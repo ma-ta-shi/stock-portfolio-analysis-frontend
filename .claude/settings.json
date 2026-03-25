@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(pytest *)",
+      "Bash(cd frontend && npm *)",
+      "Bash(alembic *)",
+      "Bash(ruff *)",
+      "Bash(uvicorn *)",
+      "Bash(python -m stock_picker*)",
+      "Bash(git *)",
+      "Read",
+      "Write",
+      "Edit"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(./**/*.key)",
+      "Read(./**/*.pem)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write(*.py)|Edit(*.py)",
+        "hooks": [{
+          "type": "command",
+          "command": "python .claude/hooks/py_format.py"
+        }]
+      }
+    ]
+  }
+}
