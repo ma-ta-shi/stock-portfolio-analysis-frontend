@@ -1,0 +1,71 @@
+{
+  "stock_id": "stk_ry_to",
+  "ticker": "RY.TO",
+  "name": "Royal Bank of Canada",
+  "exchange": "TSX",
+  "sector": "Financials",
+  "industry": "Diversified Banks",
+  "currency": "CAD",
+  "current_price": 158.32,
+  "day_change": -0.44,
+  "day_change_pct": -0.0028,
+  "week_52_high": 172.14,
+  "week_52_low": 120.88,
+  "market_cap_cad": 225600000000,
+  "volume": 3421000,
+  "avg_volume_30d": 3180000,
+  "fundamentals": {
+    "pe_ratio": 13.8,
+    "forward_pe": 12.6,
+    "ev_ebitda": null,
+    "ev_sales": null,
+    "revenue_ttm_cad": 58200000000,
+    "revenue_growth_yoy": 0.112,
+    "gross_margin": null,
+    "operating_margin": 0.298,
+    "fcf_margin": null,
+    "cash_cad": null,
+    "total_debt_cad": null,
+    "debt_to_equity": 4.2,
+    "current_ratio": null,
+    "roe": 0.162,
+    "dividend_yield": 0.0364,
+    "annual_dividend_per_share": 5.76,
+    "payout_ratio": 0.48,
+    "price_to_book": 1.92,
+    "tier1_capital_ratio": 0.141
+  },
+  "description": "Royal Bank of Canada provides diversified financial services in Canada and internationally. It operates through Personal & Commercial Banking, Wealth Management, Insurance, Investor & Treasury Services, and Capital Markets segments. RY is Canada's largest bank by market capitalization.",
+  "headquarters": "Toronto, Ontario, Canada",
+  "employees": 97000,
+  "website": "rbc.com",
+  "latest_recommendation": {
+    "analysis_id": "run_002",
+    "recommendation": "HOLD",
+    "confidence_score": 68,
+    "disagreement_score": 0.22,
+    "analyzed_at": "2026-03-22T10:02:19Z"
+  },
+  "latest_analysis": {
+    "analysis_id": "run_002",
+    "account_type": "rrsp",
+    "stock_outlook": "neutral",
+    "confidence_score": 68,
+    "disagreement_score": 0.22,
+    "analyzed_at": "2026-03-22T10:02:19Z",
+    "executive_summary": "Royal Bank is a core Canadian holding — hold the position. At fair valuation, the dividend yield provides reliable income, and the moat supports downside resilience. The key variable to monitor is Canadian mortgage credit quality in 2026-27.",
+    "key_drivers": [
+      "Dividend yield provides reliable income with resilient business economics",
+      "Valuation looks reasonable on core multiples versus ROE",
+      "Earnings quality is supported by diversification across banking segments",
+      "Credit quality of Canadian mortgages is the primary swing factor"
+    ],
+    "layer2_context": {
+      "is_in_portfolio": true,
+      "portfolio_fit": "worth_monitoring",
+      "portfolio_fit_rationale": "The dividend-and-moat profile fits a registered-account income sleeve, while timing depends on credit-cycle signals.",
+      "suggested_action": "Hold the position; consider incremental adds on weakness tied to credit conditions.",
+      "account_note_template": "In your {{account_type}} account, hold {{shares}} shares and consider adding only if credit conditions remain stable (CIO guidance)."
+    }
+  }
+}

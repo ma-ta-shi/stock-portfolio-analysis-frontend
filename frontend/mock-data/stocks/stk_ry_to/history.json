@@ -1,0 +1,20 @@
+{
+  "stock_id": "stk_ry_to",
+  "ticker": "RY.TO",
+  "data": [
+    {
+      "analysis_id": "run_002",
+      "recommendation": "HOLD",
+      "stock_outlook": "neutral",
+      "confidence_score": 68,
+      "disagreement_score": 0.22,
+      "price_at_analysis": 157.88,
+      "account_type": "rrsp",
+      "timeline": "long_term",
+      "analyzed_at": "2026-03-22T10:02:19Z",
+      "prediction_status": "pending",
+      "prediction_id": "pred_002"
+    }
+  ],
+  "meta": { "total": 1, "page": 1, "per_page": 20, "pages": 1 }
+}

@@ -1,0 +1,38 @@
+{
+  "data": [
+    {
+      "holding_id": "hld_012",
+      "user_id": "user_02",
+      "stock": {
+        "stock_id": "stk_shop_to",
+        "ticker": "SHOP.TO",
+        "name": "Shopify Inc.",
+        "sector": "Technology",
+        "exchange": "TSX",
+        "currency": "CAD"
+      },
+      "account_type": "tfsa",
+      "shares": 100,
+      "average_cost_basis": 71.15,
+      "current_price": 102.15,
+      "market_value": 10215.0,
+      "total_gain_loss": 3100.0,
+      "total_gain_loss_pct": 0.4357,
+      "day_change": 1.87,
+      "day_change_pct": 0.0186,
+      "stock_outlook": "somewhat_bullish",
+      "latest_recommendation": "BUY",
+      "confidence_score": 74,
+      "disagreement_score": 0.38,
+      "disagreement_label": "moderate",
+      "last_analyzed_at": "2026-03-24T14:22:00Z",
+      "annual_dividend_per_share": 0.0,
+      "annual_dividend_yield": 0.0,
+      "yield_on_cost": 0.0,
+      "added_at": "2024-01-08T09:00:00Z",
+      "last_updated": "2026-03-25T09:31:00Z"
+    }
+  ],
+  "meta": { "total": 1, "page": 1, "per_page": 20, "pages": 1 }
+}
+

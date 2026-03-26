@@ -1,0 +1,50 @@
+{
+  "analysis_id": "run_002",
+  "user_id": "user_01",
+  "stock": {
+    "stock_id": "stk_ry_to",
+    "ticker": "RY.TO",
+    "name": "Royal Bank of Canada",
+    "sector": "Financials",
+    "exchange": "TSX",
+    "currency": "CAD"
+  },
+  "account_type": "rrsp",
+  "timeline": "long_term",
+  "status": "complete",
+  "triggered_at": "2026-03-22T10:00:00Z",
+  "completed_at": "2026-03-22T10:02:19Z",
+  "duration_seconds": 139,
+  "trace_id": "trc_b2c3d4e5f6a7",
+  "final_recommendation": {
+    "recommendation": "HOLD",
+    "stock_outlook": {
+      "direction": "neutral",
+      "thesis_summary": "Dividend-supported fundamentals and fair valuation support a neutral outlook with credit-cycle sensitivity.",
+      "key_drivers": [
+        "Dividend yield provides reliable income with resilient business economics",
+        "Valuation looks reasonable on core multiples versus ROE",
+        "Earnings quality is supported by diversification across banking segments",
+        "Credit quality of Canadian mortgages is the primary swing factor"
+      ]
+    },
+    "confidence_score": 68,
+    "disagreement_score": 0.22,
+    "disagreement_label": "low",
+    "executive_summary": "Royal Bank is a core Canadian holding — hold the position. At fair valuation, the dividend yield provides reliable income, and the moat supports downside resilience. The key variable to monitor is Canadian mortgage credit quality in 2026-27.",
+    "cio_rationale": "Low disagreement across all four Pass 2 agents — all converge on 'hold at current price, accumulate on weakness.' I affirm this consensus view."
+  },
+  "layer2_context": {
+    "is_in_portfolio": true,
+    "portfolio_fit": "worth_monitoring",
+    "portfolio_fit_rationale": "The dividend-and-moat profile fits a registered-account income sleeve, while timing depends on credit-cycle signals.",
+    "suggested_action": "Hold the position; consider incremental adds on weakness tied to credit conditions."
+  },
+  "data_bundle_summary": {
+    "price_at_analysis": 157.88,
+    "market_cap_cad": 225600000000,
+    "volume_vs_avg": 1.02,
+    "data_quality": "high",
+    "data_sources": ["fmp", "fmp_earnings"]
+  }
+}
