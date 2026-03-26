@@ -111,6 +111,7 @@ export function AnalysisPage() {
 
   const rec = run.final_recommendation
   const l2 = run.layer2_context
+  const keyDrivers = rec.stock_outlook.key_drivers ?? []
 
   const holdingSnapshot = buildHoldingSnapshot(
     holdings?.filter((h) => h.stock.stock_id === run.stock.stock_id && h.account_type === run.account_type) ??
@@ -158,9 +159,9 @@ export function AnalysisPage() {
         <h2 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
           Layer 1 — Stock Outlook
         </h2>
-        {rec.stock_outlook.key_drivers.length > 0 && (
+        {keyDrivers.length > 0 && (
           <ul className="space-y-1">
-            {rec.stock_outlook.key_drivers.map((driver, i) => (
+            {keyDrivers.map((driver, i) => (
               <li key={i} className="text-sm flex gap-2">
                 <span className="text-muted-foreground shrink-0">·</span>
                 <span className="font-medium">{driver}</span>
@@ -221,7 +222,10 @@ export function AnalysisPage() {
         <h2 className="font-semibold mb-3">Agent Results</h2>
         <Accordion multiple className="space-y-2">
           {/* Pass 1 */}
-          {Object.values(agents.pass_1).map((result) => (
+          {Object.values(agents.pass_1 ?? {}).map((result) => {
+            const keyFindings = result.key_findings ?? []
+            const criticalRisks = result.critical_risks ?? []
+            return (
             <AccordionItem
               key={result.agent}
               value={result.agent}
@@ -242,11 +246,11 @@ export function AnalysisPage() {
                 </div>
               </AccordionTrigger>
               <AccordionContent className="pb-4 space-y-3">
-                {result.key_findings.length > 0 && (
+                {keyFindings.length > 0 && (
                   <div>
                     <p className="text-xs font-medium text-muted-foreground mb-1.5">Key Findings</p>
                     <ul className="space-y-1">
-                      {result.key_findings.map((f, i) => (
+                      {keyFindings.map((f, i) => (
                         <li key={i} className="text-sm flex gap-2">
                           <span className="text-muted-foreground shrink-0">·</span>
                           <span>{f}</span>
@@ -255,11 +259,11 @@ export function AnalysisPage() {
                     </ul>
                   </div>
                 )}
-                {result.critical_risks.length > 0 && (
+                {criticalRisks.length > 0 && (
                   <div>
                     <p className="text-xs font-medium text-red-600 mb-1.5">Critical Risks</p>
                     <ul className="space-y-1">
-                      {result.critical_risks.map((r, i) => (
+                      {criticalRisks.map((r, i) => (
                         <li key={i} className="text-sm flex gap-2 text-red-700 dark:text-red-400">
                           <span className="shrink-0">⚠</span>
                           <span>{r}</span>
@@ -270,10 +274,13 @@ export function AnalysisPage() {
                 )}
               </AccordionContent>
             </AccordionItem>
-          ))}
+            )
+          })}
 
           {/* Pass 2 */}
-          {Object.values(agents.pass_2).map((result) => (
+          {Object.values(agents.pass_2 ?? {}).map((result) => {
+            const keyArguments = result.key_arguments ?? []
+            return (
             <AccordionItem
               key={result.agent}
               value={result.agent}
@@ -288,9 +295,9 @@ export function AnalysisPage() {
                 </div>
               </AccordionTrigger>
               <AccordionContent className="pb-4">
-                {result.key_arguments.length > 0 && (
+                {keyArguments.length > 0 && (
                   <ul className="space-y-1">
-                    {result.key_arguments.map((a, i) => (
+                    {keyArguments.map((a, i) => (
                       <li key={i} className="text-sm flex gap-2">
                         <span className="text-muted-foreground shrink-0">·</span>
                         <span>{a}</span>
@@ -300,7 +307,8 @@ export function AnalysisPage() {
                 )}
               </AccordionContent>
             </AccordionItem>
-          ))}
+            )
+          })}
         </Accordion>
       </div>
 
