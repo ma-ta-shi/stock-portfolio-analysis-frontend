@@ -1,0 +1,70 @@
+{
+  "analysis_id": "stk_bmo_to",
+  "user_id": "user_01",
+  "stock": {
+    "stock_id": "stk_bmo_to",
+    "ticker": "BMO.TO",
+    "name": "Bank of Montreal",
+    "sector": "Financials",
+    "exchange": "TSX",
+    "currency": "CAD"
+  },
+  "account_type": "rrsp",
+  "timeline": "medium_term",
+  "status": "complete",
+  "triggered_at": "2026-03-22T14:30:00Z",
+  "completed_at": "2026-03-22T14:33:08Z",
+  "duration_seconds": 188,
+  "trace_id": "trc_bmo003uvw",
+  "final_recommendation": {
+    "stock_outlook": {
+      "direction": "somewhat_bearish",
+      "thesis_summary": "BMO's US integration challenges are more persistent than the market expects, weighing on near-term returns and creating elevated downside risk relative to peers.",
+      "key_drivers": [
+        "US loan losses running above peer averages; Bank of the West integration slower than guided",
+        "ROE diluted by US segment underperformance",
+        "Not cheap enough at 1.5x book to compensate for integration uncertainty",
+        "4.7% dividend yield provides a floor but not a compelling catalyst"
+      ]
+    },
+    "confidence_score": 61,
+    "disagreement_score": 0.41,
+    "disagreement_label": "moderate",
+    "executive_summary": "BMO presents a more nuanced picture than its Big 6 peers. The Bank of the West acquisition (completed 2023) gave BMO a significant US presence, but integration has been slower and more costly than management guided. US loan losses are running above peer averages, and the US segment is diluting consolidated returns on equity. The Canadian franchise is solid but not as dominant as TD's. At 1.5x book value, BMO is not cheap enough to buy through the integration uncertainty, nor is there a compelling reason to sell a high-quality Canadian bank with a 4.7% dividend yield. Hold and monitor the Q1 2026 earnings call for signs of US credit quality stabilization.",
+    "cio_rationale": "This is a genuinely difficult call — the agents were split and I share their uncertainty. The bull case depends on US integration proceeding as management promises; the bear case depends on US credit losses being a structural problem rather than a one-time normalization. I land at a somewhat bearish outlook because neither thesis is compelling enough to act on with high conviction at current prices, and the downside risks are asymmetric."
+  },
+  "layer2_context": {
+    "is_in_portfolio": false,
+    "portfolio_fit": "poor_fit",
+    "portfolio_fit_rationale": "Somewhat bearish outlook and high disagreement would add volatility without improving the portfolio's return expectation. Better capital deployment opportunities exist.",
+    "suggested_action": "Do not add — poor fit given current outlook",
+    "suggested_amount_cad": null,
+    "would_replace": null
+  },
+  "stock_fundamentals": {
+    "pe_ratio": 12.1,
+    "forward_pe": 10.8,
+    "ev_ebitda": 10.2,
+    "price_to_book": 1.51,
+    "price_to_sales": 2.6,
+    "peg_ratio": 1.4,
+    "revenue_growth_yoy": -0.04,
+    "earnings_growth_yoy": -0.11,
+    "gross_margin": 0.512,
+    "net_margin": 0.198,
+    "roe": 0.118,
+    "debt_to_equity": 4.1,
+    "beta": 0.92,
+    "week_52_high": 138.60,
+    "week_52_low": 112.80,
+    "dividend_yield_trailing": 0.047,
+    "business_description": "Bank of Montreal is a diversified financial services company. BMO serves customers through three operating groups: Canadian Personal and Commercial Banking, U.S. Personal and Commercial Banking (Bank of the West, acquired 2023), and BMO Capital Markets."
+  },
+  "data_bundle_summary": {
+    "price_at_analysis": 127.43,
+    "market_cap_cad": 93800000000,
+    "volume_vs_avg": 0.76,
+    "data_quality": "high",
+    "data_sources": ["fmp", "fmp_earnings", "fmp_news"]
+  }
+}

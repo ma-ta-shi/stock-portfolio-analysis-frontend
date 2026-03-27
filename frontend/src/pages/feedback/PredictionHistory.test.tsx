@@ -31,7 +31,7 @@ describe('PredictionHistory', () => {
         ],
       },
       isLoading: false,
-    } as ReturnType<typeof usePredictions>)
+    } as unknown as ReturnType<typeof usePredictions>)
 
     render(<PredictionHistory />)
     expect(screen.getByText('74%')).toBeInTheDocument()

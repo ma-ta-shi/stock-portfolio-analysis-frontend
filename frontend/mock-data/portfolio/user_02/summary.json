@@ -1,0 +1,51 @@
+{
+  "user_id": "user_02",
+  "total_value_cad": 38975.00,
+  "total_cost_cad": 30098.00,
+  "total_gain_loss_cad": 8877.00,
+  "total_gain_loss_pct": 0.2949,
+  "day_change_cad": 181.40,
+  "day_change_pct": 0.0047,
+  "sparkline_30d": [
+    36200, 36800, 37100, 36900, 37400, 37200, 37700, 38100,
+    38400, 38000, 38600, 38900, 38500, 38800, 38975
+  ],
+  "by_account": {
+    "tfsa": {
+      "value": 10215.00,
+      "cost": 7115.00,
+      "gain_loss": 3100.00,
+      "gain_loss_pct": 0.4357
+    },
+    "rrsp": {
+      "value": 28760.00,
+      "cost": 22983.00,
+      "gain_loss": 5777.00,
+      "gain_loss_pct": 0.2514
+    },
+    "trading": {
+      "value": 0,
+      "cost": 0,
+      "gain_loss": 0,
+      "gain_loss_pct": 0
+    }
+  },
+  "annual_dividend_income_estimate_cad": 345.60,
+  "dividend_by_account": {
+    "tfsa": 0,
+    "rrsp": 345.60,
+    "trading": 0
+  },
+  "top_performer": {
+    "ticker": "SHOP.TO",
+    "account_type": "tfsa",
+    "gain_loss_pct": 0.4357
+  },
+  "worst_performer": {
+    "ticker": "AAPL",
+    "account_type": "rrsp",
+    "gain_loss_pct": 0.2392
+  },
+  "holdings_count": 3,
+  "last_updated": "2026-03-25T09:31:00Z"
+}

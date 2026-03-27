@@ -1,0 +1,73 @@
+{
+  "user_id": "user_01",
+  "display_name": "Alex",
+  "is_active": true,
+  "created_at": "2025-09-01T00:00:00Z",
+  "financial_profile": {
+    "province": "Ontario",
+    "income_bracket": "$100,001–$150,000",
+    "marginal_tax_rate": 0.4341,
+    "marginal_tax_rate_is_manual": false,
+    "investment_experience": "intermediate",
+    "risk_tolerance": "moderate",
+    "tfsa_contribution_room": 12500,
+    "rrsp_contribution_room": 28400,
+    "default_account_type": "tfsa",
+    "default_timeline": "medium_term"
+  },
+  "context_and_goals": {
+    "primary_goal": "early_retirement",
+    "target_retirement_age": 52,
+    "target_portfolio_value": 2000000,
+    "target_annual_passive_income": 60000,
+    "goals": [
+      {
+        "name": "Early Retirement",
+        "type": "early_retirement",
+        "target_amount": 2000000,
+        "target_date": "2040-01-01",
+        "target_passive_income": 60000,
+        "priority": "high",
+        "notes": "Target 52 years old. Build a dividend-growth portfolio generating $5,000/month."
+      },
+      {
+        "name": "Emergency Fund Top-Up",
+        "type": "emergency_fund",
+        "target_amount": 10000,
+        "target_date": "2026-09-01",
+        "priority": "medium",
+        "notes": "Top up from trading account savings. 6 months of expenses."
+      }
+    ],
+    "time_sensitive_constraints": [
+      {
+        "description": "Emergency fund top-up",
+        "amount_needed": 10000,
+        "deadline": "2026-09-01",
+        "account_source": "trading",
+        "priority": "medium"
+      }
+    ],
+    "investment_preferences": {
+      "sectors_to_avoid": [],
+      "sectors_of_interest": ["technology", "financials", "industrials"],
+      "max_single_position_pct": 0.10,
+      "dividend_preference": "high",
+      "geographic_preference": "north_american",
+      "rrsp_contribution_strategy": "maximize_when_possible"
+    },
+    "notes_to_agents": "I'm focused on building a dividend-growth portfolio that can sustain early retirement. I prefer companies with strong moats and consistent FCF. I'm comfortable with moderate volatility as long as the long-term thesis is intact."
+  },
+  "app_settings": {
+    "llm_mode": "local_with_fallback",
+    "batch_analysis_schedule": "weekly_sunday",
+    "notifications": {
+      "recommendation_changes": true,
+      "price_alerts": true,
+      "prediction_checkpoints": true,
+      "market_news": false
+    },
+    "primary_data_provider": "fmp",
+    "agent_portfolio_enabled": true
+  }
+}

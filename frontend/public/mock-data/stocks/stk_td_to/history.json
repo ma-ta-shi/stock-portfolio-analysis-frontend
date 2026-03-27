@@ -1,0 +1,37 @@
+{
+  "stock_id": "stk_td_to",
+  "ticker": "TD.TO",
+  "data": [
+    {
+      "analysis_id": "stk_td_to",
+      "stock_outlook": "somewhat_bullish",
+      "confidence_score": 71,
+      "disagreement_score": 0.28,
+      "price_at_analysis": 83.84,
+      "account_type": "rrsp",
+      "timeline": "long_term",
+      "analyzed_at": "2026-03-24T09:45:00Z",
+      "prediction_status": "pending",
+      "prediction_id": "pred_td_001"
+    },
+    {
+      "analysis_id": "stk_td_to_old_001",
+      "stock_outlook": "neutral",
+      "confidence_score": 64,
+      "disagreement_score": 0.34,
+      "price_at_analysis": 79.20,
+      "account_type": "rrsp",
+      "timeline": "long_term",
+      "analyzed_at": "2025-10-08T13:00:00Z",
+      "prediction_status": "scored",
+      "prediction_id": "pred_td_old_001",
+      "composite_score": 0.62,
+      "direction_correct": true,
+      "return_at_1m": 0.028,
+      "return_at_3m": 0.058,
+      "benchmark_return_at_1m": 0.019,
+      "benchmark_return_at_3m": 0.041
+    }
+  ],
+  "meta": { "total": 2, "page": 1, "per_page": 20, "pages": 1 }
+}

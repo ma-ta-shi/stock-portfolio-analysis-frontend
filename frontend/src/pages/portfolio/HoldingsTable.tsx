@@ -1,7 +1,6 @@
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { usePortfolioHoldings } from '@/hooks/use-portfolio'
-import { useRecentAnalyses } from '@/hooks/use-analysis'
-import { RecommendationBadge } from '@/components/RecommendationBadge'
+import { OutlookBadge } from '@/components/OutlookBadge'
 import { ConfidenceMeter } from '@/components/ConfidenceMeter'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -14,15 +13,22 @@ import {
 } from '@/components/ui/table'
 import { formatCAD, formatPct } from '@/lib/utils'
 import { cn } from '@/lib/utils'
-import { getLatestAnalysisIdForTicker } from '@/lib/analysis-routing'
 
 function pctDisplay(value: number) {
   return value > 0 ? `${(value * 100).toFixed(2)}%` : '—'
 }
 
-export function HoldingsTable() {
-  const { data: holdings, isLoading } = usePortfolioHoldings()
-  const { data: recentAnalyses } = useRecentAnalyses()
+interface HoldingsTableProps {
+  accountFilter?: string
+}
+
+export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
+  const navigate = useNavigate()
+  const { data: allHoldings, isLoading } = usePortfolioHoldings()
+  const holdings =
+    accountFilter && accountFilter !== 'combined'
+      ? allHoldings?.filter((h) => h.account_type === accountFilter)
+      : allHoldings
 
   if (isLoading) {
     return <div className="h-48 rounded-lg bg-muted animate-pulse" />
@@ -43,7 +49,7 @@ export function HoldingsTable() {
             <TableHead className="text-right">Price</TableHead>
             <TableHead className="text-right">Market Value</TableHead>
             <TableHead className="text-right">Gain / Loss</TableHead>
-            <TableHead>Rec</TableHead>
+            <TableHead>Outlook</TableHead>
             <TableHead>Confidence</TableHead>
             <TableHead className="text-right">Div Yield</TableHead>
             <TableHead className="text-right">YoC</TableHead>
@@ -52,17 +58,14 @@ export function HoldingsTable() {
         <TableBody>
           {holdings.map((h) => {
             const gainPositive = h.total_gain_loss >= 0
-            const analysisId = getLatestAnalysisIdForTicker(h.stock.ticker, recentAnalyses)
             return (
-              <TableRow key={h.holding_id}>
+              <TableRow
+                key={h.holding_id}
+                className="cursor-pointer hover:bg-muted/50"
+                onClick={() => navigate(`/stocks/${h.stock.stock_id}`)}
+              >
                 <TableCell>
-                  {analysisId ? (
-                    <Link to={`/analysis/${analysisId}`} className="font-medium hover:underline">
-                      {h.stock.ticker}
-                    </Link>
-                  ) : (
-                    <span className="font-medium">{h.stock.ticker}</span>
-                  )}
+                  <div className="font-medium">{h.stock.ticker}</div>
                   <div className="text-xs text-muted-foreground">{h.stock.name}</div>
                 </TableCell>
                 <TableCell>
@@ -100,7 +103,7 @@ export function HoldingsTable() {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <RecommendationBadge recommendation={h.latest_recommendation} />
+                  <OutlookBadge direction={h.stock_outlook} />
                 </TableCell>
                 <TableCell>
                   <ConfidenceMeter score={h.confidence_score} />

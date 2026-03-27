@@ -1,0 +1,184 @@
+{
+  "analysis_id": "stk_aapl",
+  "disagreement_score_pass_1": 0.54,
+  "disagreement_score_pass_2": 0.62,
+  "pass_1": {
+    "fundamental_analyst": {
+      "agent": "fundamental_analyst",
+      "pass_number": 1,
+      "signal": "neutral",
+      "overall_signal_direction": "neutral",
+      "data_quality": "high",
+      "key_findings": [
+        "Services revenue $96B in FY2025 (+14% YoY) — App Store, iCloud, Apple TV+, Apple Pay; high-margin and growing",
+        "iPhone revenue $201B (+1% YoY) — growth has stalled; unit shipments flat for 3 consecutive years in most markets",
+        "Gross margin of 46.2% — exceptional for hardware/software hybrid; Services margin estimated at 70%+",
+        "Share repurchase program reduced share count by 3.8% in FY2025 — $95B buyback ongoing",
+        "Net cash position of $57B USD — balance sheet is pristine; excess capital returned via buybacks"
+      ],
+      "critical_risks": [
+        "iPhone revenue ($201B, 49% of total) faces structural risk from China competition (Huawei, Xiaomi gaining share at premium tier)",
+        "At 28x forward earnings and 7.5x EV/Sales, AAPL is priced for growth that the hardware business is not delivering"
+      ],
+      "completed_at": "2026-03-21T15:46:02Z",
+      "duration_seconds": 62
+    },
+    "technical_analyst": {
+      "agent": "technical_analyst",
+      "pass_number": 1,
+      "signal": "neutral",
+      "overall_signal_direction": "neutral",
+      "data_quality": "high",
+      "key_findings": [
+        "AAPL has traded in a $195-235 range for 14 months — prolonged consolidation after the 2024 AI-driven run",
+        "Currently at $224, in the upper half of the range but well below the $235 resistance",
+        "RSI at 53 — neutral, no momentum in either direction",
+        "Outperforming the S&P 500 by 3% YTD but the outperformance is narrowing"
+      ],
+      "critical_risks": [
+        "A break below $205 (lower range support) would be technically significant and could lead to a test of $190",
+        "14-month consolidation without a breakout suggests the market is waiting for a fundamental catalyst"
+      ],
+      "completed_at": "2026-03-21T15:46:17Z",
+      "duration_seconds": 15
+    },
+    "sentiment_analyst": {
+      "agent": "sentiment_analyst",
+      "pass_number": 1,
+      "signal": "bullish",
+      "overall_signal_direction": "bullish",
+      "data_quality": "high",
+      "key_findings": [
+        "28 of 40 analyst ratings are Buy — strong consensus, though this is typical for AAPL regardless of fundamentals",
+        "Apple Intelligence early reviews are positive: NPS scores above 70 among US iOS users who have tried it",
+        "Warren Buffett (Berkshire Hathaway) continues to hold AAPL as its largest position — significant endorsement",
+        "Apple's brand value ranked #1 globally for 11 consecutive years — intangible asset difficult to quantify but real"
+      ],
+      "critical_risks": [
+        "High analyst buy consensus on AAPL is a persistent feature, not a differentiated signal — it rarely predicts near-term outperformance"
+      ],
+      "completed_at": "2026-03-21T15:46:32Z",
+      "duration_seconds": 15
+    },
+    "macro_economist": {
+      "agent": "macro_economist",
+      "pass_number": 1,
+      "signal": "bearish",
+      "overall_signal_direction": "bearish",
+      "data_quality": "high",
+      "key_findings": [
+        "USD strength (CAD/USD at 0.718) creates a structural headwind for Canadian holders of USD-denominated assets",
+        "China represents 18% of AAPL revenue — US-China trade tensions and Huawei's resurgence are structural risks to this segment",
+        "US regulatory pressure on App Store (EU Digital Markets Act, DOJ antitrust investigation) threatens the highest-margin Services revenue",
+        "At peak market cap ($3.4T USD), AAPL represents 7% of the S&P 500 — concentrated index exposure creates correlation risk for Canadian investors"
+      ],
+      "critical_risks": [
+        "EU's DMA ruling forcing Apple to open the App Store could reduce Services margins by 200-400bps over 3 years",
+        "A US-China trade war escalation targeting tech companies would disproportionately hurt AAPL given its China manufacturing and revenue dependency"
+      ],
+      "completed_at": "2026-03-21T15:46:49Z",
+      "duration_seconds": 17
+    },
+    "stock_researcher": {
+      "agent": "stock_researcher",
+      "pass_number": 1,
+      "signal": "bullish",
+      "overall_signal_direction": "bullish",
+      "data_quality": "high",
+      "key_findings": [
+        "Apple has the highest consumer loyalty metrics in the smartphone market — 92% of iPhone users upgrade to another iPhone",
+        "Apple Intelligence (AI) is the first meaningful new capability in the iPhone franchise in 5 years — upgrade cycle catalyst is plausible",
+        "Apple Pay and Apple Financial Services are early-stage but could become multi-billion revenue streams by 2030",
+        "Services TAM is underappreciated: healthcare (Apple Watch), automotive (CarPlay), enterprise (Vision Pro) all represent optionality"
+      ],
+      "critical_risks": [
+        "Apple's AI capabilities are perceived as behind Google and Microsoft — if Apple Intelligence fails to drive an upgrade cycle, the growth narrative collapses",
+        "Vision Pro has had weak commercial adoption — AR/VR is a high-cost, low-return bet so far"
+      ],
+      "completed_at": "2026-03-21T15:47:04Z",
+      "duration_seconds": 15
+    }
+  },
+  "pass_2": {
+    "bull_advocate": {
+      "agent": "bull_advocate",
+      "pass_number": 2,
+      "recommendation": "BUY",
+      "confidence_score": 65,
+      "key_arguments": [
+        "Apple Intelligence will drive the largest iPhone upgrade cycle since the iPhone 6 in 2014 — the installed base of 1.4B users upgrading over 3 years is a massive revenue tailwind",
+        "Services revenue will hit $130B+ by FY2028, transforming AAPL into a software/services company with hardware optionality — deserves a 30-35x forward multiple",
+        "The buyback program alone adds ~4% per year to EPS growth even with zero organic growth — you don't need a bull case to justify owning AAPL",
+        "Buffett doesn't make mistakes of this magnitude — his continued holding is the most credible endorsement in markets"
+      ],
+      "price_target_cad": 280,
+      "completed_at": "2026-03-21T15:47:22Z",
+      "duration_seconds": 18
+    },
+    "bear_advocate": {
+      "agent": "bear_advocate",
+      "pass_number": 2,
+      "recommendation": "SELL",
+      "confidence_score": 58,
+      "key_arguments": [
+        "AAPL is priced for an AI-driven upgrade cycle that has not materialized — iPhone units are flat and Apple Intelligence adoption is still niche",
+        "28x forward earnings for a company with 1-2% revenue growth is difficult to justify without a clear catalyst; growth investors will rotate out if AI thesis doesn't deliver by end of 2026",
+        "The USD/CAD currency headwind adds 3-4% annual drag for Canadian holders — often ignored but material over a 3-year hold",
+        "Regulatory risk to the App Store (DMA, DOJ) directly threatens the highest-margin revenue stream; market is not pricing this adequately"
+      ],
+      "price_target_cad": 185,
+      "completed_at": "2026-03-21T15:47:31Z",
+      "duration_seconds": 9
+    },
+    "risk_advisor": {
+      "agent": "risk_advisor",
+      "pass_number": 2,
+      "recommendation": "HOLD",
+      "confidence_score": 55,
+      "key_arguments": [
+        "The disagreement score of 0.62 is high enough that I would not initiate a new position — too much uncertainty",
+        "For existing holders: risk/reward of bull $280 (+25%) vs bear $185 (-17%) gives 1.5:1 — barely meets threshold for holding, not buying",
+        "Currency risk for a Canadian investor holding USD AAPL is often overlooked — a 5% CAD strengthening reduces effective return by 5%",
+        "Position size should not exceed 4% of TFSA given the disagreement level; consider trimming if already above this"
+      ],
+      "completed_at": "2026-03-21T15:47:36Z",
+      "duration_seconds": 5
+    },
+    "tax_strategist": {
+      "agent": "tax_strategist",
+      "pass_number": 2,
+      "recommendation": "HOLD",
+      "confidence_score": 72,
+      "key_arguments": [
+        "AAPL pays a small USD dividend (0.5% yield) — in a TFSA, the USD dividend is still subject to 15% US withholding tax, which cannot be recovered in a TFSA (unlike RRSP)",
+        "For a Canadian investor, holding AAPL in an RRSP would be more tax-efficient than TFSA due to the US withholding tax treaty exemption",
+        "Capital gains on AAPL are tax-sheltered in TFSA, which is the primary return driver — so TFSA is still appropriate for a non-dividend-focused holding",
+        "If reallocating between accounts: consider moving AAPL to RRSP and placing Canadian dividend stocks (TD, BMO) in the TFSA"
+      ],
+      "completed_at": "2026-03-21T15:47:38Z",
+      "duration_seconds": 2
+    }
+  },
+  "cio": {
+    "agent": "cio",
+    "pass_number": null,
+    "stock_outlook": {
+      "direction": "neutral",
+      "thesis_summary": "Apple is fairly priced for its current trajectory — Services growth partially offsets hardware deceleration, but AI monetization and China recovery are uncertain enough to prevent a bullish conviction call.",
+      "key_drivers": [
+        "Services revenue +14% YoY; partially offsets flat iPhone shipments in FY2025",
+        "28x forward earnings — premium requires Apple Intelligence monetization delivery to justify",
+        "Apple Intelligence platform: adoption and monetization timeline genuinely uncertain",
+        "USD/CAD currency exposure adds volatility for Canadian investors in a TFSA"
+      ]
+    },
+    "confidence_score": 58,
+    "disagreement_score": 0.62,
+    "disagreement_label": "high",
+    "executive_summary": "Apple is a high-disagreement hold at current prices. The fundamental picture is mixed: iPhone growth has stalled while Services revenue grows strongly. Apple Intelligence is the next potential catalyst but adoption and monetization timelines are genuinely uncertain. At 28x forward earnings, AAPL is priced for AI-driven growth that has not yet materialized. The bull and bear advocates reached diametrically opposed conclusions — this is appropriate, as both cases are well-constructed. A Hold is correct: the ecosystem moat makes it wrong to sell, but current valuations make it wrong to add.",
+    "key_disagreements_addressed": "The bull-bear spread is the widest I've seen on any holding this quarter ($280 vs $185, a 34% range on a $224 stock). The core disagreement is whether Apple Intelligence drives a meaningful upgrade cycle. I cannot resolve this with confidence — the evidence is genuinely mixed. Early reviews are positive but commercial adoption data doesn't exist yet. I hold 0.62 disagreement because I believe a reasonable analyst could go either way. The tax strategist raises an important point about US withholding tax in a TFSA — worth reviewing account placement.",
+    "account_specific_note": "For Alex's TFSA: note that AAPL's USD dividend (small as it is) incurs 15% US withholding tax that cannot be recovered in a TFSA. Consider whether RRSP placement would be more efficient. More importantly, given the high disagreement, limit AAPL to no more than 4% of the TFSA value (~$500). The AI upgrade cycle thesis needs to show concrete evidence by Q3 2026 — if iPhone unit growth is still flat by then, re-evaluate the thesis.",
+    "completed_at": "2026-03-21T15:47:39Z",
+    "duration_seconds": 1
+  }
+}

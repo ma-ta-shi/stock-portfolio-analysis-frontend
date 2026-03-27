@@ -1,0 +1,103 @@
+{
+  "user_id": "user_01",
+  "enabled": true,
+  "settings": {
+    "starting_capital_cad": 85443,
+    "autonomy_level": "fully_autonomous",
+    "analysis_frequency": "weekly",
+    "risk_tolerance": "moderate",
+    "scan_universe": "user_watchlist"
+  },
+  "summary": {
+    "total_value_cad": 88210,
+    "starting_value_cad": 85443,
+    "total_return_pct": 0.0324,
+    "benchmark_return_pct": 0.0182,
+    "alpha_pct": 0.0142,
+    "win_rate": 0.67,
+    "cash_available_cad": 8420,
+    "inception_date": "2026-01-01T00:00:00Z"
+  },
+  "holdings": [
+    {
+      "holding_id": "agent_hld_001",
+      "stock": {
+        "stock_id": "stk_shop_to",
+        "ticker": "SHOP.TO",
+        "name": "Shopify Inc."
+      },
+      "account_type": "tfsa",
+      "shares": 90,
+      "average_cost_basis": 88.40,
+      "current_price": 102.15,
+      "market_value": 9193.50,
+      "gain_loss_pct": 0.1556,
+      "decision_date": "2026-01-15T06:00:00Z",
+      "confidence_at_buy": 71
+    },
+    {
+      "holding_id": "agent_hld_002",
+      "stock": {
+        "stock_id": "stk_cnr_to",
+        "ticker": "CNR.TO",
+        "name": "Canadian National Railway"
+      },
+      "account_type": "rrsp",
+      "shares": 75,
+      "average_cost_basis": 170.52,
+      "current_price": 171.44,
+      "market_value": 12858.00,
+      "gain_loss_pct": 0.0054,
+      "decision_date": "2026-03-24T06:00:00Z",
+      "confidence_at_buy": 79
+    },
+    {
+      "holding_id": "agent_hld_003",
+      "stock": {
+        "stock_id": "stk_msft",
+        "ticker": "MSFT",
+        "name": "Microsoft Corporation"
+      },
+      "account_type": "rrsp",
+      "shares": 30,
+      "average_cost_basis": 362.10,
+      "current_price": 398.75,
+      "market_value": 11962.50,
+      "gain_loss_pct": 0.1013,
+      "decision_date": "2026-01-08T06:00:00Z",
+      "confidence_at_buy": 83
+    },
+    {
+      "holding_id": "agent_hld_004",
+      "stock": {
+        "stock_id": "stk_ry_to",
+        "ticker": "RY.TO",
+        "name": "Royal Bank of Canada"
+      },
+      "account_type": "rrsp",
+      "shares": 280,
+      "average_cost_basis": 162.30,
+      "current_price": 158.32,
+      "market_value": 44329.60,
+      "gain_loss_pct": -0.0245,
+      "decision_date": "2025-12-20T06:00:00Z",
+      "confidence_at_buy": 68
+    },
+    {
+      "holding_id": "agent_hld_005",
+      "stock": {
+        "stock_id": "stk_wsp_to",
+        "ticker": "WSP.TO",
+        "name": "WSP Global Inc."
+      },
+      "account_type": "tfsa",
+      "shares": 6,
+      "average_cost_basis": 225.40,
+      "current_price": 248.35,
+      "market_value": 1490.10,
+      "gain_loss_pct": 0.1018,
+      "decision_date": "2026-02-10T06:00:00Z",
+      "confidence_at_buy": 74
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "stock_id": "stk_shop_to",
+  "ticker": "SHOP.TO",
+  "data": [
+    {
+      "analysis_id": "run_001",
+      "stock_outlook": "bullish",
+      "confidence_score": 74,
+      "disagreement_score": 0.38,
+      "price_at_analysis": 100.28,
+      "account_type": "tfsa",
+      "timeline": "medium_term",
+      "analyzed_at": "2026-03-24T14:22:47Z",
+      "prediction_status": "pending",
+      "prediction_id": "pred_001"
+    },
+    {
+      "analysis_id": "run_old_002",
+      "stock_outlook": "neutral",
+      "confidence_score": 58,
+      "disagreement_score": 0.52,
+      "price_at_analysis": 78.42,
+      "account_type": "tfsa",
+      "timeline": "medium_term",
+      "analyzed_at": "2025-12-15T10:30:00Z",
+      "prediction_status": "scored",
+      "prediction_id": "pred_old_002",
+      "composite_score": 0.44,
+      "direction_correct": false,
+      "return_at_1m": 0.162,
+      "benchmark_return_at_1m": 0.031
+    },
+    {
+      "analysis_id": "run_old_003",
+      "stock_outlook": "somewhat_bullish",
+      "confidence_score": 69,
+      "disagreement_score": 0.31,
+      "price_at_analysis": 71.88,
+      "account_type": "tfsa",
+      "timeline": "medium_term",
+      "analyzed_at": "2025-11-10T09:00:00Z",
+      "prediction_status": "scored",
+      "prediction_id": "pred_old_003",
+      "composite_score": 0.78,
+      "direction_correct": true,
+      "return_at_1m": 0.091,
+      "benchmark_return_at_1m": 0.018
+    }
+  ],
+  "meta": { "total": 3, "page": 1, "per_page": 20, "pages": 1 }
+}

@@ -5,13 +5,15 @@ import {
   BarChart2,
   Calendar,
   Bot,
+  LayoutGrid,
 } from 'lucide-react'
 import { useAlerts } from '@/hooks/use-alerts'
 import { formatRelativeTime } from '@/lib/utils'
 import type { AlertType } from '@/types'
 
 const iconMap: Record<AlertType, React.ElementType> = {
-  recommendation_change: TrendingUp,
+  outlook_change: TrendingUp,
+  portfolio_optimization: LayoutGrid,
   prediction_result: Target,
   price_movement: BarChart2,
   earnings_upcoming: Calendar,

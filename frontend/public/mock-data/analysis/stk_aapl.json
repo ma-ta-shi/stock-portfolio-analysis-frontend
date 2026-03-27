@@ -1,0 +1,70 @@
+{
+  "analysis_id": "stk_aapl",
+  "user_id": "user_01",
+  "stock": {
+    "stock_id": "stk_aapl",
+    "ticker": "AAPL",
+    "name": "Apple Inc.",
+    "sector": "Technology",
+    "exchange": "NASDAQ",
+    "currency": "USD"
+  },
+  "account_type": "tfsa",
+  "timeline": "medium_term",
+  "status": "complete",
+  "triggered_at": "2026-03-21T15:45:00Z",
+  "completed_at": "2026-03-21T15:47:39Z",
+  "duration_seconds": 159,
+  "trace_id": "trc_aapl004rst",
+  "final_recommendation": {
+    "stock_outlook": {
+      "direction": "neutral",
+      "thesis_summary": "Apple is fairly priced for its current trajectory — Services growth partially offsets hardware deceleration, but AI monetization and China recovery are uncertain enough to prevent a bullish conviction call.",
+      "key_drivers": [
+        "Services revenue +14% YoY; partially offsets flat iPhone shipments in FY2025",
+        "28x forward earnings — premium requires AI monetization delivery to justify",
+        "Apple Intelligence platform: adoption and monetization timeline genuinely uncertain",
+        "USD/CAD currency exposure adds volatility for Canadian investors"
+      ]
+    },
+    "confidence_score": 58,
+    "disagreement_score": 0.62,
+    "disagreement_label": "high",
+    "executive_summary": "Apple is a high-disagreement neutral at current prices. The fundamental picture is mixed: iPhone shipments were flat in FY2025 while Services revenue grew 14%, partially offsetting the hardware deceleration. The Apple Intelligence AI platform is the next potential growth driver, but adoption and monetization timelines are uncertain. At 28x forward earnings, AAPL is not cheap — you are paying a significant premium for the brand, ecosystem, and optionality on AI. The bull and bear advocates reached diametrically opposed conclusions, which is appropriate given the genuinely uncertain path. For a Canadian investor, USD currency exposure adds another variable. A neutral outlook is correct: don't add at current valuations, but Apple's ecosystem moat makes it wrong to be bearish.",
+    "cio_rationale": "I hold a higher disagreement score here (0.62) because I genuinely believe both the bull and bear cases are well-constructed and the outcome depends on variables (AI monetization, China market recovery, regulatory outcomes) that are difficult to predict with confidence. This is not a case where one agent is clearly wrong — both are reasonable. A 58% confidence neutral outlook reflects my honest uncertainty."
+  },
+  "layer2_context": {
+    "is_in_portfolio": false,
+    "portfolio_fit": "worth_monitoring",
+    "portfolio_fit_rationale": "Neutral outlook and high disagreement reduce conviction, but AAPL provides US tech diversification not present in current holdings. Watch for clearer AI monetization signals.",
+    "suggested_action": "Monitor — wait for clearer AI monetization signals before adding",
+    "suggested_amount_cad": null,
+    "would_replace": null
+  },
+  "stock_fundamentals": {
+    "pe_ratio": 28.4,
+    "forward_pe": 25.6,
+    "ev_ebitda": 22.8,
+    "price_to_book": 42.1,
+    "price_to_sales": 7.4,
+    "peg_ratio": 2.6,
+    "revenue_growth_yoy": 0.02,
+    "earnings_growth_yoy": 0.08,
+    "gross_margin": 0.461,
+    "net_margin": 0.254,
+    "roe": 1.47,
+    "debt_to_equity": 1.73,
+    "beta": 1.18,
+    "week_52_high": 259.80,
+    "week_52_low": 196.40,
+    "dividend_yield_trailing": 0.005,
+    "business_description": "Apple Inc. designs, manufactures, and markets smartphones, personal computers, tablets, wearables, and accessories. Products include iPhone, Mac, iPad, Apple Watch, AirPods, and Apple TV. The company also provides services including the App Store, Apple Music, iCloud, Apple Pay, and Apple Intelligence AI features."
+  },
+  "data_bundle_summary": {
+    "price_at_analysis": 224.18,
+    "market_cap_cad": 4690000000000,
+    "volume_vs_avg": 0.92,
+    "data_quality": "high",
+    "data_sources": ["fmp", "fmp_earnings", "fmp_news"]
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "user_id": "user_01",
+  "display_name": "Alex",
+  "is_active": true,
+  "created_at": "2025-09-01T00:00:00Z",
+  "financial_profile": {
+    "province": "Ontario",
+    "income_bracket": "$100-150K",
+    "marginal_tax_rate": 0.4341,
+    "investment_experience": "intermediate",
+    "risk_tolerance": "moderate",
+    "tfsa_contribution_room": 12500,
+    "rrsp_contribution_room": 28400,
+    "default_account_type": "tfsa",
+    "default_timeline": "medium_term"
+  },
+  "context_and_goals": {
+    "primary_goal": "early_retirement",
+    "target_retirement_age": 52,
+    "target_portfolio_value": 2000000,
+    "target_annual_passive_income": 60000,
+    "time_sensitive_constraints": [
+      {
+        "description": "Emergency fund top-up",
+        "amount_needed": 10000,
+        "deadline": "2026-09-01",
+        "account_source": "trading",
+        "priority": "medium"
+      }
+    ],
+    "investment_preferences": {
+      "sectors_to_avoid": [],
+      "sectors_of_interest": ["technology", "financials", "industrials"],
+      "max_single_position_pct": 0.10,
+      "dividend_preference": true,
+      "geographic_preference": "north_american"
+    },
+    "notes_to_agents": "I'm focused on building a dividend-growth portfolio that can sustain early retirement. I prefer companies with strong moats and consistent FCF. I'm comfortable with moderate volatility as long as the long-term thesis is intact."
+  },
+  "app_settings": {
+    "llm_mode": "local_with_fallback",
+    "batch_analysis_schedule": "weekly_sunday",
+    "notifications": {
+      "recommendation_changes": true,
+      "price_alerts": true,
+      "prediction_checkpoints": true,
+      "market_news": false
+    },
+    "primary_data_provider": "fmp",
+    "agent_portfolio_enabled": true
+  }
+}

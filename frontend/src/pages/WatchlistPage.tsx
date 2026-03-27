@@ -2,8 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowUpDown } from 'lucide-react'
 import { useWatchlist } from '@/hooks/use-watchlist'
-import { useRecentAnalyses } from '@/hooks/use-analysis'
-import { RecommendationBadge } from '@/components/RecommendationBadge'
+import { OutlookBadge } from '@/components/OutlookBadge'
 import { ConfidenceMeter } from '@/components/ConfidenceMeter'
 import { DisagreementIndicator } from '@/components/DisagreementIndicator'
 import { Button } from '@/components/ui/button'
@@ -18,44 +17,31 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { formatDate, formatPct } from '@/lib/utils'
 import { cn } from '@/lib/utils'
-import { getLatestAnalysisIdForTicker } from '@/lib/analysis-routing'
-import type { BuySignalStrength, WatchlistItem } from '@/types'
+import type { PortfolioFit, WatchlistItem } from '@/types'
 
 type SortKey =
-  | 'buy_signal_strength'
+  | 'projected_return_pct'
   | 'confidence_score'
   | 'day_change_pct'
   | 'last_analyzed_at'
 
-const SIGNAL_ORDER: Record<BuySignalStrength, number> = {
-  strong_buy: 0,
-  buy: 1,
-  neutral: 2,
-  avoid: 3,
-  strong_avoid: 4,
+const FIT_COLORS: Record<PortfolioFit, string> = {
+  strong_candidate: 'text-emerald-600 dark:text-emerald-400',
+  worth_monitoring: 'text-amber-600 dark:text-amber-400',
+  poor_fit: 'text-red-600 dark:text-red-400',
 }
 
-const SIGNAL_LABELS: Record<BuySignalStrength, string> = {
-  strong_buy: 'Strong Buy',
-  buy: 'Buy',
-  neutral: 'Neutral',
-  avoid: 'Avoid',
-  strong_avoid: 'Strong Avoid',
-}
-
-const SIGNAL_COLORS: Record<BuySignalStrength, string> = {
-  strong_buy: 'text-emerald-700 dark:text-emerald-400',
-  buy: 'text-emerald-600 dark:text-emerald-500',
-  neutral: 'text-muted-foreground',
-  avoid: 'text-red-500',
-  strong_avoid: 'text-red-700 dark:text-red-400',
+const FIT_LABELS: Record<PortfolioFit, string> = {
+  strong_candidate: 'Strong',
+  worth_monitoring: 'Monitor',
+  poor_fit: 'Poor Fit',
 }
 
 function sortItems(items: WatchlistItem[], key: SortKey, dir: 'asc' | 'desc') {
   return [...items].sort((a, b) => {
     let cmp = 0
-    if (key === 'buy_signal_strength') {
-      cmp = SIGNAL_ORDER[a.buy_signal_strength] - SIGNAL_ORDER[b.buy_signal_strength]
+    if (key === 'projected_return_pct') {
+      cmp = a.projected_return_pct - b.projected_return_pct
     } else if (key === 'confidence_score') {
       cmp = a.confidence_score - b.confidence_score
     } else if (key === 'day_change_pct') {
@@ -92,16 +78,15 @@ function SortHeader({ label, colKey, activeKey, onSort }: SortHeaderProps) {
 export function WatchlistPage() {
   const navigate = useNavigate()
   const { data, isLoading } = useWatchlist()
-  const { data: recentAnalyses } = useRecentAnalyses()
-  const [sortKey, setSortKey] = useState<SortKey>('buy_signal_strength')
-  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
+  const [sortKey, setSortKey] = useState<SortKey>('projected_return_pct')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
 
   function handleSort(key: SortKey) {
     if (key === sortKey) {
       setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
     } else {
       setSortKey(key)
-      setSortDir('asc')
+      setSortDir('desc')
     }
   }
 
@@ -115,7 +100,7 @@ export function WatchlistPage() {
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <span>{data.summary.total} stocks</span>
             <span className="text-emerald-600 font-medium">
-              {data.summary.buy_rated} buy-rated
+              {data.summary.bullish_count} bullish
             </span>
             {data.summary.changed_since_last_check > 0 && (
               <span className="text-blue-500">
@@ -139,14 +124,15 @@ export function WatchlistPage() {
                 <TableHead>
                   <SortHeader label="Day Δ" colKey="day_change_pct" activeKey={sortKey} onSort={handleSort} />
                 </TableHead>
-                <TableHead>Rec.</TableHead>
+                <TableHead>Outlook</TableHead>
                 <TableHead>
                   <SortHeader label="Confidence" colKey="confidence_score" activeKey={sortKey} onSort={handleSort} />
                 </TableHead>
                 <TableHead>Disagreement</TableHead>
                 <TableHead>
-                  <SortHeader label="Signal" colKey="buy_signal_strength" activeKey={sortKey} onSort={handleSort} />
+                  <SortHeader label="Proj. Return" colKey="projected_return_pct" activeKey={sortKey} onSort={handleSort} />
                 </TableHead>
+                <TableHead>Portfolio Fit</TableHead>
                 <TableHead>Account</TableHead>
                 <TableHead>
                   <SortHeader label="Last Analyzed" colKey="last_analyzed_at" activeKey={sortKey} onSort={handleSort} />
@@ -156,15 +142,11 @@ export function WatchlistPage() {
             </TableHeader>
             <TableBody>
               {items.map((item) => {
-                const analysisId = getLatestAnalysisIdForTicker(item.stock.ticker, recentAnalyses)
                 return (
                 <TableRow
                   key={item.watchlist_id}
                   className="cursor-pointer hover:bg-muted/50"
-                  onClick={() => {
-                    if (!analysisId) return
-                    navigate(`/analysis/${analysisId}`)
-                  }}
+                  onClick={() => navigate(`/stocks/${item.stock.stock_id}`)}
                 >
                   <TableCell>
                     <div className="font-medium">{item.stock.ticker}</div>
@@ -188,7 +170,7 @@ export function WatchlistPage() {
                     </span>
                   </TableCell>
                   <TableCell>
-                    <RecommendationBadge recommendation={item.latest_recommendation} />
+                    <OutlookBadge direction={item.stock_outlook} />
                   </TableCell>
                   <TableCell>
                     <ConfidenceMeter score={item.confidence_score} />
@@ -200,8 +182,13 @@ export function WatchlistPage() {
                     />
                   </TableCell>
                   <TableCell>
-                    <span className={cn('text-sm', SIGNAL_COLORS[item.buy_signal_strength])}>
-                      {SIGNAL_LABELS[item.buy_signal_strength]}
+                    <span className="text-sm font-medium">
+                      {formatPct(item.projected_return_pct * 100)}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <span className={cn('text-sm font-medium', FIT_COLORS[item.portfolio_fit])}>
+                      {FIT_LABELS[item.portfolio_fit]}
                     </span>
                   </TableCell>
                   <TableCell>
@@ -216,14 +203,12 @@ export function WatchlistPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      disabled={!analysisId}
                       onClick={(e) => {
                         e.stopPropagation()
-                        if (!analysisId) return
-                        navigate(`/analysis/${analysisId}`)
+                        navigate(`/stocks/${item.stock.stock_id}`)
                       }}
                     >
-                      Analyze
+                      View
                     </Button>
                   </TableCell>
                 </TableRow>

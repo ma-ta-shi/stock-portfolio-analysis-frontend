@@ -1,0 +1,60 @@
+{
+  "stock_id": "stk_msft",
+  "ticker": "MSFT",
+  "name": "Microsoft Corporation",
+  "exchange": "NASDAQ",
+  "sector": "Technology",
+  "industry": "Systems Software",
+  "currency": "USD",
+  "current_price": 412.18,
+  "day_change": 3.44,
+  "day_change_pct": 0.0084,
+  "week_52_high": 468.35,
+  "week_52_low": 362.90,
+  "market_cap_cad": 8620000000000,
+  "volume": 21400000,
+  "avg_volume_30d": 19800000,
+  "fundamentals": {
+    "pe_ratio": 34.8,
+    "forward_pe": 29.4,
+    "ev_ebitda": 26.2,
+    "price_to_book": 12.8,
+    "price_to_sales": 12.4,
+    "peg_ratio": 2.2,
+    "revenue_growth_yoy": 0.158,
+    "earnings_growth_yoy": 0.212,
+    "gross_margin": 0.698,
+    "net_margin": 0.358,
+    "roe": 0.388,
+    "debt_to_equity": 0.38,
+    "dividend_yield_trailing": 0.0072,
+    "beta": 0.91,
+    "week_52_high": 468.35,
+    "week_52_low": 362.90,
+    "business_description": "Microsoft Corporation develops and supports software, services, devices, and solutions worldwide. Its Productivity and Business Processes segment includes Microsoft 365, LinkedIn, and Dynamics. The Intelligent Cloud segment includes Azure, SQL Server, Windows Server, and GitHub. The More Personal Computing segment covers Windows, Xbox, Surface, and Bing. Microsoft Copilot AI is integrated across its product suite and driving accelerating cloud revenue growth."
+  },
+  "headquarters": "Redmond, Washington, USA",
+  "employees": 228000,
+  "website": "microsoft.com",
+  "price_history_90d": [368.4, 372.1, 376.8, 374.2, 379.6, 383.2, 380.8, 385.4, 389.1, 386.8, 391.4, 395.2, 392.8, 397.4, 401.1, 398.8, 403.5, 407.2, 404.8, 409.4, 413.1, 410.8, 415.4, 419.1, 416.8, 421.4, 418.2, 414.8, 416.5, 413.2, 415.8, 412.4, 410.1, 412.8, 412.18],
+  "latest_analysis": {
+    "analysis_id": "stk_msft_001",
+    "stock_outlook": "bullish",
+    "confidence_score": 84,
+    "disagreement_score": 0.12,
+    "analyzed_at": "2026-03-25T15:00:00Z",
+    "executive_summary": "Microsoft is the clearest enterprise beneficiary of AI adoption through its integrated Copilot and Azure AI platform. Revenue re-acceleration combined with operating margin expansion makes this the highest-conviction name in the portfolio. RRSP is the optimal account given USD currency and capital gains profile.",
+    "key_drivers": [
+      "Azure AI workloads driving cloud segment re-acceleration to 33% growth",
+      "Copilot monetization now showing up in commercial bookings",
+      "Operating leverage expanding — margins up 200bps YoY across all segments"
+    ],
+    "layer2_context": {
+      "is_in_portfolio": true,
+      "portfolio_fit": "strong_candidate",
+      "portfolio_fit_rationale": "Held in RRSP — optimal placement for USD asset. Consider increasing weight given highest conviction rating in portfolio.",
+      "suggested_action": "Add to RRSP — increase from current 2.5% to 4% target weight",
+      "suggested_amount_cad": 4200
+    }
+  }
+}

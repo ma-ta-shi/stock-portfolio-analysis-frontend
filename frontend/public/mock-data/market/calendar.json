@@ -1,0 +1,68 @@
+{
+  "data": [
+    {
+      "date": "2026-03-27",
+      "event_type": "earnings",
+      "description": "Royal Bank of Canada Q1 2026 Earnings",
+      "ticker": "RY.TO",
+      "impact": "high"
+    },
+    {
+      "date": "2026-03-27",
+      "event_type": "earnings",
+      "description": "Toronto-Dominion Bank Q1 2026 Earnings",
+      "ticker": "TD.TO",
+      "impact": "high"
+    },
+    {
+      "date": "2026-03-31",
+      "event_type": "economic",
+      "description": "Canada GDP (January 2026) — StatCan",
+      "ticker": null,
+      "impact": "high"
+    },
+    {
+      "date": "2026-04-02",
+      "event_type": "earnings",
+      "description": "Enbridge Inc. Q1 2026 Earnings",
+      "ticker": "ENB.TO",
+      "impact": "medium"
+    },
+    {
+      "date": "2026-04-04",
+      "event_type": "economic",
+      "description": "Canada Employment Report (March 2026)",
+      "ticker": null,
+      "impact": "high"
+    },
+    {
+      "date": "2026-04-04",
+      "event_type": "economic",
+      "description": "US Non-Farm Payrolls (March 2026)",
+      "ticker": null,
+      "impact": "high"
+    },
+    {
+      "date": "2026-04-16",
+      "event_type": "central_bank",
+      "description": "Bank of Canada Rate Decision",
+      "ticker": null,
+      "impact": "high"
+    },
+    {
+      "date": "2026-04-23",
+      "event_type": "earnings",
+      "description": "Microsoft Corporation Q3 FY2026 Earnings",
+      "ticker": "MSFT",
+      "impact": "high"
+    },
+    {
+      "date": "2026-04-29",
+      "event_type": "economic",
+      "description": "Canada CPI (March 2026) — StatCan",
+      "ticker": null,
+      "impact": "high"
+    }
+  ],
+  "meta": { "total": 9, "page": 1, "per_page": 30, "pages": 1 }
+}

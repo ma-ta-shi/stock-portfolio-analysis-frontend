@@ -1,0 +1,14 @@
+{
+  "status": "ok",
+  "version": "0.1.0",
+  "database": "connected",
+  "llm": {
+    "ollama": "available",
+    "claude_api": "available"
+  },
+  "data_providers": {
+    "fmp": "available",
+    "alpha_vantage": "available"
+  },
+  "uptime_seconds": 84623
+}

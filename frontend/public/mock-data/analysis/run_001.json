@@ -1,0 +1,84 @@
+{
+  "analysis_id": "run_001",
+  "user_id": "user_01",
+  "stock": {
+    "stock_id": "stk_shop_to",
+    "ticker": "SHOP.TO",
+    "name": "Shopify Inc.",
+    "sector": "Technology",
+    "exchange": "TSX",
+    "currency": "CAD"
+  },
+  "account_type": "tfsa",
+  "timeline": "medium_term",
+  "status": "complete",
+  "triggered_at": "2026-03-24T14:20:00Z",
+  "completed_at": "2026-03-24T14:22:47Z",
+  "duration_seconds": 167,
+  "trace_id": "trc_a1b2c3d4e5f6",
+  "final_recommendation": {
+    "stock_outlook": {
+      "direction": "somewhat_bullish",
+      "thesis_summary": "Shopify's FCF inflection is confirmed and durable — the platform is gaining share, but premium valuation and moderate agent disagreement prevent a full bullish conviction call.",
+      "key_drivers": [
+        "GMV +23% YoY; free cash flow positive and margins expanding",
+        "Shopify Payments attach rate accelerating, creating significant operating leverage",
+        "Valuation premium (vs TSX tech) creates downside if revenue growth decelerates",
+        "5% TFSA position size appropriate given moderate disagreement on margin sustainability"
+      ]
+    },
+    "confidence_score": 74,
+    "disagreement_score": 0.38,
+    "disagreement_label": "moderate",
+    "executive_summary": "Shopify presents a compelling medium-term opportunity for a TFSA account. The company's merchant platform continues to gain share globally, with Gross Merchandise Volume growing 23% year-over-year. Free cash flow has turned decisively positive and margins are expanding. The main risk is valuation — SHOP trades at a significant premium to the TSX tech index — which creates downside if revenue growth decelerates. The bull and bear advocates diverged meaningfully on the sustainability of the margin expansion, which accounts for the moderate disagreement score. On balance, the risk/reward favours initiating or adding to a position at current levels, sized at no more than 5% of the TFSA. A logical stop-loss sits at $91 (support from the March 2025 base).",
+    "cio_rationale": "I weight the bull case more heavily here. FCF generation is no longer speculative — it is demonstrated. The Shopify Payments attach rate is accelerating and creates meaningful operating leverage. The bear case correctly identifies valuation risk, but I assess this as a timing/entry risk rather than a thesis risk. The risk advisor's 5% position size recommendation is appropriate given the disagreement and valuation premium."
+  },
+  "layer2_context": {
+    "is_in_portfolio": true,
+    "portfolio_fit": "strong_candidate",
+    "portfolio_fit_rationale": "Already held in TFSA with a 15.6% gain. Somewhat bullish outlook supports holding; consider adding to target weight of 8%.",
+    "suggested_action": "Hold current position — consider adding to 8% weight",
+    "suggested_amount_cad": 4000,
+    "would_replace": null,
+    "holding_snapshot": {
+      "shares": 45,
+      "average_cost": 84.32,
+      "book_cost": 3794.40,
+      "current_value": 4512.60,
+      "total_return_cad": 718.20,
+      "total_return_pct": 0.1893,
+      "day_change_cad": 84.15,
+      "dividend_income_ytd": 0.0,
+      "yield_on_cost": 0.0,
+      "by_account": [
+        { "account_type": "tfsa", "shares": 45, "value": 4512.60, "avg_cost": 84.32 }
+      ]
+    }
+  },
+  "stock_fundamentals": {
+    "pe_ratio": 65.2,
+    "forward_pe": 52.1,
+    "ev_ebitda": 48.3,
+    "price_to_book": 12.1,
+    "price_to_sales": 16.8,
+    "peg_ratio": 2.8,
+    "revenue_growth_yoy": 0.23,
+    "earnings_growth_yoy": 0.85,
+    "gross_margin": 0.482,
+    "net_margin": 0.089,
+    "roe": 0.163,
+    "debt_to_equity": 0.12,
+    "beta": 1.65,
+    "week_52_high": 118.50,
+    "week_52_low": 67.20,
+    "dividend_yield_trailing": 0.0,
+    "business_description": "Shopify Inc. provides a cloud-based commerce platform for small and medium-sized businesses across Canada and internationally. The platform enables merchants to run their businesses across all sales channels including online storefronts, physical retail, and social commerce."
+  },
+  "data_bundle_summary": {
+    "price_at_analysis": 100.28,
+    "market_cap_cad": 127400000000,
+    "volume_vs_avg": 0.94,
+    "data_quality": "high",
+    "data_sources": ["fmp", "fmp_earnings", "fmp_news"]
+  }
+}

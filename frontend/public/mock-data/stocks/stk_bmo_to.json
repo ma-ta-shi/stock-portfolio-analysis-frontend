@@ -1,0 +1,53 @@
+{
+  "stock_id": "stk_bmo_to",
+  "ticker": "BMO.TO",
+  "name": "Bank of Montreal",
+  "exchange": "TSX",
+  "sector": "Financials",
+  "industry": "Diversified Banks",
+  "currency": "CAD",
+  "current_price": 127.84,
+  "day_change": -0.32,
+  "day_change_pct": -0.0025,
+  "week_52_high": 142.56,
+  "week_52_low": 108.14,
+  "market_cap_cad": 84600000000,
+  "volume": 2140000,
+  "avg_volume_30d": 1980000,
+  "fundamentals": {
+    "pe_ratio": 12.1,
+    "forward_pe": 11.4,
+    "price_to_book": 1.24,
+    "revenue_growth_yoy": 0.048,
+    "roe": 0.108,
+    "debt_to_equity": 4.1,
+    "dividend_yield_trailing": 0.0488,
+    "beta": 0.94,
+    "week_52_high": 142.56,
+    "week_52_low": 108.14,
+    "business_description": "Bank of Montreal provides diversified financial services primarily in North America. It operates through Canadian P&C, U.S. P&C, BMO Wealth Management, and BMO Capital Markets segments. BMO is Canada's third-largest bank by assets and has a significant presence in the U.S. Midwest through its BMO Harris Bank subsidiary."
+  },
+  "headquarters": "Montreal, Quebec, Canada",
+  "employees": 53000,
+  "website": "bmo.com",
+  "price_history_90d": [112.4, 113.8, 115.2, 114.1, 116.8, 118.0, 117.4, 119.2, 118.6, 120.4, 119.8, 121.5, 122.8, 122.1, 124.0, 123.2, 125.1, 126.4, 125.8, 124.6, 126.2, 127.5, 126.8, 128.4, 127.6, 129.1, 128.4, 127.8, 128.5, 127.9, 128.1, 127.6, 128.2, 127.8, 127.84],
+  "latest_analysis": {
+    "analysis_id": "stk_bmo_to",
+    "stock_outlook": "neutral",
+    "confidence_score": 65,
+    "disagreement_score": 0.31,
+    "analyzed_at": "2026-03-23T14:15:00Z",
+    "executive_summary": "Bank of Montreal offers moderate value at current levels but earnings momentum remains unclear as the US banking integration progresses. A neutral stance is warranted until the next earnings cycle provides clearer direction on PCL trends and US segment profitability.",
+    "key_drivers": [
+      "US Midwest banking franchise growing but integration costs ongoing",
+      "PCL normalization largely complete — credit quality stabilizing",
+      "Dividend yield well-covered but limited growth expected near-term"
+    ],
+    "layer2_context": {
+      "is_in_portfolio": false,
+      "portfolio_fit": "worth_monitoring",
+      "portfolio_fit_rationale": "Not a priority addition — portfolio already has sufficient Financials exposure through RY.TO. Monitor for a more decisive earnings catalyst.",
+      "suggested_action": "Watch and wait — revisit after Q2 earnings"
+    }
+  }
+}

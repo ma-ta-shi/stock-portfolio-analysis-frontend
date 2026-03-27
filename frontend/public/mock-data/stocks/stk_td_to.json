@@ -1,0 +1,55 @@
+{
+  "stock_id": "stk_td_to",
+  "ticker": "TD.TO",
+  "name": "Toronto-Dominion Bank",
+  "exchange": "TSX",
+  "sector": "Financials",
+  "industry": "Diversified Banks",
+  "currency": "CAD",
+  "current_price": 84.72,
+  "day_change": 0.88,
+  "day_change_pct": 0.0105,
+  "week_52_high": 96.18,
+  "week_52_low": 74.42,
+  "market_cap_cad": 152800000000,
+  "volume": 5820000,
+  "avg_volume_30d": 5240000,
+  "fundamentals": {
+    "pe_ratio": 11.4,
+    "forward_pe": 10.8,
+    "price_to_book": 1.42,
+    "revenue_growth_yoy": 0.062,
+    "roe": 0.134,
+    "debt_to_equity": 3.8,
+    "dividend_yield_trailing": 0.0512,
+    "beta": 0.91,
+    "week_52_high": 96.18,
+    "week_52_low": 74.42,
+    "business_description": "The Toronto-Dominion Bank provides various financial products and services in Canada and the United States. It operates through Canadian Personal and Commercial Banking, U.S. Retail, Wealth Management and Insurance, and Wholesale Banking segments. TD is the second-largest bank in Canada by assets and has a significant retail banking presence in the eastern United States."
+  },
+  "headquarters": "Toronto, Ontario, Canada",
+  "employees": 95000,
+  "website": "td.com",
+  "price_history_90d": [76.2, 77.1, 78.4, 77.8, 79.2, 80.1, 79.5, 81.0, 80.4, 82.1, 81.5, 83.0, 82.4, 84.2, 83.6, 82.8, 84.5, 85.1, 84.3, 83.8, 85.2, 84.7, 83.9, 85.4, 84.8, 83.6, 85.0, 84.2, 83.5, 84.8, 85.3, 84.6, 84.1, 85.0, 84.72],
+  "latest_analysis": {
+    "analysis_id": "stk_td_to",
+    "stock_outlook": "somewhat_bullish",
+    "confidence_score": 71,
+    "disagreement_score": 0.28,
+    "analyzed_at": "2026-03-24T09:45:00Z",
+    "executive_summary": "TD Bank has absorbed most of its AML-related headwinds and now trades at an attractive discount to peers. The strong US retail franchise provides earnings diversification not available elsewhere in the Canadian banking sector.",
+    "key_drivers": [
+      "AML remediation costs largely absorbed — regulatory headwind fading",
+      "US retail banking footprint provides meaningful earnings diversification",
+      "Strong capital position supports buybacks and dividend growth"
+    ],
+    "layer2_context": {
+      "is_in_portfolio": false,
+      "portfolio_fit": "worth_monitoring",
+      "portfolio_fit_rationale": "Better risk/reward than current RY.TO position — consider a partial swap within the Financials allocation.",
+      "suggested_action": "Initiate 2-3% position in RRSP, partially replacing RY.TO",
+      "suggested_amount_cad": 5000,
+      "would_replace": "RY.TO"
+    }
+  }
+}

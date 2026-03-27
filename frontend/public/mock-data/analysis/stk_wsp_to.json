@@ -1,0 +1,70 @@
+{
+  "analysis_id": "stk_wsp_to",
+  "user_id": "user_01",
+  "stock": {
+    "stock_id": "stk_wsp_to",
+    "ticker": "WSP.TO",
+    "name": "WSP Global Inc.",
+    "sector": "Industrials",
+    "exchange": "TSX",
+    "currency": "CAD"
+  },
+  "account_type": "tfsa",
+  "timeline": "long_term",
+  "status": "complete",
+  "triggered_at": "2026-03-24T09:15:00Z",
+  "completed_at": "2026-03-24T09:17:42Z",
+  "duration_seconds": 162,
+  "trace_id": "trc_wsp001abc",
+  "final_recommendation": {
+    "stock_outlook": {
+      "direction": "bullish",
+      "thesis_summary": "WSP Global is one of the highest-conviction longs on the Canadian market — a compounding machine with exceptional backlog visibility and direct exposure to the infrastructure super-cycle.",
+      "key_drivers": [
+        "14% revenue CAGR over 5 years through disciplined M&A and organic growth",
+        "Backlog at 3.2x annual revenue providing exceptional forward visibility",
+        "Expanding margins as recent acquisitions integrate and fixed-price contracts reprice",
+        "Long-term infrastructure super-cycle aligns directly with WSP service lines"
+      ]
+    },
+    "confidence_score": 88,
+    "disagreement_score": 0.14,
+    "disagreement_label": "low",
+    "executive_summary": "WSP Global is one of the highest-conviction longs on the Canadian market. The global engineering and consulting firm is a compounding machine — it has grown revenue at a 14% CAGR over five years through disciplined M&A and organic growth in infrastructure, environment, and transportation consulting. Backlog grew 11% year-over-year and now stands at 3.2x annual revenue, providing exceptional visibility. Margins are expanding as the company integrates recent acquisitions and benefits from fixed-price contract pricing power. The long-term infrastructure super-cycle (energy transition, climate adaptation, digital infrastructure) directly aligns with WSP's service lines. This is a core long-term hold for a TFSA account — the tax-free compounding amplifies the thesis significantly.",
+    "cio_rationale": "All five Pass 1 agents were bullish. The Pass 2 agents reached near-consensus at BUY with only the risk advisor noting some acquisition integration risk. This is exceptional alignment. I set confidence at 88 — the 12 percentage points of uncertainty reflects the premium valuation (33x forward earnings) and sensitivity to global infrastructure spending cycles."
+  },
+  "layer2_context": {
+    "is_in_portfolio": false,
+    "portfolio_fit": "strong_candidate",
+    "portfolio_fit_rationale": "Strong capital-gains profile with low correlation to existing Financials-heavy holdings. Would improve portfolio diversification and projected return.",
+    "suggested_action": "Add to TFSA — 3–5% position (~$7,500)",
+    "suggested_amount_cad": 7500,
+    "would_replace": null
+  },
+  "stock_fundamentals": {
+    "pe_ratio": 33.1,
+    "forward_pe": 29.4,
+    "ev_ebitda": 18.2,
+    "price_to_book": 3.4,
+    "price_to_sales": 2.1,
+    "peg_ratio": 1.8,
+    "revenue_growth_yoy": 0.12,
+    "earnings_growth_yoy": 0.19,
+    "gross_margin": 0.198,
+    "net_margin": 0.064,
+    "roe": 0.112,
+    "debt_to_equity": 0.85,
+    "beta": 0.88,
+    "week_52_high": 228.40,
+    "week_52_low": 178.20,
+    "dividend_yield_trailing": 0.008,
+    "business_description": "WSP Global Inc. provides engineering and professional services in the Transportation & Infrastructure, Property & Buildings, Environment, Industry, Resources, and Power & Energy sectors across 40+ countries. One of the world's largest engineering consulting firms with over 65,000 employees."
+  },
+  "data_bundle_summary": {
+    "price_at_analysis": 218.44,
+    "market_cap_cad": 22100000000,
+    "volume_vs_avg": 1.12,
+    "data_quality": "high",
+    "data_sources": ["fmp", "fmp_earnings", "fmp_news"]
+  }
+}

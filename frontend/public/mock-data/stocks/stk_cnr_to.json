@@ -1,0 +1,60 @@
+{
+  "stock_id": "stk_cnr_to",
+  "ticker": "CNR.TO",
+  "name": "Canadian National Railway",
+  "exchange": "TSX",
+  "sector": "Industrials",
+  "industry": "Railroads",
+  "currency": "CAD",
+  "current_price": 148.62,
+  "day_change": 0.54,
+  "day_change_pct": 0.0036,
+  "week_52_high": 164.80,
+  "week_52_low": 128.44,
+  "market_cap_cad": 102400000000,
+  "volume": 1820000,
+  "avg_volume_30d": 1640000,
+  "fundamentals": {
+    "pe_ratio": 22.4,
+    "forward_pe": 20.1,
+    "ev_ebitda": 16.8,
+    "price_to_book": 5.2,
+    "price_to_sales": 5.8,
+    "peg_ratio": 2.1,
+    "revenue_growth_yoy": 0.062,
+    "earnings_growth_yoy": 0.084,
+    "gross_margin": 0.484,
+    "net_margin": 0.278,
+    "roe": 0.248,
+    "debt_to_equity": 0.94,
+    "dividend_yield_trailing": 0.0198,
+    "beta": 0.76,
+    "week_52_high": 164.80,
+    "week_52_low": 128.44,
+    "business_description": "Canadian National Railway Company, together with its subsidiaries, engages in the rail and related transportation business. CN's network spans Canada from the Atlantic coast to the Pacific, and south through the U.S. Midwest to the Gulf of Mexico, serving industries across agriculture, forest products, coal, fertilizers, metals and minerals, automotive, and intermodal sectors."
+  },
+  "headquarters": "Montreal, Quebec, Canada",
+  "employees": 25000,
+  "website": "cn.ca",
+  "price_history_90d": [131.2, 132.8, 134.1, 133.4, 135.6, 137.2, 136.4, 138.1, 139.5, 138.8, 140.4, 141.8, 140.9, 142.6, 143.8, 142.5, 144.2, 145.6, 144.8, 146.4, 147.8, 146.9, 148.4, 149.2, 148.4, 150.1, 149.2, 148.6, 149.8, 148.9, 149.4, 148.8, 149.1, 148.9, 148.62],
+  "latest_analysis": {
+    "analysis_id": "stk_cnr_to_001",
+    "stock_outlook": "somewhat_bullish",
+    "confidence_score": 76,
+    "disagreement_score": 0.18,
+    "analyzed_at": "2026-03-20T10:30:00Z",
+    "executive_summary": "CN Rail is executing its efficiency improvement program while benefiting from volume recovery across key commodity corridors. The stock trades at a modest premium to historical averages but is justified by the improving earnings trajectory and durable competitive moat.",
+    "key_drivers": [
+      "Volume recovery across grain and intermodal corridors ahead of estimates",
+      "Operating ratio improvement program on track",
+      "Strong pricing power with industrial and agricultural customers"
+    ],
+    "layer2_context": {
+      "is_in_portfolio": true,
+      "portfolio_fit": "strong_candidate",
+      "portfolio_fit_rationale": "Held in RRSP — consider increasing weight given high conviction and current underweight relative to conviction level.",
+      "suggested_action": "Add to RRSP — increase from current weight toward 5% target",
+      "suggested_amount_cad": 3500
+    }
+  }
+}

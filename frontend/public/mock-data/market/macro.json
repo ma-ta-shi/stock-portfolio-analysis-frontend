@@ -1,0 +1,61 @@
+{
+  "as_of": "2026-03-24T16:00:00Z",
+  "source_analysis_run": "run_macro_weekly_001",
+  "assessments": {
+    "interest_rate_direction": {
+      "status": "hold_with_cut_bias",
+      "label": "Hold — cuts expected Q3 2026",
+      "impact": "Neutral near-term. Positive medium-term for growth and rate-sensitive stocks as BoC cuts materialize.",
+      "direction": "easing"
+    },
+    "inflation_trend": {
+      "status": "moderating",
+      "label": "Inflation cooling",
+      "impact": "CPI tracking toward 2.1% target. Reduces pressure on BoC to hold rates, supporting rate cut thesis.",
+      "direction": "positive"
+    },
+    "economic_growth": {
+      "status": "below_trend",
+      "label": "Below-trend growth",
+      "impact": "Canadian GDP growth at 1.4% — below potential. Consumer spending constrained by mortgage renewal wave in 2026.",
+      "direction": "negative"
+    },
+    "sector_cycle": {
+      "current_phase": "late_cycle",
+      "label": "Late cycle — favour quality and defensives",
+      "impact": "Late-cycle positioning favours: Financials (earnings resilience), Utilities (defensive yield), Quality Tech (FCF). Headwind for highly cyclical sectors.",
+      "direction": "mixed"
+    }
+  },
+  "top_portfolio_impacts": {
+    "positive": [
+      {
+        "factor": "CAD weakness (0.718 USD/CAD)",
+        "impact": "Boosts USD-denominated revenue for MSFT, AAPL holdings when converted to CAD",
+        "affected_tickers": ["MSFT", "AAPL"]
+      },
+      {
+        "factor": "Expected BoC rate cuts Q3 2026",
+        "impact": "Tailwind for growth-oriented holdings; compresses discount rate for SHOP.TO, WSP.TO",
+        "affected_tickers": ["SHOP.TO", "WSP.TO"]
+      },
+      {
+        "factor": "Resilient US consumer",
+        "impact": "Shopify's primary merchant base (US) remains healthy despite Canadian weakness",
+        "affected_tickers": ["SHOP.TO"]
+      }
+    ],
+    "negative": [
+      {
+        "factor": "Canadian mortgage renewal wave 2026",
+        "impact": "Higher payment shock for Canadian consumers — headwind for domestic consumption; modest credit risk for Canadian banks",
+        "affected_tickers": ["RY.TO", "TD.TO"]
+      },
+      {
+        "factor": "Below-trend Canadian economic growth",
+        "impact": "Reduces domestic demand for Enbridge industrial customers; modest pipeline volume headwind",
+        "affected_tickers": ["ENB.TO"]
+      }
+    ]
+  }
+}

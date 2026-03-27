@@ -1,3 +1,7 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 # Stock Picker — AI-Powered Stock Analysis Platform
 
 Python FastAPI backend + React/Vite/TypeScript frontend monorepo.
@@ -5,50 +9,123 @@ Multi-agent system (10 agents, two-pass pipeline) for AI-powered stock analysis.
 Target: Canadian investors optimizing TFSA/RRSP/Trading accounts for early retirement.
 
 ## Project Structure
-- src/            — FastAPI API, 10-agent orchestration, data pipeline, LLM layer
-- frontend/       — React + Vite + TypeScript + Tailwind CSS + shadcn/ui
-- prompts/        — Agent prompt templates (prompts/{agent_name}/v{n}.txt)
-- tests/          — pytest backend tests + vitest frontend tests
-- docs/           — Architecture decisions and API specs
+- `src/`            — FastAPI API, 10-agent orchestration, data pipeline, LLM layer
+- `frontend/`       — React + Vite + TypeScript + Tailwind CSS + shadcn/ui
+- `prompts/`        — Agent prompt templates (`prompts/{agent_name}/v{n}.txt`)
+- `tests/`          — pytest backend tests + vitest frontend tests
+- `docs/`           — Architecture decisions and API specs
 
 ## Commands
-- Backend dev:    `uvicorn src.api.app:app --reload --port 8000`
-- Frontend dev:   `cd frontend && npm run dev`
-- Test backend:   `pytest -xvs`
-- Test frontend:  `cd frontend && npm test`
-- Lint:           `ruff check . && ruff format --check .`
-- Type check:     `cd frontend && npx tsc --noEmit`
-- Migration:      `alembic upgrade head`
-- New migration:  `alembic revision --autogenerate -m "description"`
-- CLI analysis:   `python -m stock_picker.cli analyze SHOP.TO --account tfsa --timeline medium_term`
+
+### Backend
+```bash
+uvicorn src.api.app:app --reload --port 8000   # dev server
+pytest -xvs                                     # all tests
+pytest tests/path/to/test_file.py -xvs         # single file
+pytest -xvs -k "test_name"                      # single test
+ruff check . && ruff format --check .           # lint
+alembic upgrade head                            # run migrations
+alembic revision --autogenerate -m "desc"       # new migration
+python -m stock_picker.cli analyze SHOP.TO --account tfsa --timeline medium_term
+```
+
+### Frontend
+```bash
+cd frontend && npm run dev                      # dev server
+cd frontend && npm test                         # all tests
+cd frontend && npx tsc --noEmit                 # type check
+cd frontend && npm run lint                     # lint (no output = clean)
+cd frontend && npm run build                    # full build verification
+cd frontend && npx openapi-typescript http://localhost:8000/openapi.json -o src/types/api.ts
+```
 
 ## Architecture Rules
 - Layer separation: Router → Service → Repository (never skip layers)
 - No DB calls in routers; no HTTP types in services
-- All agents are async, run via orchestrator only (never called directly)
-- Use FastAPI Depends() for dependency injection everywhere
-- Use structlog for all logging — never print()
+- All agents are async, run via orchestrator only (`src/services/orchestrator.py`) — never called directly
+- Use `FastAPI Depends()` for dependency injection everywhere
+- Use `structlog` for all logging — never `print()`
+
+## Agent Pipeline
+
+Two-pass pipeline — analysis takes 30–120 seconds; use async status polling or WebSocket:
+
+```
+Pass 1 (parallel): Fundamental Analyst, Technical Analyst, Sentiment Analyst, Macro Economist, Stock Researcher
+    → compress each output to ~500 tokens
+Pass 2 (parallel): Bull Advocate, Bear Advocate, Risk Advisor, Tax Strategist
+    → compute disagreement score (0.0–1.0)
+Synthesis: CIO → stock_outlook (5-point: bullish → bearish) + executive brief
+Shadow CIO (non-blocking, step 12): same inputs, bear-biased prompt → stored to shadow_predictions for calibration
+```
+
+Analysis API flow:
+```
+POST /api/analysis          → { analysis_id, status: "queued" }
+GET  /api/analysis/{id}/status
+GET  /api/analysis/{id}     → full results
+WS   ws://localhost:8000/ws/analysis/{id}  → real-time agent_complete / pass_complete events
+```
+
+## Portfolio Optimizer
+
+Separate 3-agent chain that runs **after** stock analyses complete, consuming CIO outlooks as input. Architecturally distinct from the 10-agent pipeline. ~25,300 tokens / ~$0.05–0.15 per run.
+
+```
+Pre-computation (no LLM): portfolio matrix, correlations, account state, user constraints
+    ↓
+Sub-agent 1: Portfolio Health Assessor — ranks holdings, identifies concentration/diversification issues
+    ↓
+Sub-agent 2: Opportunity Ranker — scores watchlist stocks as additions, identifies displacement targets
+    ↓
+Sub-agent 3: Action Synthesizer — final executable recommendations (swap/rebalance/deploy/no-action)
+```
+
+Trigger modes: (1) Friday night batch → full chain; (2) "Available to Trade" → Action Synthesizer only (reuses cached outputs); (3) Manual re-optimize → full chain.
+
+Action Synthesizer hardcoded rules: no RRSP withdrawals; TFSA sells flagged with contribution room impact; cross-account moves only for new capital; minimum 2% improvement threshold after costs; "no changes" is a valid output.
+
+Implementation phasing: Milestone 2 = single-agent version; Milestone 3 = full 3-agent chain; Milestone 4 = quantitative pre-computation (Black-Litterman).
+
+## LLM Routing
+- **Primary**: Ollama local inference (RTX 4070 Ti Super)
+  - Pass 1 & 2: `llama3.1:8b-instruct-q5_K_M`
+  - CIO + Portfolio Health/Opportunity: `llama3.1:70b-instruct-q4_K_M` (RAM offload)
+- **Fallback / Portfolio Action Synthesizer**: Claude API (strongly preferred for Action Synthesizer)
+  - Pass 1/2: `claude-sonnet-4-6` | CIO: `claude-opus-4-6`
+  - Action Synthesizer: `claude-sonnet-4-6` or `claude-opus-4-6`
+
+## Database
+- Dev: SQLite + aiosqlite (zero config)
+- Prod: PostgreSQL + asyncpg (set via `DATABASE_URL` env var)
+- Always use `AsyncSession` — never sync `Session`
+
+## Frontend Development Strategy
+Frontend uses mock JSON files (`frontend/mock-data/`) before backend is ready.
+- During frontend-first dev: fetch from `/mock-data/` JSON files
+- When backend ready: swap to `http://localhost:8000/api/`
+- TypeScript types in `frontend/src/types/` must mirror backend Pydantic schemas exactly
 
 ## Code Conventions
-- Python: 3.12+ typing (str | None, not Optional[str])
-- Pydantic v2 only (model_validator, field_validator, ConfigDict)
-- SQLAlchemy 2.0 async only (select() style, never legacy query())
-- Frontend: functional components + hooks only, TanStack Query for data fetching
-- All new code must have tests
+- Python 3.12+ typing: `str | None` not `Optional[str]`, `dict`/`list` not `Dict`/`List`
+- Pydantic v2 only: `model_validator`, `field_validator`, `ConfigDict` — not `@validator`
+- SQLAlchemy 2.0: `select()` style only — never legacy `db.query()`
+- Frontend: functional components + hooks only; TanStack Query for all server state (no `useEffect` for fetching)
+- Always separate Create, Update, and Read Pydantic schemas
+- All new code must have tests; always run tests with `--timeout` to prevent hanging
 
-## Common Mistakes to Avoid
-- DON'T use sync SQLAlchemy Session — always AsyncSession
-- DON'T use Pydantic v1 decorators (@validator) — use v2 (field_validator)
-- DON'T use Optional[X] — use X | None
-- DON'T use Dict/List/Union from typing — use dict/list/| syntax
-- DON'T use print() — use structlog
-- ALWAYS run tests with timeout to prevent hanging
-- ALWAYS separate Create, Update, and Read Pydantic schemas
+## Common Mistakes
+- DON'T use sync `Session` — always `AsyncSession`
+- DON'T use Pydantic v1 `@validator` — use `field_validator`
+- DON'T use `Optional[X]` — use `X | None`
+- DON'T use `Dict`/`List`/`Union` from `typing` — use `dict`/`list`/`|` syntax
+- DON'T call agents directly — always go through the orchestrator
 
-## Context
-- For backend architecture: see src/CLAUDE.md
-- For frontend conventions: see frontend/CLAUDE.md
-- For agent architecture: see docs/agent-architecture.md
-- For API conventions: see docs/api-conventions.md
-- For living project docs: ask me to check Notion — search 'Project Stock Picker'
-- Your context window will be automatically compacted. Do not stop tasks early.
+## Further Context
+- Backend architecture details: `src/CLAUDE.md`
+- Frontend conventions: `frontend/CLAUDE.md`
+- Full agent spec (prompts, I/O contracts): `docs/agent-architecture.md`
+- API conventions and error codes: `docs/api-conventions.md`
+- Architecture decisions: `docs/decision-log.md`
+- Living project docs: Notion — search 'Project Stock Picker'
+- Context window will be automatically compacted. Do not stop tasks early.

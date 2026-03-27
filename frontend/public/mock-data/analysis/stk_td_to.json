@@ -1,0 +1,70 @@
+{
+  "analysis_id": "stk_td_to",
+  "user_id": "user_01",
+  "stock": {
+    "stock_id": "stk_td_to",
+    "ticker": "TD.TO",
+    "name": "Toronto-Dominion Bank",
+    "sector": "Financials",
+    "exchange": "TSX",
+    "currency": "CAD"
+  },
+  "account_type": "rrsp",
+  "timeline": "medium_term",
+  "status": "complete",
+  "triggered_at": "2026-03-23T11:00:00Z",
+  "completed_at": "2026-03-23T11:02:51Z",
+  "duration_seconds": 171,
+  "trace_id": "trc_td002xyz",
+  "final_recommendation": {
+    "stock_outlook": {
+      "direction": "bullish",
+      "thesis_summary": "TD Bank is attractive at current levels — the market has fully priced in the US AML regulatory overhang, creating a compelling entry point into Canada's largest retail bank.",
+      "key_drivers": [
+        "18% discount to 5-year average P/BV multiple reflects excessive AML pessimism",
+        "5.1% dividend yield supported by 47% payout ratio",
+        "Best-in-class Canadian franchise: #1–2 position in personal banking, wealth management, and credit cards",
+        "Medium-term catalyst: AML remediation completion expected to re-rate to historical multiples"
+      ]
+    },
+    "confidence_score": 71,
+    "disagreement_score": 0.29,
+    "disagreement_label": "moderate",
+    "executive_summary": "TD Bank is a buy at current levels despite near-term overhang from the US anti-money-laundering consent order. The Canadian banking franchise is best-in-class — TD has the largest branch network in Canada and a #1 or #2 position in personal and commercial banking, wealth management, and credit cards. The US business (TD Bank, N.A.) is under a regulatory asset cap, constraining US growth until 2027 at the earliest. However, the market has fully priced this in: TD trades at an 18% discount to its 5-year average P/BV multiple. The dividend is safe at a 47% payout ratio, and the 5.1% yield is attractive in an RRSP where it compounds tax-free. The medium-term catalyst is AML remediation completion, which should re-rate the stock to historical multiples.",
+    "cio_rationale": "The disagreement between bull and bear is primarily about the timeline and magnitude of the US regulatory overhang. I favour the bull's view that the market has already discounted the worst case. TD's Canadian operations are performing well and will carry the stock until the US business recovers. The 5.1% dividend yield provides meaningful return while waiting."
+  },
+  "layer2_context": {
+    "is_in_portfolio": false,
+    "portfolio_fit": "worth_monitoring",
+    "portfolio_fit_rationale": "Would increase Financials sector concentration above 50%. Best considered as a swap for RY.TO rather than an outright addition.",
+    "suggested_action": "Monitor — consider as swap candidate for RY.TO",
+    "suggested_amount_cad": null,
+    "would_replace": "RY.TO"
+  },
+  "stock_fundamentals": {
+    "pe_ratio": 11.8,
+    "forward_pe": 10.2,
+    "ev_ebitda": 9.4,
+    "price_to_book": 1.38,
+    "price_to_sales": 2.8,
+    "peg_ratio": 1.1,
+    "revenue_growth_yoy": -0.02,
+    "earnings_growth_yoy": -0.08,
+    "gross_margin": 0.541,
+    "net_margin": 0.221,
+    "roe": 0.141,
+    "debt_to_equity": 3.8,
+    "beta": 0.85,
+    "week_52_high": 86.40,
+    "week_52_low": 72.10,
+    "dividend_yield_trailing": 0.051,
+    "business_description": "Toronto-Dominion Bank provides a full range of financial products and services across retail banking, wealth management, insurance, and wholesale banking. Canada's second-largest bank by assets with significant US retail operations spanning the eastern seaboard under the TD Bank brand."
+  },
+  "data_bundle_summary": {
+    "price_at_analysis": 82.14,
+    "market_cap_cad": 149300000000,
+    "volume_vs_avg": 0.88,
+    "data_quality": "high",
+    "data_sources": ["fmp", "fmp_earnings", "fmp_news"]
+  }
+}

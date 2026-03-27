@@ -1,0 +1,108 @@
+{
+  "user_id": "user_01",
+  "comparison": [
+    {
+      "ticker": "SHOP.TO",
+      "agent": {
+        "shares": 90,
+        "avg_cost": 88.40,
+        "current_value_cad": 9193.50,
+        "gain_loss_pct": 0.156,
+        "entry_date": "2026-01-15"
+      },
+      "user": {
+        "shares": 45,
+        "avg_cost": 84.32,
+        "current_value_cad": 4596.75,
+        "gain_loss_pct": 0.211
+      },
+      "difference": "Agent holds 2x more shares. Both in TFSA. Agent entered later at higher price but larger position."
+    },
+    {
+      "ticker": "RY.TO",
+      "agent": {
+        "shares": 280,
+        "avg_cost": 162.30,
+        "current_value_cad": 44329.60,
+        "gain_loss_pct": -0.025,
+        "entry_date": "2025-12-20"
+      },
+      "user": {
+        "shares": 250,
+        "avg_cost": 118.82,
+        "current_value_cad": 39580.00,
+        "gain_loss_pct": 0.332
+      },
+      "difference": "Agent entered RY.TO at a higher price — user has a larger unrealized gain due to earlier, lower-cost entry."
+    },
+    {
+      "ticker": "CNR.TO",
+      "agent": {
+        "shares": 75,
+        "avg_cost": 170.52,
+        "current_value_cad": 12858.00,
+        "gain_loss_pct": 0.005,
+        "entry_date": "2026-03-24"
+      },
+      "user": {
+        "shares": 80,
+        "avg_cost": 148.60,
+        "current_value_cad": 13715.20,
+        "gain_loss_pct": 0.154
+      },
+      "difference": "Similar conviction — agent slightly smaller position, entered later at higher price."
+    },
+    {
+      "ticker": "ENB.TO",
+      "agent": {
+        "shares": 0,
+        "avg_cost": null,
+        "current_value_cad": 0,
+        "gain_loss_pct": null,
+        "note": "Agent sold ENB.TO on Dec 20 2025"
+      },
+      "user": {
+        "shares": 300,
+        "avg_cost": 44.80,
+        "current_value_cad": 17583.00,
+        "gain_loss_pct": 0.308
+      },
+      "difference": "User holds ENB.TO; agent sold it. This is the key divergence — agent has reduced energy exposure to zero."
+    },
+    {
+      "ticker": "MSFT",
+      "agent": {
+        "shares": 30,
+        "avg_cost": 362.10,
+        "current_value_cad": 11962.50,
+        "gain_loss_pct": 0.101,
+        "entry_date": "2026-01-08"
+      },
+      "user": {
+        "shares": 25,
+        "avg_cost": 312.40,
+        "current_value_cad": 9968.75,
+        "gain_loss_pct": 0.277
+      },
+      "difference": "Agent holds 20% more MSFT shares but entered at a higher average cost — user's earlier entry gives them a larger unrealized gain percentage."
+    },
+    {
+      "ticker": "WSP.TO",
+      "agent": {
+        "shares": 6,
+        "avg_cost": 225.40,
+        "current_value_cad": 1490.10,
+        "gain_loss_pct": 0.102,
+        "entry_date": "2026-02-10"
+      },
+      "user": {
+        "shares": 0,
+        "avg_cost": null,
+        "current_value_cad": 0,
+        "gain_loss_pct": null,
+        "note": "On user watchlist; not yet purchased"
+      },
+      "difference": "Agent bought WSP.TO from user's watchlist. User has not yet acted on the Buy signal."
+    }
+  ]
+}

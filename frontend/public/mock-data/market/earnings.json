@@ -1,0 +1,70 @@
+{
+  "data": [
+    {
+      "ticker": "RY.TO",
+      "name": "Royal Bank of Canada",
+      "earnings_date": "2026-03-27",
+      "days_until": 2,
+      "report_time": "before_market",
+      "consensus_eps": 3.12,
+      "previous_eps": 2.94,
+      "previous_surprise_pct": 0.024,
+      "in_portfolio": true,
+      "in_watchlist": false,
+      "urgency": "high"
+    },
+    {
+      "ticker": "TD.TO",
+      "name": "Toronto-Dominion Bank",
+      "earnings_date": "2026-03-27",
+      "days_until": 2,
+      "report_time": "before_market",
+      "consensus_eps": 1.98,
+      "previous_eps": 1.84,
+      "previous_surprise_pct": -0.012,
+      "in_portfolio": false,
+      "in_watchlist": true,
+      "urgency": "high"
+    },
+    {
+      "ticker": "ENB.TO",
+      "name": "Enbridge Inc.",
+      "earnings_date": "2026-04-02",
+      "days_until": 8,
+      "report_time": "before_market",
+      "consensus_eps": 0.88,
+      "previous_eps": 0.82,
+      "previous_surprise_pct": 0.037,
+      "in_portfolio": true,
+      "in_watchlist": false,
+      "urgency": "normal"
+    },
+    {
+      "ticker": "MSFT",
+      "name": "Microsoft Corporation",
+      "earnings_date": "2026-04-23",
+      "days_until": 29,
+      "report_time": "after_market",
+      "consensus_eps": 3.41,
+      "previous_eps": 3.23,
+      "previous_surprise_pct": 0.058,
+      "in_portfolio": true,
+      "in_watchlist": false,
+      "urgency": "low"
+    },
+    {
+      "ticker": "SHOP.TO",
+      "name": "Shopify Inc.",
+      "earnings_date": "2026-05-07",
+      "days_until": 43,
+      "report_time": "before_market",
+      "consensus_eps": 0.38,
+      "previous_eps": 0.31,
+      "previous_surprise_pct": 0.129,
+      "in_portfolio": true,
+      "in_watchlist": false,
+      "urgency": "low"
+    }
+  ],
+  "meta": { "total": 5, "page": 1, "per_page": 20, "pages": 1 }
+}

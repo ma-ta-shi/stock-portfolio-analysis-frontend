@@ -1,0 +1,54 @@
+{
+  "stock_id": "stk_ry_to",
+  "ticker": "RY.TO",
+  "name": "Royal Bank of Canada",
+  "exchange": "TSX",
+  "sector": "Financials",
+  "industry": "Diversified Banks",
+  "currency": "CAD",
+  "current_price": 158.32,
+  "day_change": -0.44,
+  "day_change_pct": -0.0028,
+  "week_52_high": 172.14,
+  "week_52_low": 120.88,
+  "market_cap_cad": 225600000000,
+  "volume": 3421000,
+  "avg_volume_30d": 3180000,
+  "fundamentals": {
+    "pe_ratio": 13.8,
+    "forward_pe": 12.6,
+    "price_to_book": 1.92,
+    "revenue_growth_yoy": 0.112,
+    "roe": 0.162,
+    "debt_to_equity": 4.2,
+    "dividend_yield_trailing": 0.0364,
+    "beta": 0.82,
+    "week_52_high": 172.14,
+    "week_52_low": 120.88,
+    "business_description": "Royal Bank of Canada provides diversified financial services in Canada and internationally. It operates through Personal & Commercial Banking, Wealth Management, Insurance, Investor & Treasury Services, and Capital Markets segments. RY is Canada's largest bank by market capitalization."
+  },
+  "headquarters": "Toronto, Ontario, Canada",
+  "employees": 97000,
+  "website": "rbc.com",
+  "price_history_90d": [145.2, 146.8, 148.1, 147.3, 149.0, 150.4, 151.2, 149.8, 151.5, 153.0, 152.4, 154.1, 155.6, 154.8, 156.2, 155.5, 157.1, 158.4, 157.8, 159.2, 160.1, 158.9, 160.5, 161.3, 160.7, 162.0, 161.4, 163.1, 162.5, 161.8, 163.4, 162.9, 161.5, 159.8, 158.32],
+  "latest_analysis": {
+    "analysis_id": "run_002",
+    "stock_outlook": "neutral",
+    "confidence_score": 68,
+    "disagreement_score": 0.22,
+    "analyzed_at": "2026-03-22T10:02:19Z",
+    "executive_summary": "RBC faces near-term headwinds from compressed net interest margins but maintains its position as Canada's most profitable bank. The stock appears fairly valued at current levels with limited near-term upside relative to TD, which offers a better risk/reward profile.",
+    "key_drivers": [
+      "Wealth management segment performing well",
+      "Net interest margin pressure from rate environment",
+      "Capital ratios above regulatory minimums"
+    ],
+    "layer2_context": {
+      "is_in_portfolio": true,
+      "portfolio_fit": "worth_monitoring",
+      "portfolio_fit_rationale": "Held across RRSP and TFSA — consider consolidating into TD for stronger near-term upside while maintaining Financials exposure.",
+      "suggested_action": "Consider trimming RRSP position and replacing with TD.TO",
+      "would_replace": "RY.TO"
+    }
+  }
+}
