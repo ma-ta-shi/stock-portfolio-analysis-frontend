@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import { TrendingUp, TrendingDown, Pencil, Plus } from 'lucide-react'
 import { useStockDetail, useStockAnalysisHistory } from '@/hooks/use-stock-detail'
 import { usePortfolioHoldings } from '@/hooks/use-portfolio'
 import { StockInfoSection } from '@/components/StockInfoSection'
@@ -6,6 +8,10 @@ import { OutlookBadge } from '@/components/OutlookBadge'
 import { ConfidenceMeter } from '@/components/ConfidenceMeter'
 import { DisagreementIndicator } from '@/components/DisagreementIndicator'
 import { SparklineChart } from '@/components/SparklineChart'
+import { BuySharesDialog } from '@/components/BuySharesDialog'
+import { SellPositionDialog } from '@/components/SellPositionDialog'
+import { EditPositionDialog } from '@/components/EditPositionDialog'
+import { AddStockDialog } from '@/components/AddStockDialog'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -89,7 +95,7 @@ export function StockPage() {
   const { stockId } = useParams<{ stockId: string }>()
   const id = stockId ?? ''
 
-  const { data: stock, isLoading: stockLoading } = useStockDetail(id)
+  const { data: stock, isLoading: stockLoading, isError: stockError, refetch: refetchStock } = useStockDetail(id)
   const { data: history, isLoading: historyLoading } = useStockAnalysisHistory(id)
   const { data: allHoldings } = usePortfolioHoldings()
 
@@ -99,6 +105,11 @@ export function StockPage() {
     acc[h.account_type] = (acc[h.account_type] ?? 0) + h.shares
     return acc
   }, {})
+
+  const [buyingHolding, setBuyingHolding] = useState<(typeof holdingsForStock)[0] | null>(null)
+  const [sellingHolding, setSellingHolding] = useState<(typeof holdingsForStock)[0] | null>(null)
+  const [editingHolding, setEditingHolding] = useState<(typeof holdingsForStock)[0] | null>(null)
+  const [addDialogOpen, setAddDialogOpen] = useState(false)
 
   if (stockLoading) {
     return (
@@ -110,10 +121,19 @@ export function StockPage() {
     )
   }
 
+  if (stockError) {
+    return (
+      <div className="max-w-3xl mx-auto text-center py-12 space-y-3">
+        <p className="text-sm text-muted-foreground">Failed to load stock data.</p>
+        <Button size="sm" variant="outline" onClick={() => refetchStock()}>Retry</Button>
+      </div>
+    )
+  }
+
   if (!stock) {
     return (
       <div className="max-w-3xl mx-auto text-center py-12 text-muted-foreground">
-        Stock not found
+        Stock not found.
       </div>
     )
   }
@@ -130,6 +150,58 @@ export function StockPage() {
         fundamentals={stock.fundamentals}
         holdingSnapshot={holdingSnapshot}
       />
+
+      {/* Position Actions */}
+      {holdingsForStock.length > 0 ? (
+        <div className="bg-card border border-border rounded-lg px-4 py-3 space-y-2">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Your Position</p>
+          {holdingsForStock.map((h) => (
+            <div key={h.holding_id} className="flex items-center justify-between gap-3 flex-wrap">
+              <div className="flex items-center gap-3 flex-wrap text-sm">
+                <Badge variant="outline" className="text-xs">{h.account_type.toUpperCase()}</Badge>
+                <span>{h.shares} shares</span>
+                <span className="text-muted-foreground">@ ${h.average_cost_basis.toFixed(2)} avg</span>
+              </div>
+              <div className="flex gap-1">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-emerald-600 border-emerald-200 hover:bg-emerald-50 dark:border-emerald-800 dark:hover:bg-emerald-950/30"
+                  onClick={() => setBuyingHolding(h)}
+                >
+                  <TrendingUp className="w-3.5 h-3.5 mr-1" />
+                  Buy
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-red-600 border-red-200 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950/30"
+                  onClick={() => setSellingHolding(h)}
+                >
+                  <TrendingDown className="w-3.5 h-3.5 mr-1" />
+                  Sell
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setEditingHolding(h)}
+                >
+                  <Pencil className="w-3.5 h-3.5 mr-1" />
+                  Edit
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : allHoldings !== undefined ? (
+        <div className="flex items-center justify-between bg-card border border-border rounded-lg px-4 py-3">
+          <span className="text-sm text-muted-foreground">Not in your portfolio</span>
+          <Button size="sm" onClick={() => setAddDialogOpen(true)}>
+            <Plus className="w-3.5 h-3.5 mr-1" />
+            Add to Portfolio
+          </Button>
+        </div>
+      ) : null}
 
       {/* Price Chart */}
       {stock.price_history_90d && stock.price_history_90d.length > 0 && (
@@ -273,9 +345,9 @@ export function StockPage() {
       <div>
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-semibold">Analysis History</h2>
-          <Link to={`/analysis/new?stock=${stock.stock_id}`}>
-            <Button size="sm">Run New Analysis</Button>
-          </Link>
+          <Button size="sm" disabled title="Requires backend — POST /api/analysis">
+            Run New Analysis
+          </Button>
         </div>
 
         {historyLoading ? (
@@ -390,6 +462,37 @@ export function StockPage() {
             <span>Web: <span className="text-foreground">{stock.website}</span></span>
           )}
         </div>
+      )}
+
+      <BuySharesDialog
+        key={buyingHolding?.holding_id ?? 'none-buy'}
+        holding={buyingHolding}
+        onClose={() => setBuyingHolding(null)}
+      />
+      <SellPositionDialog
+        key={sellingHolding?.holding_id ?? 'none-sell'}
+        holding={sellingHolding}
+        onClose={() => setSellingHolding(null)}
+      />
+      <EditPositionDialog
+        key={editingHolding?.holding_id ?? 'none-edit'}
+        holding={editingHolding}
+        onClose={() => setEditingHolding(null)}
+      />
+      {stock && (
+        <AddStockDialog
+          mode="portfolio"
+          open={addDialogOpen}
+          onOpenChange={setAddDialogOpen}
+          defaultStock={{
+            stock_id: stock.stock_id,
+            ticker: stock.ticker,
+            name: stock.name,
+            sector: stock.sector ?? '',
+            exchange: stock.exchange ?? '',
+            currency: stock.currency ?? 'CAD',
+          }}
+        />
       )}
     </div>
   )

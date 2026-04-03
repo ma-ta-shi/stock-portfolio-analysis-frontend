@@ -1,11 +1,14 @@
 import { useState } from 'react'
+import { Plus } from 'lucide-react'
 import { usePortfolioSummary } from '@/hooks/use-portfolio'
 import { SparklineChart } from '@/components/SparklineChart'
+import { AddStockDialog } from '@/components/AddStockDialog'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { HoldingsTable } from './portfolio/HoldingsTable'
 import { AllocationCharts } from './portfolio/AllocationCharts'
 import { PortfolioOptimizerSection } from './portfolio/PortfolioOptimizerSection'
+import { TransactionsTab } from './portfolio/TransactionsTab'
 import { formatCAD, formatPct } from '@/lib/utils'
 import { cn } from '@/lib/utils'
 import type { PortfolioAccountView } from '@/types'
@@ -36,19 +39,29 @@ function SummaryHeader({
   accountView: PortfolioAccountView
   onAccountChange: (v: PortfolioAccountView) => void
 }) {
-  const { data, isLoading } = usePortfolioSummary()
+  const { data, isLoading, isError, refetch } = usePortfolioSummary()
 
   if (isLoading) {
     return <div className="h-32 rounded-lg bg-muted animate-pulse mb-4" />
+  }
+  if (isError) {
+    return (
+      <div className="border border-border rounded-lg p-6 text-center space-y-2 mb-4">
+        <p className="text-sm text-muted-foreground">Failed to load portfolio summary.</p>
+        <Button size="sm" variant="outline" onClick={() => refetch()}>Retry</Button>
+      </div>
+    )
   }
   if (!data) return null
 
   const isCombined = accountView === 'combined'
   const acct = !isCombined ? data.by_account?.[accountView] : null
   const value = acct?.value ?? data.total_value_cad
-  const gainLoss = acct?.gain_loss ?? data.total_gain_loss_cad
-  const gainPct = acct?.gain_loss_pct ?? data.total_gain_loss_pct
+  const unrealizedGainLoss = acct?.gain_loss ?? data.total_gain_loss_cad
+  const unrealizedGainPct = acct?.gain_loss_pct ?? data.total_gain_loss_pct
   const dayPositive = data.day_change_cad >= 0
+
+  const hasRealizedData = data.total_realized_gain_loss_cad != null
 
   return (
     <div className="space-y-3 mb-4">
@@ -61,11 +74,33 @@ function SummaryHeader({
             <div className="text-2xl font-semibold tracking-tight">{formatCAD(value)}</div>
           </div>
           <div>
-            <div className="text-xs text-muted-foreground mb-0.5">Total Gain</div>
-            <div className="text-sm font-medium text-emerald-600">
-              {formatCAD(gainLoss)} ({formatPct(gainPct * 100)})
+            <div className="text-xs text-muted-foreground mb-0.5">Unrealized</div>
+            <div className={cn('text-sm font-medium', unrealizedGainLoss >= 0 ? 'text-emerald-600' : 'text-red-600')}>
+              {formatCAD(unrealizedGainLoss)} ({formatPct(unrealizedGainPct * 100)})
             </div>
           </div>
+          {isCombined && hasRealizedData && (
+            <>
+              <div>
+                <div className="text-xs text-muted-foreground mb-0.5">Realized</div>
+                <div className={cn('text-sm font-medium', (data.total_realized_gain_loss_cad ?? 0) >= 0 ? 'text-emerald-600' : 'text-red-600')}>
+                  {formatCAD(data.total_realized_gain_loss_cad!)}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground mb-0.5">Total Return</div>
+                <div className={cn('text-sm font-medium', (data.total_return_cad ?? 0) >= 0 ? 'text-emerald-600' : 'text-red-600')}>
+                  {formatCAD(data.total_return_cad!)} ({formatPct((data.total_return_pct ?? 0) * 100)})
+                </div>
+              </div>
+              {data.total_dividends_received_cad != null && (
+                <div>
+                  <div className="text-xs text-muted-foreground mb-0.5">Dividends Received</div>
+                  <div className="text-sm font-medium">{formatCAD(data.total_dividends_received_cad)}</div>
+                </div>
+              )}
+            </>
+          )}
           {isCombined && (
             <div>
               <div className="text-xs text-muted-foreground mb-0.5">Today</div>
@@ -82,7 +117,7 @@ function SummaryHeader({
           )}
           {data.annual_dividend_income_estimate_cad != null && isCombined && (
             <div>
-              <div className="text-xs text-muted-foreground mb-0.5">Annual Dividends</div>
+              <div className="text-xs text-muted-foreground mb-0.5">Annual Div Est.</div>
               <div className="text-sm font-medium">
                 {formatCAD(data.annual_dividend_income_estimate_cad)}/yr
               </div>
@@ -197,6 +232,8 @@ function AvailableToTradeWidget() {
 
 export function PortfolioPage() {
   const [accountView, setAccountView] = useState<PortfolioAccountView>(getSessionAccount)
+  const [addDialogOpen, setAddDialogOpen] = useState(false)
+  const [activeTab, setActiveTab] = useState('holdings')
 
   function handleAccountChange(v: PortfolioAccountView) {
     setAccountView(v)
@@ -230,24 +267,42 @@ export function PortfolioPage() {
       </div>
 
       <SummaryHeader accountView={accountView} onAccountChange={handleAccountChange} />
-      <AvailableToTradeWidget />
 
-      <Tabs defaultValue="holdings">
-        <TabsList className="mb-4">
-          <TabsTrigger value="holdings">Holdings</TabsTrigger>
-          <TabsTrigger value="allocation">Allocation</TabsTrigger>
-          <TabsTrigger value="optimizer">Optimizer</TabsTrigger>
-        </TabsList>
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <div className="flex items-center justify-between mb-4">
+          <TabsList>
+            <TabsTrigger value="holdings">Holdings</TabsTrigger>
+            <TabsTrigger value="optimizer">Optimizer</TabsTrigger>
+            <TabsTrigger value="transactions">Transactions</TabsTrigger>
+            <TabsTrigger value="allocation">Allocation</TabsTrigger>
+          </TabsList>
+          {activeTab === 'holdings' && (
+            <Button size="sm" onClick={() => setAddDialogOpen(true)}>
+              <Plus className="w-4 h-4 mr-1" />
+              Add Stock
+            </Button>
+          )}
+        </div>
         <TabsContent value="holdings">
           <HoldingsTable accountFilter={accountView} />
+        </TabsContent>
+        <TabsContent value="transactions">
+          <TransactionsTab accountFilter={accountView} />
+        </TabsContent>
+        <TabsContent value="optimizer">
+          <AvailableToTradeWidget />
+          <PortfolioOptimizerSection accountFilter={accountView} />
         </TabsContent>
         <TabsContent value="allocation">
           <AllocationCharts accountFilter={accountView} />
         </TabsContent>
-        <TabsContent value="optimizer">
-          <PortfolioOptimizerSection accountFilter={accountView} />
-        </TabsContent>
       </Tabs>
+
+      <AddStockDialog
+        mode="portfolio"
+        open={addDialogOpen}
+        onOpenChange={setAddDialogOpen}
+      />
     </div>
   )
 }

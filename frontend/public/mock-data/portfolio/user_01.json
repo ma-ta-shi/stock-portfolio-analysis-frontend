@@ -29,7 +29,10 @@
       "annual_dividend_yield": 0.0,
       "yield_on_cost": 0.0,
       "added_at": "2025-10-12T09:00:00Z",
-      "last_updated": "2026-03-25T09:31:00Z"
+      "last_updated": "2026-03-25T09:31:00Z",
+      "is_active": true,
+      "total_realized_gain_loss": 0,
+      "transaction_count": 2
     },
     {
       "holding_id": "hld_002",
@@ -60,7 +63,10 @@
       "annual_dividend_yield": 0.0364,
       "yield_on_cost": 0.0474,
       "added_at": "2024-03-15T09:00:00Z",
-      "last_updated": "2026-03-25T09:31:00Z"
+      "last_updated": "2026-03-25T09:31:00Z",
+      "is_active": true,
+      "total_realized_gain_loss": 0,
+      "transaction_count": 3
     },
     {
       "holding_id": "hld_003",
@@ -91,7 +97,10 @@
       "annual_dividend_yield": 0.0364,
       "yield_on_cost": 0.0532,
       "added_at": "2023-08-20T09:00:00Z",
-      "last_updated": "2026-03-25T09:31:00Z"
+      "last_updated": "2026-03-25T09:31:00Z",
+      "is_active": true,
+      "total_realized_gain_loss": 0,
+      "transaction_count": 2
     },
     {
       "holding_id": "hld_004",
@@ -122,7 +131,10 @@
       "annual_dividend_yield": 0.0625,
       "yield_on_cost": 0.0817,
       "added_at": "2023-04-10T09:00:00Z",
-      "last_updated": "2026-03-25T09:31:00Z"
+      "last_updated": "2026-03-25T09:31:00Z",
+      "is_active": true,
+      "total_realized_gain_loss": 0,
+      "transaction_count": 3
     },
     {
       "holding_id": "hld_005",
@@ -153,7 +165,10 @@
       "annual_dividend_yield": 0.0197,
       "yield_on_cost": 0.0227,
       "added_at": "2024-11-05T09:00:00Z",
-      "last_updated": "2026-03-25T09:31:00Z"
+      "last_updated": "2026-03-25T09:31:00Z",
+      "is_active": true,
+      "total_realized_gain_loss": 0,
+      "transaction_count": 1
     },
     {
       "holding_id": "hld_006",
@@ -184,7 +199,10 @@
       "annual_dividend_yield": 0.0083,
       "yield_on_cost": 0.0106,
       "added_at": "2024-02-20T09:00:00Z",
-      "last_updated": "2026-03-25T09:31:00Z"
+      "last_updated": "2026-03-25T09:31:00Z",
+      "is_active": true,
+      "total_realized_gain_loss": 0,
+      "transaction_count": 1
     }
   ],
   "meta": { "total": 6, "page": 1, "per_page": 20, "pages": 1 }

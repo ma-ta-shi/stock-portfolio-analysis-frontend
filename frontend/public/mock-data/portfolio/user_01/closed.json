@@ -1,0 +1,22 @@
+[
+  {
+    "holding_id": "hld_007",
+    "stock": {
+      "stock_id": "stk_td_to",
+      "ticker": "TD.TO",
+      "name": "Toronto-Dominion Bank",
+      "sector": "Financials",
+      "exchange": "TSX",
+      "currency": "CAD"
+    },
+    "account_type": "trading",
+    "total_shares_bought": 100,
+    "avg_buy_price": 72.00,
+    "total_shares_sold": 100,
+    "avg_sell_price": 84.50,
+    "total_realized_gain_loss": 1245.01,
+    "total_realized_gain_loss_pct": 0.1729,
+    "first_buy_date": "2024-06-15T09:00:00Z",
+    "last_sell_date": "2025-11-20T09:00:00Z"
+  }
+]

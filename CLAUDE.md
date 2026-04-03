@@ -91,9 +91,20 @@ Implementation phasing: Milestone 2 = single-agent version; Milestone 3 = full 3
 - **Primary**: Ollama local inference (RTX 4070 Ti Super)
   - Pass 1 & 2: `llama3.1:8b-instruct-q5_K_M`
   - CIO + Portfolio Health/Opportunity: `llama3.1:70b-instruct-q4_K_M` (RAM offload)
-- **Fallback / Portfolio Action Synthesizer**: Claude API (strongly preferred for Action Synthesizer)
-  - Pass 1/2: `claude-sonnet-4-6` | CIO: `claude-opus-4-6`
-  - Action Synthesizer: `claude-sonnet-4-6` or `claude-opus-4-6`
+- **Fallback / Strongly preferred for CIO + Action Synthesizer**: Claude API
+  - Pass 1/2: `claude-sonnet-4-6` | CIO: `claude-opus-4-6` (**primary recommendation** — never use small model for CIO)
+  - Tax Strategist: Claude Sonnet preferred (tax rule complexity)
+  - Action Synthesizer: `claude-sonnet-4-6` minimum / `claude-opus-4-6` preferred
+
+## Data Providers
+- **FMP** — primary, all stock data (fundamentals, prices, peers); 250 calls/day free; batch schedule Wed/Thu/Fri keeps 50-stock watchlist within free tier
+- **Finnhub** — supplementary; news + AI sentiment for US stocks; 60 calls/min free
+- **FRED** — US macro data; 120 calls/min free
+- **Bank of Canada Valet API** — Canadian macro data; free, no API key
+- **pandas-ta** — local technical indicator computation; no API calls
+- **yfinance** — dev/test fallback only; not used in production
+- **Alpha Vantage** — dropped; 25 calls/day is too restrictive
+- First paid upgrade: FMP Starter ($19/month) at 60–70+ stocks. Full batch schedule and env vars: `src/CLAUDE.md`.
 
 ## Database
 - Dev: SQLite + aiosqlite (zero config)
@@ -120,6 +131,18 @@ Frontend uses mock JSON files (`frontend/mock-data/`) before backend is ready.
 - DON'T use `Optional[X]` — use `X | None`
 - DON'T use `Dict`/`List`/`Union` from `typing` — use `dict`/`list`/`|` syntax
 - DON'T call agents directly — always go through the orchestrator
+
+## Calibration & Learning System
+
+Prediction thresholds for automated actions: **5** (first diagnostic/accuracy brief) → **20** (shadow vs primary win-rate comparison) → **50** (full pattern detection + Winning Patterns Brief injected into Pass 2 agents). Meaningful human-readable signals appear before these thresholds — equity curve and shadow comparisons accumulate from day one.
+
+The two users × two portfolios are **one compound system**: ~20-stock overlap creates double-scored predictions; same stock in different account types feeds tax-strategy calibration. Combined system reaches 80–100+ scored predictions by month 8–10.
+
+**Pre-launch warm-up backtest** (30 historical analyses) is the highest-leverage action — provides multi-regime validation that would take 2+ years naturally. Design against coverage targets in the Feedback Learning doc (sector spread, market-cap spread, at least one correction/rally cycle).
+
+Real bottleneck: **regime coverage, not prediction count**. Tag each `prediction_resolution` record with market regime (bull/bear/sideways/volatile) from day one to enable regime-segmented analysis.
+
+Full scenario analysis: Notion — "Calibration Speed & Learning System Scenario Analysis". Full spec: `docs/agent-architecture.md` (Calibration Speed & Learning Timeline section).
 
 ## Further Context
 - Backend architecture details: `src/CLAUDE.md`

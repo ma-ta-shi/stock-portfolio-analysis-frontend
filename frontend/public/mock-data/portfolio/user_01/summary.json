@@ -48,5 +48,9 @@
     "gain_loss_pct": 0.3082
   },
   "holdings_count": 6,
-  "last_updated": "2026-03-25T09:31:00Z"
+  "last_updated": "2026-03-25T09:31:00Z",
+  "total_realized_gain_loss_cad": 1245.01,
+  "total_dividends_received_cad": 634.50,
+  "total_return_cad": 18581.11,
+  "total_return_pct": 0.2442
 }
