@@ -87,3 +87,23 @@
 ## Test Patterns
 - Mock `useNavigate`: `vi.mock('react-router-dom', async (importOriginal) => ({ ...await importOriginal(), useNavigate: vi.fn() }))` then `vi.mocked(useNavigate).mockReturnValue(mockFn)` at module level
 - Partial hook mocks: `{ data: [...], isLoading: false } as unknown as ReturnType<typeof useHook>`
+
+## Contribution Workflow
+
+This repo is **PR-only** — the backend developer reviews and merges everything; Claude never
+pushes to `main` or merges its own work. A `PreToolUse` hook (`.claude/hooks/block-protected-branch.cjs`)
+structurally blocks commits/pushes/merges against `main` and any force push, so this isn't just a
+convention.
+
+1. **Branch**: `git checkout -b feature/<short-desc>` or `fix/<short-desc>` off latest `main` before any change.
+2. **Implement + test together**: write vitest tests alongside the code, not after. New hooks/components need
+   both success and error/loading-state coverage (see Test Patterns above).
+3. **Definition of done** before opening a PR:
+   - `npx tsc --noEmit` clean
+   - `npm run lint` clean
+   - `npm test` passing
+   - Self-review with `/code-review` on the diff — fix findings before moving on
+4. **Commit**: descriptive message, present tense, explains *why* not just *what*.
+5. **PR**: `gh pr create` with a Summary + Test plan body (see repo-wide PR conventions). Small, focused
+   diffs — one feature or fix per PR, not a batch of unrelated changes.
+6. **Never merge**: the PR sits until the backend developer approves and merges it.
