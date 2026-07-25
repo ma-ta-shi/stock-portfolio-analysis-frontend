@@ -1,0 +1,33 @@
+{
+  "user_id": "user_01",
+  "as_of": "2026-03-26T09:00:00Z",
+  "no_changes_needed": false,
+  "swap_suggestions": [
+    {
+      "sell": {
+        "ticker": "RY.TO",
+        "account_type": "rrsp",
+        "rationale": "Somewhat bearish outlook; weakest forward return expectation in the Financials cohort. The dividend yield, while solid, does not compensate for the negative momentum."
+      },
+      "buy": {
+        "ticker": "TD.TO",
+        "account_type": "rrsp",
+        "rationale": "Bullish outlook; trading at 18% discount to 5-year P/BV average with a 5.1% yield. The US regulatory overhang is bounded and the risk/reward is asymmetric to the upside."
+      },
+      "confidence": 0.68,
+      "expected_return_improvement_pct": 4.2,
+      "risk_change": "neutral"
+    }
+  ],
+  "rebalance_suggestions": [
+    {
+      "ticker": "WSP.TO",
+      "current_weight_pct": 5.2,
+      "target_weight_pct": 8.0,
+      "action": "increase",
+      "amount_cad": 7200,
+      "confidence": 0.74,
+      "rationale": "Highest-conviction bullish outlook in the portfolio; currently underweight relative to conviction level. Infrastructure super-cycle tailwind is durable and backlog visibility is exceptional."
+    }
+  ]
+}

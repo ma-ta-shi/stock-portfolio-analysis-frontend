@@ -1,0 +1,93 @@
+{
+  "data": [
+    {
+      "article_id": "news_001",
+      "headline": "Shopify reports record Q4 GMV; shares jump 8% in pre-market",
+      "source": "The Globe and Mail",
+      "published_at": "2026-03-24T07:30:00Z",
+      "url": "#",
+      "affected_tickers": ["SHOP.TO"],
+      "sentiment": "positive",
+      "sentiment_score": 0.82,
+      "category": "earnings"
+    },
+    {
+      "article_id": "news_002",
+      "headline": "Bank of Canada holds rate at 2.75%, signals possible cut in Q3",
+      "source": "Financial Post",
+      "published_at": "2026-03-25T10:00:00Z",
+      "url": "#",
+      "affected_tickers": ["RY.TO", "TD.TO", "BMO.TO", "ENB.TO"],
+      "sentiment": "positive",
+      "sentiment_score": 0.61,
+      "category": "macro"
+    },
+    {
+      "article_id": "news_003",
+      "headline": "WSP Global beats Q4 estimates; raises full-year guidance",
+      "source": "Reuters Canada",
+      "published_at": "2026-03-23T08:15:00Z",
+      "url": "#",
+      "affected_tickers": ["WSP.TO"],
+      "sentiment": "positive",
+      "sentiment_score": 0.79,
+      "category": "earnings"
+    },
+    {
+      "article_id": "news_004",
+      "headline": "Canadian mortgage renewals to peak in mid-2026, RBC Economics warns",
+      "source": "BNN Bloomberg",
+      "published_at": "2026-03-24T11:45:00Z",
+      "url": "#",
+      "affected_tickers": ["RY.TO", "TD.TO"],
+      "sentiment": "negative",
+      "sentiment_score": -0.42,
+      "category": "macro"
+    },
+    {
+      "article_id": "news_005",
+      "headline": "Microsoft Azure revenue up 31% — AI infrastructure demand shows no signs of slowing",
+      "source": "Bloomberg",
+      "published_at": "2026-03-23T20:00:00Z",
+      "url": "#",
+      "affected_tickers": ["MSFT"],
+      "sentiment": "positive",
+      "sentiment_score": 0.88,
+      "category": "earnings"
+    },
+    {
+      "article_id": "news_006",
+      "headline": "Enbridge completes acquisition of three US natural gas utilities, boosts dividend guidance",
+      "source": "CBC News",
+      "published_at": "2026-03-22T14:00:00Z",
+      "url": "#",
+      "affected_tickers": ["ENB.TO"],
+      "sentiment": "positive",
+      "sentiment_score": 0.55,
+      "category": "corporate"
+    },
+    {
+      "article_id": "news_007",
+      "headline": "NVIDIA posts strongest quarter ever; data centre revenue triples year-on-year",
+      "source": "Wall Street Journal",
+      "published_at": "2026-03-22T22:00:00Z",
+      "url": "#",
+      "affected_tickers": ["NVDA"],
+      "sentiment": "positive",
+      "sentiment_score": 0.91,
+      "category": "earnings"
+    },
+    {
+      "article_id": "news_008",
+      "headline": "CNR reports solid freight volumes; intermodal growth offsets lower grain shipments",
+      "source": "Railway Age",
+      "published_at": "2026-03-21T09:00:00Z",
+      "url": "#",
+      "affected_tickers": ["CNR.TO"],
+      "sentiment": "neutral",
+      "sentiment_score": 0.12,
+      "category": "corporate"
+    }
+  ],
+  "meta": { "total": 8, "page": 1, "per_page": 20, "pages": 1 }
+}

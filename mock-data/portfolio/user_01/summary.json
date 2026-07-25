@@ -1,0 +1,52 @@
+{
+  "user_id": "user_01",
+  "total_value_cad": 85443.70,
+  "total_cost_cad": 68742.10,
+  "total_gain_loss_cad": 16701.60,
+  "total_gain_loss_pct": 0.2429,
+  "day_change_cad": 472.30,
+  "day_change_pct": 0.0055,
+  "sparkline_30d": [
+    79200, 79850, 80100, 79600, 80400, 81200, 80800, 81500,
+    82100, 81700, 82900, 83200, 82700, 83500, 84000, 83800,
+    84200, 84800, 85000, 84600, 85100, 84900, 85200, 85440
+  ],
+  "by_account": {
+    "tfsa": {
+      "value": 12512.75,
+      "cost": 9458.40,
+      "gain_loss": 3054.35,
+      "gain_loss_pct": 0.3229
+    },
+    "rrsp": {
+      "value": 72930.95,
+      "cost": 59283.70,
+      "gain_loss": 13647.25,
+      "gain_loss_pct": 0.2302
+    },
+    "trading": {
+      "value": 0,
+      "cost": 0,
+      "gain_loss": 0,
+      "gain_loss_pct": 0
+    }
+  },
+  "annual_dividend_income_estimate_cad": 2928.50,
+  "dividend_by_account": {
+    "tfsa": 288.00,
+    "rrsp": 2640.50,
+    "trading": 0
+  },
+  "top_performer": {
+    "ticker": "RY.TO",
+    "account_type": "tfsa",
+    "gain_loss_pct": 0.4627
+  },
+  "worst_performer": {
+    "ticker": "ENB.TO",
+    "account_type": "rrsp",
+    "gain_loss_pct": 0.3082
+  },
+  "holdings_count": 6,
+  "last_updated": "2026-03-25T09:31:00Z"
+}

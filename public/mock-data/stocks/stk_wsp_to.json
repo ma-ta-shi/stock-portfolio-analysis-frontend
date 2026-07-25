@@ -1,0 +1,59 @@
+{
+  "stock_id": "stk_wsp_to",
+  "ticker": "WSP.TO",
+  "name": "WSP Global Inc.",
+  "exchange": "TSX",
+  "sector": "Industrials",
+  "industry": "Engineering & Construction Services",
+  "currency": "CAD",
+  "current_price": 221.44,
+  "day_change": 2.18,
+  "day_change_pct": 0.0099,
+  "week_52_high": 238.50,
+  "week_52_low": 168.22,
+  "market_cap_cad": 25800000000,
+  "volume": 412000,
+  "avg_volume_30d": 388000,
+  "fundamentals": {
+    "pe_ratio": 42.1,
+    "forward_pe": 34.8,
+    "ev_ebitda": 22.4,
+    "price_to_book": 4.1,
+    "price_to_sales": 2.8,
+    "peg_ratio": 1.9,
+    "revenue_growth_yoy": 0.18,
+    "earnings_growth_yoy": 0.22,
+    "gross_margin": 0.194,
+    "net_margin": 0.068,
+    "roe": 0.098,
+    "debt_to_equity": 0.71,
+    "beta": 0.88,
+    "week_52_high": 238.50,
+    "week_52_low": 168.22,
+    "business_description": "WSP Global Inc. is a leading engineering and professional services firm. It provides technical and strategic advisory services to clients in the Transportation & Infrastructure, Property & Buildings, Environment, Power & Energy, Resources, and Industry sectors. WSP has over 73,000 employees worldwide and is headquartered in Montreal."
+  },
+  "headquarters": "Montreal, Quebec, Canada",
+  "employees": 73000,
+  "website": "wsp.com",
+  "price_history_90d": [182.1, 184.3, 185.8, 183.2, 186.5, 188.0, 190.4, 189.1, 191.8, 193.5, 192.4, 195.0, 197.2, 196.1, 198.8, 200.3, 199.5, 202.1, 204.4, 203.2, 205.8, 207.4, 206.1, 208.9, 211.2, 210.4, 212.8, 214.5, 213.8, 215.6, 218.1, 217.4, 219.8, 220.6, 221.44],
+  "latest_analysis": {
+    "analysis_id": "stk_wsp_to",
+    "stock_outlook": "bullish",
+    "confidence_score": 82,
+    "disagreement_score": 0.14,
+    "analyzed_at": "2026-03-25T11:30:00Z",
+    "executive_summary": "WSP Global is well-positioned to benefit from the global infrastructure investment cycle. The company's diversified end-market exposure and strong M&A track record support a premium multiple. Initiating a 3-5% TFSA position is warranted at current levels.",
+    "key_drivers": [
+      "Infrastructure spending supercycle driven by energy transition and data centre build-out",
+      "M&A integration delivering synergies ahead of schedule",
+      "Backlog growth accelerating to 18% YoY"
+    ],
+    "layer2_context": {
+      "is_in_portfolio": false,
+      "portfolio_fit": "strong_candidate",
+      "portfolio_fit_rationale": "Not yet held — highest-conviction addition for TFSA given capital gains profile and low correlation to existing holdings.",
+      "suggested_action": "Initiate 3-5% position in TFSA",
+      "suggested_amount_cad": 7500
+    }
+  }
+}

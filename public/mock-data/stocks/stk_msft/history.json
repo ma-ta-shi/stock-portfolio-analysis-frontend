@@ -1,0 +1,55 @@
+{
+  "stock_id": "stk_msft",
+  "ticker": "MSFT",
+  "data": [
+    {
+      "analysis_id": "stk_msft_001",
+      "stock_outlook": "bullish",
+      "confidence_score": 84,
+      "disagreement_score": 0.12,
+      "price_at_analysis": 408.74,
+      "account_type": "trading",
+      "timeline": "long_term",
+      "analyzed_at": "2026-03-25T15:00:00Z",
+      "prediction_status": "pending",
+      "prediction_id": "pred_msft_001"
+    },
+    {
+      "analysis_id": "stk_msft_old_001",
+      "stock_outlook": "bullish",
+      "confidence_score": 81,
+      "disagreement_score": 0.14,
+      "price_at_analysis": 375.20,
+      "account_type": "trading",
+      "timeline": "long_term",
+      "analyzed_at": "2025-12-02T14:00:00Z",
+      "prediction_status": "scored",
+      "prediction_id": "pred_msft_old_001",
+      "composite_score": 0.88,
+      "direction_correct": true,
+      "return_at_1m": 0.048,
+      "return_at_3m": 0.098,
+      "benchmark_return_at_1m": 0.018,
+      "benchmark_return_at_3m": 0.041
+    },
+    {
+      "analysis_id": "stk_msft_old_002",
+      "stock_outlook": "somewhat_bullish",
+      "confidence_score": 74,
+      "disagreement_score": 0.22,
+      "price_at_analysis": 362.90,
+      "account_type": "trading",
+      "timeline": "medium_term",
+      "analyzed_at": "2025-09-10T10:00:00Z",
+      "prediction_status": "scored",
+      "prediction_id": "pred_msft_old_002",
+      "composite_score": 0.78,
+      "direction_correct": true,
+      "return_at_1m": 0.034,
+      "return_at_3m": 0.082,
+      "benchmark_return_at_1m": 0.015,
+      "benchmark_return_at_3m": 0.036
+    }
+  ],
+  "meta": { "total": 3, "page": 1, "per_page": 20, "pages": 1 }
+}

@@ -1,0 +1,59 @@
+{
+  "data": [
+    {
+      "sector": "Technology",
+      "performance_1w_pct": 0.0312,
+      "performance_1m_pct": 0.0718,
+      "performance_3m_pct": 0.1442,
+      "cycle_position": "early_to_mid",
+      "macro_bias": "positive",
+      "summary": "AI infrastructure demand continues to drive the sector. Valuation premium is elevated but supported by earnings growth."
+    },
+    {
+      "sector": "Financials",
+      "performance_1w_pct": 0.0088,
+      "performance_1m_pct": 0.0122,
+      "performance_3m_pct": 0.0441,
+      "cycle_position": "late_cycle",
+      "macro_bias": "neutral",
+      "summary": "Canadian banks hold up but face credit quality headwinds from mortgage renewals. Dividend yields remain attractive."
+    },
+    {
+      "sector": "Energy",
+      "performance_1w_pct": -0.0055,
+      "performance_1m_pct": 0.0210,
+      "performance_3m_pct": 0.0318,
+      "cycle_position": "mid_cycle",
+      "macro_bias": "neutral",
+      "summary": "WTI oil stable around $82. Pipelines benefiting from US LNG export growth. Oilsands producers at reasonable valuations."
+    },
+    {
+      "sector": "Industrials",
+      "performance_1w_pct": 0.0241,
+      "performance_1m_pct": 0.0534,
+      "performance_3m_pct": 0.0892,
+      "cycle_position": "early_to_mid",
+      "macro_bias": "positive",
+      "summary": "Infrastructure spending tailwinds benefiting engineering firms. Railways seeing solid intermodal volumes."
+    },
+    {
+      "sector": "Utilities",
+      "performance_1w_pct": 0.0018,
+      "performance_1m_pct": -0.0088,
+      "performance_3m_pct": 0.0221,
+      "cycle_position": "defensive",
+      "macro_bias": "neutral",
+      "summary": "Defensive positioning as rate expectations drift. Yield-sensitive, benefits as BoC cuts materialize in H2 2026."
+    },
+    {
+      "sector": "Healthcare",
+      "performance_1w_pct": 0.0142,
+      "performance_1m_pct": 0.0381,
+      "performance_3m_pct": 0.0622,
+      "cycle_position": "defensive",
+      "macro_bias": "positive",
+      "summary": "Defensive sector with growth characteristics. Aging demographics tailwind. Small Canadian healthcare sector limited."
+    }
+  ],
+  "as_of": "2026-03-25T09:30:00Z"
+}

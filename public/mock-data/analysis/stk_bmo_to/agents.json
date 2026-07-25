@@ -1,0 +1,180 @@
+{
+  "analysis_id": "stk_bmo_to",
+  "disagreement_score_pass_1": 0.38,
+  "disagreement_score_pass_2": 0.41,
+  "pass_1": {
+    "fundamental_analyst": {
+      "agent": "fundamental_analyst",
+      "pass_number": 1,
+      "signal": "neutral",
+      "overall_signal_direction": "neutral",
+      "data_quality": "high",
+      "key_findings": [
+        "Consolidated ROE of 10.8% — below the 13-15% range BMO delivered pre-acquisition; US integration is the primary drag",
+        "US PCL (provision for credit losses) ratio of 0.68% vs Canadian peers averaging 0.42% — US loan book is underperforming",
+        "Canadian segment ROE remains strong at 16.2% — the core franchise is healthy",
+        "CET1 ratio of 13.0% — adequate but below TD's 13.4% and RBC's 14.1%; less capital flexibility",
+        "P/BV of 1.5x — fair value given current ROE, not cheap enough to be a clear buy"
+      ],
+      "critical_risks": [
+        "US commercial real estate exposure of $18B is the primary credit risk — office sector losses could accelerate",
+        "Integration costs have already exceeded initial guidance by $400M; further overruns are possible"
+      ],
+      "completed_at": "2026-03-22T14:31:12Z",
+      "duration_seconds": 72
+    },
+    "technical_analyst": {
+      "agent": "technical_analyst",
+      "pass_number": 1,
+      "signal": "bearish",
+      "overall_signal_direction": "bearish",
+      "data_quality": "high",
+      "key_findings": [
+        "BMO has underperformed the TSX Financials index by 8% YTD — relative weakness is a concern",
+        "Price rejected at $132 resistance twice in the past 3 months; lower highs forming",
+        "50-day MA ($129.80) is now below the 200-day MA ($131.20) — death cross formation is bearish",
+        "On-balance volume (OBV) declining, suggesting distribution by institutional holders"
+      ],
+      "critical_risks": [
+        "A break below $124 support could lead to a quick move to $118",
+        "The death cross is a lagging indicator but the distribution volume pattern is more concerning in real-time"
+      ],
+      "completed_at": "2026-03-22T14:31:27Z",
+      "duration_seconds": 15
+    },
+    "sentiment_analyst": {
+      "agent": "sentiment_analyst",
+      "pass_number": 1,
+      "signal": "neutral",
+      "overall_signal_direction": "neutral",
+      "data_quality": "high",
+      "key_findings": [
+        "Analyst consensus has deteriorated: 6 Buys, 8 Holds, 2 Sells — below-average for a Big 6 bank",
+        "Several analysts downgraded from Buy to Hold following Q4 2025 earnings miss on US provisions",
+        "Management tone on the Q4 call was defensive regarding the US integration timeline",
+        "Short interest has increased 1.8% over the past 90 days — modest but notable"
+      ],
+      "critical_risks": [
+        "If Q1 2026 earnings show further US PCL deterioration, additional analyst downgrades are likely"
+      ],
+      "completed_at": "2026-03-22T14:31:42Z",
+      "duration_seconds": 15
+    },
+    "macro_economist": {
+      "agent": "macro_economist",
+      "pass_number": 1,
+      "signal": "neutral",
+      "overall_signal_direction": "neutral",
+      "data_quality": "high",
+      "key_findings": [
+        "US commercial real estate (CRE) market remains stressed — office vacancy rates in BMO's US markets (Chicago, LA) are at 20-year highs",
+        "BoC rate cuts are marginally positive for BMO's Canadian NIM but don't offset US credit concerns",
+        "US economic soft landing scenario (most likely) is neutral for BMO — limits both the upside and the downside"
+      ],
+      "critical_risks": [
+        "A US recession would be particularly damaging given BMO's elevated US CRE and commercial loan exposure",
+        "Concentration in US Midwest markets (Chicago corridor) — these regions have below-average economic growth"
+      ],
+      "completed_at": "2026-03-22T14:31:58Z",
+      "duration_seconds": 16
+    },
+    "stock_researcher": {
+      "agent": "stock_researcher",
+      "pass_number": 1,
+      "signal": "bullish",
+      "overall_signal_direction": "bullish",
+      "data_quality": "medium",
+      "key_findings": [
+        "Bank of the West acquisition added 500 US branches and 1.8M customers — the strategic rationale is sound even if execution has been costly",
+        "BMO has successfully integrated acquisitions historically (Marshall & Ilsley in 2011 had similar short-term pain)",
+        "4.7% dividend yield is well-covered; BMO has paid a dividend every year since 1829",
+        "Insider buying: 3 directors purchased shares in the open market in January 2026 at $125-128 — modest but positive signal"
+      ],
+      "critical_risks": [
+        "The M&I integration comparison is imperfect — that was a smaller, better-quality US bank in healthier markets"
+      ],
+      "completed_at": "2026-03-22T14:32:14Z",
+      "duration_seconds": 16
+    }
+  },
+  "pass_2": {
+    "bull_advocate": {
+      "agent": "bull_advocate",
+      "pass_number": 2,
+      "recommendation": "BUY",
+      "confidence_score": 62,
+      "key_arguments": [
+        "The market is pricing BMO as if the US integration will permanently impair the bank — this is too pessimistic; integrations are temporary drags",
+        "4.7% dividend yield provides meaningful return while waiting — in an RRSP this compounds tax-free",
+        "BMO is trading at a discount to RBC and TD on P/BV for the first time in 10 years; mean reversion alone provides 10-15% upside"
+      ],
+      "price_target_cad": 148,
+      "completed_at": "2026-03-22T14:32:44Z",
+      "duration_seconds": 30
+    },
+    "bear_advocate": {
+      "agent": "bear_advocate",
+      "pass_number": 2,
+      "recommendation": "SELL",
+      "confidence_score": 52,
+      "key_arguments": [
+        "US PCL ratios are not normalizing — they are trending higher each quarter; this is not a one-time adjustment, it may be structural",
+        "BMO paid a high price for Bank of the West ($16.3B USD) and the ROE on that acquisition is tracking well below the 15%+ management promised",
+        "The death cross in the technical picture reflects institutional distribution — smart money is reducing exposure",
+        "There are better risk-adjusted opportunities in the Canadian bank sector (TD at deeper discount, RBC at cleaner multiple)"
+      ],
+      "price_target_cad": 112,
+      "completed_at": "2026-03-22T14:32:57Z",
+      "duration_seconds": 13
+    },
+    "risk_advisor": {
+      "agent": "risk_advisor",
+      "pass_number": 2,
+      "recommendation": "HOLD",
+      "confidence_score": 60,
+      "key_arguments": [
+        "Risk/reward is not compelling: bull target $148 (+16%) vs bear target $112 (-12%) — ratio of 1.3:1 is below my 1.5x minimum threshold for a new buy",
+        "If already holding, the 4.7% yield makes it rational to hold — don't sell a yielding position without a clear negative catalyst",
+        "If not holding, wait for Q1 2026 earnings to assess US PCL trend before initiating",
+        "Stop-loss for existing holders at $122 (below the 52-week low)"
+      ],
+      "completed_at": "2026-03-22T14:33:04Z",
+      "duration_seconds": 7
+    },
+    "tax_strategist": {
+      "agent": "tax_strategist",
+      "pass_number": 2,
+      "recommendation": "HOLD",
+      "confidence_score": 70,
+      "key_arguments": [
+        "4.7% eligible dividend yield is best held in RRSP — shields dividend from both Canadian dividend tax and any withholding",
+        "If realizing a loss for tax-loss harvesting purposes, there are better candidates in the portfolio first",
+        "BMO in RRSP is appropriately placed; no tax-driven reason to change the account type"
+      ],
+      "completed_at": "2026-03-22T14:33:06Z",
+      "duration_seconds": 2
+    }
+  },
+  "cio": {
+    "agent": "cio",
+    "pass_number": null,
+    "stock_outlook": {
+      "direction": "somewhat_bearish",
+      "thesis_summary": "BMO's US integration challenges are more persistent than the market expects — the stock is not cheap enough at 1.5x book to compensate for ongoing credit quality uncertainty and below-peer ROE.",
+      "key_drivers": [
+        "US loan losses running above peer averages; Bank of the West integration slower than guided",
+        "ROE diluted by US segment underperformance — below Big 6 peer average",
+        "Not cheap enough at 1.5x book value to justify buying through the uncertainty",
+        "4.7% dividend yield provides a floor but is not a compelling forward catalyst"
+      ]
+    },
+    "confidence_score": 61,
+    "disagreement_score": 0.41,
+    "disagreement_label": "moderate",
+    "executive_summary": "BMO presents a more nuanced picture than its Big 6 peers. The Bank of the West acquisition has been slower and more costly to integrate than management guided, and US loan losses are running above peer averages. The Canadian franchise is solid, and the 4.7% dividend yield provides income while waiting. At 1.5x book value, BMO is not cheap enough to be a conviction buy nor is there a compelling reason to sell a high-quality Canadian bank. Hold and monitor Q1 2026 earnings for signs of US credit quality stabilization.",
+    "key_disagreements_addressed": "The most significant disagreement was between the bear advocate (Sell, $112 target) and the bull advocate (Buy, $148 target) — a $36 spread on a $127 stock. The bear's concern about US PCL trends is the most important variable to watch. I chose HOLD over BUY because the risk advisor's point about the 1.3:1 risk/reward ratio being below threshold is compelling. A HOLD is appropriate when the evidence is genuinely mixed.",
+    "account_specific_note": "For Alex's RRSP, BMO should remain a HOLD at current sizing. Do not add to the position before Q1 2026 earnings. If US PCL ratios improve, upgrade to Buy. If US PCL ratios worsen again, the bear case gains credibility and a trim would be warranted.",
+    "completed_at": "2026-03-22T14:33:08Z",
+    "duration_seconds": 2
+  }
+}

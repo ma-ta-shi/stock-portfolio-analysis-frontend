@@ -1,0 +1,23 @@
+{
+  "query": "shop",
+  "data": [
+    {
+      "stock_id": "stk_shop_to",
+      "ticker": "SHOP.TO",
+      "name": "Shopify Inc.",
+      "exchange": "TSX",
+      "sector": "Technology",
+      "currency": "CAD",
+      "current_price": 102.15
+    },
+    {
+      "stock_id": "stk_shop_us",
+      "ticker": "SHOP",
+      "name": "Shopify Inc.",
+      "exchange": "NYSE",
+      "sector": "Technology",
+      "currency": "USD",
+      "current_price": 73.36
+    }
+  ]
+}

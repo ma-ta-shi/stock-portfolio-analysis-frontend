@@ -1,0 +1,35 @@
+{
+  "stock_id": "stk_ry_to",
+  "ticker": "RY.TO",
+  "data": [
+    {
+      "analysis_id": "run_002",
+      "stock_outlook": "neutral",
+      "confidence_score": 68,
+      "disagreement_score": 0.22,
+      "price_at_analysis": 157.88,
+      "account_type": "rrsp",
+      "timeline": "long_term",
+      "analyzed_at": "2026-03-22T10:02:19Z",
+      "prediction_status": "pending",
+      "prediction_id": "pred_002"
+    },
+    {
+      "analysis_id": "run_old_010",
+      "stock_outlook": "somewhat_bullish",
+      "confidence_score": 72,
+      "disagreement_score": 0.19,
+      "price_at_analysis": 138.50,
+      "account_type": "rrsp",
+      "timeline": "long_term",
+      "analyzed_at": "2025-09-15T10:00:00Z",
+      "prediction_status": "scored",
+      "prediction_id": "pred_old_010",
+      "composite_score": 0.76,
+      "direction_correct": true,
+      "return_at_3m": 0.091,
+      "benchmark_return_at_3m": 0.041
+    }
+  ],
+  "meta": { "total": 2, "page": 1, "per_page": 20, "pages": 1 }
+}

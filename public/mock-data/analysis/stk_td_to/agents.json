@@ -1,0 +1,181 @@
+{
+  "analysis_id": "stk_td_to",
+  "disagreement_score_pass_1": 0.22,
+  "disagreement_score_pass_2": 0.29,
+  "pass_1": {
+    "fundamental_analyst": {
+      "agent": "fundamental_analyst",
+      "pass_number": 1,
+      "signal": "bullish",
+      "overall_signal_direction": "bullish",
+      "data_quality": "high",
+      "key_findings": [
+        "Canadian retail banking revenue grew 6% YoY — personal deposits, mortgage originations, and credit cards all showing healthy volume growth",
+        "CET1 ratio of 13.4% — well above the 11.5% regulatory minimum; TD has excess capital but cannot deploy it in the US due to the asset cap",
+        "Dividend of $4.20/share annualized (5.1% yield); payout ratio of 47% — dividend is safe with significant coverage",
+        "P/BV of 1.4x vs 5-year average of 1.7x — 18% discount to historical norm; discount attributable entirely to US regulatory overhang",
+        "US segment revenue declined 4% YoY due to asset cap constraints — this is the key drag on consolidated earnings growth"
+      ],
+      "critical_risks": [
+        "AML consent order remediation may take longer than the market expects — 2027 timeline for asset cap removal is not guaranteed",
+        "Canadian housing market slowdown could increase mortgage loss provisions, pressuring net interest margins"
+      ],
+      "completed_at": "2026-03-23T11:01:05Z",
+      "duration_seconds": 65
+    },
+    "technical_analyst": {
+      "agent": "technical_analyst",
+      "pass_number": 1,
+      "signal": "neutral",
+      "overall_signal_direction": "neutral",
+      "data_quality": "high",
+      "key_findings": [
+        "TD has been range-bound between $78-86 for 8 months — no clear directional trend",
+        "Price is currently in the middle of the range at $82; neither overbought nor oversold",
+        "Volume has been below-average, suggesting institutional investors are waiting for a catalyst before adding",
+        "Relative strength vs TSX Financials index has been flat-to-slightly-negative YTD"
+      ],
+      "critical_risks": [
+        "A break below $78 support would be technically significant and could trigger further selling",
+        "No positive price catalyst is visible in the near term to break out of the range"
+      ],
+      "completed_at": "2026-03-23T11:01:19Z",
+      "duration_seconds": 14
+    },
+    "sentiment_analyst": {
+      "agent": "sentiment_analyst",
+      "pass_number": 1,
+      "signal": "neutral",
+      "overall_signal_direction": "neutral",
+      "data_quality": "high",
+      "key_findings": [
+        "8 of 16 analyst ratings are Buy; 6 are Hold; 2 are Sell — more mixed than typical for a Big 6 bank",
+        "Media coverage continues to focus on the US AML overhang, keeping sentiment subdued",
+        "Institutional ownership stable — no significant buying or selling by large shareholders",
+        "Management commentary on last earnings call was cautious on US growth but confident on Canadian franchise"
+      ],
+      "critical_risks": [
+        "Any new negative headlines on the AML investigation would likely push the stock below the $78 support level"
+      ],
+      "completed_at": "2026-03-23T11:01:34Z",
+      "duration_seconds": 15
+    },
+    "macro_economist": {
+      "agent": "macro_economist",
+      "pass_number": 1,
+      "signal": "bullish",
+      "overall_signal_direction": "bullish",
+      "data_quality": "high",
+      "key_findings": [
+        "BoC rate cuts expected in H1 2026 — historically positive for Canadian bank NIMs as mortgage renewals re-price upward at profitable spreads",
+        "Canadian employment remains robust at 4.2% unemployment — credit quality metrics should remain benign",
+        "US economic conditions have stabilized — TD's US business is not facing credit deterioration, only regulatory constraints",
+        "Inverted yield curve in Canada has normalized — net interest margin headwinds are abating"
+      ],
+      "critical_risks": [
+        "A Canadian housing correction of >15% would materially increase mortgage provisions and pressure earnings",
+        "US recession risk (elevated at ~30%) would hurt TD's US consumer banking franchise even without the regulatory issue"
+      ],
+      "completed_at": "2026-03-23T11:01:51Z",
+      "duration_seconds": 17
+    },
+    "stock_researcher": {
+      "agent": "stock_researcher",
+      "pass_number": 1,
+      "signal": "bullish",
+      "overall_signal_direction": "bullish",
+      "data_quality": "high",
+      "key_findings": [
+        "TD has raised its dividend every year for 166 consecutive years — extraordinary dividend track record",
+        "The AML remediation program has a credible structure: Chief Compliance Officer hired from OCC, $3.5B in remediation spending budgeted over 3 years",
+        "TD's Canadian market share in personal banking is 22% — structurally defensible and growing",
+        "Historical precedent: Wells Fargo's asset cap (imposed 2018) was lifted in 2024 — TD's situation is analogous, suggesting resolution is achievable"
+      ],
+      "critical_risks": [
+        "Wells Fargo comparison is imperfect — TD's issues involved criminal charges in the US, not just regulatory failures"
+      ],
+      "completed_at": "2026-03-23T11:02:04Z",
+      "duration_seconds": 13
+    }
+  },
+  "pass_2": {
+    "bull_advocate": {
+      "agent": "bull_advocate",
+      "pass_number": 2,
+      "recommendation": "BUY",
+      "confidence_score": 78,
+      "key_arguments": [
+        "The market has discounted the US regulatory overhang fully — the stock is trading at 1.4x book vs a 5-year average of 1.7x, a discount that implies a far worse outcome than the most likely scenario",
+        "You are being paid 5.1% in yield while you wait for the US issue to resolve — in an RRSP this compounds tax-free, making the true return substantially higher",
+        "Canadian retail banking is firing on all cylinders — this is a temporary drag, not a structural impairment",
+        "Wells Fargo re-rated 40% in the 12 months following asset cap removal — TD is likely to follow a similar path"
+      ],
+      "price_target_cad": 98,
+      "completed_at": "2026-03-23T11:02:28Z",
+      "duration_seconds": 24
+    },
+    "bear_advocate": {
+      "agent": "bear_advocate",
+      "pass_number": 2,
+      "recommendation": "HOLD",
+      "confidence_score": 55,
+      "key_arguments": [
+        "The US asset cap removal timeline is unknown and could extend beyond 2027 — each year of constraint costs TD ~$400M in foregone US earnings",
+        "TD's US franchise has lost competitive ground to JPMorgan and Bank of America during the cap period — recovery may be slower than the bull assumes",
+        "Canadian housing risk is underappreciated: TD has $350B in mortgage exposure; a 10% price correction would add ~$2B in provisions"
+      ],
+      "price_target_cad": 76,
+      "completed_at": "2026-03-23T11:02:38Z",
+      "duration_seconds": 10
+    },
+    "risk_advisor": {
+      "agent": "risk_advisor",
+      "pass_number": 2,
+      "recommendation": "BUY",
+      "confidence_score": 68,
+      "key_arguments": [
+        "5.1% yield provides meaningful downside buffer — even in the bear case, total return is protected by dividend income",
+        "Position size recommendation: 4-5% of RRSP — meaningful but not concentrated given the regulatory uncertainty",
+        "Risk/reward: bull target $98 (+19%) vs bear target $76 (-7%) — asymmetry favours the long even with moderate conviction",
+        "Stop-loss at $77 (below 8-month support) limits downside to ~6% from current price"
+      ],
+      "completed_at": "2026-03-23T11:02:45Z",
+      "duration_seconds": 7
+    },
+    "tax_strategist": {
+      "agent": "tax_strategist",
+      "pass_number": 2,
+      "recommendation": "BUY",
+      "confidence_score": 85,
+      "key_arguments": [
+        "TD's 5.1% dividend is eligible for the Canadian dividend tax credit — however, in an RRSP it is sheltered entirely from tax, making it even more efficient",
+        "RRSP is the ideal account for a high-dividend stock like TD — dividend income that would otherwise attract withholding tax is deferred",
+        "Long-term capital gain on re-rating to historical P/BV is also best realized in RRSP for Alex's income bracket"
+      ],
+      "completed_at": "2026-03-23T11:02:48Z",
+      "duration_seconds": 3
+    }
+  },
+  "cio": {
+    "agent": "cio",
+    "pass_number": null,
+    "stock_outlook": {
+      "direction": "bullish",
+      "thesis_summary": "TD Bank is a buy at current levels despite near-term overhang from the US AML consent order — the stock trades at an 18% discount to its 5-year P/BV average, fully pricing in the regulatory risk, while the 5.1% dividend yield provides return while waiting for resolution.",
+      "key_drivers": [
+        "Trades at 18% discount to 5-year average P/BV multiple — overhang fully priced in",
+        "5.1% dividend yield compounds tax-free in RRSP while waiting for US catalyst",
+        "Canadian retail franchise is best-in-class and growing — the drag is entirely US-segment specific",
+        "AML remediation completion expected by 2027 — re-rating to historical multiples implies 19% upside"
+      ]
+    },
+    "confidence_score": 71,
+    "disagreement_score": 0.29,
+    "disagreement_label": "moderate",
+    "executive_summary": "TD Bank is a buy at current levels despite near-term overhang from the US anti-money-laundering consent order. The Canadian banking franchise is best-in-class, and the US regulatory issue is real but bounded and solvable. The stock trades at an 18% discount to its 5-year average P/BV multiple, fully pricing in the overhang. The 5.1% dividend yield provides return while waiting for resolution. The medium-term catalyst is AML remediation completion, which should re-rate the stock to historical multiples and generate 19% upside from current levels.",
+    "key_disagreements_addressed": "The bear advocate correctly identifies that the US asset cap timeline is uncertain and that TD has lost competitive ground. I do not dismiss these points — they are real risks and explain why I set confidence at 71 rather than 80+. However, the bear's $76 price target requires a Canadian housing correction and extended regulatory delays simultaneously. The probability of both occurring is low enough that the bull case dominates the expected value calculation.",
+    "account_specific_note": "For Alex's RRSP, TD is well-suited given the high dividend yield (sheltered from withholding in RRSP) and the long wait for the US catalyst. Recommend 4-5% of RRSP value (~$3,200-$4,000). The RRSP time horizon aligns well with the 2027 anticipated resolution timeline.",
+    "completed_at": "2026-03-23T11:02:51Z",
+    "duration_seconds": 3
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "data": [
+    {
+      "decision_id": "dec_001",
+      "timestamp": "2026-03-24T06:00:00Z",
+      "ticker": "CNR.TO",
+      "action": "buy",
+      "shares": 75,
+      "price_cad": 170.52,
+      "total_cad": 12789.00,
+      "account_type": "rrsp",
+      "confidence_score": 79,
+      "rationale": "CNR BUY signal confirmed by all four Pass 2 agents. Strong intermodal volume growth, reasonable valuation at 21x forward earnings, dividend growth track record intact. Low disagreement (0.18) supports conviction sizing.",
+      "analysis_id": "run_003",
+      "outcome": null,
+      "prediction_id": "pred_agent_001"
+    },
+    {
+      "decision_id": "dec_002",
+      "timestamp": "2026-02-10T06:00:00Z",
+      "ticker": "WSP.TO",
+      "action": "buy",
+      "shares": 6,
+      "price_cad": 225.40,
+      "total_cad": 1352.40,
+      "account_type": "tfsa",
+      "confidence_score": 74,
+      "rationale": "WSP Global adding infrastructure exposure. Government infrastructure spending tailwind, strong international backlog. Sized conservatively at 1.6% of portfolio given moderate valuation premium.",
+      "analysis_id": "run_old_wsp_001",
+      "outcome": null,
+      "prediction_id": "pred_agent_002"
+    },
+    {
+      "decision_id": "dec_003",
+      "timestamp": "2026-01-15T06:00:00Z",
+      "ticker": "SHOP.TO",
+      "action": "buy",
+      "shares": 90,
+      "price_cad": 88.40,
+      "total_cad": 7956.00,
+      "account_type": "tfsa",
+      "confidence_score": 71,
+      "rationale": "Shopify post-correction entry. FCF inflection confirmed in Q3 2025 results. TFSA optimal for zero-dividend Canadian tech.",
+      "analysis_id": "run_old_shop_002",
+      "outcome": "correct",
+      "prediction_id": "pred_agent_003",
+      "return_pct": 0.156
+    },
+    {
+      "decision_id": "dec_004",
+      "timestamp": "2025-12-20T06:00:00Z",
+      "ticker": "ENB.TO",
+      "action": "sell",
+      "shares": 150,
+      "price_cad": 56.20,
+      "total_cad": 8430.00,
+      "account_type": "rrsp",
+      "confidence_score": 72,
+      "rationale": "ENB SELL signal from bear advocate and risk advisor citing elevated leverage post-US gas utility acquisitions and regulated return compression. Capital redeployed to RY.TO.",
+      "analysis_id": "run_old_enb_001",
+      "outcome": "correct",
+      "prediction_id": "pred_agent_004",
+      "return_pct": 0.031
+    }
+  ],
+  "meta": { "total": 4, "page": 1, "per_page": 20, "pages": 1 }
+}

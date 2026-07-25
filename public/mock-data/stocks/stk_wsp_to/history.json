@@ -1,0 +1,37 @@
+{
+  "stock_id": "stk_wsp_to",
+  "ticker": "WSP.TO",
+  "data": [
+    {
+      "analysis_id": "stk_wsp_to",
+      "stock_outlook": "bullish",
+      "confidence_score": 82,
+      "disagreement_score": 0.14,
+      "price_at_analysis": 219.26,
+      "account_type": "tfsa",
+      "timeline": "long_term",
+      "analyzed_at": "2026-03-25T11:30:00Z",
+      "prediction_status": "pending",
+      "prediction_id": "pred_wsp_001"
+    },
+    {
+      "analysis_id": "stk_wsp_to_old_001",
+      "stock_outlook": "bullish",
+      "confidence_score": 79,
+      "disagreement_score": 0.16,
+      "price_at_analysis": 198.40,
+      "account_type": "tfsa",
+      "timeline": "long_term",
+      "analyzed_at": "2025-11-18T10:00:00Z",
+      "prediction_status": "scored",
+      "prediction_id": "pred_wsp_old_001",
+      "composite_score": 0.84,
+      "direction_correct": true,
+      "return_at_1m": 0.042,
+      "return_at_3m": 0.114,
+      "benchmark_return_at_1m": 0.014,
+      "benchmark_return_at_3m": 0.038
+    }
+  ],
+  "meta": { "total": 2, "page": 1, "per_page": 20, "pages": 1 }
+}

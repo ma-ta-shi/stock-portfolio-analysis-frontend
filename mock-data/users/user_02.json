@@ -1,0 +1,44 @@
+{
+  "user_id": "user_02",
+  "display_name": "Sam",
+  "is_active": true,
+  "created_at": "2025-09-01T00:00:00Z",
+  "financial_profile": {
+    "province": "British Columbia",
+    "income_bracket": "$150-200K",
+    "marginal_tax_rate": 0.4970,
+    "investment_experience": "advanced",
+    "risk_tolerance": "aggressive",
+    "tfsa_contribution_room": 6000,
+    "rrsp_contribution_room": 41200,
+    "default_account_type": "rrsp",
+    "default_timeline": "long_term"
+  },
+  "context_and_goals": {
+    "primary_goal": "wealth_building",
+    "target_retirement_age": 58,
+    "target_portfolio_value": 3500000,
+    "target_annual_passive_income": 90000,
+    "time_sensitive_constraints": [],
+    "investment_preferences": {
+      "sectors_to_avoid": ["fossil_fuels"],
+      "sectors_of_interest": ["technology", "healthcare", "clean_energy"],
+      "max_single_position_pct": 0.15,
+      "dividend_preference": false,
+      "geographic_preference": "global"
+    },
+    "notes_to_agents": "I prefer growth over income. I'm willing to hold through volatility. I'm particularly interested in AI infrastructure and cloud computing themes. I avoid fossil fuel companies on ESG grounds."
+  },
+  "app_settings": {
+    "llm_mode": "local_with_fallback",
+    "batch_analysis_schedule": "daily_market_close",
+    "notifications": {
+      "recommendation_changes": true,
+      "price_alerts": true,
+      "prediction_checkpoints": true,
+      "market_news": true
+    },
+    "primary_data_provider": "fmp",
+    "agent_portfolio_enabled": false
+  }
+}

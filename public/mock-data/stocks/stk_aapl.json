@@ -1,0 +1,59 @@
+{
+  "stock_id": "stk_aapl",
+  "ticker": "AAPL",
+  "name": "Apple Inc.",
+  "exchange": "NASDAQ",
+  "sector": "Technology",
+  "industry": "Consumer Electronics",
+  "currency": "USD",
+  "current_price": 228.44,
+  "day_change": -1.22,
+  "day_change_pct": -0.0053,
+  "week_52_high": 260.10,
+  "week_52_low": 164.08,
+  "market_cap_cad": 4820000000000,
+  "volume": 48200000,
+  "avg_volume_30d": 51400000,
+  "fundamentals": {
+    "pe_ratio": 38.2,
+    "forward_pe": 32.4,
+    "ev_ebitda": 28.6,
+    "price_to_book": 52.4,
+    "price_to_sales": 9.1,
+    "peg_ratio": 2.8,
+    "revenue_growth_yoy": 0.042,
+    "earnings_growth_yoy": 0.108,
+    "gross_margin": 0.462,
+    "net_margin": 0.266,
+    "roe": 1.72,
+    "debt_to_equity": 1.68,
+    "dividend_yield_trailing": 0.0044,
+    "beta": 1.24,
+    "week_52_high": 260.10,
+    "week_52_low": 164.08,
+    "business_description": "Apple Inc. designs, manufactures, and markets smartphones, personal computers, tablets, wearables, and accessories worldwide. The company's Products segment includes iPhone, Mac, iPad, and Wearables, Home and Accessories. The Services segment comprises advertising, AppleCare, cloud services, digital content, and payment services. Apple is the world's most valuable public company by market capitalization."
+  },
+  "headquarters": "Cupertino, California, USA",
+  "employees": 161000,
+  "website": "apple.com",
+  "price_history_90d": [195.2, 197.8, 201.4, 199.6, 203.2, 205.8, 208.4, 206.1, 210.2, 212.8, 211.4, 214.6, 218.2, 216.8, 220.4, 222.1, 219.8, 224.5, 226.8, 224.2, 227.6, 230.1, 228.4, 232.1, 229.8, 234.5, 231.2, 236.8, 233.4, 230.1, 232.8, 229.4, 226.8, 230.2, 228.44],
+  "latest_analysis": {
+    "analysis_id": "stk_aapl",
+    "stock_outlook": "somewhat_bearish",
+    "confidence_score": 58,
+    "disagreement_score": 0.48,
+    "analyzed_at": "2026-03-21T16:00:00Z",
+    "executive_summary": "Apple faces a more challenging growth environment as its core hardware categories mature. Services growth is decelerating from peak margins while USD exposure and China revenue risk make this a poor fit for a TFSA-first Canadian early retirement portfolio.",
+    "key_drivers": [
+      "iPhone upgrade cycle slowing — consumers extending replacement cycles",
+      "Services revenue growth decelerating from peak levels",
+      "China revenue exposure adds material geopolitical risk"
+    ],
+    "layer2_context": {
+      "is_in_portfolio": false,
+      "portfolio_fit": "poor_fit",
+      "portfolio_fit_rationale": "USD-denominated, mature growth profile, and China risk do not align with the portfolio's Canadian income and capital growth mandate.",
+      "suggested_action": "Avoid — better technology exposure available through MSFT or Canadian alternatives"
+    }
+  }
+}

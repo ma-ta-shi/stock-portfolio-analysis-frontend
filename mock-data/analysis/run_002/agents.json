@@ -1,0 +1,162 @@
+{
+  "analysis_id": "run_002",
+  "pass_1": {
+    "fundamental_analyst": {
+      "agent": "fundamental_analyst",
+      "pass_number": 1,
+      "signal": "neutral",
+      "key_findings": [
+        "RY remains a core Canadian holding with stable earnings power",
+        "Dividend yield provides reliable income with strong business economics",
+        "ROE supports fair-to-reasonable valuation versus core multiples",
+        "Diversification across banking segments reduces single-factor risk"
+      ],
+      "overall_signal_direction": "neutral",
+      "data_quality": "high",
+      "critical_risks": [
+        "Canadian mortgage credit quality is the key swing factor for 2026-27",
+        "Any deterioration in credit metrics would pressure earnings durability"
+      ],
+      "completed_at": "2026-03-22T10:01:00Z",
+      "duration_seconds": 64
+    },
+    "technical_analyst": {
+      "agent": "technical_analyst",
+      "pass_number": 1,
+      "signal": "neutral",
+      "key_findings": [
+        "Price action is range-bound with support forming near recent consolidation levels",
+        "Moving averages remain orderly; no clear momentum breakdown yet",
+        "Momentum indicators suggest limited upside until credit-cycle clarity improves"
+      ],
+      "overall_signal_direction": "neutral",
+      "data_quality": "medium",
+      "critical_risks": [
+        "A sustained move below support would weaken the near-term bias"
+      ],
+      "completed_at": "2026-03-22T10:01:20Z",
+      "duration_seconds": 58
+    },
+    "sentiment_analyst": {
+      "agent": "sentiment_analyst",
+      "pass_number": 1,
+      "signal": "neutral",
+      "key_findings": [
+        "Analyst coverage remains constructive but not aggressive",
+        "Market sentiment is aligned with “hold for income” rather than “buy aggressively”",
+        "No dominant short-term catalyst identified"
+      ],
+      "overall_signal_direction": "neutral",
+      "data_quality": "medium",
+      "critical_risks": [
+        "If credit worries return, upgrades may stall and positions can re-rate lower"
+      ],
+      "completed_at": "2026-03-22T10:01:45Z",
+      "duration_seconds": 61
+    },
+    "macro_economist": {
+      "agent": "macro_economist",
+      "pass_number": 1,
+      "signal": "neutral",
+      "key_findings": [
+        "Bank of Canada policy expectations are broadly stabilizing in the near term",
+        "Mortgage renewals create a lagged but meaningful credit risk in 2026",
+        "CAD dynamics support household spending but credit quality remains the watch item"
+      ],
+      "overall_signal_direction": "neutral",
+      "data_quality": "high",
+      "critical_risks": [
+        "If credit conditions deteriorate faster than expected, earnings sensitivity increases"
+      ],
+      "completed_at": "2026-03-22T10:02:05Z",
+      "duration_seconds": 69
+    },
+    "stock_researcher": {
+      "agent": "stock_researcher",
+      "pass_number": 1,
+      "signal": "neutral",
+      "key_findings": [
+        "RY’s moat and underwriting franchise support resilience",
+        "Dividend durability remains a core part of the thesis",
+        "Segment diversification reduces reliance on a single macro pathway"
+      ],
+      "overall_signal_direction": "neutral",
+      "data_quality": "high",
+      "critical_risks": [
+        "Credit losses and provisioning could rise if mortgage stress increases"
+      ],
+      "completed_at": "2026-03-22T10:02:25Z",
+      "duration_seconds": 73
+    }
+  },
+  "disagreement_score_pass_1": 0.18,
+  "pass_2": {
+    "bull_advocate": {
+      "agent": "bull_advocate",
+      "pass_number": 2,
+      "recommendation": "HOLD",
+      "confidence_score": 70,
+      "key_arguments": [
+        "Fair valuation plus dependable income argues for holding at current levels",
+        "Moat strength and diversification reduce downside probability",
+        "Incremental adds make sense on weakness if credit metrics remain stable"
+      ],
+      "completed_at": "2026-03-22T10:02:40Z",
+      "duration_seconds": 60
+    },
+    "bear_advocate": {
+      "agent": "bear_advocate",
+      "pass_number": 2,
+      "recommendation": "HOLD",
+      "confidence_score": 60,
+      "key_arguments": [
+        "Credit-cycle uncertainty creates the main timing risk",
+        "If mortgage delinquencies rise, multiple support could fade",
+        "Without clear catalysts, upside may be limited until macro clarity improves"
+      ],
+      "completed_at": "2026-03-22T10:02:52Z",
+      "duration_seconds": 57
+    },
+    "risk_advisor": {
+      "agent": "risk_advisor",
+      "pass_number": 2,
+      "recommendation": "HOLD",
+      "confidence_score": 65,
+      "key_arguments": [
+        "Treat this as an income-first position with adds only if credit conditions remain contained",
+        "Reassess if credit metrics deteriorate or provisioning trends worsen",
+        "Position sizing should reflect uncertainty around the 2026-27 credit window"
+      ],
+      "completed_at": "2026-03-22T10:03:05Z",
+      "duration_seconds": 63
+    },
+    "tax_strategist": {
+      "agent": "tax_strategist",
+      "pass_number": 2,
+      "recommendation": "HOLD",
+      "confidence_score": 72,
+      "key_arguments": [
+        "Income accounts help manage dividend tax impact; prioritize registered account efficiency where possible",
+        "For RRSP holders, the dividend treatment reduces tax drag relative to non-registered accounts",
+        "Avoid trading frequency; treat as a long-hold income sleeve unless credit conditions change"
+      ],
+      "completed_at": "2026-03-22T10:03:20Z",
+      "duration_seconds": 61
+    }
+  },
+  "disagreement_score_pass_2": 0.25,
+  "cio": {
+    "agent": "cio",
+    "pass_number": null,
+    "recommendation": "HOLD",
+    "confidence_score": 68,
+    "disagreement_score": 0.22,
+    "disagreement_label": "low",
+    "executive_summary": "RY is a hold with income support and credit-cycle sensitivity. The best approach is to keep the position and consider adds only if weakness aligns with stable credit conditions.",
+    "key_disagreements_addressed": "The primary disagreement was timing: bulls emphasized income and moat resilience, bears emphasized credit uncertainty. I resolve this in favor of a hold-to-weakness strategy.",
+    "account_specific_note": "In your {{account_type}} account, hold {{shares}} shares and consider adding only if credit conditions remain stable (CIO guidance).",
+    "completed_at": "2026-03-22T10:02:19Z",
+    "duration_seconds": 17
+  }
+}
+

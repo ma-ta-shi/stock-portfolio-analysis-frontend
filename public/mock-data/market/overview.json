@@ -1,0 +1,57 @@
+{
+  "indices": [
+    {
+      "name": "S&P/TSX Composite",
+      "symbol": "^GSPTSE",
+      "value": 24681.42,
+      "day_change": 87.34,
+      "day_change_pct": 0.0035,
+      "sparkline_5d": [24410, 24320, 24480, 24594, 24681]
+    },
+    {
+      "name": "S&P 500",
+      "symbol": "^GSPC",
+      "value": 5218.70,
+      "day_change": -14.22,
+      "day_change_pct": -0.0027,
+      "sparkline_5d": [5180, 5240, 5260, 5232, 5218]
+    },
+    {
+      "name": "NASDAQ Composite",
+      "symbol": "^IXIC",
+      "value": 16342.15,
+      "day_change": -68.40,
+      "day_change_pct": -0.0042,
+      "sparkline_5d": [16100, 16280, 16420, 16410, 16342]
+    },
+    {
+      "name": "Dow Jones",
+      "symbol": "^DJI",
+      "value": 41824.60,
+      "day_change": 92.80,
+      "day_change_pct": 0.0022,
+      "sparkline_5d": [41600, 41550, 41720, 41731, 41824]
+    }
+  ],
+  "exchange_rate": {
+    "cad_usd": 0.7180,
+    "usd_cad": 1.3928,
+    "day_change": -0.0012,
+    "trend": "cad_weakening"
+  },
+  "interest_rates": {
+    "boc_rate": 0.0275,
+    "boc_direction": "hold",
+    "boc_next_meeting": "2026-04-16",
+    "fed_funds_rate": 0.0425,
+    "fed_direction": "hold",
+    "fed_next_meeting": "2026-05-07"
+  },
+  "market_sentiment": {
+    "label": "neutral",
+    "score": 52,
+    "vix": 18.42,
+    "description": "Markets are cautiously neutral. Macro uncertainty around rate timing is balanced by solid corporate earnings."
+  },
+  "as_of": "2026-03-25T09:30:00Z"
+}

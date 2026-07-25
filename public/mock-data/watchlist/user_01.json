@@ -1,0 +1,122 @@
+{
+  "data": [
+    {
+      "watchlist_id": "wl_001",
+      "user_id": "user_01",
+      "stock": {
+        "stock_id": "stk_td_to",
+        "ticker": "TD.TO",
+        "name": "Toronto-Dominion Bank",
+        "sector": "Financials",
+        "exchange": "TSX",
+        "currency": "CAD"
+      },
+      "current_price": 82.14,
+      "day_change": -0.31,
+      "day_change_pct": -0.0038,
+      "week_change_pct": 0.0112,
+      "month_change_pct": -0.0245,
+      "stock_outlook": "bullish",
+      "projected_return_pct": 0.18,
+      "portfolio_fit": "worth_monitoring",
+      "portfolio_fit_rationale": "Would increase Financials concentration above 50%; consider as a swap for RY.TO.",
+      "confidence_score": 71,
+      "disagreement_score": 0.29,
+      "disagreement_label": "low",
+      "suggested_account": "rrsp",
+      "suggested_account_rationale": "Canadian bank dividend eligible for RRSP tax deferral; TFSA limit better used for growth assets.",
+      "last_analyzed_at": "2026-03-23T09:15:00Z",
+      "added_at": "2026-01-15T09:00:00Z"
+    },
+    {
+      "watchlist_id": "wl_002",
+      "user_id": "user_01",
+      "stock": {
+        "stock_id": "stk_bmo_to",
+        "ticker": "BMO.TO",
+        "name": "Bank of Montreal",
+        "sector": "Financials",
+        "exchange": "TSX",
+        "currency": "CAD"
+      },
+      "current_price": 125.80,
+      "day_change": 0.55,
+      "day_change_pct": 0.0044,
+      "week_change_pct": 0.0201,
+      "month_change_pct": 0.0088,
+      "stock_outlook": "somewhat_bearish",
+      "projected_return_pct": -0.04,
+      "portfolio_fit": "poor_fit",
+      "portfolio_fit_rationale": "High disagreement and somewhat bearish outlook; would add volatility without improving return expectation.",
+      "confidence_score": 58,
+      "disagreement_score": 0.61,
+      "disagreement_label": "high",
+      "suggested_account": "rrsp",
+      "suggested_account_rationale": "Bank dividends are most efficient in RRSP for tax deferral.",
+      "last_analyzed_at": "2026-03-21T11:00:00Z",
+      "added_at": "2026-02-01T09:00:00Z"
+    },
+    {
+      "watchlist_id": "wl_003",
+      "user_id": "user_01",
+      "stock": {
+        "stock_id": "stk_aapl",
+        "ticker": "AAPL",
+        "name": "Apple Inc.",
+        "sector": "Technology",
+        "exchange": "NASDAQ",
+        "currency": "USD"
+      },
+      "current_price": 213.50,
+      "day_change": -1.20,
+      "day_change_pct": -0.0056,
+      "week_change_pct": -0.0124,
+      "month_change_pct": 0.0318,
+      "stock_outlook": "neutral",
+      "projected_return_pct": 0.06,
+      "portfolio_fit": "worth_monitoring",
+      "portfolio_fit_rationale": "US diversification value, but neutral outlook and high disagreement reduce conviction.",
+      "confidence_score": 65,
+      "disagreement_score": 0.51,
+      "disagreement_label": "moderate",
+      "suggested_account": "rrsp",
+      "suggested_account_rationale": "US stocks in RRSP avoid the 15% withholding tax on dividends under the Canada-US tax treaty.",
+      "last_analyzed_at": "2026-03-24T13:00:00Z",
+      "added_at": "2026-01-20T09:00:00Z"
+    },
+    {
+      "watchlist_id": "wl_004",
+      "user_id": "user_01",
+      "stock": {
+        "stock_id": "stk_wsp_to",
+        "ticker": "WSP.TO",
+        "name": "WSP Global Inc.",
+        "sector": "Industrials",
+        "exchange": "TSX",
+        "currency": "CAD"
+      },
+      "current_price": 248.35,
+      "day_change": 1.14,
+      "day_change_pct": 0.0046,
+      "week_change_pct": 0.0312,
+      "month_change_pct": 0.0715,
+      "stock_outlook": "bullish",
+      "projected_return_pct": 0.22,
+      "portfolio_fit": "strong_candidate",
+      "portfolio_fit_rationale": "Strong capital-gains profile with low correlation to existing Financials-heavy holdings.",
+      "confidence_score": 77,
+      "disagreement_score": 0.21,
+      "disagreement_label": "low",
+      "suggested_account": "tfsa",
+      "suggested_account_rationale": "Strong capital-gains growth profile — tax-free compounding in TFSA is ideal.",
+      "last_analyzed_at": "2026-03-24T10:30:00Z",
+      "added_at": "2026-03-01T09:00:00Z"
+    }
+  ],
+  "summary": {
+    "total": 4,
+    "bullish_count": 2,
+    "changed_since_last_check": 1
+  },
+  "meta": { "total": 4, "page": 1, "per_page": 20, "pages": 1 }
+}

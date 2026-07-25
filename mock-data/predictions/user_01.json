@@ -1,0 +1,105 @@
+{
+  "data": [
+    {
+      "prediction_id": "pred_001",
+      "user_id": "user_01",
+      "analysis_id": "run_001",
+      "ticker": "SHOP.TO",
+      "recommendation": "BUY",
+      "confidence_score": 74,
+      "price_at_recommendation": 100.28,
+      "recommended_at": "2026-03-24T14:22:47Z",
+      "account_type": "tfsa",
+      "timeline": "medium_term",
+      "checkpoints": [
+        { "interval": "1m", "due_at": "2026-04-24", "status": "pending", "score": null },
+        { "interval": "3m", "due_at": "2026-06-24", "status": "pending", "score": null },
+        { "interval": "6m", "due_at": "2026-09-24", "status": "pending", "score": null }
+      ],
+      "composite_score": null,
+      "status": "active"
+    },
+    {
+      "prediction_id": "pred_002",
+      "user_id": "user_01",
+      "analysis_id": "run_002",
+      "ticker": "RY.TO",
+      "recommendation": "HOLD",
+      "confidence_score": 68,
+      "price_at_recommendation": 157.88,
+      "recommended_at": "2026-03-22T10:02:19Z",
+      "account_type": "rrsp",
+      "timeline": "long_term",
+      "checkpoints": [
+        { "interval": "1m", "due_at": "2026-04-22", "status": "pending", "score": null },
+        { "interval": "3m", "due_at": "2026-06-22", "status": "pending", "score": null },
+        { "interval": "6m", "due_at": "2026-09-22", "status": "pending", "score": null },
+        { "interval": "12m", "due_at": "2027-03-22", "status": "pending", "score": null }
+      ],
+      "composite_score": null,
+      "status": "active"
+    },
+    {
+      "prediction_id": "pred_old_002",
+      "user_id": "user_01",
+      "analysis_id": "run_old_002",
+      "ticker": "SHOP.TO",
+      "recommendation": "HOLD",
+      "confidence_score": 58,
+      "price_at_recommendation": 78.42,
+      "recommended_at": "2025-12-15T10:30:00Z",
+      "account_type": "tfsa",
+      "timeline": "medium_term",
+      "checkpoints": [
+        { "interval": "1m", "due_at": "2026-01-15", "status": "scored", "score": 0.34, "price_at_checkpoint": 89.10, "return_pct": 0.135, "benchmark_return_pct": 0.022, "direction_correct": false },
+        { "interval": "3m", "due_at": "2026-03-15", "status": "scored", "score": 0.52, "price_at_checkpoint": 99.15, "return_pct": 0.264, "benchmark_return_pct": 0.051, "direction_correct": false }
+      ],
+      "composite_score": 0.44,
+      "status": "complete"
+    },
+    {
+      "prediction_id": "pred_old_003",
+      "user_id": "user_01",
+      "analysis_id": "run_old_003",
+      "ticker": "SHOP.TO",
+      "recommendation": "BUY",
+      "confidence_score": 69,
+      "price_at_recommendation": 71.88,
+      "recommended_at": "2025-11-10T09:00:00Z",
+      "account_type": "tfsa",
+      "timeline": "medium_term",
+      "checkpoints": [
+        { "interval": "1m", "due_at": "2025-12-10", "status": "scored", "score": 0.78, "price_at_checkpoint": 78.42, "return_pct": 0.091, "benchmark_return_pct": 0.018, "direction_correct": true },
+        { "interval": "3m", "due_at": "2026-02-10", "status": "scored", "score": 0.81, "price_at_checkpoint": 94.10, "return_pct": 0.310, "benchmark_return_pct": 0.042, "direction_correct": true }
+      ],
+      "composite_score": 0.78,
+      "status": "complete"
+    },
+    {
+      "prediction_id": "pred_msft_001",
+      "user_id": "user_01",
+      "analysis_id": "run_old_msft_001",
+      "ticker": "MSFT",
+      "recommendation": "BUY",
+      "confidence_score": 80,
+      "price_at_recommendation": 354.80,
+      "recommended_at": "2025-12-20T10:00:00Z",
+      "account_type": "rrsp",
+      "timeline": "long_term",
+      "checkpoints": [
+        { "interval": "3m", "due_at": "2026-03-20", "status": "scored", "score": 0.81, "price_at_checkpoint": 398.75, "return_pct": 0.124, "benchmark_return_pct": 0.041, "direction_correct": true }
+      ],
+      "composite_score": 0.81,
+      "status": "active"
+    }
+  ],
+  "summary": {
+    "total_predictions": 5,
+    "active": 3,
+    "scored": 2,
+    "direction_accuracy": 0.75,
+    "avg_composite_score": 0.68,
+    "alpha_generated_pct": 0.162
+  },
+  "meta": { "total": 5, "page": 1, "per_page": 20, "pages": 1 }
+}

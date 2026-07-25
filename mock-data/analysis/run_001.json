@@ -1,0 +1,50 @@
+{
+  "analysis_id": "run_001",
+  "user_id": "user_01",
+  "stock": {
+    "stock_id": "stk_shop_to",
+    "ticker": "SHOP.TO",
+    "name": "Shopify Inc.",
+    "sector": "Technology",
+    "exchange": "TSX",
+    "currency": "CAD"
+  },
+  "account_type": "tfsa",
+  "timeline": "medium_term",
+  "status": "complete",
+  "triggered_at": "2026-03-24T14:20:00Z",
+  "completed_at": "2026-03-24T14:22:47Z",
+  "duration_seconds": 167,
+  "trace_id": "trc_a1b2c3d4e5f6",
+  "final_recommendation": {
+    "recommendation": "BUY",
+    "stock_outlook": {
+      "direction": "somewhat_bullish",
+      "thesis_summary": "Durable cash generation and operating leverage support a somewhat bullish medium-term outlook.",
+      "key_drivers": [
+        "FCF margin expanded to 14.2% in FY2025 (durable cash generation)",
+        "Gross Merchandise Volume grew 23% YoY to $281B",
+        "Operating leverage is materializing as headcount growth slows",
+        "Balance sheet is strong with low meaningful debt"
+      ]
+    },
+    "confidence_score": 74,
+    "disagreement_score": 0.38,
+    "disagreement_label": "moderate",
+    "executive_summary": "Shopify presents a compelling medium-term buy. Cash flow has turned decisively positive and margins are expanding. The main risk is valuation — any deceleration in growth could compress the multiple. The risk/reward still favors initiating or adding a position with conservative sizing.",
+    "cio_rationale": "I weight the bull case more heavily here. FCF generation is no longer speculative — it is demonstrated. The Shopify Payments attach rate is accelerating and creates meaningful operating leverage. The bear case correctly identifies valuation risk, but I assess this as a timing/entry risk rather than a thesis risk. The risk advisor's 5% position size recommendation is appropriate given the disagreement and valuation premium."
+  },
+  "layer2_context": {
+    "is_in_portfolio": true,
+    "portfolio_fit": "strong_candidate",
+    "portfolio_fit_rationale": "This medium-term growth thesis matches a registered-account allocation focused on capital appreciation.",
+    "suggested_action": "Hold and consider adding on pullbacks toward support; keep sizing conservative given valuation risk."
+  },
+  "data_bundle_summary": {
+    "price_at_analysis": 100.28,
+    "market_cap_cad": 127400000000,
+    "volume_vs_avg": 0.94,
+    "data_quality": "high",
+    "data_sources": ["fmp", "fmp_earnings", "fmp_news"]
+  }
+}

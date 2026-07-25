@@ -1,0 +1,20 @@
+{
+  "stock_id": "stk_shop_to",
+  "ticker": "SHOP.TO",
+  "data": [
+    {
+      "analysis_id": "run_001",
+      "recommendation": "BUY",
+      "stock_outlook": "somewhat_bullish",
+      "confidence_score": 74,
+      "disagreement_score": 0.38,
+      "price_at_analysis": 100.28,
+      "account_type": "tfsa",
+      "timeline": "medium_term",
+      "analyzed_at": "2026-03-24T14:22:47Z",
+      "prediction_status": "pending",
+      "prediction_id": "pred_001"
+    }
+  ],
+  "meta": { "total": 1, "page": 1, "per_page": 20, "pages": 1 }
+}

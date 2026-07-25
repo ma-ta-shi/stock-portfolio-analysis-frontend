@@ -1,0 +1,37 @@
+{
+  "stock_id": "stk_bmo_to",
+  "ticker": "BMO.TO",
+  "data": [
+    {
+      "analysis_id": "stk_bmo_to",
+      "stock_outlook": "neutral",
+      "confidence_score": 65,
+      "disagreement_score": 0.31,
+      "price_at_analysis": 128.16,
+      "account_type": "rrsp",
+      "timeline": "long_term",
+      "analyzed_at": "2026-03-23T14:15:00Z",
+      "prediction_status": "pending",
+      "prediction_id": "pred_bmo_001"
+    },
+    {
+      "analysis_id": "stk_bmo_to_old_001",
+      "stock_outlook": "somewhat_bullish",
+      "confidence_score": 68,
+      "disagreement_score": 0.26,
+      "price_at_analysis": 118.80,
+      "account_type": "rrsp",
+      "timeline": "long_term",
+      "analyzed_at": "2025-10-20T11:00:00Z",
+      "prediction_status": "scored",
+      "prediction_id": "pred_bmo_old_001",
+      "composite_score": 0.71,
+      "direction_correct": true,
+      "return_at_1m": 0.038,
+      "return_at_3m": 0.074,
+      "benchmark_return_at_1m": 0.021,
+      "benchmark_return_at_3m": 0.044
+    }
+  ],
+  "meta": { "total": 2, "page": 1, "per_page": 20, "pages": 1 }
+}

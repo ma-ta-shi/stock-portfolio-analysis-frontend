@@ -1,0 +1,37 @@
+{
+  "stock_id": "stk_enb_to",
+  "ticker": "ENB.TO",
+  "data": [
+    {
+      "analysis_id": "stk_enb_to_001",
+      "stock_outlook": "neutral",
+      "confidence_score": 69,
+      "disagreement_score": 0.24,
+      "price_at_analysis": 58.26,
+      "account_type": "rrsp",
+      "timeline": "long_term",
+      "analyzed_at": "2026-03-19T14:00:00Z",
+      "prediction_status": "pending",
+      "prediction_id": "pred_enb_001"
+    },
+    {
+      "analysis_id": "stk_enb_to_old_001",
+      "stock_outlook": "somewhat_bullish",
+      "confidence_score": 72,
+      "disagreement_score": 0.21,
+      "price_at_analysis": 49.80,
+      "account_type": "rrsp",
+      "timeline": "long_term",
+      "analyzed_at": "2025-08-14T10:00:00Z",
+      "prediction_status": "scored",
+      "prediction_id": "pred_enb_old_001",
+      "composite_score": 0.74,
+      "direction_correct": true,
+      "return_at_1m": 0.064,
+      "return_at_3m": 0.124,
+      "benchmark_return_at_1m": 0.018,
+      "benchmark_return_at_3m": 0.038
+    }
+  ],
+  "meta": { "total": 2, "page": 1, "per_page": 20, "pages": 1 }
+}

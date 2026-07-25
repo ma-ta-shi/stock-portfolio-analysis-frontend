@@ -1,0 +1,255 @@
+{
+  "analysis_id": "run_001",
+  "pass_1": {
+    "fundamental_analyst": {
+      "agent": "fundamental_analyst",
+      "pass_number": 1,
+      "signal": "bullish",
+      "key_findings": [
+        "Revenue grew 26% YoY to $2.81B in Q4 2025; full-year GMV reached $281B (+23% YoY)",
+        "Free cash flow margin expanded to 14.2% in FY2025, up from 6.8% in FY2024 — FCF is now a durable feature, not a one-quarter event",
+        "Gross profit margin stable at 51.2%; operating leverage is materializing as headcount growth slows",
+        "Balance sheet is strong: $5.2B cash, no meaningful debt, 8.1x current ratio",
+        "Forward P/E of 64x and EV/Sales of 16x represent a premium to TSX tech peers but justified by the growth rate"
+      ],
+      "overall_signal_direction": "bullish",
+      "data_quality": "high",
+      "critical_risks": [
+        "Valuation is stretched — any deceleration in GMV growth will compress the multiple sharply",
+        "US regulatory environment for buy-now-pay-later (Shop Pay Installments) is evolving"
+      ],
+      "metrics": {
+        "pe_ratio": null,
+        "forward_pe": 64.2,
+        "ev_ebitda": 52.1,
+        "ev_sales": 16.3,
+        "revenue_growth_yoy": 0.26,
+        "gross_margin": 0.512,
+        "fcf_margin": 0.142,
+        "debt_to_equity": 0.04,
+        "current_ratio": 8.1,
+        "market_cap_cad": 127400000000
+      },
+      "completed_at": "2026-03-24T14:21:04Z",
+      "duration_seconds": 64
+    },
+    "technical_analyst": {
+      "agent": "technical_analyst",
+      "pass_number": 1,
+      "signal": "bullish",
+      "key_findings": [
+        "Price is in a confirmed uptrend since the November 2025 low of $71; higher highs and higher lows intact",
+        "Trading above all three key moving averages (20 SMA: $96.40, 50 SMA: $89.20, 200 SMA: $81.50)",
+        "RSI at 58 — not overbought; room to run before hitting resistance",
+        "MACD histogram turned positive in mid-March, supporting the bullish bias",
+        "Key support at $91 (prior breakout level); resistance at $108 (52-week high)"
+      ],
+      "overall_signal_direction": "bullish",
+      "data_quality": "high",
+      "critical_risks": [
+        "Volume on the recent rally has been below average — conviction from buyers needs to increase",
+        "A close below $96 (20 SMA) would weaken the short-term trend"
+      ],
+      "levels": {
+        "support_1": 96.40,
+        "support_2": 91.00,
+        "resistance_1": 108.00,
+        "resistance_2": 115.50,
+        "sma_20": 96.40,
+        "sma_50": 89.20,
+        "sma_200": 81.50,
+        "rsi_14": 58,
+        "macd_signal": "bullish_crossover"
+      },
+      "completed_at": "2026-03-24T14:21:11Z",
+      "duration_seconds": 71
+    },
+    "sentiment_analyst": {
+      "agent": "sentiment_analyst",
+      "pass_number": 1,
+      "signal": "neutral",
+      "key_findings": [
+        "Analyst consensus: 28 Buy, 9 Hold, 2 Sell — 72% buy-rated, which is strong but slightly elevated optimism",
+        "Average analyst price target: $118 CAD (18% upside from current price)",
+        "Recent news sentiment: neutral-to-positive; Q4 earnings beat was well-received but not a catalyst for new upgrades",
+        "Insider activity: no significant insider selling in the past 90 days; CFO purchased $2M of shares in January 2026",
+        "Social media and forum sentiment is positive but not at frothy levels"
+      ],
+      "overall_signal_direction": "neutral",
+      "data_quality": "medium",
+      "critical_risks": [
+        "High analyst consensus buy rating means most upgrades are already priced in; risk of downgrade cycle if results disappoint",
+        "No major upcoming catalyst identified in next 30 days (next earnings in ~60 days)"
+      ],
+      "analyst_data": {
+        "buy_count": 28,
+        "hold_count": 9,
+        "sell_count": 2,
+        "avg_price_target_cad": 118.00,
+        "sentiment_score": 0.62
+      },
+      "completed_at": "2026-03-24T14:21:08Z",
+      "duration_seconds": 68
+    },
+    "macro_economist": {
+      "agent": "macro_economist",
+      "pass_number": 1,
+      "signal": "neutral",
+      "key_findings": [
+        "Bank of Canada held rates at 2.75% in March 2026; rate cuts expected to resume in Q3 2026 — a tailwind for growth stocks",
+        "CAD/USD rate at 0.718 — CAD weakness provides a revenue tailwind for SHOP's USD-denominated merchant revenue",
+        "Canadian consumer spending is under pressure from elevated mortgage renewals in 2026 — a headwind for domestic merchants",
+        "US e-commerce market (SHOP's primary addressable market) remains resilient despite macro uncertainty",
+        "TSX growth stocks have lagged their US equivalents — sector rotation back toward growth is possible if BoC cuts materialize"
+      ],
+      "overall_signal_direction": "neutral",
+      "data_quality": "high",
+      "critical_risks": [
+        "If BoC rate cuts are delayed beyond Q3 2026, valuation compression on growth stocks could persist",
+        "A weakening Canadian consumer reduces the addressable market for Canadian merchants on Shopify's platform"
+      ],
+      "macro_data": {
+        "boc_rate": 0.0275,
+        "fed_funds_rate": 0.0425,
+        "cad_usd": 0.718,
+        "tsx_ytd_pct": 0.031,
+        "canadian_consumer_confidence": "negative"
+      },
+      "completed_at": "2026-03-24T14:21:09Z",
+      "duration_seconds": 69
+    },
+    "stock_researcher": {
+      "agent": "stock_researcher",
+      "pass_number": 1,
+      "signal": "bullish",
+      "key_findings": [
+        "Shopify has successfully repositioned from a pure SaaS company to a commerce infrastructure platform — this increases switching costs substantially",
+        "Shopify Payments now processes 58% of GMV; the financial services business (Shopify Capital, installments) is the next major revenue driver",
+        "The Shopify Fulfillment Network continues to scale; competing directly with Amazon's logistics is a bold but potentially transformative long-term bet",
+        "International expansion (EU, LATAM) is in early innings; represents a significant long-term TAM expansion opportunity",
+        "Competitive moat: network effects from 2M+ merchants, embedded financial services, and a growing developer ecosystem create high switching costs"
+      ],
+      "overall_signal_direction": "bullish",
+      "data_quality": "high",
+      "critical_risks": [
+        "Amazon continues to compete directly for merchants — any Shopify merchant loss to Amazon's marketplace would be a negative signal",
+        "Shopify's logistics ambitions require significant ongoing capex investment; execution risk is material"
+      ],
+      "completed_at": "2026-03-24T14:21:15Z",
+      "duration_seconds": 75
+    }
+  },
+  "disagreement_score_pass_1": 0.24,
+  "pass_2": {
+    "bull_advocate": {
+      "agent": "bull_advocate",
+      "pass_number": 2,
+      "recommendation": "BUY",
+      "confidence_score": 82,
+      "key_arguments": [
+        "FCF generation is the defining change in the investment thesis — SHOP is no longer valued on hope, it is valued on demonstrated cash generation",
+        "Shopify Payments and Capital create a flywheel: more merchants → more payment volume → more data → better loan underwriting → more merchant trust",
+        "At 64x forward earnings, the market is paying for growth that is entirely deliverable given the current trajectory — this is not speculative pricing",
+        "The CAD/USD tailwind is a structural advantage: USD-denominated revenue in a CAD-reporting company is a multi-year earning tailwind as long as BoC lags the Fed"
+      ],
+      "price_target_cad": 125.00,
+      "bear_counter": "The bear's valuation concern is valid but misprices the FCF yield improvement trajectory. A 15-20% FCF margin in FY2027 compresses the effective multiple significantly.",
+      "completed_at": "2026-03-24T14:22:18Z",
+      "duration_seconds": 63
+    },
+    "bear_advocate": {
+      "agent": "bear_advocate",
+      "pass_number": 2,
+      "recommendation": "HOLD",
+      "confidence_score": 61,
+      "key_arguments": [
+        "At 16x EV/Sales, SHOP is priced for perfection — any slip in GMV growth rate triggers a multiple compression far larger than earnings disappointment",
+        "The logistics bet is burning capital with no clear path to profitability — management has de-emphasized Shopify Fulfillment Network but it still consumes resources",
+        "Analyst consensus at 72% buy is a warning sign, not comfort — crowded positions unwind violently",
+        "Canadian consumer headwinds are a near-term drag on the domestic merchant base that supports the platform's foundational network"
+      ],
+      "downside_target_cad": 82.00,
+      "bull_counter": "I concede FCF is real, but the bull is anchoring on a best-case FCF trajectory without adequately discounting execution risk in international expansion.",
+      "completed_at": "2026-03-24T14:22:22Z",
+      "duration_seconds": 67
+    },
+    "risk_advisor": {
+      "agent": "risk_advisor",
+      "pass_number": 2,
+      "recommendation": "BUY",
+      "confidence_score": 70,
+      "position_sizing": {
+        "recommended_pct_of_account": 0.05,
+        "rationale": "Moderate disagreement score and valuation premium warrant sizing below the 10% maximum. 5% provides meaningful exposure while limiting drawdown impact."
+      },
+      "stop_loss": {
+        "level_cad": 91.00,
+        "rationale": "The $91 level represents the prior breakout base; a close below this level would invalidate the medium-term bullish thesis."
+      },
+      "scenario_analysis": [
+        {
+          "scenario": "Bull case (GMV accelerates to 28%+)",
+          "probability": 0.30,
+          "price_target_cad": 128.00,
+          "return_pct": 0.253
+        },
+        {
+          "scenario": "Base case (GMV holds at 23-25%)",
+          "probability": 0.50,
+          "price_target_cad": 112.00,
+          "return_pct": 0.096
+        },
+        {
+          "scenario": "Bear case (GMV decelerates to sub-20%)",
+          "probability": 0.20,
+          "price_target_cad": 80.00,
+          "return_pct": -0.216
+        }
+      ],
+      "key_risks": ["valuation_compression", "gmv_deceleration", "logistics_capex"],
+      "completed_at": "2026-03-24T14:22:30Z",
+      "duration_seconds": 75
+    },
+    "tax_strategist": {
+      "agent": "tax_strategist",
+      "pass_number": 2,
+      "recommendation": "BUY",
+      "confidence_score": 85,
+      "account_recommendation": {
+        "optimal_account": "tfsa",
+        "rationale": "SHOP.TO pays no dividend, so the RRSP withholding-tax advantage does not apply. SHOP is a Canadian-listed stock — no foreign withholding concern. Expected returns are primarily capital gains; holding in TFSA makes all gains permanently tax-free."
+      },
+      "tax_notes": [
+        "TFSA is optimal: no dividend tax drag, capital gains grow tax-free",
+        "If already holding in TFSA (as Alex does), no account switch required",
+        "If TFSA room is exhausted, RRSP is the second-best option — capital gains are tax-deferred",
+        "Trading account is least efficient: 50% of capital gains are taxable income at Alex's 43% marginal rate"
+      ],
+      "completed_at": "2026-03-24T14:22:25Z",
+      "duration_seconds": 70
+    }
+  },
+  "disagreement_score_pass_2": 0.38,
+  "cio": {
+    "agent": "cio",
+    "pass_number": null,
+    "stock_outlook": {
+      "direction": "somewhat_bullish",
+      "thesis_summary": "Shopify's FCF inflection is confirmed and durable — the platform is gaining share, but premium valuation and moderate agent disagreement prevent a full bullish conviction call.",
+      "key_drivers": [
+        "GMV +23% YoY; free cash flow positive and expanding margins confirmed in financial statements",
+        "Shopify Payments attach rate accelerating — creates meaningful operating leverage",
+        "Valuation premium (64x forward earnings) creates downside if revenue growth decelerates",
+        "5% TFSA position size appropriate given moderate disagreement on margin sustainability"
+      ]
+    },
+    "confidence_score": 74,
+    "disagreement_score": 0.38,
+    "disagreement_label": "moderate",
+    "executive_summary": "Shopify presents a compelling medium-term buy for a TFSA account. The company's merchant platform continues to gain share globally, with Gross Merchandise Volume growing 23% year-over-year. Free cash flow has turned decisively positive and margins are expanding. The main risk is valuation — SHOP trades at a significant premium to the TSX tech index — which creates downside if revenue growth decelerates. The bull and bear advocates diverged meaningfully on the sustainability of the margin expansion, which accounts for the moderate disagreement score. On balance, the risk/reward favours initiating or adding to a position at current levels, sized at no more than 5% of the TFSA. A logical stop-loss sits at $91 (support from the March 2025 base).",
+    "key_disagreements_addressed": "The primary disagreement was on valuation sustainability. I resolve this in the bull's favour because the FCF improvement is demonstrated in the financial statements (not projected), and the Payments/Capital flywheel provides structural operating leverage. I do not dismiss the bear's concern — it is the primary risk to monitor in the next earnings cycle.",
+    "account_specific_note": "For Alex's TFSA, this recommendation is to hold the existing 45 shares and consider adding up to 5% of TFSA value (~$625) on any pullback toward $96-98.",
+    "completed_at": "2026-03-24T14:22:47Z",
+    "duration_seconds": 17
+  }
+}

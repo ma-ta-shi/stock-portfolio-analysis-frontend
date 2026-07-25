@@ -1,0 +1,44 @@
+{
+  "user_id": "user_01",
+  "as_of": "2026-03-25T09:30:00Z",
+  "positive_impacts": [
+    {
+      "ticker": "MSFT",
+      "factor": "CAD/USD rate at 0.718",
+      "impact_statement": "USD revenue converts to more CAD — effective return boosted ~3% annually vs parity",
+      "direction": "positive"
+    },
+    {
+      "ticker": "SHOP.TO",
+      "factor": "Expected BoC rate cuts Q3 2026",
+      "impact_statement": "Growth stock discount rate compression — every 25bps cut adds ~4% to DCF value at current growth rate",
+      "direction": "positive"
+    },
+    {
+      "ticker": "CNR.TO",
+      "factor": "Resilient US intermodal freight volumes",
+      "impact_statement": "Cross-border trade volumes holding up despite macro uncertainty — supports CNR revenue guidance",
+      "direction": "positive"
+    }
+  ],
+  "negative_impacts": [
+    {
+      "ticker": "RY.TO",
+      "factor": "Canadian mortgage renewal stress peak mid-2026",
+      "impact_statement": "Modest PCL (provisions for credit losses) risk; not thesis-changing but warrants monitoring",
+      "direction": "negative"
+    },
+    {
+      "ticker": "ENB.TO",
+      "factor": "Below-trend Canadian economic growth",
+      "impact_statement": "Industrial gas demand slightly below expectations — minimal revenue impact given regulated pipeline contracts",
+      "direction": "negative"
+    },
+    {
+      "ticker": "SHOP.TO",
+      "factor": "Canadian consumer spending decline",
+      "impact_statement": "Domestic merchant GMV may underperform; partially offset by US and international growth",
+      "direction": "negative"
+    }
+  ]
+}

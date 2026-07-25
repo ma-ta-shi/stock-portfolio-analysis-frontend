@@ -1,0 +1,37 @@
+{
+  "stock_id": "stk_cnr_to",
+  "ticker": "CNR.TO",
+  "data": [
+    {
+      "analysis_id": "stk_cnr_to_001",
+      "stock_outlook": "somewhat_bullish",
+      "confidence_score": 76,
+      "disagreement_score": 0.18,
+      "price_at_analysis": 148.08,
+      "account_type": "tfsa",
+      "timeline": "long_term",
+      "analyzed_at": "2026-03-20T10:30:00Z",
+      "prediction_status": "pending",
+      "prediction_id": "pred_cnr_001"
+    },
+    {
+      "analysis_id": "stk_cnr_to_old_001",
+      "stock_outlook": "bullish",
+      "confidence_score": 78,
+      "disagreement_score": 0.15,
+      "price_at_analysis": 134.20,
+      "account_type": "tfsa",
+      "timeline": "long_term",
+      "analyzed_at": "2025-09-22T09:00:00Z",
+      "prediction_status": "scored",
+      "prediction_id": "pred_cnr_old_001",
+      "composite_score": 0.82,
+      "direction_correct": true,
+      "return_at_1m": 0.054,
+      "return_at_3m": 0.098,
+      "benchmark_return_at_1m": 0.021,
+      "benchmark_return_at_3m": 0.042
+    }
+  ],
+  "meta": { "total": 2, "page": 1, "per_page": 20, "pages": 1 }
+}

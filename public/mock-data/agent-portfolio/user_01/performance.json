@@ -1,0 +1,61 @@
+{
+  "user_id": "user_01",
+  "periods": ["1M", "3M", "6M", "inception"],
+  "returns": {
+    "1M": {
+      "agent_portfolio_pct": 0.0218,
+      "user_portfolio_pct": 0.0195,
+      "benchmark_tsx_pct": 0.0112
+    },
+    "3M": {
+      "agent_portfolio_pct": 0.0622,
+      "user_portfolio_pct": 0.0741,
+      "benchmark_tsx_pct": 0.0318
+    },
+    "inception": {
+      "agent_portfolio_pct": 0.0324,
+      "user_portfolio_pct": 0.0412,
+      "benchmark_tsx_pct": 0.0182,
+      "start_date": "2026-01-01"
+    }
+  },
+  "cumulative_curve": [
+    { "date": "2026-01-01", "agent": 85443, "user": 85443, "benchmark": 85443 },
+    { "date": "2026-01-15", "agent": 86100, "user": 86800, "benchmark": 85910 },
+    { "date": "2026-02-01", "agent": 87200, "user": 87900, "benchmark": 86440 },
+    { "date": "2026-02-15", "agent": 87800, "user": 88600, "benchmark": 86900 },
+    { "date": "2026-03-01", "agent": 87400, "user": 89200, "benchmark": 86940 },
+    { "date": "2026-03-15", "agent": 88000, "user": 84900, "benchmark": 87200 },
+    { "date": "2026-03-25", "agent": 88210, "user": 85443, "benchmark": 87000 }
+  ],
+  "decision_accuracy": {
+    "total_decisions": 4,
+    "correct": 2,
+    "incorrect": 0,
+    "pending": 2,
+    "win_rate": 0.67,
+    "rolling_30d_accuracy": 0.50
+  },
+  "sector_allocation_vs_user": {
+    "agent": {
+      "Technology": 0.24,
+      "Financials": 0.50,
+      "Industrials": 0.16,
+      "Energy": 0.00,
+      "Cash": 0.10
+    },
+    "user": {
+      "Technology": 0.17,
+      "Financials": 0.46,
+      "Industrials": 0.16,
+      "Energy": 0.21,
+      "Cash": 0.00
+    }
+  },
+  "risk_metrics": {
+    "agent_volatility_annualized": 0.142,
+    "user_volatility_annualized": 0.138,
+    "agent_sharpe_ratio": 1.24,
+    "user_sharpe_ratio": 1.31
+  }
+}
