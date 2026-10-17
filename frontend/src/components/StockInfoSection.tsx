@@ -188,7 +188,7 @@ export function StockInfoSection({
         <div className="bg-card border border-border rounded-lg overflow-hidden">
           <div className="flex flex-wrap divide-x divide-border">
             <Metric label="P/E" value={fmt(f.pe_ratio)} />
-            <Metric label="Fwd P/E" value={fmt(f.forward_pe)} />
+            <Metric label="P/E (FY est.)" value={fmt(f.forward_pe)} />
             <Metric label="EV/EBITDA" value={fmt(f.ev_ebitda)} />
             <Metric
               label="Div Yield"
@@ -221,7 +221,6 @@ export function StockInfoSection({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-0 divide-x divide-y divide-border border-t border-border">
               <Metric label="P/B" value={fmt(f.price_to_book)} />
               <Metric label="P/S" value={fmt(f.price_to_sales)} />
-              <Metric label="PEG" value={fmt(f.peg_ratio)} />
               <Metric label="ROE" value={fmtPct(f.roe)} />
               <Metric label="Rev Growth" value={fmtPct(f.revenue_growth_yoy)} />
               <Metric label="EPS Growth" value={fmtPct(f.earnings_growth_yoy)} />
