@@ -114,6 +114,15 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
                   <TableCell>
                     <div className="font-medium">{h.stock.ticker}</div>
                     <div className="text-xs text-muted-foreground">{h.stock.name}</div>
+                    {h.stock.pipeline_supported === false && (
+                      <Badge
+                        variant="outline"
+                        className="mt-1 border-amber-500 text-xs text-amber-600"
+                        title={h.stock.unsupported_reason ?? undefined}
+                      >
+                        Unsupported
+                      </Badge>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline" className="text-xs">
@@ -150,10 +159,18 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <OutlookBadge direction={h.stock_outlook} />
+                    {h.stock.pipeline_supported === false ? (
+                      <span className="text-muted-foreground">—</span>
+                    ) : (
+                      <OutlookBadge direction={h.stock_outlook} />
+                    )}
                   </TableCell>
                   <TableCell>
-                    <ConfidenceMeter score={h.confidence_score} />
+                    {h.stock.pipeline_supported === false ? (
+                      <span className="text-muted-foreground">—</span>
+                    ) : (
+                      <ConfidenceMeter score={h.confidence_score} />
+                    )}
                   </TableCell>
                   <TableCell className="text-right text-sm">
                     {pctDisplay(h.annual_dividend_yield)}

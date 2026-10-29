@@ -60,6 +60,31 @@ describe('HoldingsTable', () => {
     expect(screen.getByText('TFSA')).toBeInTheDocument()
   })
 
+  it('flags a holding the pipeline cannot analyse and shows no outlook for it', () => {
+    const etf = {
+      ...mockHolding,
+      stock: {
+        ...mockHolding.stock,
+        ticker: 'ZQQ.TO',
+        name: 'BMO Nasdaq 100 Equity Hedged To CAD Index ETF',
+        pipeline_supported: false,
+        instrument_type: 'etf',
+        unsupported_reason: 'an ETF or fund: the analysis covers individual equities only',
+      },
+    }
+    mockUsePortfolioHoldings.mockReturnValue({ data: [etf], isLoading: false } as unknown as ReturnType<typeof usePortfolioHoldings>)
+    renderWithRouter(<HoldingsTable />)
+    const badge = screen.getByText('Unsupported')
+    expect(badge).toHaveAttribute('title', 'an ETF or fund: the analysis covers individual equities only')
+    expect(screen.queryByText('Somewhat Bullish')).not.toBeInTheDocument()
+  })
+
+  it('does not flag a supported holding', () => {
+    mockUsePortfolioHoldings.mockReturnValue({ data: [mockHolding], isLoading: false } as unknown as ReturnType<typeof usePortfolioHoldings>)
+    renderWithRouter(<HoldingsTable />)
+    expect(screen.queryByText('Unsupported')).not.toBeInTheDocument()
+  })
+
   it('renders the outlook badge', () => {
     mockUsePortfolioHoldings.mockReturnValue({ data: [mockHolding], isLoading: false } as unknown as ReturnType<typeof usePortfolioHoldings>)
     renderWithRouter(<HoldingsTable />)
