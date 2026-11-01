@@ -1,0 +1,74 @@
+{
+  "proposal_id": "d14a30c4-5001-42c8-a57e-1b1e1d2e2b74",
+  "sequence": 1,
+  "kind": "order",
+  "status": "open",
+  "followed_by": null,
+  "account": "rrsp",
+  "to_account": null,
+  "ticker": "RY.TO",
+  "side": "sell",
+  "shares": 40.0,
+  "price": 286.41,
+  "currency": "CAD",
+  "amount_cad": 11456.4,
+  "rule": "sell_cap",
+  "rule_text": "Trim a holding that is over a limit",
+  "chain": null,
+  "reasons": [
+    {
+      "text": "the book no longer holds it here and 11,456.40 is held",
+      "field": "target_book.lines[RY.TO].weights.rrsp",
+      "value": 0.0
+    },
+    {
+      "text": "the industry group (BMO.TO, RY.TO, TD.TO) holds 25,607.60 against a cap of 8,412.28, 204% over (more than the 50% tolerance), so it is cut back to the cap",
+      "field": null,
+      "value": null
+    },
+    {
+      "text": "it has qualified in 1 weekly run(s) in a row",
+      "field": null,
+      "value": null
+    }
+  ],
+  "costs": {
+    "commission_cad": 0.0,
+    "conversion_cad": 0.0,
+    "cash_effect_cad": 11456.4
+  },
+  "value": {
+    "benefit_cad": 0.0,
+    "benefit_years": 1.0,
+    "costs_cad": 0.0,
+    "noise_margin_cad": 0.0,
+    "tax_cad": 0.0,
+    "tax_exact": false,
+    "loss": false,
+    "jump": false,
+    "signal_to_noise": null,
+    "qualified_runs": 1
+  },
+  "rebuy_not_before": null,
+  "what_would_change": [
+    "FUND: dividend payout falls below 50% and dividend growth stagnates, shifting outlook to somewhat_bearish."
+  ],
+  "view": {
+    "ticker": "RY.TO",
+    "outlook": "bullish",
+    "confidence": 60,
+    "tier": "outperform",
+    "reason_text": "Royal Bank of Canada is a quality compounder with solid ROE, margin, and dividend growth, trading within its industry valuation range, positioning it for medium\u2011term upside.",
+    "dissent_text": "",
+    "falsifier_text": "FUND: dividend payout falls below 50% and dividend growth stagnates, shifting outlook to somewhat_bearish.",
+    "falsifier": null,
+    "flags": [
+      "edge_history_short",
+      "stale"
+    ],
+    "status": "excluded",
+    "exclusions": [
+      "stale"
+    ]
+  }
+}
