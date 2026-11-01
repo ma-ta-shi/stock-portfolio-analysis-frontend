@@ -1,7 +1,6 @@
-// Generated from the backend's OpenAPI schema (backend/src/api/schemas/optimizer.py, monthly_plan.py,
-// portfolio_reports.py) so these types mirror the Pydantic models. A proposal has no model confidence: its value is
-// the benefit over a number of years against its costs and the noise margin of the views behind it. The CIO's words
-// (`ViewNoteResponse`) are for information only.
+// Generated from the backend's OpenAPI schema (backend/scripts/generate_ts_types.py) so these types mirror the
+// Pydantic models. A proposal has no model confidence: its value is the benefit over a number of years against its
+// costs and the noise margin of the views behind it. The CIO's words (`ViewNoteResponse`) are for information only.
 // Regenerate after a schema change; do not edit by hand.
 
 import type { PaginationMeta } from './api'
@@ -26,6 +25,16 @@ export interface AccountPlanResponse {
   room_before: number | null
   room_after: number | null
   room_estimated: boolean
+}
+
+/** An option the run did not take, and why: the next stock the cash could have gone to, or "keep it" for a sale. */
+export interface AlternativeViewResponse {
+  rank: number
+  account: string
+  ticker: string
+  action_type: string
+  expected_return_at_time: number | null
+  reason_not_chosen: string
 }
 
 /** Where should this money go: the top three investments with their orders. Saved as an inquiry only when `store` is true; an inquiry never replaces a run and is never mirrored to the agent portfolio. */
@@ -242,6 +251,27 @@ export interface OrderViewResponse {
   rebuy_not_before: string | null
   what_would_change: string[]
   view: ViewNoteResponse | null
+  predicted: PredictedLinesResponse | null
+  alternatives: AlternativeViewResponse[]
+}
+
+/** The predicted-return lines of the name and account an order is in, from the account matrix stored with the run. Returns, rates and costs are fractions (0.0797 is 7.97%); `noise_margin_pts` and `tax_rate_pct` are points. */
+export interface PredictedLinesResponse {
+  after_tax_12m: number | null
+  total_return_cad: number | null
+  baseline_cad: number | null
+  view_applied: number | null
+  noise_margin_pts: number | null
+  sigma: number | null
+  market_line_12m: number | null
+  score_12m: number | null
+  entry_cost: number | null
+  exit_tax_cad: number | null
+  tax_rate_pct: number | null
+  usable: boolean
+  flags: string[]
+  status: string
+  reason: string | null
 }
 
 /** Ask for a fresh look at the portfolio. Nothing is saved unless `store` is true, and saving replaces the portfolio's open proposals (their ids are listed in the answer). `allow_stale` weights a name whose only fault is an analysis over a week old; the answer is then marked a dry run. */

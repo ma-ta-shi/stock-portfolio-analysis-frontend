@@ -43,6 +43,12 @@ describe('optimizer mock data', () => {
       // a proposal carries no model confidence: its value is the benefit against its costs and noise margin
       expect(Object.keys(order)).not.toContain('confidence')
     }
+    // each order carries the predicted-return lines of its name and account and the options the run did not take
+    expect(proposals.orders.some((o) => o.predicted !== null)).toBe(true)
+    for (const order of proposals.orders) {
+      expect(order.alternatives.map((alt) => alt.rank)).toEqual(order.alternatives.map((_, i) => i + 1))
+      expect(order.alternatives.every((alt) => alt.reason_not_chosen.length > 0)).toBe(true)
+    }
     expect(proposals.waiting.length).toBeGreaterThan(0)
     expect(proposals.report.caps.length).toBeGreaterThan(0)
     expect(proposals.missing).toEqual([])
