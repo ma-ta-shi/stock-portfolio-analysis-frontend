@@ -2,7 +2,7 @@
   "run_id": null,
   "portfolio_id": "e3ba3a97-cedc-4d75-9976-0655d9fd9340",
   "kind": "adhoc",
-  "as_of": "2026-10-31",
+  "as_of": "2026-11-01",
   "created_at": null,
   "stored": false,
   "dry_run": true,
@@ -36,7 +36,7 @@
     },
     "sell": []
   },
-  "headline": "5 order(s) to place; 11 waiting (not saved)",
+  "headline": "5 order(s) to place; 10 waiting (not saved)",
   "no_changes": false,
   "orders": [
     {
@@ -111,7 +111,45 @@
         "exclusions": [
           "stale"
         ]
-      }
+      },
+      "predicted": {
+        "after_tax_12m": 0.08386645614352273,
+        "total_return_cad": 0.08386645614352273,
+        "baseline_cad": 0.07594570453813154,
+        "view_applied": 0.007920751605391185,
+        "noise_margin_pts": 1.1452810902779413,
+        "sigma": 0.18282122415080806,
+        "market_line_12m": 0.06541275548000156,
+        "score_12m": 0.10093850289668135,
+        "entry_cost": 0.0,
+        "exit_tax_cad": 0.0,
+        "tax_rate_pct": 0.0,
+        "usable": false,
+        "flags": [
+          "edge_history_short",
+          "stale"
+        ],
+        "status": "ok",
+        "reason": null
+      },
+      "alternatives": [
+        {
+          "rank": 1,
+          "account": "rrsp",
+          "ticker": "RY.TO",
+          "action_type": "no_action",
+          "expected_return_at_time": 0.058643604650359706,
+          "reason_not_chosen": "a limit is over, so the rule requires the cut"
+        },
+        {
+          "rank": 2,
+          "account": "rrsp",
+          "ticker": "ENB.TO",
+          "action_type": "deploy",
+          "expected_return_at_time": 0.04071020245081714,
+          "reason_not_chosen": "waiting: the book wants no more of it overall until its holding in another account is sold"
+        }
+      ]
     },
     {
       "proposal_id": null,
@@ -132,9 +170,9 @@
       "chain": null,
       "reasons": [
         {
-          "text": "the book puts 1,655.64 here and 0.00 is held",
+          "text": "the book puts 1,910.64 here and 0.00 is held",
           "field": "target_book.lines[JNJ].weights.rrsp",
-          "value": 1655.64
+          "value": 1910.64
         },
         {
           "text": "the book values a dollar there at +0.45 points a year over the fund",
@@ -153,7 +191,7 @@
         "cash_effect_cad": 1558.63
       },
       "value": {
-        "gap_cad": 1655.64,
+        "gap_cad": 1910.64,
         "held_return": 0.03779886180685292,
         "utility": 0.004511633006021056
       },
@@ -179,7 +217,37 @@
         "exclusions": [
           "stale"
         ]
-      }
+      },
+      "predicted": {
+        "after_tax_12m": 0.07656442490334295,
+        "total_return_cad": 0.07656442490334295,
+        "baseline_cad": 0.06779951192587097,
+        "view_applied": 0.008764912977471978,
+        "noise_margin_pts": 1.4176653585936478,
+        "sigma": 0.22269979793434927,
+        "market_line_12m": 0.06541275548000156,
+        "score_12m": -0.017280350554215923,
+        "entry_cost": 0.015,
+        "exit_tax_cad": null,
+        "tax_rate_pct": 0.0,
+        "usable": false,
+        "flags": [
+          "edge_history_short",
+          "stale"
+        ],
+        "status": "ok",
+        "reason": null
+      },
+      "alternatives": [
+        {
+          "rank": 1,
+          "account": "rrsp",
+          "ticker": "ENB.TO",
+          "action_type": "deploy",
+          "expected_return_at_time": 0.04071020245081714,
+          "reason_not_chosen": "waiting: the book wants no more of it overall until its holding in another account is sold"
+        }
+      ]
     },
     {
       "proposal_id": null,
@@ -191,18 +259,18 @@
       "to_account": null,
       "ticker": "CNQ.TO",
       "side": "buy",
-      "shares": 21.0,
+      "shares": 24.0,
       "price": 76.78,
       "currency": "CAD",
-      "amount_cad": 1612.38,
+      "amount_cad": 1842.72,
       "rule": "deploy_cash",
       "rule_text": "Buy with cash the account already holds",
       "chain": null,
       "reasons": [
         {
-          "text": "the book puts 1,655.64 here and 0.00 is held",
+          "text": "the book puts 1,910.64 here and 0.00 is held",
           "field": "target_book.lines[CNQ.TO].weights.rrsp",
-          "value": 1655.64
+          "value": 1910.64
         },
         {
           "text": "the book values a dollar there at +0.41 points a year over the fund",
@@ -218,10 +286,10 @@
       "costs": {
         "commission_cad": 0.0,
         "conversion_cad": 0.0,
-        "cash_effect_cad": 1612.38
+        "cash_effect_cad": 1842.72
       },
       "value": {
-        "gap_cad": 1655.64,
+        "gap_cad": 1910.64,
         "held_return": 0.02762338444338508,
         "utility": 0.004144807900521484
       },
@@ -253,7 +321,40 @@
         "exclusions": [
           "stale"
         ]
-      }
+      },
+      "predicted": {
+        "after_tax_12m": 0.07476281497167592,
+        "total_return_cad": 0.07476281497167592,
+        "baseline_cad": 0.07476281497167592,
+        "view_applied": 0.0,
+        "noise_margin_pts": 1.7891600425503233,
+        "sigma": 0.29158189244190047,
+        "market_line_12m": 0.06541275548000156,
+        "score_12m": 0.032066667149220934,
+        "entry_cost": 0.0,
+        "exit_tax_cad": null,
+        "tax_rate_pct": 0.0,
+        "usable": false,
+        "flags": [
+          "target_below_price",
+          "view_against_data",
+          "edge_history_short",
+          "stale",
+          "view_zeroed"
+        ],
+        "status": "ok",
+        "reason": null
+      },
+      "alternatives": [
+        {
+          "rank": 1,
+          "account": "rrsp",
+          "ticker": "ENB.TO",
+          "action_type": "deploy",
+          "expected_return_at_time": 0.04071020245081714,
+          "reason_not_chosen": "waiting: the book wants no more of it overall until its holding in another account is sold"
+        }
+      ]
     },
     {
       "proposal_id": null,
@@ -265,18 +366,18 @@
       "to_account": null,
       "ticker": "VFV.TO",
       "side": "buy",
-      "shares": 43.0,
+      "shares": 41.0,
       "price": 192.28,
       "currency": "CAD",
-      "amount_cad": 8268.04,
+      "amount_cad": 7883.48,
       "rule": "deploy_fund",
       "rule_text": "Park cash in the benchmark fund",
       "chain": null,
       "reasons": [
         {
-          "text": "the book parks 11,589.48 in the fund here and 0.00 is held",
+          "text": "the book parks 13,374.48 in the fund here and 0.00 is held",
           "field": null,
-          "value": 11589.48
+          "value": 13374.48
         },
         {
           "text": "a dollar held there earns 5.64% a year after tax",
@@ -287,16 +388,43 @@
       "costs": {
         "commission_cad": 0.0,
         "conversion_cad": 0.0,
-        "cash_effect_cad": 8268.04
+        "cash_effect_cad": 7883.48
       },
       "value": {
-        "gap_cad": 11589.48,
+        "gap_cad": 13374.48,
         "held_return": 0.05644420728601229,
         "utility": null
       },
       "rebuy_not_before": null,
       "what_would_change": [],
-      "view": null
+      "view": null,
+      "predicted": {
+        "after_tax_12m": 0.06541275548000156,
+        "total_return_cad": 0.06779951192587093,
+        "baseline_cad": null,
+        "view_applied": null,
+        "noise_margin_pts": null,
+        "sigma": null,
+        "market_line_12m": null,
+        "score_12m": null,
+        "entry_cost": 0.0,
+        "exit_tax_cad": null,
+        "tax_rate_pct": null,
+        "usable": true,
+        "flags": [],
+        "status": "ok",
+        "reason": null
+      },
+      "alternatives": [
+        {
+          "rank": 1,
+          "account": "rrsp",
+          "ticker": "ENB.TO",
+          "action_type": "deploy",
+          "expected_return_at_time": 0.04071020245081714,
+          "reason_not_chosen": "waiting: the book wants no more of it overall until its holding in another account is sold"
+        }
+      ]
     },
     {
       "proposal_id": null,
@@ -317,9 +445,9 @@
       "chain": null,
       "reasons": [
         {
-          "text": "the book parks 46,584.63 in the fund here and 23,073.60 is held",
+          "text": "the book parks 45,675.17 in the fund here and 23,073.60 is held",
           "field": null,
-          "value": 46584.63
+          "value": 45675.17
         },
         {
           "text": "a dollar held there earns 6.54% a year after tax",
@@ -333,13 +461,48 @@
         "cash_effect_cad": 1345.96
       },
       "value": {
-        "gap_cad": 23511.03,
+        "gap_cad": 22601.57,
         "held_return": 0.06541275548000147,
         "utility": null
       },
       "rebuy_not_before": null,
       "what_would_change": [],
-      "view": null
+      "view": null,
+      "predicted": {
+        "after_tax_12m": 0.06541275548000156,
+        "total_return_cad": 0.06779951192587093,
+        "baseline_cad": null,
+        "view_applied": null,
+        "noise_margin_pts": null,
+        "sigma": null,
+        "market_line_12m": null,
+        "score_12m": null,
+        "entry_cost": 0.0,
+        "exit_tax_cad": 0.0,
+        "tax_rate_pct": null,
+        "usable": true,
+        "flags": [],
+        "status": "ok",
+        "reason": null
+      },
+      "alternatives": [
+        {
+          "rank": 1,
+          "account": "tfsa",
+          "ticker": "BMO.TO",
+          "action_type": "deploy",
+          "expected_return_at_time": 0.07260569791688487,
+          "reason_not_chosen": "waiting: the industry group (BMO.TO, RY.TO, TD.TO) holds 14,151.20 against its cap of 8,412.28, so nothing more goes into it"
+        },
+        {
+          "rank": 2,
+          "account": "tfsa",
+          "ticker": "RY.TO",
+          "action_type": "deploy",
+          "expected_return_at_time": 0.0676308243474193,
+          "reason_not_chosen": "waiting: the industry group (BMO.TO, RY.TO, TD.TO) holds 14,151.20 against its cap of 8,412.28, so nothing more goes into it"
+        }
+      ]
     }
   ],
   "transfers": [],
@@ -348,7 +511,7 @@
       "account": "tfsa",
       "ticker": "SHOP.TO",
       "side": "sell",
-      "amount_cad": 5022.55,
+      "amount_cad": 4991.47,
       "rule": "sell_switch",
       "rule_text": "Switch into a name the book values more",
       "reason": "waiting: moving 4,944.87 gains 78.60 over a year; after costs of 0.00 that is 78.60 against a noise margin of 192.30, a signal-to-noise ratio of 0.41 (it needs 1.00)"
@@ -360,7 +523,7 @@
       "amount_cad": 5618.0,
       "rule": "sell_relocate",
       "rule_text": "Sell in Trading to move the money into the TFSA or RRSP",
-      "reason": "waiting: moving 5,618.00 gains 121.61 over 5 years; after costs of 24.83 that is 96.77 against a noise margin of 253.43, a signal-to-noise ratio of 0.38 (it needs 1.00)"
+      "reason": "waiting: moving 5,618.00 gains 138.12 over 5 years; after costs of 28.66 that is 109.46 against a noise margin of 253.43, a signal-to-noise ratio of 0.43 (it needs 1.00)"
     },
     {
       "account": "trading",
@@ -369,7 +532,7 @@
       "amount_cad": 10183.5,
       "rule": "sell_relocate",
       "rule_text": "Sell in Trading to move the money into the TFSA or RRSP",
-      "reason": "waiting: moving 10,183.50 gains 379.62 over 5 years; after costs of 201.84 that is 177.77 against a noise margin of 383.85, a signal-to-noise ratio of 0.46 (it needs 1.00)"
+      "reason": "waiting: moving 10,183.50 gains 331.41 over 5 years; after costs of 205.67 that is 125.74 against a noise margin of 383.85, a signal-to-noise ratio of 0.33 (it needs 1.00)"
     },
     {
       "account": "trading",
@@ -393,7 +556,7 @@
       "account": "rrsp",
       "ticker": "ENB.TO",
       "side": "buy",
-      "amount_cad": 1655.64,
+      "amount_cad": 1910.64,
       "rule": "deploy_cash",
       "rule_text": "Buy with cash the account already holds",
       "reason": "waiting: the book wants no more of it overall until its holding in another account is sold"
@@ -402,7 +565,7 @@
       "account": "tfsa",
       "ticker": "BMO.TO",
       "side": "buy",
-      "amount_cad": 2006.15,
+      "amount_cad": 2059.52,
       "rule": "deploy_cash",
       "rule_text": "Buy with cash the account already holds",
       "reason": "waiting: the industry group (BMO.TO, RY.TO, TD.TO) holds 14,151.20 against its cap of 8,412.28, so nothing more goes into it"
@@ -411,7 +574,7 @@
       "account": "tfsa",
       "ticker": "ENB.TO",
       "side": "buy",
-      "amount_cad": 6599.24,
+      "amount_cad": 6501.64,
       "rule": "deploy_cash",
       "rule_text": "Buy with cash the account already holds",
       "reason": "waiting: the book wants no more of it overall until its holding in another account is sold"
@@ -420,7 +583,7 @@
       "account": "tfsa",
       "ticker": "RY.TO",
       "side": "buy",
-      "amount_cad": 2533.12,
+      "amount_cad": 2495.46,
       "rule": "deploy_cash",
       "rule_text": "Buy with cash the account already holds",
       "reason": "waiting: the industry group (BMO.TO, RY.TO, TD.TO) holds 14,151.20 against its cap of 8,412.28, so nothing more goes into it"
@@ -429,19 +592,10 @@
       "account": "tfsa",
       "ticker": "TD.TO",
       "side": "buy",
-      "amount_cad": 3873.02,
+      "amount_cad": 3857.3,
       "rule": "deploy_cash",
       "rule_text": "Buy with cash the account already holds",
       "reason": "waiting: the book wants no more of it overall until its holding in another account is sold"
-    },
-    {
-      "account": "trading",
-      "ticker": "VFV.TO",
-      "side": "buy",
-      "amount_cad": 1574.02,
-      "rule": "deploy_fund",
-      "rule_text": "Park cash in the benchmark fund",
-      "reason": "waiting: needs 76.84 more to reach the minimum order of 500.00"
     }
   ],
   "drift": [
@@ -449,7 +603,7 @@
       "account": "rrsp",
       "ticker": "CNQ.TO",
       "held_cad": 0.0,
-      "target_cad": 1655.64,
+      "target_cad": 1910.64,
       "ratio": 0.0,
       "status": "new"
     },
@@ -457,7 +611,7 @@
       "account": "rrsp",
       "ticker": "ENB.TO",
       "held_cad": 0.0,
-      "target_cad": 1655.64,
+      "target_cad": 1910.64,
       "ratio": 0.0,
       "status": "new"
     },
@@ -465,7 +619,7 @@
       "account": "rrsp",
       "ticker": "JNJ",
       "held_cad": 0.0,
-      "target_cad": 1655.64,
+      "target_cad": 1910.64,
       "ratio": 0.0,
       "status": "new"
     },
@@ -481,7 +635,7 @@
       "account": "tfsa",
       "ticker": "BMO.TO",
       "held_cad": 0.0,
-      "target_cad": 2006.15,
+      "target_cad": 2059.52,
       "ratio": 0.0,
       "status": "new"
     },
@@ -489,7 +643,7 @@
       "account": "tfsa",
       "ticker": "ENB.TO",
       "held_cad": 0.0,
-      "target_cad": 6599.24,
+      "target_cad": 6501.64,
       "ratio": 0.0,
       "status": "new"
     },
@@ -497,7 +651,7 @@
       "account": "tfsa",
       "ticker": "RY.TO",
       "held_cad": 0.0,
-      "target_cad": 2533.12,
+      "target_cad": 2495.46,
       "ratio": 0.0,
       "status": "new"
     },
@@ -505,15 +659,15 @@
       "account": "tfsa",
       "ticker": "SHOP.TO",
       "held_cad": 9418.8,
-      "target_cad": 4396.25,
-      "ratio": 2.142,
+      "target_cad": 4427.33,
+      "ratio": 2.127,
       "status": "above"
     },
     {
       "account": "tfsa",
       "ticker": "TD.TO",
       "held_cad": 0.0,
-      "target_cad": 3873.02,
+      "target_cad": 3857.3,
       "ratio": 0.0,
       "status": "new"
     },
@@ -551,7 +705,7 @@
     }
   ],
   "warnings": [
-    "the book puts 5,100.00 into the RRSP this month; this run moves 0.00, so 5,100.00 of the month's amount is still to fund (new money, or a later run)"
+    "the book puts 7,650.00 into the RRSP this month; this run moves 0.00, so 7,650.00 of the month's amount is still to fund (new money, or a later run)"
   ],
   "report": {
     "caps": [
@@ -656,16 +810,16 @@
         "kind": "account",
         "account": "tfsa",
         "exposure_cad": 9418.8,
-        "cap_cad": 6599.24,
-        "share_of_cap": 1.4273
+        "cap_cad": 6501.64,
+        "share_of_cap": 1.4487
       },
       {
         "name": "RY.TO position in the RRSP (the account's cap, on the account once the money has moved in)",
         "kind": "account",
         "account": "rrsp",
         "exposure_cad": 11456.4,
-        "cap_cad": 1655.64,
-        "share_of_cap": 6.9196
+        "cap_cad": 1910.64,
+        "share_of_cap": 5.9961
       },
       {
         "name": "Communication Services sector",
@@ -727,7 +881,7 @@
       }
     },
     "room": {
-      "rrsp_limit_cad": 5100.0,
+      "rrsp_limit_cad": 7650.0,
       "rrsp_room_cad": 28000.0,
       "tfsa_limit_cad": 32000.0,
       "rrsp_open": true,
@@ -737,31 +891,33 @@
     "run_sale_tax_cad": 496.95,
     "harvest": [],
     "excluded": [],
-    "parked_share": 0.7102487678109725,
+    "parked_share": 0.7019456771029768,
     "fund_by_account": {
       "tfsa": {
-        "weight": 0.5537691959494446,
+        "weight": 0.5429581459974149,
         "listing": "VFV.TO"
       },
       "rrsp": {
-        "weight": 0.13776855713248487,
+        "weight": 0.15898753110556071,
         "listing": "VFV.TO"
       },
       "trading": {
-        "weight": 0.018711014729042852,
+        "weight": 1.1657341758564144e-15,
         "listing": "VOO"
       }
     },
-    "unfilled": [
-      {
-        "account": "rrsp",
-        "left_cad": 22900.0,
-        "reasons": [
-          "paced: this month's contribution is the quota, the rest waits for the next months"
-        ]
-      }
+    "unfilled": [],
+    "breaches": [
+      "AAPL in the TRADING position cap 10% of the account",
+      "BCE.TO in the TRADING position cap 10% of the account",
+      "BMO.TO in the TRADING position cap 10% of the account",
+      "CNQ.TO in the TRADING position cap 10% of the account",
+      "FTS.TO in the TRADING position cap 10% of the account",
+      "JNJ in the TRADING position cap 10% of the account",
+      "RY.TO in the TRADING position cap 10% of the account",
+      "SHOP.TO in the TRADING position cap 10% of the account",
+      "TD.TO in the TRADING position cap 10% of the account"
     ],
-    "breaches": [],
     "view_notes": [
       {
         "ticker": "AAPL",

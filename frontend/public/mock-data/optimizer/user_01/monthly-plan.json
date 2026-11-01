@@ -1,6 +1,6 @@
 {
   "portfolio_id": "e3ba3a97-cedc-4d75-9976-0655d9fd9340",
-  "as_of": "2026-10-31",
+  "as_of": "2026-11-01",
   "amount_cad": 5000.0,
   "account": null,
   "tax_year": 2026,
@@ -17,13 +17,13 @@
   "deducted_so_far": 0.0,
   "rrsp_months": 1.0,
   "rrsp_since": null,
-  "rrsp_suggested": 5100.0,
+  "rrsp_suggested": 7650.0,
   "rrsp_year": {
     "target": 15300.0,
     "paid": 0.0,
     "to_target": 15300.0,
     "can_still_claim": 15300.0,
-    "needed_per_month": 5100.0,
+    "needed_per_month": 7650.0,
     "on_pace": 12750.0,
     "behind_by": 12750.0,
     "tax_saved_so_far": 0.0,
@@ -69,12 +69,14 @@
     }
   },
   "reasons": [
-    "RRSP 5,000.00: 1.00 month(s) of the 5,100.00 a month needed to reach the year's target over the 3 month(s) left, for the time since the start (none before); 15,300.00 more can be claimed for 2026 (limited by the owner's cap (15,300.00)), 0.00 so far",
+    "RRSP 5,000.00: 1.00 month(s) of the 7,650.00 a month needed to reach the year's target over the 2 month(s) left, for the time since the start (none before); 15,300.00 more can be claimed for 2026 (limited by the owner's cap (15,300.00)), 0.00 so far",
     "The RRSP amount is limited to the 5,000.00 asked about",
     "TFSA 0.00: the rest, up to the 32,000.00 of room",
     "Trading 0.00: nothing is left after the TFSA"
   ],
-  "warnings": [],
+  "warnings": [
+    "The 2026 RRSP amount uses the profile's income of 85,000.00; enter the year's actual taxable income to true it up"
+  ],
   "income_final": false,
   "income_notes": [
     "Dividends were not checked for this answer"

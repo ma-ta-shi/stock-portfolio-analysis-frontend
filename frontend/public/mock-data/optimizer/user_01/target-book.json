@@ -1,42 +1,47 @@
 {
   "portfolio_id": "e3ba3a97-cedc-4d75-9976-0655d9fd9340",
-  "run_id": "928e4a95-d52a-464a-8fb4-f11df77f79c8",
-  "as_of": "2026-10-31",
+  "run_id": "46551533-1642-4704-87e2-6650454f7129",
+  "as_of": "2026-11-01",
   "total_value_cad": 84122.82,
-  "stock_share": 0.28975123218902765,
-  "parked": 0.7102487678109725,
-  "expected_return": 0.06452789988665875,
-  "volatility": 0.14084974512928627,
-  "tracking_volatility": 0.03799341579432553,
+  "stock_share": 0.29805432289702316,
+  "parked": 0.7019456771029768,
+  "expected_return": 0.06426928042190858,
+  "volatility": 0.14015417564700025,
+  "tracking_volatility": 0.03882547308962906,
   "benchmark_return": {
     "tfsa": 0.06541275548000147,
     "rrsp": 0.05644420728601229,
     "trading": 0.05678858876857107
   },
-  "certain_part": 0.0017611605810050168,
-  "view_part": 0.002417019160860612,
+  "certain_part": 0.0017676485063803614,
+  "view_part": 0.00246124237482561,
   "risk_aversion": 1.7433761864254935,
   "benchmark_vol": 0.15048924190244634,
   "dropped": [
-    "AAPL",
-    "BCE.TO",
     "RDDT",
     "CNQ.TO in the TFSA",
-    "CNQ.TO in the TRADING",
-    "ENB.TO in the TRADING",
-    "JNJ in the TRADING",
-    "TD.TO in the TRADING"
+    "ENB.TO in the TRADING"
   ],
-  "breaches": [],
+  "breaches": [
+    "AAPL in the TRADING position cap 10% of the account",
+    "BCE.TO in the TRADING position cap 10% of the account",
+    "BMO.TO in the TRADING position cap 10% of the account",
+    "CNQ.TO in the TRADING position cap 10% of the account",
+    "FTS.TO in the TRADING position cap 10% of the account",
+    "JNJ in the TRADING position cap 10% of the account",
+    "RY.TO in the TRADING position cap 10% of the account",
+    "SHOP.TO in the TRADING position cap 10% of the account",
+    "TD.TO in the TRADING position cap 10% of the account"
+  ],
   "registered": {
     "tc": 0.2965,
     "tw": 0.1905,
     "level": 0.9915820904641331,
-    "refund_rate": 0.29650000000000004,
-    "gain": 0.012561780949331913,
+    "refund_rate": 0.29649934640522874,
+    "gain": 0.012561757014240671,
     "rrsp_open": true,
     "rrsp_closed_reason": null,
-    "rrsp_limit": 5100.0,
+    "rrsp_limit": 7650.0,
     "rrsp_room": 28000.0,
     "tfsa_limit": 32000.0,
     "plan_ok": true,
@@ -44,15 +49,15 @@
     "deducted": 0.0,
     "province": "ON",
     "tc_override": null,
-    "extra_income": 1676.0616937255854,
+    "extra_income": 1676.0616937255845,
     "passes": 2,
     "notes": []
   },
   "moves": {
     "relocate": true,
     "transfers": {
-      "tfsa": 32000.0,
-      "rrsp": 5100.0
+      "tfsa": 31024.02,
+      "rrsp": 7650.0
     },
     "sales": [
       {
@@ -82,26 +87,18 @@
     "net_gain_cad": 3352.12,
     "sale_tax_cad": 496.95,
     "expected_as_held": 0.0684658932311137,
-    "expected_targeted": 0.06452789988665875,
+    "expected_targeted": 0.06426928042190856,
     "expected_by_account": {
-      "tfsa": 0.06832614695089037,
-      "rrsp": 0.05012418997031413,
+      "tfsa": 0.06842610330024163,
+      "rrsp": 0.05012418997031411,
       "trading": 0.05678858876857107
     },
-    "unfilled": [
-      {
-        "account": "rrsp",
-        "left_cad": 22900.0,
-        "reasons": [
-          "paced: this month's contribution is the quota, the rest waits for the next months"
-        ]
-      }
-    ],
+    "unfilled": [],
     "volatility_as_held": 0.1658959710459481,
-    "volatility_targeted": 0.14084974512928627,
+    "volatility_targeted": 0.14015417564700025,
     "income_added": 1676.06,
     "passes": 2,
-    "harvest_window": false,
+    "harvest_window": true,
     "harvest": []
   },
   "accounts": [
@@ -113,11 +110,11 @@
       "new_money_cad": 0.0,
       "new_money_placed_cad": 0.0,
       "capacity": 0.40408058872963043,
-      "stocks": 0.2307075648465341,
-      "fund": 0.5537691959494446,
+      "stocks": 0.22991680956606847,
+      "fund": 0.5429581459974149,
       "fund_listing": "VFV.TO",
       "full": false,
-      "capacity_after": 0.7844767607959787
+      "capacity_after": 0.7728749555634834
     },
     {
       "account": "rrsp",
@@ -127,11 +124,11 @@
       "new_money_cad": 0.0,
       "new_money_placed_cad": 0.0,
       "capacity": 0.13618658455190394,
-      "stocks": 0.059043667342493486,
-      "fund": 0.13776855713248487,
+      "stocks": 0.06813751333095466,
+      "fund": 0.15898753110556071,
       "fund_listing": "VFV.TO",
       "full": false,
-      "capacity_after": 0.19681222447497834
+      "capacity_after": 0.22712504443651538
     },
     {
       "account": "trading",
@@ -142,10 +139,10 @@
       "new_money_placed_cad": 0.0,
       "capacity": 0.45973282671846555,
       "stocks": 0.0,
-      "fund": 0.018711014729042852,
+      "fund": 1.1657341758564144e-15,
       "fund_listing": "VOO",
-      "full": false,
-      "capacity_after": 0.018711014729042852
+      "full": true,
+      "capacity_after": 1.1657341758564144e-15
     }
   ],
   "lines": [
@@ -191,7 +188,7 @@
           "account": "rrsp",
           "before_level": 0.06765890654132223,
           "held": 0.05867145045089504,
-          "new_dollar": 0.07123323140022694,
+          "new_dollar": 0.0712332074651357,
           "edge": -0.0003901818014929309,
           "score": -0.001630082476929781,
           "dividend_tax": 0.0,
@@ -259,7 +256,7 @@
           "account": "rrsp",
           "before_level": 0.046098812716676596,
           "held": 0.037292847545650064,
-          "new_dollar": 0.04985462849498198,
+          "new_dollar": 0.049854604559890735,
           "edge": 0.008476352062464297,
           "score": 0.03418656672561378,
           "dividend_tax": 0.0,
@@ -287,9 +284,9 @@
       "ticker": "BMO.TO",
       "status": "in_book",
       "weights": {
-        "tfsa": 0.023847814050470203
+        "tfsa": 0.024482336859175138
       },
-      "total": 0.023847814050470203,
+      "total": 0.024482336859175138,
       "current": {},
       "current_total": 0.0,
       "cap": 0.1,
@@ -329,7 +326,7 @@
           "account": "rrsp",
           "before_level": 0.07260569791688476,
           "held": 0.06357660018416517,
-          "new_dollar": 0.07613838113349708,
+          "new_dollar": 0.07613835719840584,
           "edge": 0.015160845361843006,
           "score": 0.10930324418868127,
           "dividend_tax": 0.0,
@@ -357,9 +354,9 @@
       "ticker": "CNQ.TO",
       "status": "in_book",
       "weights": {
-        "rrsp": 0.01968122244749784
+        "rrsp": 0.02271250444365156
       },
-      "total": 0.01968122244749784,
+      "total": 0.02271250444365156,
       "current": {},
       "current_total": 0.0,
       "cap": 0.1,
@@ -399,7 +396,7 @@
           "account": "rrsp",
           "before_level": 0.03634726194215743,
           "held": 0.02762338444338508,
-          "new_dollar": 0.04018516539271699,
+          "new_dollar": 0.04018514145762575,
           "edge": 0.0007668390752565112,
           "score": 0.002724952549099924,
           "dividend_tax": 0.0,
@@ -427,10 +424,10 @@
       "ticker": "ENB.TO",
       "status": "in_book",
       "weights": {
-        "tfsa": 0.07844767607959784,
-        "rrsp": 0.019681222447497832
+        "tfsa": 0.07728749555634828,
+        "rrsp": 0.022712504443651547
       },
-      "total": 0.09812889852709566,
+      "total": 0.09999999999999984,
       "current": {
         "trading": 0.12105513806992715
       },
@@ -473,7 +470,7 @@
           "account": "rrsp",
           "before_level": 0.04954517881992859,
           "held": 0.04071020245081714,
-          "new_dollar": 0.053271983400149055,
+          "new_dollar": 0.05327195946505781,
           "edge": 0.009269270184563846,
           "score": 0.05310268373163306,
           "dividend_tax": 0.0,
@@ -539,7 +536,7 @@
           "account": "rrsp",
           "before_level": 0.030174172901041185,
           "held": 0.021502259907373658,
-          "new_dollar": 0.03406404085670557,
+          "new_dollar": 0.03406401692161433,
           "edge": -0.010979854625041127,
           "score": -0.08662417183988934,
           "dividend_tax": 0.0,
@@ -567,9 +564,9 @@
       "ticker": "JNJ",
       "status": "in_book",
       "weights": {
-        "rrsp": 0.019681222447497815
+        "rrsp": 0.02271250444365155
       },
-      "total": 0.019681222447497815,
+      "total": 0.02271250444365155,
       "current": {},
       "current_total": 0.0,
       "cap": 0.1,
@@ -609,7 +606,7 @@
           "account": "rrsp",
           "before_level": 0.046609122721334106,
           "held": 0.03779886180685292,
-          "new_dollar": 0.050360642756184834,
+          "new_dollar": 0.05036061882109359,
           "edge": 0.006379151263931328,
           "score": 0.03134046597072243,
           "dividend_tax": 0.0,
@@ -677,7 +674,7 @@
           "account": "rrsp",
           "before_level": 0.10552090404738523,
           "held": 0.0962147290871047,
-          "new_dollar": 0.10877651003643661,
+          "new_dollar": 0.10877648610134537,
           "edge": 0.002051008532110682,
           "score": 0.0030787462956854725,
           "dividend_tax": 0.0,
@@ -707,9 +704,9 @@
       "ticker": "RY.TO",
       "status": "in_book",
       "weights": {
-        "tfsa": 0.03011212430550816
+        "tfsa": 0.02966448484279823
       },
-      "total": 0.03011212430550816,
+      "total": 0.02966448484279823,
       "current": {
         "rrsp": 0.13618658455190394
       },
@@ -751,7 +748,7 @@
           "account": "rrsp",
           "before_level": 0.0676308243474193,
           "held": 0.058643604650359706,
-          "new_dollar": 0.07120538559969161,
+          "new_dollar": 0.07120536166460037,
           "edge": 0.014130867589653297,
           "score": 0.13322033818083684,
           "dividend_tax": 0.0,
@@ -779,9 +776,9 @@
       "ticker": "SHOP.TO",
       "status": "in_book",
       "weights": {
-        "tfsa": 0.05225988876693561
+        "tfsa": 0.05262931400971984
       },
-      "total": 0.05225988876693561,
+      "total": 0.05262931400971984,
       "current": {
         "tfsa": 0.1119648582955791
       },
@@ -821,7 +818,7 @@
           "account": "rrsp",
           "before_level": 0.1253127072526783,
           "held": 0.11583992668346371,
-          "new_dollar": 0.12840170763279563,
+          "new_dollar": 0.12840168369770438,
           "edge": 0.030562492600995986,
           "score": 0.05486094722403994,
           "dividend_tax": 0.0,
@@ -851,9 +848,9 @@
       "ticker": "TD.TO",
       "status": "in_book",
       "weights": {
-        "tfsa": 0.046040061644022294
+        "tfsa": 0.045853178298026966
       },
-      "total": 0.046040061644022294,
+      "total": 0.045853178298026966,
       "current": {
         "trading": 0.16822069719204136
       },
@@ -895,7 +892,7 @@
           "account": "rrsp",
           "before_level": 0.06892210964444856,
           "held": 0.05992402002457354,
-          "new_dollar": 0.07248580097390545,
+          "new_dollar": 0.0724857770388142,
           "edge": 0.015448432224403168,
           "score": 0.12008933790916836,
           "dividend_tax": 0.0,

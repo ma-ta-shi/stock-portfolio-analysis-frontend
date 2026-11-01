@@ -1,13 +1,13 @@
 {
   "data": [
     {
-      "run_id": "928e4a95-d52a-464a-8fb4-f11df77f79c8",
+      "run_id": "46551533-1642-4704-87e2-6650454f7129",
       "kind": "adhoc",
-      "as_of": "2026-10-31",
-      "created_at": "2026-10-31T23:48:50.678114",
+      "as_of": "2026-11-01",
+      "created_at": "2026-11-01T19:27:31.842601",
       "orders": 5,
       "transfers": 0,
-      "waiting": 11,
+      "waiting": 10,
       "no_changes": false,
       "matrix_stored": true
     },

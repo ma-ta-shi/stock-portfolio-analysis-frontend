@@ -2,7 +2,7 @@
   "run_id": null,
   "portfolio_id": "e3ba3a97-cedc-4d75-9976-0655d9fd9340",
   "kind": "inquiry",
-  "as_of": "2026-10-31",
+  "as_of": "2026-11-01",
   "created_at": null,
   "stored": false,
   "dry_run": true,
@@ -80,7 +80,42 @@
       },
       "rebuy_not_before": null,
       "what_would_change": [],
-      "view": null
+      "view": null,
+      "predicted": {
+        "after_tax_12m": 0.06541275548000156,
+        "total_return_cad": 0.06779951192587093,
+        "baseline_cad": null,
+        "view_applied": null,
+        "noise_margin_pts": null,
+        "sigma": null,
+        "market_line_12m": null,
+        "score_12m": null,
+        "entry_cost": 0.0,
+        "exit_tax_cad": 0.0,
+        "tax_rate_pct": null,
+        "usable": true,
+        "flags": [],
+        "status": "ok",
+        "reason": null
+      },
+      "alternatives": [
+        {
+          "rank": 1,
+          "account": "tfsa",
+          "ticker": "BMO.TO",
+          "action_type": "deploy",
+          "expected_return_at_time": 0.07260569791688487,
+          "reason_not_chosen": "waiting: the industry group (BMO.TO, RY.TO, TD.TO) holds 25,607.60 against its cap of 8,912.28, so nothing more goes into it"
+        },
+        {
+          "rank": 2,
+          "account": "tfsa",
+          "ticker": "RY.TO",
+          "action_type": "deploy",
+          "expected_return_at_time": 0.0676308243474193,
+          "reason_not_chosen": "waiting: the RY.TO position holds 11,456.40 against its cap of 8,912.28, so nothing more goes into it"
+        }
+      ]
     }
   ],
   "transfers": [],
@@ -147,7 +182,9 @@
       "status": "above"
     }
   ],
-  "warnings": [],
+  "warnings": [
+    "The 2026 RRSP amount uses the profile's income of 85,000.00; enter the year's actual taxable income to true it up"
+  ],
   "report": {
     "caps": [
       {
@@ -318,7 +355,7 @@
       }
     },
     "room": {
-      "rrsp_limit_cad": 5100.0,
+      "rrsp_limit_cad": 7650.0,
       "rrsp_room_cad": 28000.0,
       "tfsa_limit_cad": 27000.0,
       "rrsp_open": true,
