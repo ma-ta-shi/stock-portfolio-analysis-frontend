@@ -134,7 +134,7 @@ export function StockPage() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="text-emerald-600 border-emerald-200 hover:bg-emerald-50 dark:border-emerald-800 dark:hover:bg-emerald-950/30"
+                  className="text-emerald-700 dark:text-emerald-400 border-emerald-200 hover:bg-emerald-50 dark:border-emerald-800 dark:hover:bg-emerald-950/30"
                   onClick={() => setBuyingHolding(h)}
                 >
                   <TrendingUp className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
@@ -143,7 +143,7 @@ export function StockPage() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="text-red-600 border-red-200 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950/30"
+                  className="text-red-600 dark:text-red-400 border-red-200 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950/30"
                   onClick={() => setSellingHolding(h)}
                 >
                   <TrendingDown className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
@@ -294,7 +294,9 @@ export function StockPage() {
                   <TableHead>Timeline</TableHead>
                   <TableHead>Prediction</TableHead>
                   <TableHead className="text-right">Return</TableHead>
-                  <TableHead />
+                  <TableHead>
+                  <span className="sr-only">Actions</span>
+                </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

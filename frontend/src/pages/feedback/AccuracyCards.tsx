@@ -37,7 +37,7 @@ export function AccuracyCards() {
   const s = data.accuracy_summary
   const dirPct = s.direction_accuracy * 100
   const dirColor =
-    dirPct >= 70 ? 'text-emerald-600' : dirPct >= 55 ? 'text-amber-500' : 'text-red-600'
+    dirPct >= 70 ? 'text-emerald-700 dark:text-emerald-400' : dirPct >= 55 ? 'text-amber-700 dark:text-amber-400' : 'text-red-600 dark:text-red-400'
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">

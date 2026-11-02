@@ -61,3 +61,8 @@ public/mock-data/  Mock API responses, one JSON file per endpoint
 - **Money is shown in its own currency.** Use `formatMoney(value, holding.stock.currency)`; USD renders as `US$1,234.56`. Combined totals across currencies must be converted with `toCad`/`sumInCad` and the rate from `useFxRates()`. Don't add USD and CAD amounts directly.
 - **Every query handles errors.** Render `<QueryError what="…" error={error} onRetry={refetch} />`.
 - **Query keys come from `queryKeys`** so queries and cache updates can't drift apart.
+
+## Known limitations / future work
+
+- **Phones and small screens.** The app targets a desktop browser. At phone widths the header overflows and several wide tables need horizontal scrolling. A responsive pass (collapsible nav, stacked summary cards, card-style tables) would make it usable on phones without a separate build.
+- **Dev tooling updates.** `@vitejs/plugin-react` 6.2 can't be installed yet because of an upstream `@babel/core` 8 peer conflict, which also blocks some dev-only minor updates (ESLint, Vitest, Vite). `npm audit --omit=dev` is clean; the remaining advisories are in dev tools only.

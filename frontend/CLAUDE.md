@@ -43,6 +43,12 @@
 - Dates: display API date strings with `formatDate` / `parseDate` — never `new Date(apiString)` (date-only strings parse as UTC midnight = the previous day in Canada). Date inputs default to `localDateInputValue()` and are sent to the API as the `YYYY-MM-DD` string, not `toISOString()`
 - Tests run with `TZ=America/Toronto` (vitest.config.ts) so timezone bugs surface
 
+## Colour, Contrast & Theme
+- Status colours come from `TONE_TEXT` / `BADGE` / `gainLossColor` in `src/lib/labels.ts` — every pair meets WCAG AA (≥ 4.5:1) in light and dark mode. Don't use raw Tailwind 400–600 shades for text or white-on-colour badges (they fail on white)
+- Dark mode follows the OS setting (inline script in `index.html` toggles `.dark`); any new colour class needs a `dark:` counterpart
+- `--destructive` is red-700 in light mode for contrast; don't revert to the shadcn default
+- Verified with axe-core (0 violations on every page, both themes) — re-run after visual changes
+
 ## Pages (from Notion Front End Design spec)
 - Home: morning briefing (alert types: outlook_change, portfolio_optimization, price_movement, etc.)
 - Watchlist: outlook badge, projected return %, portfolio fit, full-row click → /stocks/:stockId; "Add Stock" button (ticker/name search → exchange confirm → add); trash icon per row with confirmation dialog to remove

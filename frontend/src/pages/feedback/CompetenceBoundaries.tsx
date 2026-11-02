@@ -1,5 +1,5 @@
 import { useFeedback } from '@/hooks/use-feedback'
-import { formatDate, parseDate } from '@/lib/format'
+import { formatDate, formatEnumLabel, parseDate } from '@/lib/format'
 import { Badge } from '@/components/ui/badge'
 
 export function CompetenceBoundaries() {
@@ -24,7 +24,7 @@ export function CompetenceBoundaries() {
             <div className="text-xs text-muted-foreground mb-1">Best Sectors</div>
             <div className="flex flex-wrap gap-1">
               {competence_boundaries.best_performing_sectors.map((s) => (
-                <Badge key={s} className="text-xs bg-emerald-500/10 text-emerald-700 border-emerald-200">
+                <Badge key={s} className="text-xs bg-emerald-500/10 text-emerald-700 border-emerald-200 dark:text-emerald-400 dark:border-emerald-800">
                   {s}
                 </Badge>
               ))}
@@ -34,7 +34,7 @@ export function CompetenceBoundaries() {
             <div className="text-xs text-muted-foreground mb-1">Weakest Sectors</div>
             <div className="flex flex-wrap gap-1">
               {competence_boundaries.weakest_performing_sectors.map((s) => (
-                <Badge key={s} variant="outline" className="text-xs text-red-600 border-red-200">
+                <Badge key={s} variant="outline" className="text-xs text-red-600 dark:text-red-400 border-red-200 dark:border-red-800">
                   {s}
                 </Badge>
               ))}
@@ -42,12 +42,12 @@ export function CompetenceBoundaries() {
           </div>
           <div>
             <div className="text-xs text-muted-foreground mb-1">Best Timeline</div>
-            <span className="font-medium">{competence_boundaries.best_timeline}</span>
+            <span className="font-medium">{formatEnumLabel(competence_boundaries.best_timeline)}</span>
           </div>
           <div>
             <div className="text-xs text-muted-foreground mb-1">Weakest Timeline</div>
             <span className="font-medium text-muted-foreground">
-              {competence_boundaries.weakest_timeline}
+              {formatEnumLabel(competence_boundaries.weakest_timeline)}
             </span>
           </div>
         </div>

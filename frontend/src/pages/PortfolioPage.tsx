@@ -152,7 +152,6 @@ function SummaryHeader({
                 type="button"
                 key={acc}
                 onClick={() => onAccountChange(acc)}
-                aria-label={`Show ${acc.toUpperCase()} account`}
                 className="bg-card border border-border rounded-lg px-4 py-3 text-left hover:border-primary transition-colors"
               >
                 <div className="text-xs font-medium text-muted-foreground mb-1">

@@ -10,7 +10,7 @@ function DirectionArrow({ direction }: { direction: string }) {
   if (direction === 'up' || direction === 'hiking')
     return <ArrowUp className="w-3 h-3 text-red-500 inline" aria-label="rising" />
   if (direction === 'down' || direction === 'cutting')
-    return <ArrowDown className="w-3 h-3 text-emerald-600 inline" aria-label="falling" />
+    return <ArrowDown className="w-3 h-3 text-emerald-700 dark:text-emerald-400 inline" aria-label="falling" />
   return <Minus className="w-3 h-3 text-muted-foreground inline" aria-label="holding" />
 }
 

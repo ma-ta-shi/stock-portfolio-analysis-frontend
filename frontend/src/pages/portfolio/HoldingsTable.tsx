@@ -95,7 +95,9 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
               <TableHead>Confidence</TableHead>
               <TableHead className="text-right">Div Yield</TableHead>
               <TableHead className="text-right">YoC</TableHead>
-              <TableHead />
+              <TableHead>
+                  <span className="sr-only">Actions</span>
+                </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -154,7 +156,7 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-muted-foreground hover:text-emerald-600"
+                        className="text-muted-foreground hover:text-emerald-700 dark:text-emerald-400"
                         title="Buy more shares"
                         aria-label={`Buy more ${label}`}
                         onClick={() => setBuyingHolding(h)}
@@ -164,7 +166,7 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-muted-foreground hover:text-red-600"
+                        className="text-muted-foreground hover:text-red-600 dark:text-red-400"
                         title="Sell shares"
                         aria-label={`Sell ${label}`}
                         onClick={() => setSellingHolding(h)}

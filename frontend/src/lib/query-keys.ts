@@ -13,7 +13,6 @@ export const queryKeys = {
     unreadCount: (userId: string) => ['alerts', userId, 'unread'] as const,
   },
   analysis: {
-    recent: ['analysis', 'recent'] as const,
     run: (analysisId: string) => ['analysis', 'run', analysisId] as const,
     agents: (analysisId: string) => ['analysis', 'agents', analysisId] as const,
   },

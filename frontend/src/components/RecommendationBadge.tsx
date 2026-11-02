@@ -1,4 +1,5 @@
 import { Badge } from '@/components/ui/badge'
+import { BADGE } from '@/lib/labels'
 import { cn } from '@/lib/utils'
 import type { Recommendation } from '@/types'
 
@@ -8,9 +9,9 @@ interface Props {
 }
 
 const colorMap: Record<Recommendation, string> = {
-  BUY: 'bg-emerald-600 text-white hover:bg-emerald-600',
-  HOLD: 'bg-amber-500 text-white hover:bg-amber-500',
-  SELL: 'bg-red-600 text-white hover:bg-red-600',
+  BUY: BADGE.positive,
+  HOLD: BADGE.warningSoft,
+  SELL: BADGE.negative,
 }
 
 export function RecommendationBadge({ recommendation, size = 'sm' }: Props) {

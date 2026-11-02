@@ -84,7 +84,7 @@ export function AllocationCharts({ accountFilter }: AllocationChartsProps) {
       <p className="text-xs text-muted-foreground text-center">
         Weights by market value in CAD{allocations.missingCurrencies.length === 0 && rates.USD ? ' (USD converted at the current rate)' : ''}.
         {allocations.missingCurrencies.length > 0 && (
-          <span className="text-amber-600">
+          <span className="text-amber-700 dark:text-amber-400">
             {' '}{allocations.missingCurrencies.join(', ')} holdings excluded — exchange rate unavailable.
           </span>
         )}

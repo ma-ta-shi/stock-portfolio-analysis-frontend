@@ -12,7 +12,7 @@ function InfoRow({ label, value, note }: { label: string; value: ReactNode; note
     <div className="flex items-start justify-between py-2 border-b border-border last:border-0">
       <div>
         <span className="text-sm text-muted-foreground">{label}</span>
-        {note && <div className="text-xs text-muted-foreground/60 mt-0.5">{note}</div>}
+        {note && <div className="text-xs text-muted-foreground mt-0.5">{note}</div>}
       </div>
       <span className="text-sm font-medium text-right max-w-xs">{value}</span>
     </div>
@@ -321,7 +321,7 @@ function InvestmentPreferencesTab() {
             prefs.sectors_to_avoid.length > 0 ? (
               <div className="flex flex-wrap gap-1 justify-end">
                 {prefs.sectors_to_avoid.map((s) => (
-                  <Badge key={s} variant="outline" className="text-xs text-red-600">
+                  <Badge key={s} variant="outline" className="text-xs text-red-600 dark:text-red-400">
                     {s}
                   </Badge>
                 ))}

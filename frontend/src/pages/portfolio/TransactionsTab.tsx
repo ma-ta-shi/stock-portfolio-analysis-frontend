@@ -154,7 +154,7 @@ export function TransactionsTab({ accountFilter }: TransactionsTabProps) {
                     </TableCell>
                     <TableCell className="text-right text-sm">
                       {t.shares != null ? (
-                        <span className={t.shares < 0 ? 'text-red-600' : undefined}>
+                        <span className={t.shares < 0 ? 'text-red-600 dark:text-red-400' : undefined}>
                           {t.shares > 0 ? '+' : ''}{t.shares}
                         </span>
                       ) : (

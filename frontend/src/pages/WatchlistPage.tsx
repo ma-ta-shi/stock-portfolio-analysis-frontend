@@ -97,11 +97,11 @@ export function WatchlistPage() {
         {data?.summary && (
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <span>{data.summary.total} stocks</span>
-            <span className="text-emerald-600 font-medium">
+            <span className="text-emerald-700 dark:text-emerald-400 font-medium">
               {data.summary.bullish_count} bullish
             </span>
             {data.summary.changed_since_last_check > 0 && (
-              <span className="text-blue-500">
+              <span className="text-blue-600 dark:text-blue-400">
                 {data.summary.changed_since_last_check} changed
               </span>
             )}
@@ -131,7 +131,9 @@ export function WatchlistPage() {
                 <TableHead>Portfolio Fit</TableHead>
                 <TableHead>Account</TableHead>
                 <SortableHead label="Last Analyzed" colKey="last_analyzed_at" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
-                <TableHead />
+                <TableHead>
+                  <span className="sr-only">Actions</span>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

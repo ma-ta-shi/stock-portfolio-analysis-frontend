@@ -46,7 +46,7 @@ export function Header() {
             {!!unreadCount && unreadCount > 0 && (
               <span
                 aria-hidden="true"
-                className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-blue-500 text-white text-[9px] flex items-center justify-center leading-none"
+                className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-blue-600 text-white text-[9px] flex items-center justify-center leading-none"
               >
                 {unreadCount > 9 ? '9+' : unreadCount}
               </span>

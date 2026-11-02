@@ -123,7 +123,7 @@ export function SellPositionDialog({ holding, onClose }: SellPositionDialogProps
         <form onSubmit={handleSubmit} className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
             <FormField
-              label={<>Shares to sell <span className="text-muted-foreground/60">(max {maxShares})</span></>}
+              label={<>Shares to sell <span className="text-muted-foreground">(max {maxShares})</span></>}
               error={sharesNum > maxShares ? `Cannot exceed ${maxShares} shares` : undefined}
             >
               {(id, describedBy) => (

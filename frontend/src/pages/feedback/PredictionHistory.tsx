@@ -80,7 +80,7 @@ export function PredictionHistory() {
                   className={cn(
                     'text-xs',
                     p.status === 'active'
-                      ? 'border-blue-500 text-blue-600'
+                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
                       : 'text-muted-foreground',
                   )}
                 >
