@@ -63,7 +63,12 @@ export function TransactionsTab({ accountFilter }: TransactionsTabProps) {
     [allTransactions, accountFilter, filters.holdingId],
   )
   const transactions = useMemo(() => filterTransactions(scoped, filters), [scoped, filters])
-  const tickers = useMemo(() => tickersIn(scoped), [scoped])
+  // Always list the active ticker, even if the current account has none: otherwise the
+  // dropdown would show "All tickers" while the table is still filtered (and empty).
+  const tickers = useMemo(() => {
+    const list = tickersIn(scoped)
+    return filters.ticker && !list.includes(filters.ticker) ? [...list, filters.ticker].sort() : list
+  }, [scoped, filters.ticker])
   const holdingTx = filters.holdingId
     ? allTransactions?.find((t) => t.holding_id === filters.holdingId)
     : undefined

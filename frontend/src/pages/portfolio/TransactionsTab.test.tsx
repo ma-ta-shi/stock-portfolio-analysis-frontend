@@ -77,6 +77,13 @@ describe('TransactionsTab filters', () => {
     expect(screen.getByLabelText('To', { exact: true })).toHaveAttribute('type', 'date')
   })
 
+  it('keeps showing the active ticker after switching to an account without it', () => {
+    renderAt('/portfolio?tab=transactions&ticker=MSFT', 'tfsa')
+    expect(screen.getByRole('combobox', { name: 'Ticker' })).toHaveValue('MSFT')
+    expect(screen.getByText('No transactions match these filters.')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Clear filters' })).toBeInTheDocument()
+  })
+
   it('flags an inverted date range instead of silently showing nothing', () => {
     renderAt('/portfolio?tab=transactions&from=2026-03-01&to=2026-01-01')
     expect(screen.getByRole('alert')).toHaveTextContent('“From” date is after the “To” date')
