@@ -78,6 +78,8 @@ describe('SellPositionDialog', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Sell 10 shares' }))
     await waitFor(() => expect(onClose).toHaveBeenCalled())
     expect(mutateAsync).toHaveBeenCalledWith(expect.objectContaining({ holdingId: trading.holding_id, shares: 10, pricePerShare: 150 }))
+    // A calendar date, not a UTC timestamp (which would display as the previous day in Canada)
+    expect(mutateAsync.mock.calls[0][0].transactionDate).toMatch(/^\d{4}-\d{2}-\d{2}$/)
   })
 
   it('stays open when the mutation fails', async () => {

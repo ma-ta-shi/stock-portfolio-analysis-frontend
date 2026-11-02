@@ -8,6 +8,8 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
+    // Users are in Canada; a UTC test runner would hide off-by-one-day bugs.
+    env: { TZ: 'America/Toronto' },
   },
   resolve: {
     alias: {

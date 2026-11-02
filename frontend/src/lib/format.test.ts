@@ -11,6 +11,7 @@ import {
   formatRelativeTime,
   localDateInputValue,
   parseAmount,
+  parseDate,
 } from './format'
 
 describe('formatCAD', () => {
@@ -132,6 +133,13 @@ describe('formatDate', () => {
   })
   it('formats date-only strings as that calendar day in any timezone', () => {
     expect(formatDate('2026-03-01')).toBe('Mar 1, 2026')
+  })
+  it('runs in a Canadian timezone (guards the tests below against a UTC runner)', () => {
+    expect(new Date('2026-01-01T00:00:00Z').getTimezoneOffset()).toBeGreaterThan(0)
+  })
+  it('does not shift date-only strings back a day (UTC midnight is the previous day in Canada)', () => {
+    expect(formatDate('2025-09-01', { month: 'short', year: '2-digit' })).toBe('Sep 25')
+    expect(parseDate('2025-09-01').getDate()).toBe(1)
   })
   it('handles invalid input', () => {
     expect(formatDate('')).toBe('—')

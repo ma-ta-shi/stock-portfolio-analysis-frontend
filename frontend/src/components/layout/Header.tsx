@@ -37,11 +37,10 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-3">
-          {/* Alerts are listed under "What Changed" on Home; the bell links there. */}
-          <Link
-            to="/"
-            className="relative rounded-md p-1 hover:bg-muted transition-colors"
-            aria-label={unreadCount ? `Alerts, ${unreadCount} unread` : 'Alerts'}
+          <div
+            role="img"
+            className="relative p-1"
+            aria-label={unreadCount ? `${unreadCount} unread alerts` : 'No unread alerts'}
           >
             <Bell className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
             {!!unreadCount && unreadCount > 0 && (
@@ -52,7 +51,7 @@ export function Header() {
                 {unreadCount > 9 ? '9+' : unreadCount}
               </span>
             )}
-          </Link>
+          </div>
           <ProfileSwitcher />
         </div>
       </div>

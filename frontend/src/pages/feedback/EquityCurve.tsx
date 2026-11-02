@@ -9,15 +9,14 @@ import {
   Tooltip,
 } from 'recharts'
 import { useFeedback } from '@/hooks/use-feedback'
-import { formatCAD } from '@/lib/format'
+import { formatCAD, formatDate } from '@/lib/format'
 
 function formatYAxis(value: number) {
   return formatCAD(value, { compact: true })
 }
 
 function formatXAxis(dateStr: string) {
-  const d = new Date(dateStr)
-  return d.toLocaleDateString('en-CA', { month: 'short', year: '2-digit' })
+  return formatDate(dateStr, { month: 'short', year: '2-digit' })
 }
 
 export function EquityCurve() {

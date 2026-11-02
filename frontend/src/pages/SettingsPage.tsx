@@ -3,7 +3,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import type { ReactNode } from 'react'
 import { QueryError } from '@/components/QueryError'
-import { formatCAD, formatEnumLabel, formatPercent } from '@/lib/format'
+import { formatCAD, formatEnumLabel, formatPercent, parseDate } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import type { GoalPriority, InvestmentGoalType, RrspContributionStrategy } from '@/types'
 
@@ -92,7 +92,7 @@ function ProfileTab() {
         <p className="text-xs text-muted-foreground font-mono mt-0.5">{data.user_id}</p>
         <p className="text-xs text-muted-foreground mt-1">
           Member since{' '}
-          {new Date(data.created_at).toLocaleDateString('en-CA', {
+          {parseDate(data.created_at).toLocaleDateString('en-CA', {
             year: 'numeric',
             month: 'long',
           })}
@@ -220,7 +220,7 @@ function GoalsTab() {
                 <div>
                   <div className="text-xs text-muted-foreground">Target Date</div>
                   <div className="text-sm font-medium">
-                    {new Date(goal.target_date).toLocaleDateString('en-CA', {
+                    {parseDate(goal.target_date).toLocaleDateString('en-CA', {
                       year: 'numeric',
                       month: 'short',
                     })}

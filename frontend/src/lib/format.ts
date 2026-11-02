@@ -102,14 +102,22 @@ export function formatRelativeTime(isoString: string, now: number = Date.now()):
 }
 
 /**
- * "Mar 24, 2026". Date-only strings ("2026-03-24") are formatted as that calendar day;
- * `new Date('2026-03-24')` would be UTC midnight and show the previous day in Canada.
+ * Parse an API date string. Date-only strings ("2026-03-24") become local midnight of
+ * that calendar day — `new Date('2026-03-24')` is UTC midnight, which is the *previous*
+ * day anywhere in Canada. Always use this instead of `new Date(apiString)` for display.
  */
-export function formatDate(isoString: string): string {
-  const dateOnly = /^\d{4}-\d{2}-\d{2}$/.test(isoString)
-  const date = dateOnly ? new Date(`${isoString}T00:00:00`) : new Date(isoString)
+export function parseDate(value: string): Date {
+  return /^\d{4}-\d{2}-\d{2}$/.test(value) ? new Date(`${value}T00:00:00`) : new Date(value)
+}
+
+/** "Mar 24, 2026" by default; pass `options` for other shapes (e.g. { month: 'short', day: 'numeric' }). */
+export function formatDate(
+  value: string,
+  options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' },
+): string {
+  const date = parseDate(value)
   if (Number.isNaN(date.getTime())) return EMPTY
-  return date.toLocaleDateString(LOCALE, { month: 'short', day: 'numeric', year: 'numeric' })
+  return date.toLocaleDateString(LOCALE, options)
 }
 
 /** "fundamental_analyst" → "Fundamental Analyst" */

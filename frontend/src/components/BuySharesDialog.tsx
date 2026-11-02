@@ -51,7 +51,9 @@ export function BuySharesDialog({ holding, onClose }: BuySharesDialogProps) {
         shares: sharesNum,
         pricePerShare: priceNum,
         fees: feesNum,
-        transactionDate: new Date(date).toISOString(),
+        // The API takes a calendar date ("2026-04-02"). Converting via toISOString() would
+        // make it UTC midnight, which displays as the previous day in Canada.
+        transactionDate: date,
       })
       onClose()
     } catch {

@@ -1,4 +1,5 @@
 import { useFeedback } from '@/hooks/use-feedback'
+import { formatDate, parseDate } from '@/lib/format'
 import { Badge } from '@/components/ui/badge'
 
 export function CompetenceBoundaries() {
@@ -11,7 +12,7 @@ export function CompetenceBoundaries() {
 
   const { competence_boundaries, learning_journal } = data
   const journal = [...learning_journal].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+    (a, b) => parseDate(b.date).getTime() - parseDate(a.date).getTime(),
   )
 
   return (
@@ -58,10 +59,7 @@ export function CompetenceBoundaries() {
           {journal.map((entry, i) => (
             <li key={i} className="flex gap-3 text-sm">
               <span className="text-xs text-muted-foreground shrink-0 pt-0.5 tabular-nums">
-                {new Date(entry.date).toLocaleDateString('en-CA', {
-                  month: 'short',
-                  day: 'numeric',
-                })}
+                {formatDate(entry.date, { month: 'short', day: 'numeric' })}
               </span>
               <span>{entry.insight}</span>
             </li>

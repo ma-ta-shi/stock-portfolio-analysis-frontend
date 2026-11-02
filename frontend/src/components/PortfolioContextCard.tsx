@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import { formatCAD } from '@/lib/format'
 import { FIT_BADGE_COLORS, FIT_BOX_COLORS, FIT_LABELS } from '@/lib/labels'
 import { cn } from '@/lib/utils'
@@ -12,13 +13,14 @@ interface PortfolioContextCardProps {
 /** "Layer 2 — Portfolio Context" card shared by the Stock and Analysis pages. */
 export function PortfolioContextCard({ context, accountNote }: PortfolioContextCardProps) {
   const fit = context.portfolio_fit
+  const headingId = useId()
   return (
     <section
-      aria-labelledby="portfolio-context-heading"
+      aria-labelledby={headingId}
       className={cn('border rounded-lg p-5 space-y-3', FIT_BOX_COLORS[fit])}
     >
       <h2
-        id="portfolio-context-heading"
+        id={headingId}
         className="font-semibold text-sm uppercase tracking-wide text-muted-foreground"
       >
         Layer 2 — Portfolio Context

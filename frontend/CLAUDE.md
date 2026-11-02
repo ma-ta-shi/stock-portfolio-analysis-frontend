@@ -40,7 +40,8 @@
 - Per-holding money is in the holding's currency: `formatMoney(v, h.stock.currency)` (USD renders `US$`). `formatCAD` only for `_cad` fields
 - Signed amounts: `formatMoney(v, cur, { signed: true })` — never prepend `'+'` manually (formatPct/signed money already sign)
 - Combined cross-currency totals: convert with `toCad`/`sumInCad` (`src/lib/fx.ts`) using `useFxRates()`; unknown rates are reported, never summed as CAD
-- Date inputs default to `localDateInputValue()` (local calendar day, not UTC)
+- Dates: display API date strings with `formatDate` / `parseDate` — never `new Date(apiString)` (date-only strings parse as UTC midnight = the previous day in Canada). Date inputs default to `localDateInputValue()` and are sent to the API as the `YYYY-MM-DD` string, not `toISOString()`
+- Tests run with `TZ=America/Toronto` (vitest.config.ts) so timezone bugs surface
 
 ## Pages (from Notion Front End Design spec)
 - Home: morning briefing (alert types: outlook_change, portfolio_optimization, price_movement, etc.)
@@ -68,7 +69,7 @@
 ## Watchlist & Portfolio Mutations
 - `useAddToWatchlist`, `useRemoveFromWatchlist` in `use-watchlist.ts` — update TanStack Query cache directly (mock mode; no API call)
 - `useAddToPortfolio`, `useRemoveFromPortfolio`, `useUpdatePosition` in `use-portfolio.ts` — same pattern; `useUpdatePosition` recalculates `market_value`, `total_gain_loss`, `total_gain_loss_pct`, `yield_on_cost`
-- `useTickerSearch` in `use-ticker-search.ts` — mock lookup (exact ticker, then partial name; 600ms delay) in mock mode, `GET /api/stocks/resolve?q=` otherwise; returns `TickerResult | null`
+- `useTickerSearch` in `use-ticker-search.ts` — mock lookup (exact ticker, then partial name; 600ms delay) in mock mode, `GET /api/stocks/resolve?q=` otherwise (endpoint path assumed — not yet in docs/api-conventions.md); returns `TickerResult | null`
 - `useAllocationAnalysis` in `use-allocation-analysis.ts` — "Analyze allocation" on the Optimizer tab; set `ALLOCATION_ENDPOINT` to connect it to the backend
 - Sell preview maths: `estimateSell()` in `src/lib/sell-preview.ts` (swap for the backend `sell/preview` endpoint when wired)
 - `AddStockDialog` — `mode: 'watchlist' | 'portfolio'`; step 1 = search, step 2 = confirm (watchlist) or position input (portfolio)

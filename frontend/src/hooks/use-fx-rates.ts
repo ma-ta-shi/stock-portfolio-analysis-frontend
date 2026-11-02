@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useMarketOverview } from './use-market'
 import { CAD_ONLY, type FxRatesToCad } from '@/lib/fx'
 
@@ -11,10 +12,11 @@ import { CAD_ONLY, type FxRatesToCad } from '@/lib/fx'
  */
 export function useFxRates(): { rates: FxRatesToCad; isLoading: boolean; asOf?: string } {
   const { data, isLoading } = useMarketOverview()
-  if (!data) return { rates: CAD_ONLY, isLoading }
-  return {
-    rates: { CAD: 1, USD: data.exchange_rate.usd_cad },
-    isLoading,
-    asOf: data.as_of,
-  }
+  const usdCad = data?.exchange_rate.usd_cad
+  // Stable identity so consumers' useMemo dependencies don't recompute every render.
+  const rates = useMemo<FxRatesToCad>(
+    () => (usdCad == null ? CAD_ONLY : { CAD: 1, USD: usdCad }),
+    [usdCad],
+  )
+  return { rates, isLoading, asOf: data?.as_of }
 }
