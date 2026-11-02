@@ -94,3 +94,24 @@ describe('WatchlistPage — empty', () => {
     expect(screen.getByRole('dialog')).toHaveTextContent('Add to Watchlist')
   })
 })
+
+describe('WatchlistPage — awaiting analysis', () => {
+  it('shows "Awaiting analysis" and dashes instead of invented values', () => {
+    const fresh: WatchlistItem = {
+      ...item('wl_new', 'RY.TO', 'stk_ry_to'),
+      current_price: null, day_change: null, day_change_pct: null, week_change_pct: null, month_change_pct: null,
+      stock_outlook: null, projected_return_pct: null, portfolio_fit: null, confidence_score: null,
+      disagreement_score: null, disagreement_label: null, suggested_account: null, last_analyzed_at: null,
+    }
+    vi.mocked(useWatchlist).mockReturnValue({ data: { ...watchlist, data: [...watchlist.data, fresh] }, isLoading: false, isError: false } as unknown as ReturnType<typeof useWatchlist>)
+    renderPage()
+    expect(screen.getByText('1 awaiting analysis')).toBeInTheDocument()
+    const row = screen.getByRole('row', { name: 'View RY.TO' })
+    expect(within(row).getByText('Awaiting analysis')).toBeInTheDocument()
+    expect(within(row).getByText('Not yet')).toBeInTheDocument()
+    expect(within(row).queryByRole('meter')).not.toBeInTheDocument()
+    expect(within(row).queryByText(/%/)).not.toBeInTheDocument()
+    // Sorted below analysed stocks
+    expect(screen.getAllByRole('row').at(-1)).toBe(row)
+  })
+})

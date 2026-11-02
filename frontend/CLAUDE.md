@@ -102,6 +102,7 @@
 - `Recommendation` (`BUY|HOLD|SELL`) is kept only for Pass 2 agents and `Prediction` history — never on live display
 - `StockOutlookDirection`: `'bullish' | 'somewhat_bullish' | 'neutral' | 'somewhat_bearish' | 'bearish'`
 - A holding may exist in multiple accounts (e.g. RY.TO in RRSP + TFSA) — aggregate when building `HoldingSnapshot`
+- `WatchlistItem` market and analysis fields are nullable: a newly added stock is `null` until priced / analysed (`isAwaitingAnalysis()` in `src/lib/watchlist.ts` = `last_analyzed_at == null`). Render "Awaiting analysis" / "—", never placeholder values; sorting puts nulls last
 
 ## Test Patterns
 - Mock `useNavigate`: `vi.mock('react-router-dom', async (importOriginal) => ({ ...await importOriginal(), useNavigate: vi.fn() }))` then `vi.mocked(useNavigate).mockReturnValue(mockFn)` at module level

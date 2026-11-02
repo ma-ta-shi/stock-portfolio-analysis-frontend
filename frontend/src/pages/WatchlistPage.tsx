@@ -28,31 +28,10 @@ import { clickableRowProps } from '@/lib/a11y'
 import { formatDate, formatNumber, formatPct } from '@/lib/format'
 import { FIT_SHORT_LABELS, FIT_TEXT_COLORS, gainLossColor, TONE_TEXT } from '@/lib/labels'
 import { cn } from '@/lib/utils'
+import { isAwaitingAnalysis, sortWatchlist, type SortDir, type WatchlistSortKey as SortKey } from '@/lib/watchlist'
 import type { WatchlistItem } from '@/types'
 
-type SortKey =
-  | 'projected_return_pct'
-  | 'confidence_score'
-  | 'day_change_pct'
-  | 'last_analyzed_at'
-
-type SortDir = 'asc' | 'desc'
-
-function sortItems(items: WatchlistItem[], key: SortKey, dir: SortDir) {
-  return [...items].sort((a, b) => {
-    let cmp = 0
-    if (key === 'projected_return_pct') {
-      cmp = a.projected_return_pct - b.projected_return_pct
-    } else if (key === 'confidence_score') {
-      cmp = a.confidence_score - b.confidence_score
-    } else if (key === 'day_change_pct') {
-      cmp = a.day_change_pct - b.day_change_pct
-    } else if (key === 'last_analyzed_at') {
-      cmp = new Date(a.last_analyzed_at).getTime() - new Date(b.last_analyzed_at).getTime()
-    }
-    return dir === 'asc' ? cmp : -cmp
-  })
-}
+const EMPTY = <span className="text-xs text-muted-foreground">—</span>
 
 interface SortableHeadProps {
   label: string
@@ -114,7 +93,8 @@ export function WatchlistPage() {
     }
   }
 
-  const items = data ? sortItems(data.data, sortKey, sortDir) : []
+  const items = data ? sortWatchlist(data.data, sortKey, sortDir) : []
+  const awaitingCount = data?.data.filter(isAwaitingAnalysis).length ?? 0
 
   return (
     <div>
@@ -127,6 +107,7 @@ export function WatchlistPage() {
               <span className={cn(TONE_TEXT.positive, 'font-medium')}>
                 {data.summary.bullish_count} bullish
               </span>
+              {awaitingCount > 0 && <span>{awaitingCount} awaiting analysis</span>}
               {data.summary.changed_since_last_check > 0 && (
                 <span className={TONE_TEXT.info}>
                   {data.summary.changed_since_last_check} changed
@@ -189,43 +170,73 @@ export function WatchlistPage() {
                     {item.stock.sector}
                   </TableCell>
                   <TableCell className="text-sm font-medium">
-                    {formatNumber(item.current_price)}{' '}
-                    <span className="text-xs text-muted-foreground">{item.stock.currency}</span>
+                    {item.current_price == null ? (
+                      EMPTY
+                    ) : (
+                      <>
+                        {formatNumber(item.current_price)}{' '}
+                        <span className="text-xs text-muted-foreground">{item.stock.currency}</span>
+                      </>
+                    )}
                   </TableCell>
                   <TableCell>
-                    <span className={cn('text-sm', gainLossColor(item.day_change_pct))}>
-                      {formatPct(item.day_change_pct)}
-                    </span>
+                    {item.day_change_pct == null ? (
+                      EMPTY
+                    ) : (
+                      <span className={cn('text-sm', gainLossColor(item.day_change_pct))}>
+                        {formatPct(item.day_change_pct)}
+                      </span>
+                    )}
                   </TableCell>
                   <TableCell>
-                    <OutlookBadge direction={item.stock_outlook} />
+                    {item.stock_outlook == null ? (
+                      <Badge variant="outline" className="text-xs font-normal text-muted-foreground border-dashed">
+                        Awaiting analysis
+                      </Badge>
+                    ) : (
+                      <OutlookBadge direction={item.stock_outlook} />
+                    )}
                   </TableCell>
                   <TableCell>
-                    <ConfidenceMeter score={item.confidence_score} />
+                    {item.confidence_score == null ? EMPTY : <ConfidenceMeter score={item.confidence_score} />}
                   </TableCell>
                   <TableCell>
-                    <DisagreementIndicator
-                      label={item.disagreement_label}
-                      score={item.disagreement_score}
-                    />
+                    {item.disagreement_label == null ? (
+                      EMPTY
+                    ) : (
+                      <DisagreementIndicator
+                        label={item.disagreement_label}
+                        score={item.disagreement_score ?? undefined}
+                      />
+                    )}
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm font-medium">
-                      {formatPct(item.projected_return_pct)}
-                    </span>
+                    {item.projected_return_pct == null ? (
+                      EMPTY
+                    ) : (
+                      <span className="text-sm font-medium">{formatPct(item.projected_return_pct)}</span>
+                    )}
                   </TableCell>
                   <TableCell>
-                    <span className={cn('text-sm font-medium', FIT_TEXT_COLORS[item.portfolio_fit])}>
-                      {FIT_SHORT_LABELS[item.portfolio_fit]}
-                    </span>
+                    {item.portfolio_fit == null ? (
+                      EMPTY
+                    ) : (
+                      <span className={cn('text-sm font-medium', FIT_TEXT_COLORS[item.portfolio_fit])}>
+                        {FIT_SHORT_LABELS[item.portfolio_fit]}
+                      </span>
+                    )}
                   </TableCell>
                   <TableCell>
-                    <Badge variant="outline" className="text-xs">
-                      {item.suggested_account.toUpperCase()}
-                    </Badge>
+                    {item.suggested_account == null ? (
+                      EMPTY
+                    ) : (
+                      <Badge variant="outline" className="text-xs">
+                        {item.suggested_account.toUpperCase()}
+                      </Badge>
+                    )}
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground">
-                    {formatDate(item.last_analyzed_at)}
+                    {item.last_analyzed_at == null ? 'Not yet' : formatDate(item.last_analyzed_at)}
                   </TableCell>
                   <TableCell onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
                     <div className="flex items-center gap-1">
