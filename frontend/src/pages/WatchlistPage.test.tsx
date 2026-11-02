@@ -114,4 +114,13 @@ describe('WatchlistPage — awaiting analysis', () => {
     // Sorted below analysed stocks
     expect(screen.getAllByRole('row').at(-1)).toBe(row)
   })
+
+  it('uses one definition: an analysed stock with no outlook is not "awaiting analysis"', () => {
+    const noOutlook: WatchlistItem = { ...item('wl_x', 'XX.TO', 'stk_xx_to'), stock_outlook: null }
+    vi.mocked(useWatchlist).mockReturnValue({ data: { ...watchlist, data: [noOutlook] }, isLoading: false, isError: false } as unknown as ReturnType<typeof useWatchlist>)
+    renderPage()
+    const row = screen.getByRole('row', { name: 'View XX.TO' })
+    expect(within(row).queryByText('Awaiting analysis')).not.toBeInTheDocument()
+    expect(screen.queryByText(/awaiting analysis$/)).not.toBeInTheDocument()
+  })
 })

@@ -189,10 +189,12 @@ export function WatchlistPage() {
                     )}
                   </TableCell>
                   <TableCell>
-                    {item.stock_outlook == null ? (
+                    {isAwaitingAnalysis(item) ? (
                       <Badge variant="outline" className="text-xs font-normal text-muted-foreground border-dashed">
                         Awaiting analysis
                       </Badge>
+                    ) : item.stock_outlook == null ? (
+                      EMPTY
                     ) : (
                       <OutlookBadge direction={item.stock_outlook} />
                     )}
