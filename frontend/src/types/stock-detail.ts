@@ -3,14 +3,18 @@ import type { StockFundamentals, Layer2PortfolioContext } from './analysis'
 import type { StockOutlookDirection } from './watchlist'
 import type { PaginationMeta } from './api'
 
+/**
+ * Stock detail page data. Market fields are `null` for a stock the backend hasn't
+ * priced yet (e.g. just added to the watchlist) — see docs/api-conventions.md.
+ */
 export interface StockDetail extends Stock {
   industry?: string
-  current_price: number
-  day_change: number
-  day_change_pct: number
-  week_52_high: number
-  week_52_low: number
-  market_cap_cad: number
+  current_price: number | null
+  day_change: number | null
+  day_change_pct: number | null
+  week_52_high: number | null
+  week_52_low: number | null
+  market_cap_cad: number | null
   volume?: number
   avg_volume_30d?: number
   fundamentals?: StockFundamentals

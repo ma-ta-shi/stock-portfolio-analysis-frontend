@@ -137,3 +137,34 @@ describe('StockPage — error state', () => {
     expect(screen.queryByRole('button', { name: /retry/i })).toBeNull()
   })
 })
+
+describe('StockPage — not yet priced or analysed', () => {
+  it('shows "Price not available yet" and "Awaiting analysis" instead of zeros', () => {
+    mockUseStockDetail.mockReturnValue({
+      data: {
+        ...mockStock,
+        current_price: null,
+        day_change: null,
+        day_change_pct: null,
+        week_52_high: null,
+        week_52_low: null,
+        market_cap_cad: null,
+        latest_analysis: undefined,
+        price_history_90d: [100, 101],
+      },
+      isLoading: false,
+      isError: false,
+      refetch: vi.fn(),
+    } as unknown as ReturnType<typeof useStockDetail>)
+    mockUseStockAnalysisHistory.mockReturnValue({ data: { data: [] }, isLoading: false } as unknown as ReturnType<typeof useStockAnalysisHistory>)
+    mockUsePortfolioHoldings.mockReturnValue({ data: [], isLoading: false } as unknown as ReturnType<typeof usePortfolioHoldings>)
+
+    renderStockPage()
+
+    expect(screen.getByText('Price not available yet')).toBeInTheDocument()
+    expect(screen.getByText(/Awaiting analysis\./)).toBeInTheDocument()
+    expect(screen.queryByText(/Mkt cap/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/today$/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/\$0\.00|0\.00%/)).not.toBeInTheDocument()
+  })
+})

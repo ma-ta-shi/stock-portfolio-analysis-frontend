@@ -115,6 +115,10 @@ Until then, return `null` (never placeholders such as `0`, `"neutral"` or the ad
 
 `last_analyzed_at: null` is how the frontend shows "Awaiting analysis".
 
+The same applies to the stock detail response (`GET /api/stocks/{stock_id}`): `current_price`,
+`day_change`, `day_change_pct`, `week_52_high`, `week_52_low` and `market_cap_cad` are `null`
+until the stock has been priced, and `latest_analysis` is omitted until it has been analysed.
+
 ---
 
 ## Pagination

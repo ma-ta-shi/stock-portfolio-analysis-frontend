@@ -41,7 +41,8 @@ export function AddStockDialog({ mode, open, onOpenChange, defaultStock }: AddSt
 
   const tickerSearch = useTickerSearch()
   const addToWatchlist = useAddToWatchlist()
-  const { data: watchlist } = useWatchlist()
+  // Only needed for the duplicate check, so only fetched while adding to the watchlist.
+  const { data: watchlist } = useWatchlist({ enabled: open && mode === 'watchlist' })
   const addToPortfolio = useAddToPortfolio()
 
   function reset() {

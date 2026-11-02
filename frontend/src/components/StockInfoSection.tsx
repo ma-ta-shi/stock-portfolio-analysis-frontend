@@ -125,8 +125,9 @@ function HoldingPanel({ snapshot, currency }: HoldingPanelProps) {
 
 interface StockInfoSectionProps {
   stock: Stock
-  price: number
-  marketCapCad?: number
+  /** null when the stock hasn't been priced yet */
+  price: number | null
+  marketCapCad?: number | null
   fundamentals?: StockFundamentals
   holdingSnapshot?: HoldingSnapshot
 }
@@ -157,7 +158,13 @@ export function StockInfoSection({
           </div>
           <div className="text-right shrink-0">
             <div className="text-xl font-semibold">
-              {formatNumber(price)} <span className="text-xs text-muted-foreground">{stock.currency}</span>
+              {price == null ? (
+                <span className="text-sm font-normal text-muted-foreground">Price not available yet</span>
+              ) : (
+                <>
+                  {formatNumber(price)} <span className="text-xs text-muted-foreground">{stock.currency}</span>
+                </>
+              )}
             </div>
             {marketCapCad != null && (
               <div className="text-xs text-muted-foreground">Mkt cap {formatCAD(marketCapCad, { compact: true })}</div>
@@ -188,7 +195,7 @@ export function StockInfoSection({
               muted={!f.dividend_yield_trailing}
             />
             <Metric label="Beta" value={fmt(f.beta, 2)} />
-            {f.week_52_high != null && f.week_52_low != null && (
+            {f.week_52_high != null && f.week_52_low != null && price != null && (
               <div className="flex-1 min-w-40 px-3 py-2">
                 <div className="text-xs text-muted-foreground mb-1">52-Week Range</div>
                 <RangeBar low={f.week_52_low} high={f.week_52_high} current={price} />

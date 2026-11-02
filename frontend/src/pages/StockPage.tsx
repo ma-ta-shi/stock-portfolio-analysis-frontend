@@ -104,7 +104,7 @@ export function StockPage() {
     )
   }
 
-  const dayPositive = stock.day_change_pct >= 0
+  const dayPositive = (stock.day_change_pct ?? 0) >= 0
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
@@ -179,15 +179,24 @@ export function StockPage() {
             <h2 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
               90-Day Price
             </h2>
-            <span className={cn('text-sm font-medium', gainLossColor(stock.day_change_pct))}>
-              {formatPct(stock.day_change_pct)} today
-            </span>
+            {stock.day_change_pct != null && (
+              <span className={cn('text-sm font-medium', gainLossColor(stock.day_change_pct))}>
+                {formatPct(stock.day_change_pct)} today
+              </span>
+            )}
           </div>
           <SparklineChart
             data={stock.price_history_90d}
             color={dayPositive ? '#10b981' : '#ef4444'}
             height={80}
           />
+        </div>
+      )}
+
+      {!stock.latest_analysis && (
+        <div className="border border-dashed border-border rounded-lg px-4 py-3 text-sm text-muted-foreground">
+          <span className="font-medium text-foreground">Awaiting analysis.</span> {stock.ticker} hasn’t
+          been analysed yet. Results will appear here once it has been.
         </div>
       )}
 
