@@ -1,5 +1,6 @@
 import type { DisagreementLabel, Holding, HoldingSnapshot } from '@/types'
 import { toCad, type FxRatesToCad } from './fx'
+import { parseDate } from './format'
 
 /**
  * Aggregate one stock's holdings (possibly across TFSA/RRSP/Trading) into a snapshot.
@@ -120,4 +121,18 @@ export function buildAllocations(holdings: readonly Holding[], rates: FxRatesToC
     totalCad,
     missingCurrencies: [...missing],
   }
+}
+
+/**
+ * Human-readable time between two dates: "12d", "5mo", "1y", "2y 3mo".
+ * Works in whole months so the remainder can never round up to "12mo".
+ */
+export function holdingPeriod(firstBuy: string, lastSell: string): string {
+  const days = Math.max(0, Math.round((parseDate(lastSell).getTime() - parseDate(firstBuy).getTime()) / 86_400_000))
+  if (days < 30) return `${days}d`
+  const months = Math.round(days / 30.4375)
+  if (months < 12) return `${months}mo`
+  const years = Math.floor(months / 12)
+  const rest = months % 12
+  return rest > 0 ? `${years}y ${rest}mo` : `${years}y`
 }

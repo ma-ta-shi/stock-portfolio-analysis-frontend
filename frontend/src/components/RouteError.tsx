@@ -1,4 +1,5 @@
-import { isRouteErrorResponse, Link, useRouteError } from 'react-router-dom'
+import { isRouteErrorResponse, useRouteError } from 'react-router-dom'
+import { ButtonLink } from '@/components/ButtonLink'
 import { Button } from '@/components/ui/button'
 
 /**
@@ -30,9 +31,9 @@ export function RouteError() {
             Reload
           </Button>
         )}
-        <Button size="sm" nativeButton={false} render={<Link to="/" />}>
+        <ButtonLink size="sm" to="/">
           Go home
-        </Button>
+        </ButtonLink>
       </div>
     </div>
   )

@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react'
-import { Download } from 'lucide-react'
+import { useId, useMemo } from 'react'
+import { Download, X } from 'lucide-react'
 import { useTransactions } from '@/hooks/use-portfolio'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -12,12 +12,22 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { QueryError } from '@/components/QueryError'
+import { useTransactionFilters } from '@/hooks/use-transaction-filters'
 import { downloadFile, toCsv } from '@/lib/csv'
 import { formatDate, formatMoney, formatPct, localDateInputValue } from '@/lib/format'
 import { gainLossColor, TONE_TEXT } from '@/lib/labels'
 import { filterByAccount } from '@/lib/portfolio'
+import {
+  filterTransactions,
+  isDateRangeInvalid,
+  tickersIn,
+  TX_TYPE_FILTERS,
+} from '@/lib/transactions'
 import { cn } from '@/lib/utils'
 import type { PortfolioAccountView, TransactionType } from '@/types'
+
+const FILTER_CONTROL =
+  'h-8 rounded-md border border-border bg-background px-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary'
 
 const TX_TYPE_LABELS: Record<TransactionType, string> = {
   buy: 'Buy',
@@ -37,21 +47,27 @@ const TX_TYPE_VARIANTS: Record<TransactionType, string> = {
   transfer_out: 'bg-muted text-muted-foreground',
 }
 
-const TYPE_FILTERS = ['all', 'buy', 'sell', 'dividend', 'drip'] as const
-
 interface TransactionsTabProps {
   accountFilter?: PortfolioAccountView
 }
 
 export function TransactionsTab({ accountFilter }: TransactionsTabProps) {
   const { data: allTransactions, isLoading, isError, error, refetch } = useTransactions()
-  const [typeFilter, setTypeFilter] = useState<TransactionType | 'all'>('all')
+  const { filters, setFilters, clearFilters, isFiltered } = useTransactionFilters()
+  const fieldId = useId()
 
-  const transactions = useMemo(() => {
-    return (filterByAccount(allTransactions, accountFilter) ?? [])
-      .filter((t) => typeFilter === 'all' || t.transaction_type === typeFilter)
-      .sort((a, b) => new Date(b.transaction_date).getTime() - new Date(a.transaction_date).getTime())
-  }, [allTransactions, accountFilter, typeFilter])
+  // A single position's history ignores the account switcher: the position belongs to
+  // exactly one account, and hiding it because another account is selected would be confusing.
+  const scoped = useMemo(
+    () => (filters.holdingId ? (allTransactions ?? []) : (filterByAccount(allTransactions, accountFilter) ?? [])),
+    [allTransactions, accountFilter, filters.holdingId],
+  )
+  const transactions = useMemo(() => filterTransactions(scoped, filters), [scoped, filters])
+  const tickers = useMemo(() => tickersIn(scoped), [scoped])
+  const holdingTx = filters.holdingId
+    ? allTransactions?.find((t) => t.holding_id === filters.holdingId)
+    : undefined
+  const dateRangeInvalid = isDateRangeInvalid(filters)
 
   function handleExportCSV() {
     if (!transactions.length) return
@@ -81,25 +97,95 @@ export function TransactionsTab({ accountFilter }: TransactionsTabProps) {
 
   return (
     <div>
+      {filters.holdingId && (
+        <div className="flex items-center justify-between gap-2 mb-3 rounded-md border border-border bg-muted/40 px-3 py-2 text-sm">
+          <span>
+            Showing full history for{' '}
+            <span className="font-medium">
+              {holdingTx ? `${holdingTx.stock.ticker} (${holdingTx.account_type.toUpperCase()})` : 'one position'}
+            </span>
+          </span>
+          <Button size="sm" variant="ghost" onClick={() => setFilters({ holdingId: null })}>
+            Show all transactions
+          </Button>
+        </div>
+      )}
+
       {/* Filters */}
-      <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-        <div role="group" aria-label="Transaction type" className="flex gap-1.5 flex-wrap">
-          {TYPE_FILTERS.map((type) => (
-            <button
-              type="button"
-              key={type}
-              aria-pressed={typeFilter === type}
-              onClick={() => setTypeFilter(type)}
-              className={cn(
-                'px-2.5 py-1 text-xs rounded-md border transition-colors',
-                typeFilter === type
-                  ? 'bg-primary text-primary-foreground border-primary'
-                  : 'border-border text-muted-foreground hover:bg-muted',
-              )}
-            >
-              {type === 'all' ? 'All' : TX_TYPE_LABELS[type]}
-            </button>
-          ))}
+      <div className="flex items-end justify-between mb-3 flex-wrap gap-3">
+        <div className="flex items-end gap-3 flex-wrap">
+          <div role="group" aria-label="Transaction type" className="flex gap-1.5 flex-wrap">
+            {TX_TYPE_FILTERS.map((type) => (
+              <button
+                type="button"
+                key={type}
+                aria-pressed={filters.type === type}
+                onClick={() => setFilters({ type })}
+                className={cn(
+                  'px-2.5 py-1 text-xs rounded-md border transition-colors h-8',
+                  filters.type === type
+                    ? 'bg-primary text-primary-foreground border-primary'
+                    : 'border-border text-muted-foreground hover:bg-muted',
+                )}
+              >
+                {type === 'all' ? 'All' : TX_TYPE_LABELS[type as TransactionType]}
+              </button>
+            ))}
+          </div>
+          {!filters.holdingId && (
+            <div className="flex flex-col gap-1">
+              <label htmlFor={`${fieldId}-ticker`} className="text-xs text-muted-foreground">
+                Ticker
+              </label>
+              <select
+                id={`${fieldId}-ticker`}
+                className={FILTER_CONTROL}
+                value={filters.ticker ?? ''}
+                onChange={(e) => setFilters({ ticker: e.target.value || null })}
+              >
+                <option value="">All tickers</option>
+                {tickers.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+          <div className="flex flex-col gap-1">
+            <label htmlFor={`${fieldId}-from`} className="text-xs text-muted-foreground">
+              From
+            </label>
+            <input
+              id={`${fieldId}-from`}
+              type="date"
+              className={FILTER_CONTROL}
+              value={filters.from ?? ''}
+              max={filters.to ?? undefined}
+              onChange={(e) => setFilters({ from: e.target.value || null })}
+              aria-invalid={dateRangeInvalid || undefined}
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor={`${fieldId}-to`} className="text-xs text-muted-foreground">
+              To
+            </label>
+            <input
+              id={`${fieldId}-to`}
+              type="date"
+              className={FILTER_CONTROL}
+              value={filters.to ?? ''}
+              min={filters.from ?? undefined}
+              onChange={(e) => setFilters({ to: e.target.value || null })}
+              aria-invalid={dateRangeInvalid || undefined}
+            />
+          </div>
+          {isFiltered && !filters.holdingId && (
+            <Button size="sm" variant="ghost" onClick={clearFilters}>
+              <X className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
+              Clear filters
+            </Button>
+          )}
         </div>
         <Button size="sm" variant="outline" onClick={handleExportCSV} disabled={!transactions.length}>
           <Download className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" />
@@ -107,8 +193,16 @@ export function TransactionsTab({ accountFilter }: TransactionsTabProps) {
         </Button>
       </div>
 
+      {dateRangeInvalid && (
+        <p role="alert" className="text-xs text-destructive mb-3">
+          The “From” date is after the “To” date.
+        </p>
+      )}
+
       {!transactions.length ? (
-        <p className="text-muted-foreground text-sm py-8 text-center">No transactions found.</p>
+        <p className="text-muted-foreground text-sm py-8 text-center">
+          {isFiltered ? 'No transactions match these filters.' : 'No transactions yet.'}
+        </p>
       ) : (
         <div className="border border-border rounded-lg overflow-hidden">
           <Table>

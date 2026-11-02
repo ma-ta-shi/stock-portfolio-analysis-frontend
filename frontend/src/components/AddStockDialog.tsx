@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { FormField } from '@/components/FormField'
 import { MoneyInput } from '@/components/MoneyInput'
 import { useTickerSearch, type TickerResult } from '@/hooks/use-ticker-search'
-import { useAddToWatchlist } from '@/hooks/use-watchlist'
+import { useAddToWatchlist, useWatchlist } from '@/hooks/use-watchlist'
 import { useAddToPortfolio } from '@/hooks/use-portfolio'
 import { getErrorMessage } from '@/lib/api'
 import { formatMoney, parseAmount } from '@/lib/format'
@@ -41,6 +41,7 @@ export function AddStockDialog({ mode, open, onOpenChange, defaultStock }: AddSt
 
   const tickerSearch = useTickerSearch()
   const addToWatchlist = useAddToWatchlist()
+  const { data: watchlist } = useWatchlist()
   const addToPortfolio = useAddToPortfolio()
 
   function reset() {
@@ -89,7 +90,10 @@ export function AddStockDialog({ mode, open, onOpenChange, defaultStock }: AddSt
   const addError = addToWatchlist.error ?? addToPortfolio.error
   const sharesNum = parseAmount(shares)
   const avgCostNum = parseAmount(avgCost)
-  const canConfirm = mode === 'portfolio' ? sharesNum > 0 && avgCostNum > 0 : true
+  // A stock can be held in several accounts, but appears on the watchlist only once.
+  const alreadyWatched =
+    mode === 'watchlist' && !!found && !!watchlist?.data.some((i) => i.stock.stock_id === found.stock_id)
+  const canConfirm = mode === 'portfolio' ? sharesNum > 0 && avgCostNum > 0 : !alreadyWatched
 
   async function handleConfirm(e: FormEvent) {
     e.preventDefault()
@@ -221,6 +225,12 @@ export function AddStockDialog({ mode, open, onOpenChange, defaultStock }: AddSt
                   </p>
                 )}
               </div>
+            )}
+
+            {alreadyWatched && (
+              <p role="status" className="text-sm text-muted-foreground">
+                {found.ticker} is already on your watchlist.
+              </p>
             )}
 
             {addError && (

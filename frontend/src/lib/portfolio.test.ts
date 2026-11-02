@@ -6,6 +6,7 @@ import {
   buildHoldingSnapshot,
   disagreementLabel,
   filterByAccount,
+  holdingPeriod,
 } from './portfolio'
 import { CAD_ONLY } from './fx'
 
@@ -104,5 +105,21 @@ describe('filterByAccount', () => {
   })
   it('passes through undefined (still loading)', () => {
     expect(filterByAccount(undefined, 'tfsa')).toBeUndefined()
+  })
+})
+
+describe('holdingPeriod', () => {
+  it.each([
+    ['2026-01-01', '2026-01-13', '12d'],
+    ['2026-01-01', '2026-06-01', '5mo'],
+    ['2024-01-01', '2024-12-25', '1y'],
+    ['2024-01-01', '2026-04-01', '2y 3mo'],
+    // Regression: the old helper printed "1y 12mo" here
+    ['2024-01-01', '2025-12-30', '2y'],
+  ])('%s → %s is %s', (from, to, expected) => {
+    expect(holdingPeriod(from, to)).toBe(expected)
+  })
+  it('never goes negative', () => {
+    expect(holdingPeriod('2026-02-01', '2026-01-01')).toBe('0d')
   })
 })

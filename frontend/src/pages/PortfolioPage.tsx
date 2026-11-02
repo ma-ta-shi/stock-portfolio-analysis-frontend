@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Plus } from 'lucide-react'
+import { useSearchParams } from 'react-router-dom'
 import { usePortfolioSummary } from '@/hooks/use-portfolio'
 import {
   useAllocationAnalysis,
@@ -22,6 +23,21 @@ import { cn } from '@/lib/utils'
 import type { PortfolioAccountView } from '@/types'
 
 const ACCOUNT_VIEW_STORAGE_KEY = 'portfolio_account_view'
+
+const PORTFOLIO_TABS = ['holdings', 'optimizer', 'transactions', 'allocation'] as const
+type PortfolioTab = (typeof PORTFOLIO_TABS)[number]
+
+/** The active subtab lives in `?tab=` so links (e.g. "View history") can open a specific tab. */
+function usePortfolioTab(): [PortfolioTab, (tab: PortfolioTab) => void] {
+  const [params, setParams] = useSearchParams()
+  const raw = params.get('tab')
+  const tab = PORTFOLIO_TABS.includes(raw as PortfolioTab) ? (raw as PortfolioTab) : 'holdings'
+  function setTab(next: PortfolioTab) {
+    // Changing tab drops the previous tab's filters; the default tab needs no param.
+    setParams(next === 'holdings' ? {} : { tab: next })
+  }
+  return [tab, setTab]
+}
 
 const ACCOUNT_TABS: { value: PortfolioAccountView; label: string }[] = [
   { value: 'combined', label: 'Combined' },
@@ -238,7 +254,7 @@ function AvailableToTradeWidget() {
 export function PortfolioPage() {
   const [accountView, setAccountView] = useState<PortfolioAccountView>(getSessionAccount)
   const [addDialogOpen, setAddDialogOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState('holdings')
+  const [activeTab, setActiveTab] = usePortfolioTab()
 
   function handleAccountChange(v: PortfolioAccountView) {
     setAccountView(v)
@@ -271,7 +287,7 @@ export function PortfolioPage() {
 
       <SummaryHeader accountView={accountView} onAccountChange={handleAccountChange} />
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as PortfolioTab)}>
         <div className="flex items-center justify-between mb-4">
           <TabsList>
             <TabsTrigger value="holdings">Holdings</TabsTrigger>

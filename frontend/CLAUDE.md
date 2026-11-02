@@ -79,14 +79,15 @@
 - `useTickerSearch` in `use-ticker-search.ts` — mock lookup (exact ticker, then partial name; 600ms delay) in mock mode, `GET /api/stocks/resolve?q=` otherwise (endpoint path assumed — not yet in docs/api-conventions.md); returns `TickerResult | null`
 - `useAllocationAnalysis` in `use-allocation-analysis.ts` — "Analyze allocation" on the Optimizer tab; set `ALLOCATION_ENDPOINT` to connect it to the backend
 - Sell preview maths: `estimateSell()` in `src/lib/sell-preview.ts` (swap for the backend `sell/preview` endpoint when wired)
-- `AddStockDialog` — `mode: 'watchlist' | 'portfolio'`; step 1 = search, step 2 = confirm (watchlist) or position input (portfolio)
+- `AddStockDialog` — `mode: 'watchlist' | 'portfolio'`; step 1 = search, step 2 = confirm (watchlist) or position input (portfolio); in watchlist mode a stock already on the watchlist can't be added again
+- Transactions filters (type, ticker, from/to, holding) live in the URL query string via `useTransactionFilters()`; logic in `src/lib/transactions.ts`. Portfolio subtab is `?tab=`. Link to one position's history with `holdingHistoryHref(holdingId)`
 - `EditPositionDialog` — pre-filled shares + avg cost; live book cost preview; calls `useUpdatePosition`
 - When mocking `use-portfolio` in tests, always mock `useRemoveFromPortfolio`, `useUpdatePosition`, `useClosedPositions`, and `useSellPosition` in addition to `usePortfolioHoldings` (they are called by child components rendered inside `HoldingsTable`)
 - Components rendering `SellPositionDialog` or building holding snapshots also need `use-user-profile` and `use-fx-rates` mocked
 
 ## Navigation Pattern
 - Full-row clickable tables: spread `clickableRowProps(() => navigate(...), 'View TICKER')` (`src/lib/a11y.ts`) on `<TableRow>` — adds keyboard (Tab/Enter) support. Cells with buttons stop click *and* keydown propagation
-- Link-styled buttons: `<Button nativeButton={false} render={<Link to="…" />}>` — never nest `<Button>` inside `<Link>`
+- Link-styled buttons: `<ButtonLink to="…" variant="outline">` (`src/components/ButtonLink.tsx`) — renders a real `<a>`. Never nest `<Button>` inside `<Link>`, and never `<Button render={<Link />}>` (Base UI adds `role="button"`, so it's announced as a button)
 - Icon-only buttons need `aria-label`; decorative icons get `aria-hidden="true"`
 - Form fields: use `<FormField label="…">{(id) => <Input id={id} … />}</FormField>` so labels are linked
 - All stock links go to `/stocks/${stock_id}` (e.g. `stk_ry_to`, `stk_shop_to`)

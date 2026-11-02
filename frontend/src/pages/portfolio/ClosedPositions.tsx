@@ -11,24 +11,23 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { QueryError } from '@/components/QueryError'
+import { holdingHistoryHref } from '@/hooks/use-transaction-filters'
 import { formatDate, formatMoney, formatPct } from '@/lib/format'
 import { gainLossColor } from '@/lib/labels'
+import { filterByAccount, holdingPeriod } from '@/lib/portfolio'
 import { cn } from '@/lib/utils'
+import { ButtonLink } from '@/components/ButtonLink'
+import type { PortfolioAccountView } from '@/types'
 
-function holdingPeriod(firstBuy: string, lastSell: string) {
-  const ms = new Date(lastSell).getTime() - new Date(firstBuy).getTime()
-  const days = Math.floor(ms / (1000 * 60 * 60 * 24))
-  if (days < 30) return `${days}d`
-  if (days < 365) return `${Math.round(days / 30)}mo`
-  const years = Math.floor(days / 365)
-  const months = Math.round((days % 365) / 30)
-  return months > 0 ? `${years}y ${months}mo` : `${years}y`
+interface ClosedPositionsProps {
+  accountFilter?: PortfolioAccountView
 }
 
-export function ClosedPositions() {
+export function ClosedPositions({ accountFilter }: ClosedPositionsProps) {
   const [open, setOpen] = useState(false)
   const panelId = useId()
-  const { data: closed, isError, error, refetch } = useClosedPositions()
+  const { data: allClosed, isError, error, refetch } = useClosedPositions()
+  const closed = filterByAccount(allClosed, accountFilter)
 
   if (isError) {
     return <QueryError what="closed positions" error={error} onRetry={refetch} compact className="mt-4" />
@@ -56,12 +55,16 @@ export function ClosedPositions() {
               <TableRow>
                 <TableHead>Stock</TableHead>
                 <TableHead>Account</TableHead>
-                <TableHead className="text-right">Shares</TableHead>
+                <TableHead className="text-right">Bought</TableHead>
+                <TableHead className="text-right">Sold</TableHead>
                 <TableHead className="text-right">Avg Buy</TableHead>
                 <TableHead className="text-right">Avg Sell</TableHead>
                 <TableHead className="text-right">Realized P&L</TableHead>
                 <TableHead>Holding Period</TableHead>
                 <TableHead>Dates</TableHead>
+                <TableHead>
+                  <span className="sr-only">History</span>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -79,6 +82,7 @@ export function ClosedPositions() {
                         {pos.account_type.toUpperCase()}
                       </Badge>
                     </TableCell>
+                    <TableCell className="text-right text-sm">{pos.total_shares_bought}</TableCell>
                     <TableCell className="text-right text-sm">{pos.total_shares_sold}</TableCell>
                     <TableCell className="text-right text-sm">
                       {formatMoney(pos.avg_buy_price, currency)}
@@ -100,6 +104,17 @@ export function ClosedPositions() {
                     <TableCell className="text-xs text-muted-foreground">
                       <div>{formatDate(pos.first_buy_date)}</div>
                       <div>→ {formatDate(pos.last_sell_date)}</div>
+                    </TableCell>
+                    <TableCell>
+                      <ButtonLink
+                        variant="ghost"
+                        size="sm"
+                        className="text-xs"
+                        to={holdingHistoryHref(pos.holding_id)}
+                        aria-label={`View history for ${pos.stock.ticker} (${pos.account_type.toUpperCase()})`}
+                      >
+                        View history
+                      </ButtonLink>
                     </TableCell>
                   </TableRow>
                 )

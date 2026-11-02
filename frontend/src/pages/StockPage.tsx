@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { TrendingUp, TrendingDown, Pencil, Plus } from 'lucide-react'
 import { useStockDetail, useStockAnalysisHistory } from '@/hooks/use-stock-detail'
 import { usePortfolioHoldings } from '@/hooks/use-portfolio'
@@ -13,6 +13,7 @@ import { SellPositionDialog } from '@/components/SellPositionDialog'
 import { EditPositionDialog } from '@/components/EditPositionDialog'
 import { AddStockDialog } from '@/components/AddStockDialog'
 import { Button } from '@/components/ui/button'
+import { ButtonLink } from '@/components/ButtonLink'
 import { Badge } from '@/components/ui/badge'
 import {
   Table,
@@ -212,14 +213,9 @@ export function StockPage() {
                   score={a.disagreement_score}
                 />
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                nativeButton={false}
-                render={<Link to={`/analysis/${a.analysis_id}`} />}
-              >
+              <ButtonLink variant="outline" size="sm" to={`/analysis/${a.analysis_id}`}>
                 Full Analysis
-              </Button>
+              </ButtonLink>
             </div>
 
             {/* Layer 1 — Stock Outlook */}
@@ -340,16 +336,15 @@ export function StockPage() {
                       <ReturnCell entry={entry} />
                     </TableCell>
                     <TableCell>
-                      <Button
+                      <ButtonLink
                         variant="ghost"
                         size="sm"
                         className="text-xs"
-                        nativeButton={false}
-                        render={<Link to={`/analysis/${entry.analysis_id}`} />}
+                        to={`/analysis/${entry.analysis_id}`}
                         aria-label={`View analysis from ${formatDate(entry.analyzed_at)}`}
                       >
                         View
-                      </Button>
+                      </ButtonLink>
                     </TableCell>
                   </TableRow>
                 ))}

@@ -73,7 +73,7 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
     return (
       <>
         <p className="text-muted-foreground text-sm py-8 text-center">No holdings found.</p>
-        <ClosedPositions />
+        <ClosedPositions accountFilter={accountFilter} />
       </>
     )
   }
@@ -205,7 +205,7 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
       </div>
 
       {/* Closed positions collapsible section */}
-      <ClosedPositions />
+      <ClosedPositions accountFilter={accountFilter} />
 
       <EditPositionDialog
         key={editingHolding?.holding_id ?? 'none'}
