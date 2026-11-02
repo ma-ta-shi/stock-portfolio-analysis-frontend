@@ -27,11 +27,12 @@ Open http://localhost:5173.
 | `npm run dev` | Dev server with hot reload |
 | `npm test` | Run the Vitest suite once |
 | `npm run test:watch` | Vitest in watch mode |
+| `npm run test:e2e` | Playwright: every page and key flow in a real browser (mock mode), light + dark, with axe-core accessibility checks |
 | `npm run lint` | ESLint |
 | `npx tsc -b` | Type check |
 | `npm run build` | Type check + production build to `dist/` |
 
-CI (`.github/workflows/frontend.yml`) runs the type check, lint, tests and build on every push that touches `frontend/`.
+CI (`.github/workflows/frontend.yml`) runs the type check, lint, unit tests and build, plus the end-to-end suite as a separate job, on every push that touches `frontend/`. Locally, the first `npm run test:e2e` may need `npx playwright install chromium`.
 
 ## Project layout
 

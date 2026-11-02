@@ -105,5 +105,7 @@
 - `WatchlistItem` market and analysis fields are nullable: a newly added stock is `null` until priced / analysed (`isAwaitingAnalysis()` in `src/lib/watchlist.ts` = `last_analyzed_at == null`). Render "Awaiting analysis" / "—", never placeholder values; sorting puts nulls last
 
 ## Test Patterns
+- Unit/component tests: `src/**/*.test.{ts,tsx}` (Vitest). End-to-end: `e2e/*.spec.ts` (Playwright, `npm run test:e2e`) — runs every route and key flow in light and dark mode, fails on axe-core violations or console errors. Add a flow there for any new user-facing feature
+- `@playwright/test` is pinned to an exact version (each version needs its matching browser build). After changing it, run `npx playwright install chromium`
 - Mock `useNavigate`: `vi.mock('react-router-dom', async (importOriginal) => ({ ...await importOriginal(), useNavigate: vi.fn() }))` then `vi.mocked(useNavigate).mockReturnValue(mockFn)` at module level
 - Partial hook mocks: `{ data: [...], isLoading: false } as unknown as ReturnType<typeof useHook>`
