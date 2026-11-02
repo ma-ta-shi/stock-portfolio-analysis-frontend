@@ -1,24 +1,29 @@
 import { ArrowUp, ArrowDown, Minus } from 'lucide-react'
 import { useMarketOverview } from '@/hooks/use-market'
 import { SparklineChart } from '@/components/SparklineChart'
-import { formatPct } from '@/lib/utils'
+import { QueryError } from '@/components/QueryError'
+import { formatNumber, formatPct, formatPercent } from '@/lib/format'
+import { gainLossColor } from '@/lib/labels'
 import { cn } from '@/lib/utils'
 
 function DirectionArrow({ direction }: { direction: string }) {
   if (direction === 'up' || direction === 'hiking')
-    return <ArrowUp className="w-3 h-3 text-red-500 inline" />
+    return <ArrowUp className="w-3 h-3 text-red-500 inline" aria-label="rising" />
   if (direction === 'down' || direction === 'cutting')
-    return <ArrowDown className="w-3 h-3 text-emerald-600 inline" />
-  return <Minus className="w-3 h-3 text-muted-foreground inline" />
+    return <ArrowDown className="w-3 h-3 text-emerald-600 inline" aria-label="falling" />
+  return <Minus className="w-3 h-3 text-muted-foreground inline" aria-label="holding" />
 }
 
 export function MarketOverviewSection() {
-  const { data, isLoading } = useMarketOverview()
+  const { data, isLoading, isError, error, refetch } = useMarketOverview()
 
   if (isLoading) {
     return (
       <div className="bg-card border border-border rounded-lg p-4 h-64 animate-pulse" />
     )
+  }
+  if (isError) {
+    return <QueryError what="market overview" error={error} onRetry={refetch} />
   }
   if (!data) return null
 
@@ -47,14 +52,8 @@ export function MarketOverviewSection() {
                   <div className="text-sm font-medium">
                     {idx.value.toLocaleString('en-CA', { maximumFractionDigits: 2 })}
                   </div>
-                  <div
-                    className={cn(
-                      'text-xs',
-                      positive ? 'text-emerald-600' : 'text-red-600',
-                    )}
-                  >
-                    {positive ? '+' : ''}
-                    {formatPct(idx.day_change_pct * 100)}
+                  <div className={cn('text-xs', gainLossColor(idx.day_change_pct))}>
+                    {formatPct(idx.day_change_pct)}
                   </div>
                 </div>
                 <div className="w-16 h-8 shrink-0">
@@ -74,7 +73,7 @@ export function MarketOverviewSection() {
         <div className="flex items-center justify-between text-sm">
           <span className="text-muted-foreground">CAD/USD</span>
           <span className="font-medium">
-            {exchange_rate.cad_usd.toFixed(4)}
+            {formatNumber(exchange_rate.cad_usd, 4)}
           </span>
         </div>
         <div className="flex items-center justify-between text-sm">
@@ -82,7 +81,7 @@ export function MarketOverviewSection() {
             BoC Rate <DirectionArrow direction={interest_rates.boc_direction} />
           </span>
           <span className="font-medium">
-            {(interest_rates.boc_rate * 100).toFixed(2)}%
+            {formatPercent(interest_rates.boc_rate)}
           </span>
         </div>
         <div className="flex items-center justify-between text-sm">
@@ -90,7 +89,7 @@ export function MarketOverviewSection() {
             Fed Rate <DirectionArrow direction={interest_rates.fed_direction} />
           </span>
           <span className="font-medium">
-            {(interest_rates.fed_funds_rate * 100).toFixed(2)}%
+            {formatPercent(interest_rates.fed_funds_rate)}
           </span>
         </div>
       </div>
@@ -102,7 +101,13 @@ export function MarketOverviewSection() {
             {market_sentiment.label} ({market_sentiment.score}/100)
           </span>
         </div>
-        <div className="w-full h-1.5 rounded-full bg-gradient-to-r from-red-500 via-amber-500 to-emerald-500 relative">
+        <div
+          role="meter"
+          aria-label="Market sentiment"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={market_sentiment.score}
+          className="w-full h-1.5 rounded-full bg-gradient-to-r from-red-500 via-amber-500 to-emerald-500 relative">
           <div
             className={cn('absolute top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full border-2 border-background', sentimentColor)}
             style={{ left: `calc(${market_sentiment.score}% - 5px)` }}

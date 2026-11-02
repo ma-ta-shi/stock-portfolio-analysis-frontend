@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import { useClosedPositions } from '@/hooks/use-portfolio'
 import { Badge } from '@/components/ui/badge'
@@ -10,12 +10,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { formatCAD, formatPct } from '@/lib/utils'
+import { QueryError } from '@/components/QueryError'
+import { formatDate, formatMoney, formatPct } from '@/lib/format'
+import { gainLossColor } from '@/lib/labels'
 import { cn } from '@/lib/utils'
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('en-CA', { year: 'numeric', month: 'short', day: 'numeric' })
-}
 
 function holdingPeriod(firstBuy: string, lastSell: string) {
   const ms = new Date(lastSell).getTime() - new Date(firstBuy).getTime()
@@ -29,23 +27,30 @@ function holdingPeriod(firstBuy: string, lastSell: string) {
 
 export function ClosedPositions() {
   const [open, setOpen] = useState(false)
-  const { data: closed } = useClosedPositions()
+  const panelId = useId()
+  const { data: closed, isError, error, refetch } = useClosedPositions()
 
+  if (isError) {
+    return <QueryError what="closed positions" error={error} onRetry={refetch} compact className="mt-4" />
+  }
   if (!closed?.length) return null
 
   return (
     <div className="mt-4">
       <button
+        type="button"
+        aria-expanded={open}
+        aria-controls={panelId}
         onClick={() => setOpen((v) => !v)}
         className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-2"
       >
-        {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+        {open ? <ChevronDown className="w-4 h-4" aria-hidden="true" /> : <ChevronRight className="w-4 h-4" aria-hidden="true" />}
         <span className="font-medium">Closed Positions</span>
         <span className="text-xs">({closed.length})</span>
       </button>
 
       {open && (
-        <div className="border border-border rounded-lg overflow-hidden">
+        <div id={panelId} className="border border-border rounded-lg overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>
@@ -61,7 +66,8 @@ export function ClosedPositions() {
             </TableHeader>
             <TableBody>
               {closed.map((pos) => {
-                const gainPositive = pos.total_realized_gain_loss >= 0
+                const currency = pos.stock.currency
+                const gainClass = gainLossColor(pos.total_realized_gain_loss)
                 return (
                   <TableRow key={pos.holding_id}>
                     <TableCell>
@@ -75,29 +81,17 @@ export function ClosedPositions() {
                     </TableCell>
                     <TableCell className="text-right text-sm">{pos.total_shares_sold}</TableCell>
                     <TableCell className="text-right text-sm">
-                      ${pos.avg_buy_price.toFixed(2)}
+                      {formatMoney(pos.avg_buy_price, currency)}
                     </TableCell>
                     <TableCell className="text-right text-sm">
-                      ${pos.avg_sell_price.toFixed(2)}
+                      {formatMoney(pos.avg_sell_price, currency)}
                     </TableCell>
                     <TableCell className="text-right">
-                      <div
-                        className={cn(
-                          'text-sm font-medium',
-                          gainPositive ? 'text-emerald-600' : 'text-red-600',
-                        )}
-                      >
-                        {gainPositive ? '+' : ''}
-                        {formatCAD(pos.total_realized_gain_loss)}
+                      <div className={cn('text-sm font-medium', gainClass)}>
+                        {formatMoney(pos.total_realized_gain_loss, currency, { signed: true })}
                       </div>
-                      <div
-                        className={cn(
-                          'text-xs',
-                          gainPositive ? 'text-emerald-600' : 'text-red-600',
-                        )}
-                      >
-                        {gainPositive ? '+' : ''}
-                        {formatPct(pos.total_realized_gain_loss_pct * 100)}
+                      <div className={cn('text-xs', gainClass)}>
+                        {formatPct(pos.total_realized_gain_loss_pct)}
                       </div>
                     </TableCell>
                     <TableCell className="text-sm">

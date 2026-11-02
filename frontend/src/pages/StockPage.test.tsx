@@ -8,6 +8,12 @@ vi.mock('@/hooks/use-stock-detail')
 vi.mock('@/hooks/use-portfolio')
 vi.mock('@/hooks/use-ticker-search')
 vi.mock('@/hooks/use-watchlist')
+vi.mock('@/hooks/use-user-profile', () => ({
+  useUserProfile: () => ({ data: undefined, isLoading: false, isError: false }),
+}))
+vi.mock('@/hooks/use-fx-rates', () => ({
+  useFxRates: () => ({ rates: { CAD: 1, USD: 1.4 }, isLoading: false }),
+}))
 vi.mock('@/context/UserContext', () => ({
   UserProvider: ({ children }: { children: React.ReactNode }) => children,
   useUser: () => ({ userId: 'user_01', setUserId: vi.fn() }),

@@ -15,9 +15,12 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { formatDate, formatPct } from '@/lib/utils'
+import { QueryError } from '@/components/QueryError'
+import { clickableRowProps } from '@/lib/a11y'
+import { formatDate, formatNumber, formatPct } from '@/lib/format'
+import { FIT_SHORT_LABELS, FIT_TEXT_COLORS, gainLossColor } from '@/lib/labels'
 import { cn } from '@/lib/utils'
-import type { PortfolioFit, WatchlistItem } from '@/types'
+import type { WatchlistItem } from '@/types'
 
 type SortKey =
   | 'projected_return_pct'
@@ -25,19 +28,9 @@ type SortKey =
   | 'day_change_pct'
   | 'last_analyzed_at'
 
-const FIT_COLORS: Record<PortfolioFit, string> = {
-  strong_candidate: 'text-emerald-600 dark:text-emerald-400',
-  worth_monitoring: 'text-amber-600 dark:text-amber-400',
-  poor_fit: 'text-red-600 dark:text-red-400',
-}
+type SortDir = 'asc' | 'desc'
 
-const FIT_LABELS: Record<PortfolioFit, string> = {
-  strong_candidate: 'Strong',
-  worth_monitoring: 'Monitor',
-  poor_fit: 'Poor Fit',
-}
-
-function sortItems(items: WatchlistItem[], key: SortKey, dir: 'asc' | 'desc') {
+function sortItems(items: WatchlistItem[], key: SortKey, dir: SortDir) {
   return [...items].sort((a, b) => {
     let cmp = 0
     if (key === 'projected_return_pct') {
@@ -53,33 +46,38 @@ function sortItems(items: WatchlistItem[], key: SortKey, dir: 'asc' | 'desc') {
   })
 }
 
-interface SortHeaderProps {
+interface SortableHeadProps {
   label: string
   colKey: SortKey
-  activeKey: SortKey
+  sortKey: SortKey
+  sortDir: SortDir
   onSort: (key: SortKey) => void
 }
 
-function SortHeader({ label, colKey, activeKey, onSort }: SortHeaderProps) {
+function SortableHead({ label, colKey, sortKey, sortDir, onSort }: SortableHeadProps) {
+  const active = sortKey === colKey
   return (
-    <button
-      className={cn(
-        'flex items-center gap-1 text-xs font-medium',
-        activeKey === colKey ? 'text-foreground' : 'text-muted-foreground',
-      )}
-      onClick={() => onSort(colKey)}
-    >
-      {label}
-      <ArrowUpDown className="w-3 h-3" />
-    </button>
+    <TableHead aria-sort={active ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none'}>
+      <button
+        type="button"
+        className={cn(
+          'flex items-center gap-1 text-xs font-medium',
+          active ? 'text-foreground' : 'text-muted-foreground',
+        )}
+        onClick={() => onSort(colKey)}
+      >
+        {label}
+        <ArrowUpDown className="w-3 h-3" aria-hidden="true" />
+      </button>
+    </TableHead>
   )
 }
 
 export function WatchlistPage() {
   const navigate = useNavigate()
-  const { data, isLoading } = useWatchlist()
+  const { data, isLoading, isError, error, refetch } = useWatchlist()
   const [sortKey, setSortKey] = useState<SortKey>('projected_return_pct')
-  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
+  const [sortDir, setSortDir] = useState<SortDir>('desc')
 
   function handleSort(key: SortKey) {
     if (key === sortKey) {
@@ -113,6 +111,10 @@ export function WatchlistPage() {
 
       {isLoading ? (
         <div className="h-64 rounded-lg bg-muted animate-pulse" />
+      ) : isError ? (
+        <QueryError what="watchlist" error={error} onRetry={refetch} />
+      ) : items.length === 0 ? (
+        <p className="text-muted-foreground text-sm py-8 text-center">Your watchlist is empty.</p>
       ) : (
         <div className="border border-border rounded-lg overflow-hidden">
           <Table>
@@ -121,22 +123,14 @@ export function WatchlistPage() {
                 <TableHead>Stock</TableHead>
                 <TableHead>Sector</TableHead>
                 <TableHead>Price</TableHead>
-                <TableHead>
-                  <SortHeader label="Day Δ" colKey="day_change_pct" activeKey={sortKey} onSort={handleSort} />
-                </TableHead>
+                <SortableHead label="Day Δ" colKey="day_change_pct" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
                 <TableHead>Outlook</TableHead>
-                <TableHead>
-                  <SortHeader label="Confidence" colKey="confidence_score" activeKey={sortKey} onSort={handleSort} />
-                </TableHead>
+                <SortableHead label="Confidence" colKey="confidence_score" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
                 <TableHead>Disagreement</TableHead>
-                <TableHead>
-                  <SortHeader label="Proj. Return" colKey="projected_return_pct" activeKey={sortKey} onSort={handleSort} />
-                </TableHead>
+                <SortableHead label="Proj. Return" colKey="projected_return_pct" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
                 <TableHead>Portfolio Fit</TableHead>
                 <TableHead>Account</TableHead>
-                <TableHead>
-                  <SortHeader label="Last Analyzed" colKey="last_analyzed_at" activeKey={sortKey} onSort={handleSort} />
-                </TableHead>
+                <SortableHead label="Last Analyzed" colKey="last_analyzed_at" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
                 <TableHead />
               </TableRow>
             </TableHeader>
@@ -145,8 +139,7 @@ export function WatchlistPage() {
                 return (
                 <TableRow
                   key={item.watchlist_id}
-                  className="cursor-pointer hover:bg-muted/50"
-                  onClick={() => navigate(`/stocks/${item.stock.stock_id}`)}
+                  {...clickableRowProps(() => navigate(`/stocks/${item.stock.stock_id}`), `View ${item.stock.ticker}`)}
                 >
                   <TableCell>
                     <div className="font-medium">{item.stock.ticker}</div>
@@ -156,17 +149,12 @@ export function WatchlistPage() {
                     {item.stock.sector}
                   </TableCell>
                   <TableCell className="text-sm font-medium">
-                    {item.current_price.toFixed(2)}{' '}
+                    {formatNumber(item.current_price)}{' '}
                     <span className="text-xs text-muted-foreground">{item.stock.currency}</span>
                   </TableCell>
                   <TableCell>
-                    <span
-                      className={cn(
-                        'text-sm',
-                        item.day_change_pct >= 0 ? 'text-emerald-600' : 'text-red-600',
-                      )}
-                    >
-                      {formatPct(item.day_change_pct * 100)}
+                    <span className={cn('text-sm', gainLossColor(item.day_change_pct))}>
+                      {formatPct(item.day_change_pct)}
                     </span>
                   </TableCell>
                   <TableCell>
@@ -183,12 +171,12 @@ export function WatchlistPage() {
                   </TableCell>
                   <TableCell>
                     <span className="text-sm font-medium">
-                      {formatPct(item.projected_return_pct * 100)}
+                      {formatPct(item.projected_return_pct)}
                     </span>
                   </TableCell>
                   <TableCell>
-                    <span className={cn('text-sm font-medium', FIT_COLORS[item.portfolio_fit])}>
-                      {FIT_LABELS[item.portfolio_fit]}
+                    <span className={cn('text-sm font-medium', FIT_TEXT_COLORS[item.portfolio_fit])}>
+                      {FIT_SHORT_LABELS[item.portfolio_fit]}
                     </span>
                   </TableCell>
                   <TableCell>
@@ -199,10 +187,11 @@ export function WatchlistPage() {
                   <TableCell className="text-xs text-muted-foreground">
                     {formatDate(item.last_analyzed_at)}
                   </TableCell>
-                  <TableCell>
+                  <TableCell onKeyDown={(e) => e.stopPropagation()}>
                     <Button
                       variant="outline"
                       size="sm"
+                      aria-label={`View ${item.stock.ticker}`}
                       onClick={(e) => {
                         e.stopPropagation()
                         navigate(`/stocks/${item.stock.stock_id}`)

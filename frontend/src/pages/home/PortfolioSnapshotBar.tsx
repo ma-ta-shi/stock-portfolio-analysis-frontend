@@ -1,15 +1,20 @@
 import { usePortfolioSummary } from '@/hooks/use-portfolio'
 import { SparklineChart } from '@/components/SparklineChart'
-import { formatCAD, formatPct } from '@/lib/utils'
+import { QueryError } from '@/components/QueryError'
+import { formatCAD, formatPct } from '@/lib/format'
+import { gainLossColor } from '@/lib/labels'
 import { cn } from '@/lib/utils'
 
 export function PortfolioSnapshotBar() {
-  const { data, isLoading } = usePortfolioSummary()
+  const { data, isLoading, isError, error, refetch } = usePortfolioSummary()
 
   if (isLoading) {
     return (
       <div className="h-16 rounded-lg bg-muted animate-pulse mb-6" />
     )
+  }
+  if (isError) {
+    return <QueryError what="portfolio summary" error={error} onRetry={refetch} compact className="mb-6" />
   }
   if (!data) return null
 
@@ -21,14 +26,8 @@ export function PortfolioSnapshotBar() {
         <div className="text-2xl font-semibold tracking-tight">
           {formatCAD(data.total_value_cad)}
         </div>
-        <div
-          className={cn(
-            'text-sm font-medium mt-0.5',
-            dayPositive ? 'text-emerald-600' : 'text-red-600',
-          )}
-        >
-          {dayPositive ? '+' : ''}
-          {formatCAD(data.day_change_cad)} ({formatPct(data.day_change_pct * 100)}) today
+        <div className={cn('text-sm font-medium mt-0.5', gainLossColor(data.day_change_cad))}>
+          {formatCAD(data.day_change_cad, { signed: true })} ({formatPct(data.day_change_pct)}) today
         </div>
       </div>
       <div className="w-40 h-10">

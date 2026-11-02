@@ -24,51 +24,50 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { formatCAD, formatPct } from '@/lib/utils'
+import { QueryError } from '@/components/QueryError'
+import { getErrorMessage } from '@/lib/api'
+import { clickableRowProps } from '@/lib/a11y'
+import { formatMoney, formatNumber, formatPct, formatPercent } from '@/lib/format'
+import { gainLossColor } from '@/lib/labels'
+import { filterByAccount } from '@/lib/portfolio'
 import { cn } from '@/lib/utils'
-import type { Holding } from '@/types'
+import type { Holding, PortfolioAccountView } from '@/types'
 
-function pctDisplay(value: number) {
-  return value > 0 ? `${(value * 100).toFixed(2)}%` : '—'
+/** Yield-style percentage, or "—" when there's no dividend. */
+function yieldDisplay(value: number) {
+  return value > 0 ? formatPercent(value) : '—'
 }
 
 interface HoldingsTableProps {
-  accountFilter?: string
+  accountFilter?: PortfolioAccountView
 }
 
 export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
   const navigate = useNavigate()
-  const { data: allHoldings, isLoading, isError, refetch } = usePortfolioHoldings()
+  const { data: allHoldings, isLoading, isError, error, refetch } = usePortfolioHoldings()
   const removeFromPortfolio = useRemoveFromPortfolio()
   const [editingHolding, setEditingHolding] = useState<Holding | null>(null)
   const [buyingHolding, setBuyingHolding] = useState<Holding | null>(null)
   const [sellingHolding, setSellingHolding] = useState<Holding | null>(null)
   const [removingHolding, setRemovingHolding] = useState<Holding | null>(null)
 
-  const holdings = useMemo(
-    () =>
-      accountFilter && accountFilter !== 'combined'
-        ? allHoldings?.filter((h) => h.account_type === accountFilter)
-        : allHoldings,
-    [allHoldings, accountFilter],
-  )
+  const holdings = useMemo(() => filterByAccount(allHoldings, accountFilter), [allHoldings, accountFilter])
 
   async function handleConfirmRemove() {
     if (!removingHolding) return
-    await removeFromPortfolio.mutateAsync(removingHolding.holding_id)
-    setRemovingHolding(null)
+    try {
+      await removeFromPortfolio.mutateAsync(removingHolding.holding_id)
+      setRemovingHolding(null)
+    } catch {
+      // Shown from removeFromPortfolio.error in the dialog.
+    }
   }
 
   if (isLoading) {
     return <div className="h-48 rounded-lg bg-muted animate-pulse" />
   }
   if (isError) {
-    return (
-      <div className="border border-border rounded-lg p-8 text-center space-y-3">
-        <p className="text-sm text-muted-foreground">Failed to load holdings.</p>
-        <Button size="sm" variant="outline" onClick={() => refetch()}>Retry</Button>
-      </div>
-    )
+    return <QueryError what="holdings" error={error} onRetry={refetch} />
   }
   if (!holdings?.length) {
     return (
@@ -101,13 +100,14 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
           </TableHeader>
           <TableBody>
             {holdings.map((h) => {
-              const gainPositive = h.total_gain_loss >= 0
+              const currency = h.stock.currency
+              const gainClass = gainLossColor(h.total_gain_loss)
               const canRemove = (h.transaction_count ?? 1) === 0
+              const label = `${h.stock.ticker} (${h.account_type.toUpperCase()})`
               return (
                 <TableRow
                   key={h.holding_id}
-                  className="cursor-pointer hover:bg-muted/50"
-                  onClick={() => navigate(`/stocks/${h.stock.stock_id}`)}
+                  {...clickableRowProps(() => navigate(`/stocks/${h.stock.stock_id}`), `View ${h.stock.ticker}`)}
                 >
                   <TableCell>
                     <div className="font-medium">{h.stock.ticker}</div>
@@ -120,31 +120,21 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
                   </TableCell>
                   <TableCell className="text-right text-sm">{h.shares}</TableCell>
                   <TableCell className="text-right text-sm">
-                    {h.average_cost_basis.toFixed(2)}
+                    {formatNumber(h.average_cost_basis)}
                   </TableCell>
                   <TableCell className="text-right text-sm">
-                    {h.current_price.toFixed(2)}{' '}
-                    <span className="text-xs text-muted-foreground">{h.stock.currency}</span>
+                    {formatNumber(h.current_price)}{' '}
+                    <span className="text-xs text-muted-foreground">{currency}</span>
                   </TableCell>
                   <TableCell className="text-right text-sm font-medium">
-                    {formatCAD(h.market_value)}
+                    {formatMoney(h.market_value, currency)}
                   </TableCell>
                   <TableCell className="text-right">
-                    <div
-                      className={cn(
-                        'text-sm font-medium',
-                        gainPositive ? 'text-emerald-600' : 'text-red-600',
-                      )}
-                    >
-                      {formatCAD(h.total_gain_loss)}
+                    <div className={cn('text-sm font-medium', gainClass)}>
+                      {formatMoney(h.total_gain_loss, currency, { signed: true })}
                     </div>
-                    <div
-                      className={cn(
-                        'text-xs',
-                        gainPositive ? 'text-emerald-600' : 'text-red-600',
-                      )}
-                    >
-                      {formatPct(h.total_gain_loss_pct * 100)}
+                    <div className={cn('text-xs', gainClass)}>
+                      {formatPct(h.total_gain_loss_pct)}
                     </div>
                   </TableCell>
                   <TableCell>
@@ -154,39 +144,42 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
                     <ConfidenceMeter score={h.confidence_score} />
                   </TableCell>
                   <TableCell className="text-right text-sm">
-                    {pctDisplay(h.annual_dividend_yield)}
+                    {yieldDisplay(h.annual_dividend_yield)}
                   </TableCell>
                   <TableCell className="text-right text-sm">
-                    {pctDisplay(h.yield_on_cost)}
+                    {yieldDisplay(h.yield_on_cost)}
                   </TableCell>
-                  <TableCell onClick={(e) => e.stopPropagation()}>
+                  <TableCell onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
                     <div className="flex items-center gap-1">
                       <Button
                         variant="ghost"
                         size="sm"
                         className="text-muted-foreground hover:text-emerald-600"
                         title="Buy more shares"
+                        aria-label={`Buy more ${label}`}
                         onClick={() => setBuyingHolding(h)}
                       >
-                        <TrendingUp className="w-4 h-4" />
+                        <TrendingUp className="w-4 h-4" aria-hidden="true" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
                         className="text-muted-foreground hover:text-red-600"
                         title="Sell shares"
+                        aria-label={`Sell ${label}`}
                         onClick={() => setSellingHolding(h)}
                       >
-                        <TrendingDown className="w-4 h-4" />
+                        <TrendingDown className="w-4 h-4" aria-hidden="true" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
                         className="text-muted-foreground hover:text-foreground"
                         title="Edit position"
+                        aria-label={`Edit ${label}`}
                         onClick={() => setEditingHolding(h)}
                       >
-                        <Pencil className="w-4 h-4" />
+                        <Pencil className="w-4 h-4" aria-hidden="true" />
                       </Button>
                       {canRemove && (
                         <Button
@@ -194,9 +187,10 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
                           size="sm"
                           className="text-muted-foreground hover:text-destructive"
                           title="Remove (no transactions)"
+                        aria-label={`Remove ${label}`}
                           onClick={() => setRemovingHolding(h)}
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4" aria-hidden="true" />
                         </Button>
                       )}
                     </div>
@@ -237,6 +231,11 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
           <p className="text-sm text-muted-foreground">
             Remove <span className="font-medium text-foreground">{removingHolding?.stock.ticker}</span> ({removingHolding?.account_type.toUpperCase()}) from your portfolio?
           </p>
+          {removeFromPortfolio.isError && (
+            <p role="alert" className="text-xs text-destructive">
+              {getErrorMessage(removeFromPortfolio.error)}
+            </p>
+          )}
           <div className="flex justify-end gap-2 mt-2">
             <Button variant="outline" onClick={() => setRemovingHolding(null)}>Cancel</Button>
             <Button

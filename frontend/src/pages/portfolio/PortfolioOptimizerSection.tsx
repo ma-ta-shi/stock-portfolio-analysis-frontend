@@ -1,8 +1,10 @@
 import { ArrowRight, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { usePortfolioOptimizer } from '@/hooks/use-portfolio'
 import { Badge } from '@/components/ui/badge'
+import { QueryError } from '@/components/QueryError'
+import { formatCAD } from '@/lib/format'
 import { cn } from '@/lib/utils'
-import type { SwapSuggestion, RebalanceSuggestion } from '@/types'
+import type { PortfolioAccountView, SwapSuggestion, RebalanceSuggestion } from '@/types'
 
 const riskColors = {
   lower: 'text-emerald-600 dark:text-emerald-400',
@@ -26,7 +28,7 @@ function SwapCard({ swap }: { swap: SwapSuggestion }) {
           <div className="font-semibold text-red-600">{swap.sell.ticker}</div>
           <Badge variant="outline" className="text-xs mt-1">{swap.sell.account_type.toUpperCase()}</Badge>
         </div>
-        <ArrowRight className="w-5 h-5 text-muted-foreground shrink-0" />
+        <ArrowRight className="w-5 h-5 text-muted-foreground shrink-0" aria-hidden="true" />
         <div className="text-center">
           <div className="text-xs text-muted-foreground mb-0.5">Buy</div>
           <div className="font-semibold text-emerald-600">{swap.buy.ticker}</div>
@@ -40,7 +42,7 @@ function SwapCard({ swap }: { swap: SwapSuggestion }) {
             {Math.round(swap.confidence * 100)}% confidence
           </div>
           <div className={cn('text-xs flex items-center gap-1 justify-end', riskColors[swap.risk_change])}>
-            <RiskIcon className="w-3 h-3" />
+            <RiskIcon className="w-3 h-3" aria-hidden="true" />
             {swap.risk_change} risk
           </div>
         </div>
@@ -73,7 +75,7 @@ function RebalanceCard({ suggestion }: { suggestion: RebalanceSuggestion }) {
                 : 'bg-orange-500 text-white hover:bg-orange-500',
             )}
           >
-            {isIncrease ? '▲' : '▼'} {isIncrease ? 'Add' : 'Trim'} ${suggestion.amount_cad.toLocaleString()}
+            {isIncrease ? '▲' : '▼'} {isIncrease ? 'Add' : 'Trim'} {formatCAD(suggestion.amount_cad)}
           </Badge>
           <div className="text-xs text-muted-foreground mt-1">
             {Math.round(suggestion.confidence * 100)}% confidence
@@ -86,11 +88,11 @@ function RebalanceCard({ suggestion }: { suggestion: RebalanceSuggestion }) {
 }
 
 interface PortfolioOptimizerSectionProps {
-  accountFilter?: string
+  accountFilter?: PortfolioAccountView
 }
 
 export function PortfolioOptimizerSection({ accountFilter }: PortfolioOptimizerSectionProps) {
-  const { data: rawData, isLoading } = usePortfolioOptimizer()
+  const { data: rawData, isLoading, isError, error, refetch } = usePortfolioOptimizer()
 
   const data = rawData && accountFilter && accountFilter !== 'combined'
     ? {
@@ -98,14 +100,17 @@ export function PortfolioOptimizerSection({ accountFilter }: PortfolioOptimizerS
         swap_suggestions: rawData.swap_suggestions.filter(
           (s) => s.sell.account_type === accountFilter || s.buy.account_type === accountFilter,
         ),
-        rebalance_suggestions: rawData.rebalance_suggestions.filter(
-          (s) => s.ticker !== undefined,
-        ),
+        // RebalanceSuggestion has no account_type yet, so these can't be filtered per account.
+        rebalance_suggestions: rawData.rebalance_suggestions,
       }
     : rawData
 
   if (isLoading) {
     return <div className="h-32 rounded-lg bg-muted animate-pulse" />
+  }
+
+  if (isError) {
+    return <QueryError what="optimizer suggestions" error={error} onRetry={refetch} />
   }
 
   if (!data) return null
@@ -126,7 +131,7 @@ export function PortfolioOptimizerSection({ accountFilter }: PortfolioOptimizerS
                 Swap Suggestions
               </h3>
               {data.swap_suggestions.map((swap, i) => (
-                <SwapCard key={i} swap={swap} />
+                <SwapCard key={`${swap.sell.ticker}-${swap.buy.ticker}-${i}`} swap={swap} />
               ))}
             </div>
           )}
@@ -136,7 +141,7 @@ export function PortfolioOptimizerSection({ accountFilter }: PortfolioOptimizerS
                 Rebalance Suggestions
               </h3>
               {data.rebalance_suggestions.map((s, i) => (
-                <RebalanceCard key={i} suggestion={s} />
+                <RebalanceCard key={`${s.ticker}-${i}`} suggestion={s} />
               ))}
             </div>
           )}

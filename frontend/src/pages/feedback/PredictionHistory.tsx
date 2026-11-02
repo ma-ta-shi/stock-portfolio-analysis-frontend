@@ -10,6 +10,8 @@ import {
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
+import { QueryError } from '@/components/QueryError'
+import { formatNumber } from '@/lib/format'
 import type { PredictionCheckpoint } from '@/types'
 
 function CheckpointDots({ checkpoints }: { checkpoints: PredictionCheckpoint[] }) {
@@ -33,10 +35,13 @@ function CheckpointDots({ checkpoints }: { checkpoints: PredictionCheckpoint[] }
 }
 
 export function PredictionHistory() {
-  const { data, isLoading } = usePredictions()
+  const { data, isLoading, isError, error, refetch } = usePredictions()
 
   if (isLoading) {
     return <div className="h-48 rounded-lg bg-muted animate-pulse" />
+  }
+  if (isError) {
+    return <QueryError what="prediction history" error={error} onRetry={refetch} />
   }
   if (!data?.data.length) {
     return <p className="text-muted-foreground text-sm py-8 text-center">No predictions yet.</p>
@@ -67,7 +72,7 @@ export function PredictionHistory() {
                 {Math.round(p.confidence_score)}%
               </TableCell>
               <TableCell className="text-right text-sm">
-                ${p.price_at_recommendation.toFixed(2)}
+                {formatNumber(p.price_at_recommendation)}
               </TableCell>
               <TableCell>
                 <Badge
@@ -86,7 +91,7 @@ export function PredictionHistory() {
                 <CheckpointDots checkpoints={p.checkpoints} />
               </TableCell>
               <TableCell className="text-right text-sm">
-                {p.composite_score != null ? p.composite_score.toFixed(2) : '—'}
+                {formatNumber(p.composite_score)}
               </TableCell>
             </TableRow>
           ))}

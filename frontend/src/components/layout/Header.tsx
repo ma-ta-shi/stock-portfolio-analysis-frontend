@@ -18,7 +18,7 @@ export function Header() {
           StockPicker
         </Link>
 
-        <nav className="flex items-center gap-4">
+        <nav aria-label="Main" className="flex items-center gap-4">
           <NavLink to="/" end className={navLinkClass}>
             Home
           </NavLink>
@@ -37,14 +37,22 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-3">
-          <div className="relative">
-            <Bell className="w-4 h-4 text-muted-foreground" />
+          {/* Alerts are listed under "What Changed" on Home; the bell links there. */}
+          <Link
+            to="/"
+            className="relative rounded-md p-1 hover:bg-muted transition-colors"
+            aria-label={unreadCount ? `Alerts, ${unreadCount} unread` : 'Alerts'}
+          >
+            <Bell className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
             {!!unreadCount && unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-blue-500 text-white text-[9px] flex items-center justify-center leading-none">
+              <span
+                aria-hidden="true"
+                className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-blue-500 text-white text-[9px] flex items-center justify-center leading-none"
+              >
                 {unreadCount > 9 ? '9+' : unreadCount}
               </span>
             )}
-          </div>
+          </Link>
           <ProfileSwitcher />
         </div>
       </div>

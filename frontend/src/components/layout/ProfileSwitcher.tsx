@@ -9,6 +9,7 @@ export function ProfileSwitcher() {
 
   return (
     <select
+      aria-label="Switch profile"
       value={userId}
       onChange={(e) => setUserId(e.target.value)}
       className="text-sm border border-border rounded-md px-2 py-1 bg-background text-foreground"

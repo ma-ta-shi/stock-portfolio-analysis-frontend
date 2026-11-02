@@ -1,36 +1,18 @@
 import { useMemo } from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
 import { usePortfolioHoldings } from '@/hooks/use-portfolio'
+import { useFxRates } from '@/hooks/use-fx-rates'
+import { QueryError } from '@/components/QueryError'
+import { formatCAD, formatPercent } from '@/lib/format'
+import { buildAllocations, filterByAccount, type AllocationSlice } from '@/lib/portfolio'
+import type { PortfolioAccountView } from '@/types'
 
 const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#6b7280']
 
-interface SliceEntry {
-  name: string
-  value: number
-  pct: string
-}
-
-function groupBy(
-  items: { key: string; value: number }[],
-  total: number,
-): SliceEntry[] {
-  const map = new Map<string, number>()
-  for (const item of items) {
-    map.set(item.key, (map.get(item.key) ?? 0) + item.value)
-  }
-  return Array.from(map.entries())
-    .map(([name, value]) => ({
-      name,
-      value: Math.round(value * 100) / 100,
-      pct: ((value / total) * 100).toFixed(1),
-    }))
-    .sort((a, b) => b.value - a.value)
-}
-
-function DonutChart({ data, title }: { data: SliceEntry[]; title: string }) {
+function DonutChart({ data, title }: { data: AllocationSlice[]; title: string }) {
   return (
-    <div className="flex flex-col items-center">
-      <h3 className="text-sm font-medium text-muted-foreground mb-2">{title}</h3>
+    <figure className="flex flex-col items-center">
+      <figcaption className="text-sm font-medium text-muted-foreground mb-2">{title}</figcaption>
       <ResponsiveContainer width="100%" height={220}>
         <PieChart>
           <Pie
@@ -40,20 +22,14 @@ function DonutChart({ data, title }: { data: SliceEntry[]; title: string }) {
             innerRadius={55}
             outerRadius={85}
             dataKey="value"
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            label={({ pct }: any) => `${pct}%`}
+            label={({ percent }) => formatPercent(percent ?? 0, 1)}
             labelLine={false}
           >
-            {data.map((_entry, index) => (
-              <Cell key={index} fill={COLORS[index % COLORS.length]} />
+            {data.map((entry, index) => (
+              <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />
             ))}
           </Pie>
-          <Tooltip
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            formatter={(value: any) =>
-              new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(Number(value))
-            }
-          />
+          <Tooltip formatter={(value) => formatCAD(Number(value))} />
           <Legend
             formatter={(value: string) => (
               <span className="text-xs text-foreground">{value}</span>
@@ -61,46 +37,24 @@ function DonutChart({ data, title }: { data: SliceEntry[]; title: string }) {
           />
         </PieChart>
       </ResponsiveContainer>
-    </div>
+    </figure>
   )
 }
 
 interface AllocationChartsProps {
-  accountFilter?: string
+  accountFilter?: PortfolioAccountView
 }
 
 export function AllocationCharts({ accountFilter }: AllocationChartsProps) {
-  const { data: allHoldings, isLoading } = usePortfolioHoldings()
-  const holdings =
-    accountFilter && accountFilter !== 'combined'
-      ? allHoldings?.filter((h) => h.account_type === accountFilter)
-      : allHoldings
+  const { data: allHoldings, isLoading, isError, error, refetch } = usePortfolioHoldings()
+  const { rates, isLoading: fxLoading } = useFxRates()
 
-  const { sectorData, accountData, geoData } = useMemo(() => {
-    if (!holdings) return { sectorData: [], accountData: [], geoData: [] }
+  const allocations = useMemo(() => {
+    const holdings = filterByAccount(allHoldings, accountFilter)
+    return holdings ? buildAllocations(holdings, rates) : null
+  }, [allHoldings, accountFilter, rates])
 
-    const total = holdings.reduce((sum, h) => sum + h.market_value, 0)
-
-    const sectorData = groupBy(
-      holdings.map((h) => ({ key: h.stock.sector, value: h.market_value })),
-      total,
-    )
-    const accountData = groupBy(
-      holdings.map((h) => ({ key: h.account_type.toUpperCase(), value: h.market_value })),
-      total,
-    )
-    const geoData = groupBy(
-      holdings.map((h) => ({
-        key: h.stock.currency === 'CAD' ? 'Canadian' : 'US',
-        value: h.market_value,
-      })),
-      total,
-    )
-
-    return { sectorData, accountData, geoData }
-  }, [holdings])
-
-  if (isLoading) {
+  if (isLoading || fxLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[1, 2, 3].map((i) => (
@@ -110,11 +64,31 @@ export function AllocationCharts({ accountFilter }: AllocationChartsProps) {
     )
   }
 
+  if (isError) {
+    return <QueryError what="holdings" error={error} onRetry={refetch} />
+  }
+
+  if (!allocations || allocations.totalCad <= 0) {
+    return (
+      <p className="text-muted-foreground text-sm py-8 text-center">No holdings to chart.</p>
+    )
+  }
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <DonutChart data={sectorData} title="By Sector" />
-      <DonutChart data={accountData} title="By Account" />
-      <DonutChart data={geoData} title="By Geography" />
+    <div className="space-y-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <DonutChart data={allocations.bySector} title="By Sector" />
+        <DonutChart data={allocations.byAccount} title="By Account" />
+        <DonutChart data={allocations.byGeography} title="By Geography" />
+      </div>
+      <p className="text-xs text-muted-foreground text-center">
+        Weights by market value in CAD{allocations.missingCurrencies.length === 0 && rates.USD ? ' (USD converted at the current rate)' : ''}.
+        {allocations.missingCurrencies.length > 0 && (
+          <span className="text-amber-600">
+            {' '}{allocations.missingCurrencies.join(', ')} holdings excluded — exchange rate unavailable.
+          </span>
+        )}
+      </p>
     </div>
   )
 }

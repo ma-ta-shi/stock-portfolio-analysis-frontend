@@ -16,8 +16,7 @@
 - Hooks: use-prefixed files in src/hooks/
 - TypeScript types in src/types/ — must match backend Pydantic schemas exactly
 - TypeScript strict mode — no `any` without justification
-- During frontend-first dev: fetch from /mock-data/ JSON files
-- When backend ready: swap to real API at http://localhost:8000/api/
+- Mock mode (`VITE_USE_MOCK=true` in `.env.local`) reads `public/mock-data/`; otherwise `/api/...` is called and the Vite dev server proxies it to the backend (see `.env.example`)
 
 ## Component Patterns
 - Prefer explicit props typing over React.FC
@@ -29,7 +28,19 @@
 - TanStack Query (useQuery, useMutation) for ALL server state
 - No useEffect for data fetching — use TanStack Query
 - Optimistic updates for watchlist and portfolio mutations
-- Mock data: frontend/mock-data/ with JSON matching every API response shape
+- Mock data: `public/mock-data/` with JSON matching every API response shape
+- Query keys: always from `queryKeys` in `src/lib/query-keys.ts` (queries and cache updates)
+- Pass TanStack Query's `signal` to `apiFetch`: `queryFn: ({ signal }) => apiFetch(mock, api, { signal })`
+- Every query result must render an error state: `<QueryError what="…" error={error} onRetry={refetch} />`
+
+## Formatting, Units & Currency
+- Formatting lives in `src/lib/format.ts` (`src/lib/utils.ts` only has `cn`)
+- API ratios are fractions (0.125 = 12.5%): `formatPct(x)` (signed) / `formatPercent(x)` (unsigned) — never `x * 100` at the call site
+  - Exception: the optimizer's `expected_return_improvement_pct` / `*_weight_pct` are whole percents (backend inconsistency, displayed as-is)
+- Per-holding money is in the holding's currency: `formatMoney(v, h.stock.currency)` (USD renders `US$`). `formatCAD` only for `_cad` fields
+- Signed amounts: `formatMoney(v, cur, { signed: true })` — never prepend `'+'` manually (formatPct/signed money already sign)
+- Combined cross-currency totals: convert with `toCad`/`sumInCad` (`src/lib/fx.ts`) using `useFxRates()`; unknown rates are reported, never summed as CAD
+- Date inputs default to `localDateInputValue()` (local calendar day, not UTC)
 
 ## Pages (from Notion Front End Design spec)
 - Home: morning briefing (alert types: outlook_change, portfolio_optimization, price_movement, etc.)
@@ -57,13 +68,19 @@
 ## Watchlist & Portfolio Mutations
 - `useAddToWatchlist`, `useRemoveFromWatchlist` in `use-watchlist.ts` — update TanStack Query cache directly (mock mode; no API call)
 - `useAddToPortfolio`, `useRemoveFromPortfolio`, `useUpdatePosition` in `use-portfolio.ts` — same pattern; `useUpdatePosition` recalculates `market_value`, `total_gain_loss`, `total_gain_loss_pct`, `yield_on_cost`
-- `useTickerSearch` in `use-ticker-search.ts` — mock lookup against 23 known tickers; matches exact ticker or partial name; 600ms delay; returns `TickerResult | null`
+- `useTickerSearch` in `use-ticker-search.ts` — mock lookup (exact ticker, then partial name; 600ms delay) in mock mode, `GET /api/stocks/resolve?q=` otherwise; returns `TickerResult | null`
+- `useAllocationAnalysis` in `use-allocation-analysis.ts` — "Analyze allocation" on the Optimizer tab; set `ALLOCATION_ENDPOINT` to connect it to the backend
+- Sell preview maths: `estimateSell()` in `src/lib/sell-preview.ts` (swap for the backend `sell/preview` endpoint when wired)
 - `AddStockDialog` — `mode: 'watchlist' | 'portfolio'`; step 1 = search, step 2 = confirm (watchlist) or position input (portfolio)
 - `EditPositionDialog` — pre-filled shares + avg cost; live book cost preview; calls `useUpdatePosition`
 - When mocking `use-portfolio` in tests, always mock `useRemoveFromPortfolio`, `useUpdatePosition`, `useClosedPositions`, and `useSellPosition` in addition to `usePortfolioHoldings` (they are called by child components rendered inside `HoldingsTable`)
+- Components rendering `SellPositionDialog` or building holding snapshots also need `use-user-profile` and `use-fx-rates` mocked
 
 ## Navigation Pattern
-- Full-row clickable tables: use `onClick={() => navigate(...)}` on `<TableRow>`, NOT `<Link>` on one cell
+- Full-row clickable tables: spread `clickableRowProps(() => navigate(...), 'View TICKER')` (`src/lib/a11y.ts`) on `<TableRow>` — adds keyboard (Tab/Enter) support. Cells with buttons stop click *and* keydown propagation
+- Link-styled buttons: `<Button nativeButton={false} render={<Link to="…" />}>` — never nest `<Button>` inside `<Link>`
+- Icon-only buttons need `aria-label`; decorative icons get `aria-hidden="true"`
+- Form fields: use `<FormField label="…">{(id) => <Input id={id} … />}</FormField>` so labels are linked
 - All stock links go to `/stocks/${stock_id}` (e.g. `stk_ry_to`, `stk_shop_to`)
 
 ## Mock Data Conventions

@@ -1,6 +1,7 @@
 import { useFeedback } from '@/hooks/use-feedback'
 import { cn } from '@/lib/utils'
-import { formatPct } from '@/lib/utils'
+import { formatPct, formatPercent } from '@/lib/format'
+import { gainLossColor } from '@/lib/labels'
 
 interface StatCardProps {
   label: string
@@ -42,7 +43,7 @@ export function AccuracyCards() {
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <StatCard
         label="Direction Accuracy"
-        value={`${dirPct.toFixed(0)}%`}
+        value={formatPercent(s.direction_accuracy, 0)}
         valueClass={dirColor}
         sub={`${s.total_scored_predictions} predictions scored`}
       />
@@ -53,8 +54,8 @@ export function AccuracyCards() {
       />
       <StatCard
         label="Alpha vs TSX"
-        value={formatPct(s.alpha_vs_tsx_pct * 100)}
-        valueClass="text-emerald-600"
+        value={formatPct(s.alpha_vs_tsx_pct)}
+        valueClass={gainLossColor(s.alpha_vs_tsx_pct)}
         sub="vs benchmark"
       />
       <StatCard

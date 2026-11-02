@@ -1,73 +1,63 @@
-# React + TypeScript + Vite
+# Stock Picker — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React 19 + Vite + TypeScript + Tailwind CSS + shadcn/ui (Base UI), with TanStack Query for server state.
 
-Currently, two official plugins are available:
+## Getting started
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm ci
+cp .env.example .env.local   # then edit as needed
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open http://localhost:5173.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Mock mode vs. backend
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| Setting (`.env.local`) | Behaviour |
+|---|---|
+| `VITE_USE_MOCK=true` | Reads static JSON from `public/mock-data/`. No backend needed. Portfolio and watchlist edits update the in-memory cache only and are lost on reload. |
+| `VITE_USE_MOCK` unset/false | Calls the FastAPI backend at `/api/...`. In dev, Vite proxies `/api` to `VITE_API_PROXY_TARGET` (default `http://localhost:8000`). |
+| `VITE_API_BASE_URL` | Backend origin for production builds served from a different host. Leave empty when the backend serves the built frontend itself. |
+
+## Scripts
+
+| Command | What it does |
+|---|---|
+| `npm run dev` | Dev server with hot reload |
+| `npm test` | Run the Vitest suite once |
+| `npm run test:watch` | Vitest in watch mode |
+| `npm run lint` | ESLint |
+| `npx tsc -b` | Type check |
+| `npm run build` | Type check + production build to `dist/` |
+
+CI (`.github/workflows/frontend.yml`) runs the type check, lint, tests and build on every push that touches `frontend/`.
+
+## Project layout
+
 ```
+src/
+  components/      Shared components (dialogs, badges, QueryError, FormField, MoneyInput…)
+    ui/            shadcn/ui primitives — regenerate with the shadcn CLI, don't hand-edit
+    layout/        App shell (header, profile switcher)
+  context/         UserContext (active profile)
+  hooks/           One TanStack Query hook module per API resource
+  lib/
+    api.ts         apiFetch + ApiError (backend error envelope, timeouts, cancellation)
+    query-keys.ts  The only place query keys are defined
+    format.ts      Money / percent / date formatting
+    fx.ts          Currency → CAD conversion for combined totals
+    portfolio.ts   Holding snapshots, allocations, template filling
+    sell-preview.ts  Client-side sell estimate (stand-in for the backend preview endpoint)
+  pages/           One component per route (lazy-loaded), with sub-sections in folders
+  types/           API response types — must match the backend Pydantic schemas
+  test/            Test setup and shared fixtures
+public/mock-data/  Mock API responses, one JSON file per endpoint
+```
+
+## Conventions worth knowing
+
+- **Percentages are fractions.** The API sends `0.125` for 12.5%. Pass it straight to `formatPct` (signed) or `formatPercent` (unsigned). Never multiply by 100 at the call site.
+- **Money is shown in its own currency.** Use `formatMoney(value, holding.stock.currency)`; USD renders as `US$1,234.56`. Combined totals across currencies must be converted with `toCad`/`sumInCad` and the rate from `useFxRates()`. Don't add USD and CAD amounts directly.
+- **Every query handles errors.** Render `<QueryError what="…" error={error} onRetry={refetch} />`.
+- **Query keys come from `queryKeys`** so queries and cache updates can't drift apart.

@@ -1,11 +1,13 @@
 import { useUserProfile } from '@/hooks/use-user-profile'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
-import { formatCAD } from '@/lib/utils'
+import type { ReactNode } from 'react'
+import { QueryError } from '@/components/QueryError'
+import { formatCAD, formatEnumLabel, formatPercent } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import type { GoalPriority, InvestmentGoalType, RrspContributionStrategy } from '@/types'
 
-function InfoRow({ label, value, note }: { label: string; value: React.ReactNode; note?: string }) {
+function InfoRow({ label, value, note }: { label: string; value: ReactNode; note?: string }) {
   return (
     <div className="flex items-start justify-between py-2 border-b border-border last:border-0">
       <div>
@@ -26,7 +28,9 @@ function NotificationRow({ label, enabled }: { label: string; enabled: boolean }
           'inline-block w-2.5 h-2.5 rounded-full',
           enabled ? 'bg-emerald-500' : 'bg-muted-foreground/30',
         )}
-      />
+      >
+        <span className="sr-only">{enabled ? 'On' : 'Off'}</span>
+      </span>
     </div>
   )
 }
@@ -107,7 +111,7 @@ function ProfileTab() {
           label="Marginal Tax Rate"
           value={
             <div className="flex items-center gap-2">
-              <span>{(f.marginal_tax_rate * 100).toFixed(2)}%</span>
+              <span>{formatPercent(f.marginal_tax_rate)}</span>
               <span className="text-xs text-muted-foreground">
                 {f.marginal_tax_rate_is_manual ? '(manual override)' : '(auto-calculated)'}
               </span>
@@ -333,7 +337,7 @@ function InvestmentPreferencesTab() {
         <h3 className="text-sm font-medium mb-2">Position Sizing &amp; Preferences</h3>
         <InfoRow
           label="Max Single Position"
-          value={`${(prefs.max_single_position_pct * 100).toFixed(0)}%`}
+          value={formatPercent(prefs.max_single_position_pct, 0)}
           note="Applies as a hard cap per holding across all accounts"
         />
         <InfoRow
@@ -398,17 +402,21 @@ function NotificationsTab() {
       </div>
       <div className="bg-card border border-border rounded-lg p-4">
         <h3 className="text-sm font-medium mb-2">System</h3>
-        <InfoRow label="LLM Mode" value={s.llm_mode.replace(/_/g, ' ')} />
-        <InfoRow label="Batch Analysis Schedule" value={s.batch_analysis_schedule.replace(/_/g, ' ')} />
+        <InfoRow label="LLM Mode" value={formatEnumLabel(s.llm_mode)} />
+        <InfoRow label="Batch Analysis Schedule" value={formatEnumLabel(s.batch_analysis_schedule)} />
       </div>
     </div>
   )
 }
 
 export function SettingsPage() {
+  // Each tab reads this same (deduplicated) query; report a failure once, above the tabs.
+  const { isError, error, refetch } = useUserProfile()
+
   return (
     <div>
       <h1 className="text-xl font-semibold mb-4">Settings</h1>
+      {isError && <QueryError what="your profile" error={error} onRetry={refetch} className="mb-4" />}
       <Tabs defaultValue="profile">
         <TabsList className="mb-4">
           <TabsTrigger value="profile">Profile</TabsTrigger>

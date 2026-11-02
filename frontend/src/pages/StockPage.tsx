@@ -22,60 +22,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { formatDate, formatCAD } from '@/lib/utils'
+import { PortfolioContextCard } from '@/components/PortfolioContextCard'
+import { QueryError } from '@/components/QueryError'
+import { useFxRates } from '@/hooks/use-fx-rates'
+import { isNotFound } from '@/lib/api'
+import { formatDate, formatEnumLabel, formatMoney, formatPct } from '@/lib/format'
+import { gainLossColor } from '@/lib/labels'
+import { applyTemplate, buildHoldingSnapshot, disagreementLabel } from '@/lib/portfolio'
 import { cn } from '@/lib/utils'
-import type { StockAnalysisHistoryEntry, HoldingSnapshot, Holding, PortfolioFit } from '@/types'
-
-const fitBoxColors: Record<PortfolioFit, string> = {
-  strong_candidate: 'bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800',
-  worth_monitoring: 'bg-amber-50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800',
-  poor_fit: 'bg-muted border-border',
-}
-
-const fitBadgeColors: Record<PortfolioFit, string> = {
-  strong_candidate: 'bg-emerald-600 text-white',
-  worth_monitoring: 'bg-amber-500 text-white',
-  poor_fit: 'bg-muted-foreground text-white',
-}
-
-const FIT_LABELS: Record<PortfolioFit, string> = {
-  strong_candidate: 'Strong Candidate',
-  worth_monitoring: 'Worth Monitoring',
-  poor_fit: 'Poor Fit',
-}
-
-function buildHoldingSnapshot(holdings: Holding[]): HoldingSnapshot | undefined {
-  if (!holdings.length) return undefined
-
-  const totalShares = holdings.reduce((s, h) => s + h.shares, 0)
-  const bookCost = holdings.reduce((s, h) => s + h.shares * h.average_cost_basis, 0)
-  const currentValue = holdings.reduce((s, h) => s + h.market_value, 0)
-  const totalReturnCad = holdings.reduce((s, h) => s + h.total_gain_loss, 0)
-  const dayChangeCad = holdings.reduce((s, h) => s + h.day_change * h.shares, 0)
-  // weighted average yield on cost
-  const yieldOnCost = totalShares > 0
-    ? holdings.reduce((s, h) => s + h.yield_on_cost * h.shares, 0) / totalShares
-    : 0
-
-  return {
-    shares: totalShares,
-    average_cost: bookCost / totalShares,
-    book_cost: bookCost,
-    current_value: currentValue,
-    total_return_cad: totalReturnCad,
-    total_return_pct: bookCost > 0 ? totalReturnCad / bookCost : 0,
-    day_change_cad: dayChangeCad,
-    yield_on_cost: yieldOnCost > 0 ? yieldOnCost : undefined,
-    by_account: holdings.length > 1
-      ? holdings.map((h) => ({
-          account_type: h.account_type,
-          shares: h.shares,
-          value: h.market_value,
-          avg_cost: h.average_cost_basis,
-        }))
-      : undefined,
-  }
-}
+import type { Holding, StockAnalysisHistoryEntry } from '@/types'
 
 function predictionStatusColor(status: StockAnalysisHistoryEntry['prediction_status']) {
   if (status === 'scored') return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
@@ -83,32 +38,43 @@ function predictionStatusColor(status: StockAnalysisHistoryEntry['prediction_sta
   return 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400'
 }
 
-function applyTemplate(template: string, vars: Record<string, string | number>) {
-  let out = template
-  for (const [key, value] of Object.entries(vars)) {
-    out = out.replaceAll(`{{${key}}}`, String(value))
-  }
-  return out
+function ReturnCell({ entry }: { entry: StockAnalysisHistoryEntry }) {
+  const value = entry.return_at_3m ?? entry.return_at_1m
+  if (value == null) return <span className="text-xs text-muted-foreground">—</span>
+  return <span className={cn('text-sm font-medium', gainLossColor(value))}>{formatPct(value, 1)}</span>
 }
 
 export function StockPage() {
   const { stockId } = useParams<{ stockId: string }>()
   const id = stockId ?? ''
 
-  const { data: stock, isLoading: stockLoading, isError: stockError, refetch: refetchStock } = useStockDetail(id)
-  const { data: history, isLoading: historyLoading } = useStockAnalysisHistory(id)
+  const {
+    data: stock,
+    isLoading: stockLoading,
+    isError: stockError,
+    error: stockErrorValue,
+    refetch: refetchStock,
+  } = useStockDetail(id)
+  const {
+    data: history,
+    isLoading: historyLoading,
+    isError: historyError,
+    error: historyErrorValue,
+    refetch: refetchHistory,
+  } = useStockAnalysisHistory(id)
   const { data: allHoldings } = usePortfolioHoldings()
+  const { rates } = useFxRates()
 
   const holdingsForStock = allHoldings?.filter((h) => h.stock.stock_id === id) ?? []
-  const holdingSnapshot = buildHoldingSnapshot(holdingsForStock)
+  const holdingSnapshot = buildHoldingSnapshot(holdingsForStock, rates)
   const holdingsSharesByAccount = holdingsForStock.reduce<Record<string, number>>((acc, h) => {
     acc[h.account_type] = (acc[h.account_type] ?? 0) + h.shares
     return acc
   }, {})
 
-  const [buyingHolding, setBuyingHolding] = useState<(typeof holdingsForStock)[0] | null>(null)
-  const [sellingHolding, setSellingHolding] = useState<(typeof holdingsForStock)[0] | null>(null)
-  const [editingHolding, setEditingHolding] = useState<(typeof holdingsForStock)[0] | null>(null)
+  const [buyingHolding, setBuyingHolding] = useState<Holding | null>(null)
+  const [sellingHolding, setSellingHolding] = useState<Holding | null>(null)
+  const [editingHolding, setEditingHolding] = useState<Holding | null>(null)
   const [addDialogOpen, setAddDialogOpen] = useState(false)
 
   if (stockLoading) {
@@ -121,11 +87,10 @@ export function StockPage() {
     )
   }
 
-  if (stockError) {
+  if (stockError && !isNotFound(stockErrorValue)) {
     return (
-      <div className="max-w-3xl mx-auto text-center py-12 space-y-3">
-        <p className="text-sm text-muted-foreground">Failed to load stock data.</p>
-        <Button size="sm" variant="outline" onClick={() => refetchStock()}>Retry</Button>
+      <div className="max-w-3xl mx-auto py-12">
+        <QueryError what="stock data" error={stockErrorValue} onRetry={refetchStock} />
       </div>
     )
   }
@@ -142,6 +107,9 @@ export function StockPage() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
+      <h1 className="sr-only">
+        {stock.ticker} — {stock.name}
+      </h1>
       {/* Stock Info Section */}
       <StockInfoSection
         stock={stock}
@@ -160,7 +128,7 @@ export function StockPage() {
               <div className="flex items-center gap-3 flex-wrap text-sm">
                 <Badge variant="outline" className="text-xs">{h.account_type.toUpperCase()}</Badge>
                 <span>{h.shares} shares</span>
-                <span className="text-muted-foreground">@ ${h.average_cost_basis.toFixed(2)} avg</span>
+                <span className="text-muted-foreground">@ {formatMoney(h.average_cost_basis, h.stock.currency)} avg</span>
               </div>
               <div className="flex gap-1">
                 <Button
@@ -169,7 +137,7 @@ export function StockPage() {
                   className="text-emerald-600 border-emerald-200 hover:bg-emerald-50 dark:border-emerald-800 dark:hover:bg-emerald-950/30"
                   onClick={() => setBuyingHolding(h)}
                 >
-                  <TrendingUp className="w-3.5 h-3.5 mr-1" />
+                  <TrendingUp className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
                   Buy
                 </Button>
                 <Button
@@ -178,7 +146,7 @@ export function StockPage() {
                   className="text-red-600 border-red-200 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950/30"
                   onClick={() => setSellingHolding(h)}
                 >
-                  <TrendingDown className="w-3.5 h-3.5 mr-1" />
+                  <TrendingDown className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
                   Sell
                 </Button>
                 <Button
@@ -186,7 +154,7 @@ export function StockPage() {
                   variant="outline"
                   onClick={() => setEditingHolding(h)}
                 >
-                  <Pencil className="w-3.5 h-3.5 mr-1" />
+                  <Pencil className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
                   Edit
                 </Button>
               </div>
@@ -197,7 +165,7 @@ export function StockPage() {
         <div className="flex items-center justify-between bg-card border border-border rounded-lg px-4 py-3">
           <span className="text-sm text-muted-foreground">Not in your portfolio</span>
           <Button size="sm" onClick={() => setAddDialogOpen(true)}>
-            <Plus className="w-3.5 h-3.5 mr-1" />
+            <Plus className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
             Add to Portfolio
           </Button>
         </div>
@@ -210,14 +178,8 @@ export function StockPage() {
             <h2 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
               90-Day Price
             </h2>
-            <span
-              className={cn(
-                'text-sm font-medium',
-                dayPositive ? 'text-emerald-600' : 'text-red-600',
-              )}
-            >
-              {dayPositive ? '+' : ''}
-              {(stock.day_change_pct * 100).toFixed(2)}% today
+            <span className={cn('text-sm font-medium', gainLossColor(stock.day_change_pct))}>
+              {formatPct(stock.day_change_pct)} today
             </span>
           </div>
           <SparklineChart
@@ -246,21 +208,18 @@ export function StockPage() {
                 <OutlookBadge direction={a.stock_outlook} size="lg" />
                 <ConfidenceMeter score={a.confidence_score} />
                 <DisagreementIndicator
-                  label={
-                    a.disagreement_score < 0.25
-                      ? 'low'
-                      : a.disagreement_score < 0.5
-                        ? 'moderate'
-                        : 'high'
-                  }
+                  label={disagreementLabel(a.disagreement_score)}
                   score={a.disagreement_score}
                 />
               </div>
-              <Link to={`/analysis/${a.analysis_id}`}>
-                <Button variant="outline" size="sm">
-                  Full Analysis
-                </Button>
-              </Link>
+              <Button
+                variant="outline"
+                size="sm"
+                nativeButton={false}
+                render={<Link to={`/analysis/${a.analysis_id}`} />}
+              >
+                Full Analysis
+              </Button>
             </div>
 
             {/* Layer 1 — Stock Outlook */}
@@ -288,54 +247,18 @@ export function StockPage() {
               )}
             </div>
 
-            {/* Layer 2 — Portfolio Context */}
             {l2 && (
-              <div className={cn('border rounded-lg p-5 space-y-3', fitBoxColors[l2.portfolio_fit])}>
-                <h2 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
-                  Layer 2 — Portfolio Context
-                </h2>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className={cn('text-xs font-medium px-2 py-0.5 rounded-full', fitBadgeColors[l2.portfolio_fit])}>
-                    {FIT_LABELS[l2.portfolio_fit]}
-                  </span>
-                  <span className="text-sm text-muted-foreground">{l2.portfolio_fit_rationale}</span>
-                </div>
-                <div className={cn('rounded-md border p-3', fitBoxColors[l2.portfolio_fit])}>
-                  <p className="text-sm font-medium">{l2.suggested_action}</p>
-                  {l2.suggested_amount_cad != null && (
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      Suggested amount: {formatCAD(l2.suggested_amount_cad)}
-                    </p>
-                  )}
-                </div>
-                {l2.account_note_template && holdingSnapshot && (
-                  <div className="border-t border-border pt-3">
-                    <p className="text-xs font-medium text-muted-foreground mb-1">Account Note</p>
-                    <p className="text-sm leading-relaxed text-muted-foreground">
-                      {applyTemplate(l2.account_note_template, {
-                        shares: sharesForTemplate,
+              <PortfolioContextCard
+                context={l2}
+                accountNote={
+                  l2.account_note_template
+                    ? applyTemplate(l2.account_note_template, {
+                        shares: holdingSnapshot ? sharesForTemplate : 0,
                         account_type: accountTypeLabel,
-                      })}
-                    </p>
-                  </div>
-                )}
-                {l2.account_note_template && !holdingSnapshot && (
-                  <div className="border-t border-border pt-3">
-                    <p className="text-xs font-medium text-muted-foreground mb-1">Account Note</p>
-                    <p className="text-sm leading-relaxed text-muted-foreground">
-                      {applyTemplate(l2.account_note_template, {
-                        shares: 0,
-                        account_type: accountTypeLabel,
-                      })}
-                    </p>
-                  </div>
-                )}
-                {l2.would_replace && (
-                  <p className="text-xs text-muted-foreground">
-                    Would replace: <span className="font-medium text-foreground">{l2.would_replace}</span>
-                  </p>
-                )}
-              </div>
+                      })
+                    : undefined
+                }
+              />
             )}
           </div>
         )
@@ -352,6 +275,8 @@ export function StockPage() {
 
         {historyLoading ? (
           <div className="h-32 rounded-lg bg-muted animate-pulse" />
+        ) : historyError ? (
+          <QueryError what="analysis history" error={historyErrorValue} onRetry={refetchHistory} />
         ) : !history?.data.length ? (
           <div className="border border-border rounded-lg p-8 text-center text-sm text-muted-foreground">
             No analyses yet for {stock.ticker}.
@@ -385,7 +310,7 @@ export function StockPage() {
                       <ConfidenceMeter score={entry.confidence_score} />
                     </TableCell>
                     <TableCell className="text-right text-sm font-medium">
-                      ${entry.price_at_analysis.toFixed(2)}
+                      {formatMoney(entry.price_at_analysis, stock.currency)}
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline" className="text-xs">
@@ -393,7 +318,7 @@ export function StockPage() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">
-                      {entry.timeline.replace('_', ' ')}
+                      {formatEnumLabel(entry.timeline)}
                     </TableCell>
                     <TableCell>
                       <span
@@ -410,36 +335,19 @@ export function StockPage() {
                       </span>
                     </TableCell>
                     <TableCell className="text-right">
-                      {entry.return_at_3m != null ? (
-                        <span
-                          className={cn(
-                            'text-sm font-medium',
-                            entry.return_at_3m >= 0 ? 'text-emerald-600' : 'text-red-600',
-                          )}
-                        >
-                          {entry.return_at_3m >= 0 ? '+' : ''}
-                          {(entry.return_at_3m * 100).toFixed(1)}%
-                        </span>
-                      ) : entry.return_at_1m != null ? (
-                        <span
-                          className={cn(
-                            'text-sm font-medium',
-                            entry.return_at_1m >= 0 ? 'text-emerald-600' : 'text-red-600',
-                          )}
-                        >
-                          {entry.return_at_1m >= 0 ? '+' : ''}
-                          {(entry.return_at_1m * 100).toFixed(1)}%
-                        </span>
-                      ) : (
-                        <span className="text-xs text-muted-foreground">—</span>
-                      )}
+                      <ReturnCell entry={entry} />
                     </TableCell>
                     <TableCell>
-                      <Link to={`/analysis/${entry.analysis_id}`}>
-                        <Button variant="ghost" size="sm" className="text-xs">
-                          View
-                        </Button>
-                      </Link>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-xs"
+                        nativeButton={false}
+                        render={<Link to={`/analysis/${entry.analysis_id}`} />}
+                        aria-label={`View analysis from ${formatDate(entry.analyzed_at)}`}
+                      >
+                        View
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
