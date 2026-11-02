@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { apiFetch } from '@/lib/api'
+import { queryKeys } from '@/lib/query-keys'
 import type { AnalysisSummary, AnalysisRun, AgentResults } from '@/types'
 
 interface RecentAnalysesResponse {
@@ -8,11 +9,12 @@ interface RecentAnalysesResponse {
 
 export function useRecentAnalyses() {
   return useQuery({
-    queryKey: ['analysis', 'recent'],
-    queryFn: () =>
+    queryKey: queryKeys.analysis.recent,
+    queryFn: ({ signal }) =>
       apiFetch<RecentAnalysesResponse>(
         '/mock-data/analysis/recent.json',
         '/api/analysis/recent',
+        { signal },
       ),
     select: (res) => res.data,
   })
@@ -20,11 +22,12 @@ export function useRecentAnalyses() {
 
 export function useAnalysisRun(analysisId: string) {
   return useQuery({
-    queryKey: ['analysis', 'run', analysisId],
-    queryFn: () =>
+    queryKey: queryKeys.analysis.run(analysisId),
+    queryFn: ({ signal }) =>
       apiFetch<AnalysisRun>(
         `/mock-data/analysis/${analysisId}.json`,
         `/api/analysis/${analysisId}`,
+        { signal },
       ),
     enabled: !!analysisId,
   })
@@ -32,11 +35,12 @@ export function useAnalysisRun(analysisId: string) {
 
 export function useAgentResults(analysisId: string) {
   return useQuery({
-    queryKey: ['analysis', 'agents', analysisId],
-    queryFn: () =>
+    queryKey: queryKeys.analysis.agents(analysisId),
+    queryFn: ({ signal }) =>
       apiFetch<AgentResults>(
         `/mock-data/analysis/${analysisId}/agents.json`,
         `/api/analysis/${analysisId}/agents`,
+        { signal },
       ),
     enabled: !!analysisId,
   })
