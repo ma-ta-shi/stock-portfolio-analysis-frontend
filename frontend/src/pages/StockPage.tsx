@@ -193,7 +193,9 @@ export function StockPage() {
         </div>
       )}
 
-      {!stock.latest_analysis && (
+      {/* Only when we know there are no analyses at all: a stock with history but no
+          latest_analysis must not claim it "hasn't been analysed". */}
+      {!stock.latest_analysis && !historyLoading && !historyError && history?.data.length === 0 && (
         <div className="border border-dashed border-border rounded-lg px-4 py-3 text-sm text-muted-foreground">
           <span className="font-medium text-foreground">Awaiting analysis.</span> {stock.ticker} hasn’t
           been analysed yet. Results will appear here once it has been.

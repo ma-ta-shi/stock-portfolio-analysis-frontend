@@ -22,10 +22,11 @@ export default defineConfig({
     { name: 'dark', use: { ...devices['Desktop Chrome'], colorScheme: 'dark' } },
   ],
   webServer: {
-    command: `npx vite --port ${PORT} --strictPort`,
+    // Test the production build (what actually ships), in mock mode.
+    command: `npx vite build && npx vite preview --port ${PORT} --strictPort`,
     port: PORT,
     reuseExistingServer: !process.env.CI,
     env: { VITE_USE_MOCK: 'true' },
-    timeout: 60_000,
+    timeout: 120_000,
   },
 })

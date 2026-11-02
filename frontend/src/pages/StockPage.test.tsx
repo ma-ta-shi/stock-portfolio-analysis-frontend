@@ -168,3 +168,27 @@ describe('StockPage — not yet priced or analysed', () => {
     expect(screen.queryByText(/\$0\.00|0\.00%/)).not.toBeInTheDocument()
   })
 })
+
+describe('StockPage — awaiting-analysis note', () => {
+  const unanalysed = { ...mockStock, latest_analysis: undefined }
+  function setup(history: unknown) {
+    mockUseStockDetail.mockReturnValue({ data: unanalysed, isLoading: false, isError: false, refetch: vi.fn() } as unknown as ReturnType<typeof useStockDetail>)
+    mockUseStockAnalysisHistory.mockReturnValue(history as ReturnType<typeof useStockAnalysisHistory>)
+    mockUsePortfolioHoldings.mockReturnValue({ data: [], isLoading: false } as unknown as ReturnType<typeof usePortfolioHoldings>)
+    renderStockPage()
+  }
+
+  it('is not shown when the stock has past analyses', () => {
+    setup({
+      data: { data: [{ analysis_id: 'a1', stock_outlook: 'bullish', confidence_score: 70, disagreement_score: 0.1, price_at_analysis: 140, account_type: 'tfsa', timeline: 'medium_term', prediction_status: 'active', analyzed_at: '2026-03-01T00:00:00Z' }] },
+      isLoading: false,
+      isError: false,
+    })
+    expect(screen.queryByText(/Awaiting analysis\./)).not.toBeInTheDocument()
+  })
+
+  it('is not shown while the history is still loading', () => {
+    setup({ data: undefined, isLoading: true, isError: false })
+    expect(screen.queryByText(/Awaiting analysis\./)).not.toBeInTheDocument()
+  })
+})
