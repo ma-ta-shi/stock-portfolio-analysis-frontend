@@ -1,7 +1,7 @@
 import { useFeedback } from '@/hooks/use-feedback'
 import { cn } from '@/lib/utils'
 import { formatPct, formatPercent } from '@/lib/format'
-import { gainLossColor } from '@/lib/labels'
+import { gainLossColor, TONE_TEXT } from '@/lib/labels'
 
 interface StatCardProps {
   label: string
@@ -37,7 +37,7 @@ export function AccuracyCards() {
   const s = data.accuracy_summary
   const dirPct = s.direction_accuracy * 100
   const dirColor =
-    dirPct >= 70 ? 'text-emerald-700 dark:text-emerald-400' : dirPct >= 55 ? 'text-amber-700 dark:text-amber-400' : 'text-red-600 dark:text-red-400'
+    dirPct >= 70 ? TONE_TEXT.positive : dirPct >= 55 ? TONE_TEXT.warning : TONE_TEXT.negative
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">

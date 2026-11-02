@@ -1,5 +1,7 @@
 import { useFeedback } from '@/hooks/use-feedback'
 import { formatDate, formatEnumLabel, parseDate } from '@/lib/format'
+import { TONE_TEXT } from '@/lib/labels'
+import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 
 export function CompetenceBoundaries() {
@@ -34,7 +36,7 @@ export function CompetenceBoundaries() {
             <div className="text-xs text-muted-foreground mb-1">Weakest Sectors</div>
             <div className="flex flex-wrap gap-1">
               {competence_boundaries.weakest_performing_sectors.map((s) => (
-                <Badge key={s} variant="outline" className="text-xs text-red-600 dark:text-red-400 border-red-200 dark:border-red-800">
+                <Badge key={s} variant="outline" className={cn('text-xs', TONE_TEXT.negative, 'border-red-200 dark:border-red-800')}>
                   {s}
                 </Badge>
               ))}

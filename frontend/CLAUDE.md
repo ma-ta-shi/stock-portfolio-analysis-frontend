@@ -48,6 +48,7 @@
 - Dark mode follows the OS setting (inline script in `index.html` toggles `.dark`); any new colour class needs a `dark:` counterpart
 - `--destructive` is red-700 in light mode for contrast; don't revert to the shadcn default
 - Verified with axe-core (0 violations on every page, both themes) — re-run after visual changes
+- `src/test/contrast-guard.test.ts` fails the build on low-contrast shades and on `hover:text-x dark:text-y` (must be `dark:hover:text-y`, otherwise the colour applies permanently in dark mode)
 
 ## Pages (from Notion Front End Design spec)
 - Home: morning briefing (alert types: outlook_change, portfolio_optimization, price_movement, etc.)

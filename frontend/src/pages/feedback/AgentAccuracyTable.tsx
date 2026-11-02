@@ -1,5 +1,6 @@
 import { useFeedback } from '@/hooks/use-feedback'
 import { Progress } from '@/components/ui/progress'
+import { TONE_TEXT } from '@/lib/labels'
 import { cn } from '@/lib/utils'
 
 function formatAgentName(key: string): string {
@@ -27,10 +28,10 @@ export function AgentAccuracyTable() {
           const accPct = Math.round(entry.signal_accuracy * 100)
           const accColor =
             accPct >= 70
-              ? 'text-emerald-700 dark:text-emerald-400'
+              ? TONE_TEXT.positive
               : accPct >= 55
-                ? 'text-amber-700 dark:text-amber-400'
-                : 'text-red-600 dark:text-red-400'
+                ? TONE_TEXT.warning
+                : TONE_TEXT.negative
           return (
             <div key={key}>
               <div className="flex items-center justify-between mb-1">

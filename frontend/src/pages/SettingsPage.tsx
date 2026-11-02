@@ -5,6 +5,7 @@ import type { ReactNode } from 'react'
 import { QueryError } from '@/components/QueryError'
 import { formatCAD, formatEnumLabel, formatPercent, parseDate } from '@/lib/format'
 import { cn } from '@/lib/utils'
+import { TONE_TEXT } from '@/lib/labels'
 import type { GoalPriority, InvestmentGoalType, RrspContributionStrategy } from '@/types'
 
 function InfoRow({ label, value, note }: { label: string; value: ReactNode; note?: string }) {
@@ -321,7 +322,7 @@ function InvestmentPreferencesTab() {
             prefs.sectors_to_avoid.length > 0 ? (
               <div className="flex flex-wrap gap-1 justify-end">
                 {prefs.sectors_to_avoid.map((s) => (
-                  <Badge key={s} variant="outline" className="text-xs text-red-600 dark:text-red-400">
+                  <Badge key={s} variant="outline" className={cn('text-xs', TONE_TEXT.negative)}>
                     {s}
                   </Badge>
                 ))}

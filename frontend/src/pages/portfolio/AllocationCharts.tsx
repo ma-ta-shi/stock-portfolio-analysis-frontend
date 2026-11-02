@@ -5,6 +5,7 @@ import { useFxRates } from '@/hooks/use-fx-rates'
 import { QueryError } from '@/components/QueryError'
 import { formatCAD, formatPercent } from '@/lib/format'
 import { buildAllocations, filterByAccount, type AllocationSlice } from '@/lib/portfolio'
+import { TONE_TEXT } from '@/lib/labels'
 import type { PortfolioAccountView } from '@/types'
 
 const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#6b7280']
@@ -84,7 +85,7 @@ export function AllocationCharts({ accountFilter }: AllocationChartsProps) {
       <p className="text-xs text-muted-foreground text-center">
         Weights by market value in CAD{allocations.missingCurrencies.length === 0 && rates.USD ? ' (USD converted at the current rate)' : ''}.
         {allocations.missingCurrencies.length > 0 && (
-          <span className="text-amber-700 dark:text-amber-400">
+          <span className={TONE_TEXT.warning}>
             {' '}{allocations.missingCurrencies.join(', ')} holdings excluded — exchange rate unavailable.
           </span>
         )}

@@ -3,14 +3,14 @@ import { useMarketOverview } from '@/hooks/use-market'
 import { SparklineChart } from '@/components/SparklineChart'
 import { QueryError } from '@/components/QueryError'
 import { formatNumber, formatPct, formatPercent } from '@/lib/format'
-import { gainLossColor } from '@/lib/labels'
+import { gainLossColor, TONE_TEXT } from '@/lib/labels'
 import { cn } from '@/lib/utils'
 
 function DirectionArrow({ direction }: { direction: string }) {
   if (direction === 'up' || direction === 'hiking')
     return <ArrowUp className="w-3 h-3 text-red-500 inline" aria-label="rising" />
   if (direction === 'down' || direction === 'cutting')
-    return <ArrowDown className="w-3 h-3 text-emerald-700 dark:text-emerald-400 inline" aria-label="falling" />
+    return <ArrowDown className={cn('w-3 h-3', TONE_TEXT.positive, 'inline')} aria-label="falling" />
   return <Minus className="w-3 h-3 text-muted-foreground inline" aria-label="holding" />
 }
 

@@ -19,7 +19,7 @@ import { useFxRates } from '@/hooks/use-fx-rates'
 import { isNotFound } from '@/lib/api'
 import { formatAgentName, formatDate, formatEnumLabel, formatMoney } from '@/lib/format'
 import { applyTemplate, buildHoldingSnapshot } from '@/lib/portfolio'
-import { BADGE } from '@/lib/labels'
+import { BADGE, TONE_TEXT } from '@/lib/labels'
 import { cn } from '@/lib/utils'
 import type { SignalDirection } from '@/types'
 
@@ -201,7 +201,7 @@ export function AnalysisPage() {
                 )}
                 {criticalRisks.length > 0 && (
                   <div>
-                    <p className="text-xs font-medium text-red-600 dark:text-red-400 mb-1.5">Critical Risks</p>
+                    <p className={cn('text-xs font-medium', TONE_TEXT.negative, 'mb-1.5')}>Critical Risks</p>
                     <ul className="space-y-1">
                       {criticalRisks.map((r, i) => (
                         <li key={i} className="text-sm flex gap-2 text-red-700 dark:text-red-400">

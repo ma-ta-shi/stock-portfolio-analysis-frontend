@@ -18,7 +18,7 @@ import { Badge } from '@/components/ui/badge'
 import { QueryError } from '@/components/QueryError'
 import { clickableRowProps } from '@/lib/a11y'
 import { formatDate, formatNumber, formatPct } from '@/lib/format'
-import { FIT_SHORT_LABELS, FIT_TEXT_COLORS, gainLossColor } from '@/lib/labels'
+import { FIT_SHORT_LABELS, FIT_TEXT_COLORS, gainLossColor, TONE_TEXT } from '@/lib/labels'
 import { cn } from '@/lib/utils'
 import type { WatchlistItem } from '@/types'
 
@@ -97,11 +97,11 @@ export function WatchlistPage() {
         {data?.summary && (
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <span>{data.summary.total} stocks</span>
-            <span className="text-emerald-700 dark:text-emerald-400 font-medium">
+            <span className={cn(TONE_TEXT.positive, 'font-medium')}>
               {data.summary.bullish_count} bullish
             </span>
             {data.summary.changed_since_last_check > 0 && (
-              <span className="text-blue-600 dark:text-blue-400">
+              <span className={TONE_TEXT.info}>
                 {data.summary.changed_since_last_check} changed
               </span>
             )}

@@ -14,7 +14,7 @@ import {
 import { QueryError } from '@/components/QueryError'
 import { downloadFile, toCsv } from '@/lib/csv'
 import { formatDate, formatMoney, formatPct, localDateInputValue } from '@/lib/format'
-import { gainLossColor } from '@/lib/labels'
+import { gainLossColor, TONE_TEXT } from '@/lib/labels'
 import { filterByAccount } from '@/lib/portfolio'
 import { cn } from '@/lib/utils'
 import type { PortfolioAccountView, TransactionType } from '@/types'
@@ -154,7 +154,7 @@ export function TransactionsTab({ accountFilter }: TransactionsTabProps) {
                     </TableCell>
                     <TableCell className="text-right text-sm">
                       {t.shares != null ? (
-                        <span className={t.shares < 0 ? 'text-red-600 dark:text-red-400' : undefined}>
+                        <span className={t.shares < 0 ? TONE_TEXT.negative : undefined}>
                           {t.shares > 0 ? '+' : ''}{t.shares}
                         </span>
                       ) : (

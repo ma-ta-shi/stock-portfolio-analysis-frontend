@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { TONE_TEXT } from '@/lib/labels'
 import type { DisagreementLabel } from '@/types'
 
 interface Props {
@@ -7,9 +8,9 @@ interface Props {
 }
 
 const colorMap: Record<DisagreementLabel, string> = {
-  low: 'text-emerald-700 dark:text-emerald-400',
-  moderate: 'text-amber-700 dark:text-amber-400',
-  high: 'text-red-600 dark:text-red-400',
+  low: TONE_TEXT.positive,
+  moderate: TONE_TEXT.warning,
+  high: TONE_TEXT.negative,
 }
 
 export function DisagreementIndicator({ label, score }: Props) {

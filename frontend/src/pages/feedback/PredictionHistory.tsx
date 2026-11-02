@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { QueryError } from '@/components/QueryError'
 import { formatNumber } from '@/lib/format'
+import { TONE_TEXT } from '@/lib/labels'
 import type { PredictionCheckpoint } from '@/types'
 
 function CheckpointDots({ checkpoints }: { checkpoints: PredictionCheckpoint[] }) {
@@ -80,7 +81,7 @@ export function PredictionHistory() {
                   className={cn(
                     'text-xs',
                     p.status === 'active'
-                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                      ? `border-blue-500 ${TONE_TEXT.info}`
                       : 'text-muted-foreground',
                   )}
                 >

@@ -156,7 +156,7 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-muted-foreground hover:text-emerald-700 dark:text-emerald-400"
+                        className="text-muted-foreground hover:text-emerald-700 dark:hover:text-emerald-400"
                         title="Buy more shares"
                         aria-label={`Buy more ${label}`}
                         onClick={() => setBuyingHolding(h)}
@@ -166,7 +166,7 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-muted-foreground hover:text-red-600 dark:text-red-400"
+                        className="text-muted-foreground hover:text-red-600 dark:hover:text-red-400"
                         title="Sell shares"
                         aria-label={`Sell ${label}`}
                         onClick={() => setSellingHolding(h)}

@@ -27,7 +27,7 @@ import { QueryError } from '@/components/QueryError'
 import { useFxRates } from '@/hooks/use-fx-rates'
 import { isNotFound } from '@/lib/api'
 import { formatDate, formatEnumLabel, formatMoney, formatPct } from '@/lib/format'
-import { gainLossColor } from '@/lib/labels'
+import { gainLossColor, TONE_TEXT } from '@/lib/labels'
 import { applyTemplate, buildHoldingSnapshot, disagreementLabel } from '@/lib/portfolio'
 import { cn } from '@/lib/utils'
 import type { Holding, StockAnalysisHistoryEntry } from '@/types'
@@ -134,7 +134,7 @@ export function StockPage() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="text-emerald-700 dark:text-emerald-400 border-emerald-200 hover:bg-emerald-50 dark:border-emerald-800 dark:hover:bg-emerald-950/30"
+                  className={cn(TONE_TEXT.positive, 'border-emerald-200 hover:bg-emerald-50 dark:border-emerald-800 dark:hover:bg-emerald-950/30')}
                   onClick={() => setBuyingHolding(h)}
                 >
                   <TrendingUp className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
@@ -143,7 +143,7 @@ export function StockPage() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="text-red-600 dark:text-red-400 border-red-200 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950/30"
+                  className={cn(TONE_TEXT.negative, 'border-red-200 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950/30')}
                   onClick={() => setSellingHolding(h)}
                 >
                   <TrendingDown className="w-3.5 h-3.5 mr-1" aria-hidden="true" />

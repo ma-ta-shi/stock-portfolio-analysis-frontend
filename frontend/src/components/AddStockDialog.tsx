@@ -16,6 +16,8 @@ import { useAddToWatchlist } from '@/hooks/use-watchlist'
 import { useAddToPortfolio } from '@/hooks/use-portfolio'
 import { getErrorMessage } from '@/lib/api'
 import { formatMoney, parseAmount } from '@/lib/format'
+import { TONE_TEXT } from '@/lib/labels'
+import { cn } from '@/lib/utils'
 import type { AccountType } from '@/types'
 
 type Step = 'search' | 'found'
@@ -160,7 +162,7 @@ export function AddStockDialog({ mode, open, onOpenChange, defaultStock }: AddSt
                   <p className="font-semibold text-base">{found.ticker}</p>
                   <p className="text-sm text-muted-foreground">{found.name}</p>
                 </div>
-                <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" aria-hidden="true" />
+                <CheckCircle2 className={cn('w-5 h-5 shrink-0 mt-0.5', TONE_TEXT.positive)} aria-hidden="true" />
               </div>
               <div className="flex gap-2 flex-wrap">
                 <Badge variant="outline">{found.exchange}</Badge>

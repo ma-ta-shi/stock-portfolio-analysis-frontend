@@ -3,14 +3,14 @@ import { usePortfolioOptimizer } from '@/hooks/use-portfolio'
 import { Badge } from '@/components/ui/badge'
 import { QueryError } from '@/components/QueryError'
 import { formatCAD } from '@/lib/format'
-import { BADGE } from '@/lib/labels'
+import { BADGE, TONE_TEXT } from '@/lib/labels'
 import { cn } from '@/lib/utils'
 import type { PortfolioAccountView, SwapSuggestion, RebalanceSuggestion } from '@/types'
 
 const riskColors = {
-  lower: 'text-emerald-700 dark:text-emerald-400',
+  lower: TONE_TEXT.positive,
   neutral: 'text-muted-foreground',
-  higher: 'text-red-600 dark:text-red-400',
+  higher: TONE_TEXT.negative,
 }
 
 const riskIcons = {
@@ -26,17 +26,17 @@ function SwapCard({ swap }: { swap: SwapSuggestion }) {
       <div className="flex items-center gap-3">
         <div className="text-center">
           <div className="text-xs text-muted-foreground mb-0.5">Sell</div>
-          <div className="font-semibold text-red-600 dark:text-red-400">{swap.sell.ticker}</div>
+          <div className={cn('font-semibold', TONE_TEXT.negative)}>{swap.sell.ticker}</div>
           <Badge variant="outline" className="text-xs mt-1">{swap.sell.account_type.toUpperCase()}</Badge>
         </div>
         <ArrowRight className="w-5 h-5 text-muted-foreground shrink-0" aria-hidden="true" />
         <div className="text-center">
           <div className="text-xs text-muted-foreground mb-0.5">Buy</div>
-          <div className="font-semibold text-emerald-700 dark:text-emerald-400">{swap.buy.ticker}</div>
+          <div className={cn('font-semibold', TONE_TEXT.positive)}>{swap.buy.ticker}</div>
           <Badge variant="outline" className="text-xs mt-1">{swap.buy.account_type.toUpperCase()}</Badge>
         </div>
         <div className="ml-auto text-right space-y-0.5">
-          <div className="text-sm font-medium text-emerald-700 dark:text-emerald-400">
+          <div className={cn('text-sm font-medium', TONE_TEXT.positive)}>
             +{(swap.expected_return_improvement_pct).toFixed(1)}% expected
           </div>
           <div className="text-xs text-muted-foreground">
