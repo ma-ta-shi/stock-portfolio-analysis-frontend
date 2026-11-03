@@ -10,13 +10,14 @@ vi.mock('react-router-dom', async (importOriginal) => {
   return { ...actual, useNavigate: vi.fn() }
 })
 
-import { usePortfolioHoldings, useRemoveFromPortfolio, useUpdatePosition, useClosedPositions, useSellPosition, useBuyShares } from '@/hooks/use-portfolio'
+import { usePortfolioHoldings, useRemoveFromPortfolio, useUpdatePosition, useClosedPositions, useSellPosition, useBuyShares, useLogDividend } from '@/hooks/use-portfolio'
 const mockUsePortfolioHoldings = vi.mocked(usePortfolioHoldings)
 vi.mocked(useRemoveFromPortfolio).mockReturnValue({ mutateAsync: vi.fn(), isPending: false } as unknown as ReturnType<typeof useRemoveFromPortfolio>)
 vi.mocked(useUpdatePosition).mockReturnValue({ mutateAsync: vi.fn(), isPending: false } as unknown as ReturnType<typeof useUpdatePosition>)
 vi.mocked(useClosedPositions).mockReturnValue({ data: [] } as unknown as ReturnType<typeof useClosedPositions>)
 vi.mocked(useSellPosition).mockReturnValue({ mutateAsync: vi.fn(), isPending: false } as unknown as ReturnType<typeof useSellPosition>)
 vi.mocked(useBuyShares).mockReturnValue({ mutateAsync: vi.fn(), isPending: false } as unknown as ReturnType<typeof useBuyShares>)
+vi.mocked(useLogDividend).mockReturnValue({ mutateAsync: vi.fn(), isPending: false } as unknown as ReturnType<typeof useLogDividend>)
 const mockNavigate = vi.fn()
 vi.mocked(useNavigate).mockReturnValue(mockNavigate)
 

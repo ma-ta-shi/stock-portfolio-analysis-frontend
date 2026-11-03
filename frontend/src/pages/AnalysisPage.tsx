@@ -13,6 +13,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { formatDate, formatAgentName, formatCAD } from '@/lib/utils'
 import { cn } from '@/lib/utils'
 import type { Holding, HoldingSnapshot, SignalDirection, PortfolioFit } from '@/types'
@@ -87,8 +88,8 @@ export function AnalysisPage() {
   const { analysisId } = useParams<{ analysisId: string }>()
   const id = analysisId ?? ''
 
-  const { data: run, isLoading: runLoading } = useAnalysisRun(id)
-  const { data: agents, isLoading: agentsLoading } = useAgentResults(id)
+  const { data: run, isLoading: runLoading, isError: runError, refetch: refetchRun } = useAnalysisRun(id)
+  const { data: agents, isLoading: agentsLoading, isError: agentsError } = useAgentResults(id)
   const { data: holdings } = usePortfolioHoldings()
 
   if (runLoading || agentsLoading) {
@@ -101,10 +102,19 @@ export function AnalysisPage() {
     )
   }
 
+  if (runError || agentsError) {
+    return (
+      <div className="max-w-3xl mx-auto text-center py-12 space-y-3">
+        <p className="text-sm text-muted-foreground">Failed to load analysis.</p>
+        <Button size="sm" variant="outline" onClick={() => refetchRun()}>Retry</Button>
+      </div>
+    )
+  }
+
   if (!run || !agents) {
     return (
       <div className="max-w-3xl mx-auto text-center py-12 text-muted-foreground">
-        Analysis not found
+        Analysis not found.
       </div>
     )
   }

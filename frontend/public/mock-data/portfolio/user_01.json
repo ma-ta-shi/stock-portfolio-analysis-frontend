@@ -25,14 +25,15 @@
       "disagreement_score": 0.38,
       "disagreement_label": "moderate",
       "last_analyzed_at": "2026-03-24T14:22:00Z",
-      "annual_dividend_per_share": 0.0,
-      "annual_dividend_yield": 0.0,
-      "yield_on_cost": 0.0,
+      "annual_dividend_per_share": 0,
+      "annual_dividend_yield": 0,
+      "yield_on_cost": 0,
       "added_at": "2025-10-12T09:00:00Z",
       "last_updated": "2026-03-25T09:31:00Z",
       "is_active": true,
       "total_realized_gain_loss": 0,
-      "transaction_count": 2
+      "transaction_count": 2,
+      "total_dividends_received": 0
     },
     {
       "holding_id": "hld_002",
@@ -49,8 +50,8 @@
       "shares": 200,
       "average_cost_basis": 121.45,
       "current_price": 158.32,
-      "market_value": 31664.00,
-      "total_gain_loss": 7374.00,
+      "market_value": 31664,
+      "total_gain_loss": 7374,
       "total_gain_loss_pct": 0.3034,
       "day_change": -0.44,
       "day_change_pct": -0.0028,
@@ -66,7 +67,8 @@
       "last_updated": "2026-03-25T09:31:00Z",
       "is_active": true,
       "total_realized_gain_loss": 0,
-      "transaction_count": 3
+      "transaction_count": 3,
+      "total_dividends_received": 288
     },
     {
       "holding_id": "hld_003",
@@ -81,10 +83,10 @@
       },
       "account_type": "tfsa",
       "shares": 50,
-      "average_cost_basis": 108.20,
+      "average_cost_basis": 108.2,
       "current_price": 158.32,
-      "market_value": 7916.00,
-      "total_gain_loss": 2506.00,
+      "market_value": 7916,
+      "total_gain_loss": 2506,
       "total_gain_loss_pct": 0.4627,
       "day_change": -0.44,
       "day_change_pct": -0.0028,
@@ -100,7 +102,8 @@
       "last_updated": "2026-03-25T09:31:00Z",
       "is_active": true,
       "total_realized_gain_loss": 0,
-      "transaction_count": 2
+      "transaction_count": 2,
+      "total_dividends_received": 72
     },
     {
       "holding_id": "hld_004",
@@ -115,10 +118,10 @@
       },
       "account_type": "rrsp",
       "shares": 300,
-      "average_cost_basis": 44.80,
+      "average_cost_basis": 44.8,
       "current_price": 58.61,
-      "market_value": 17583.00,
-      "total_gain_loss": 4143.00,
+      "market_value": 17583,
+      "total_gain_loss": 4143,
       "total_gain_loss_pct": 0.3082,
       "day_change": 0.23,
       "day_change_pct": 0.0039,
@@ -134,7 +137,8 @@
       "last_updated": "2026-03-25T09:31:00Z",
       "is_active": true,
       "total_realized_gain_loss": 0,
-      "transaction_count": 3
+      "transaction_count": 3,
+      "total_dividends_received": 274.5
     },
     {
       "holding_id": "hld_005",
@@ -149,10 +153,10 @@
       },
       "account_type": "rrsp",
       "shares": 80,
-      "average_cost_basis": 148.60,
+      "average_cost_basis": 148.6,
       "current_price": 171.44,
-      "market_value": 13715.20,
-      "total_gain_loss": 1827.20,
+      "market_value": 13715.2,
+      "total_gain_loss": 1827.2,
       "total_gain_loss_pct": 0.1536,
       "day_change": 0.92,
       "day_change_pct": 0.0054,
@@ -168,7 +172,8 @@
       "last_updated": "2026-03-25T09:31:00Z",
       "is_active": true,
       "total_realized_gain_loss": 0,
-      "transaction_count": 1
+      "transaction_count": 1,
+      "total_dividends_received": 0
     },
     {
       "holding_id": "hld_006",
@@ -183,7 +188,7 @@
       },
       "account_type": "rrsp",
       "shares": 25,
-      "average_cost_basis": 312.40,
+      "average_cost_basis": 312.4,
       "current_price": 398.75,
       "market_value": 9968.75,
       "total_gain_loss": 2158.75,
@@ -202,8 +207,14 @@
       "last_updated": "2026-03-25T09:31:00Z",
       "is_active": true,
       "total_realized_gain_loss": 0,
-      "transaction_count": 1
+      "transaction_count": 1,
+      "total_dividends_received": 0
     }
   ],
-  "meta": { "total": 6, "page": 1, "per_page": 20, "pages": 1 }
+  "meta": {
+    "total": 6,
+    "page": 1,
+    "per_page": 20,
+    "pages": 1
+  }
 }

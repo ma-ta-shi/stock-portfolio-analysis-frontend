@@ -1,5 +1,5 @@
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
-const API_BASE = USE_MOCK ? '' : 'http://localhost:8000'
+const API_BASE = USE_MOCK ? '' : (import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000')
 const API_TIMEOUT_MS = 15000
 
 export class ApiError extends Error {

@@ -61,6 +61,7 @@ export interface Holding {
   last_updated: string
   is_active?: boolean
   total_realized_gain_loss?: number
+  total_dividends_received?: number
   transaction_count?: number
 }
 
