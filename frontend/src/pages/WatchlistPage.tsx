@@ -1,11 +1,18 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowUpDown } from 'lucide-react'
-import { useWatchlist } from '@/hooks/use-watchlist'
+import { ArrowUpDown, Plus, Trash2 } from 'lucide-react'
+import { useWatchlist, useRemoveFromWatchlist } from '@/hooks/use-watchlist'
 import { OutlookBadge } from '@/components/OutlookBadge'
 import { ConfidenceMeter } from '@/components/ConfidenceMeter'
 import { DisagreementIndicator } from '@/components/DisagreementIndicator'
+import { AddStockDialog } from '@/components/AddStockDialog'
 import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import {
   Table,
   TableBody,
@@ -77,9 +84,12 @@ function SortHeader({ label, colKey, activeKey, onSort }: SortHeaderProps) {
 
 export function WatchlistPage() {
   const navigate = useNavigate()
-  const { data, isLoading } = useWatchlist()
+  const { data, isLoading, isError, refetch } = useWatchlist()
+  const removeFromWatchlist = useRemoveFromWatchlist()
   const [sortKey, setSortKey] = useState<SortKey>('projected_return_pct')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
+  const [addDialogOpen, setAddDialogOpen] = useState(false)
+  const [removingItem, setRemovingItem] = useState<WatchlistItem | null>(null)
 
   function handleSort(key: SortKey) {
     if (key === sortKey) {
@@ -90,29 +100,49 @@ export function WatchlistPage() {
     }
   }
 
-  const items = data ? sortItems(data.data, sortKey, sortDir) : []
+  async function handleConfirmRemove() {
+    if (!removingItem) return
+    await removeFromWatchlist.mutateAsync(removingItem.watchlist_id)
+    setRemovingItem(null)
+  }
+
+  const items = useMemo(
+    () => (data ? sortItems(data.data, sortKey, sortDir) : []),
+    [data, sortKey, sortDir],
+  )
 
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-semibold">Watchlist</h1>
-        {data?.summary && (
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <span>{data.summary.total} stocks</span>
-            <span className="text-emerald-600 font-medium">
-              {data.summary.bullish_count} bullish
-            </span>
-            {data.summary.changed_since_last_check > 0 && (
-              <span className="text-blue-500">
-                {data.summary.changed_since_last_check} changed
+        <div className="flex items-center gap-4">
+          <h1 className="text-xl font-semibold">Watchlist</h1>
+          {data?.summary && (
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <span>{data.summary.total} stocks</span>
+              <span className="text-emerald-600 font-medium">
+                {data.summary.bullish_count} bullish
               </span>
-            )}
-          </div>
-        )}
+              {data.summary.changed_since_last_check > 0 && (
+                <span className="text-blue-500">
+                  {data.summary.changed_since_last_check} changed
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+        <Button size="sm" onClick={() => setAddDialogOpen(true)}>
+          <Plus className="w-4 h-4 mr-1" />
+          Add Stock
+        </Button>
       </div>
 
       {isLoading ? (
         <div className="h-64 rounded-lg bg-muted animate-pulse" />
+      ) : isError ? (
+        <div className="border border-border rounded-lg p-8 text-center space-y-3">
+          <p className="text-sm text-muted-foreground">Failed to load watchlist.</p>
+          <Button size="sm" variant="outline" onClick={() => refetch()}>Retry</Button>
+        </div>
       ) : (
         <div className="border border-border rounded-lg overflow-hidden">
           <Table>
@@ -141,8 +171,7 @@ export function WatchlistPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {items.map((item) => {
-                return (
+              {items.map((item) => (
                 <TableRow
                   key={item.watchlist_id}
                   className="cursor-pointer hover:bg-muted/50"
@@ -199,25 +228,58 @@ export function WatchlistPage() {
                   <TableCell className="text-xs text-muted-foreground">
                     {formatDate(item.last_analyzed_at)}
                   </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        navigate(`/stocks/${item.stock.stock_id}`)
-                      }}
-                    >
-                      View
-                    </Button>
+                  <TableCell onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate(`/stocks/${item.stock.stock_id}`)}
+                      >
+                        View
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-muted-foreground hover:text-destructive"
+                        onClick={() => setRemovingItem(item)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
-                )
-              })}
+              ))}
             </TableBody>
           </Table>
         </div>
       )}
+
+      <AddStockDialog
+        mode="watchlist"
+        open={addDialogOpen}
+        onOpenChange={setAddDialogOpen}
+      />
+
+      <Dialog open={removingItem !== null} onOpenChange={(open) => { if (!open) setRemovingItem(null) }}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Remove from Watchlist</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            Remove <span className="font-medium text-foreground">{removingItem?.stock.ticker}</span> ({removingItem?.stock.name}) from your watchlist?
+          </p>
+          <div className="flex justify-end gap-2 mt-2">
+            <Button variant="outline" onClick={() => setRemovingItem(null)}>Cancel</Button>
+            <Button
+              variant="destructive"
+              onClick={handleConfirmRemove}
+              disabled={removeFromWatchlist.isPending}
+            >
+              {removeFromWatchlist.isPending ? 'Removing…' : 'Remove'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

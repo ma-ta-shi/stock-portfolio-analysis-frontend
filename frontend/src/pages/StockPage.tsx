@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { TrendingUp, TrendingDown, Pencil, Plus } from 'lucide-react'
+import { TrendingUp, TrendingDown, Pencil, Plus, DollarSign } from 'lucide-react'
 import { useStockDetail, useStockAnalysisHistory } from '@/hooks/use-stock-detail'
 import { usePortfolioHoldings } from '@/hooks/use-portfolio'
 import { StockInfoSection } from '@/components/StockInfoSection'
@@ -11,6 +11,7 @@ import { SparklineChart } from '@/components/SparklineChart'
 import { BuySharesDialog } from '@/components/BuySharesDialog'
 import { SellPositionDialog } from '@/components/SellPositionDialog'
 import { EditPositionDialog } from '@/components/EditPositionDialog'
+import { LogDividendDialog } from '@/components/LogDividendDialog'
 import { AddStockDialog } from '@/components/AddStockDialog'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -109,6 +110,7 @@ export function StockPage() {
   const [buyingHolding, setBuyingHolding] = useState<(typeof holdingsForStock)[0] | null>(null)
   const [sellingHolding, setSellingHolding] = useState<(typeof holdingsForStock)[0] | null>(null)
   const [editingHolding, setEditingHolding] = useState<(typeof holdingsForStock)[0] | null>(null)
+  const [dividendHolding, setDividendHolding] = useState<(typeof holdingsForStock)[0] | null>(null)
   const [addDialogOpen, setAddDialogOpen] = useState(false)
 
   if (stockLoading) {
@@ -153,45 +155,80 @@ export function StockPage() {
 
       {/* Position Actions */}
       {holdingsForStock.length > 0 ? (
-        <div className="bg-card border border-border rounded-lg px-4 py-3 space-y-2">
+        <div className="bg-card border border-border rounded-lg px-4 py-3 space-y-3">
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Your Position</p>
-          {holdingsForStock.map((h) => (
-            <div key={h.holding_id} className="flex items-center justify-between gap-3 flex-wrap">
-              <div className="flex items-center gap-3 flex-wrap text-sm">
-                <Badge variant="outline" className="text-xs">{h.account_type.toUpperCase()}</Badge>
-                <span>{h.shares} shares</span>
-                <span className="text-muted-foreground">@ ${h.average_cost_basis.toFixed(2)} avg</span>
+          {holdingsForStock.map((h) => {
+            const annualDivEstimate = h.annual_dividend_per_share > 0
+              ? h.annual_dividend_per_share * h.shares
+              : null
+            return (
+              <div key={h.holding_id} className="space-y-2">
+                {/* Metrics row */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-1 text-sm">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="text-xs">{h.account_type.toUpperCase()}</Badge>
+                    <span>{h.shares} shares</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground text-xs">Avg cost </span>
+                    <span>${h.average_cost_basis.toFixed(2)}</span>
+                  </div>
+                  {annualDivEstimate !== null && (
+                    <div>
+                      <span className="text-muted-foreground text-xs">Annual div est. </span>
+                      <span>{formatCAD(annualDivEstimate)}/yr</span>
+                    </div>
+                  )}
+                  {(h.total_dividends_received ?? 0) > 0 && (
+                    <div>
+                      <span className="text-muted-foreground text-xs">Dividends received </span>
+                      <span className="text-blue-600 dark:text-blue-400">{formatCAD(h.total_dividends_received!)}</span>
+                    </div>
+                  )}
+                </div>
+                {/* Action buttons */}
+                <div className="flex gap-1 flex-wrap">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="text-emerald-600 border-emerald-200 hover:bg-emerald-50 dark:border-emerald-800 dark:hover:bg-emerald-950/30"
+                    onClick={() => setBuyingHolding(h)}
+                  >
+                    <TrendingUp className="w-3.5 h-3.5 mr-1" />
+                    Buy
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="text-red-600 border-red-200 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950/30"
+                    onClick={() => setSellingHolding(h)}
+                  >
+                    <TrendingDown className="w-3.5 h-3.5 mr-1" />
+                    Sell
+                  </Button>
+                  {h.annual_dividend_per_share > 0 && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="text-blue-600 border-blue-200 hover:bg-blue-50 dark:border-blue-800 dark:hover:bg-blue-950/30"
+                      onClick={() => setDividendHolding(h)}
+                    >
+                      <DollarSign className="w-3.5 h-3.5 mr-1" />
+                      Log Dividend
+                    </Button>
+                  )}
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setEditingHolding(h)}
+                  >
+                    <Pencil className="w-3.5 h-3.5 mr-1" />
+                    Edit
+                  </Button>
+                </div>
               </div>
-              <div className="flex gap-1">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-emerald-600 border-emerald-200 hover:bg-emerald-50 dark:border-emerald-800 dark:hover:bg-emerald-950/30"
-                  onClick={() => setBuyingHolding(h)}
-                >
-                  <TrendingUp className="w-3.5 h-3.5 mr-1" />
-                  Buy
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-red-600 border-red-200 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950/30"
-                  onClick={() => setSellingHolding(h)}
-                >
-                  <TrendingDown className="w-3.5 h-3.5 mr-1" />
-                  Sell
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setEditingHolding(h)}
-                >
-                  <Pencil className="w-3.5 h-3.5 mr-1" />
-                  Edit
-                </Button>
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       ) : allHoldings !== undefined ? (
         <div className="flex items-center justify-between bg-card border border-border rounded-lg px-4 py-3">
@@ -478,6 +515,11 @@ export function StockPage() {
         key={editingHolding?.holding_id ?? 'none-edit'}
         holding={editingHolding}
         onClose={() => setEditingHolding(null)}
+      />
+      <LogDividendDialog
+        key={dividendHolding?.holding_id ?? 'none-div'}
+        holding={dividendHolding}
+        onClose={() => setDividendHolding(null)}
       />
       {stock && (
         <AddStockDialog

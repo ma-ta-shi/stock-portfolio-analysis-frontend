@@ -1,0 +1,940 @@
+{
+  "portfolio_id": "e3ba3a97-cedc-4d75-9976-0655d9fd9340",
+  "run_id": "46551533-1642-4704-87e2-6650454f7129",
+  "as_of": "2026-11-01",
+  "total_value_cad": 84122.82,
+  "stock_share": 0.29805432289702316,
+  "parked": 0.7019456771029768,
+  "expected_return": 0.06426928042190858,
+  "volatility": 0.14015417564700025,
+  "tracking_volatility": 0.03882547308962906,
+  "benchmark_return": {
+    "tfsa": 0.06541275548000147,
+    "rrsp": 0.05644420728601229,
+    "trading": 0.05678858876857107
+  },
+  "certain_part": 0.0017676485063803614,
+  "view_part": 0.00246124237482561,
+  "risk_aversion": 1.7433761864254935,
+  "benchmark_vol": 0.15048924190244634,
+  "dropped": [
+    "RDDT",
+    "CNQ.TO in the TFSA",
+    "ENB.TO in the TRADING"
+  ],
+  "breaches": [
+    "AAPL in the TRADING position cap 10% of the account",
+    "BCE.TO in the TRADING position cap 10% of the account",
+    "BMO.TO in the TRADING position cap 10% of the account",
+    "CNQ.TO in the TRADING position cap 10% of the account",
+    "FTS.TO in the TRADING position cap 10% of the account",
+    "JNJ in the TRADING position cap 10% of the account",
+    "RY.TO in the TRADING position cap 10% of the account",
+    "SHOP.TO in the TRADING position cap 10% of the account",
+    "TD.TO in the TRADING position cap 10% of the account"
+  ],
+  "registered": {
+    "tc": 0.2965,
+    "tw": 0.1905,
+    "level": 0.9915820904641331,
+    "refund_rate": 0.29649934640522874,
+    "gain": 0.012561757014240671,
+    "rrsp_open": true,
+    "rrsp_closed_reason": null,
+    "rrsp_limit": 7650.0,
+    "rrsp_room": 28000.0,
+    "tfsa_limit": 32000.0,
+    "plan_ok": true,
+    "income": 85000.0,
+    "deducted": 0.0,
+    "province": "ON",
+    "tc_override": null,
+    "extra_income": 1676.0616937255845,
+    "passes": 2,
+    "notes": []
+  },
+  "moves": {
+    "relocate": true,
+    "transfers": {
+      "tfsa": 31024.02,
+      "rrsp": 7650.0
+    },
+    "sales": [
+      {
+        "ticker": "BCE.TO",
+        "sold_cad": 5618.0,
+        "gain_cad": -1278.0
+      },
+      {
+        "ticker": "ENB.TO",
+        "sold_cad": 10183.5,
+        "gain_cad": 1194.0
+      },
+      {
+        "ticker": "RDDT",
+        "sold_cad": 7104.52,
+        "gain_cad": 1992.92
+      },
+      {
+        "ticker": "TD.TO",
+        "sold_cad": 14151.2,
+        "gain_cad": 1443.2
+      }
+    ],
+    "fund_sold_cad": 0.0,
+    "fund_gain_cad": 0.0,
+    "ytd_gain_cad": 0.0,
+    "net_gain_cad": 3352.12,
+    "sale_tax_cad": 496.95,
+    "expected_as_held": 0.0684658932311137,
+    "expected_targeted": 0.06426928042190856,
+    "expected_by_account": {
+      "tfsa": 0.06842610330024163,
+      "rrsp": 0.05012418997031411,
+      "trading": 0.05678858876857107
+    },
+    "unfilled": [],
+    "volatility_as_held": 0.1658959710459481,
+    "volatility_targeted": 0.14015417564700025,
+    "income_added": 1676.06,
+    "passes": 2,
+    "harvest_window": true,
+    "harvest": []
+  },
+  "accounts": [
+    {
+      "account": "tfsa",
+      "value_cad": 33992.4,
+      "cash_cad": 1500.0,
+      "other_funds_cad": 0.0,
+      "new_money_cad": 0.0,
+      "new_money_placed_cad": 0.0,
+      "capacity": 0.40408058872963043,
+      "stocks": 0.22991680956606847,
+      "fund": 0.5429581459974149,
+      "fund_listing": "VFV.TO",
+      "full": false,
+      "capacity_after": 0.7728749555634834
+    },
+    {
+      "account": "rrsp",
+      "value_cad": 11456.4,
+      "cash_cad": 0.0,
+      "other_funds_cad": 0.0,
+      "new_money_cad": 0.0,
+      "new_money_placed_cad": 0.0,
+      "capacity": 0.13618658455190394,
+      "stocks": 0.06813751333095466,
+      "fund": 0.15898753110556071,
+      "fund_listing": "VFV.TO",
+      "full": false,
+      "capacity_after": 0.22712504443651538
+    },
+    {
+      "account": "trading",
+      "value_cad": 38674.02,
+      "cash_cad": 1616.8,
+      "other_funds_cad": 0.0,
+      "new_money_cad": 0.0,
+      "new_money_placed_cad": 0.0,
+      "capacity": 0.45973282671846555,
+      "stocks": 0.0,
+      "fund": 1.1657341758564144e-15,
+      "fund_listing": "VOO",
+      "full": true,
+      "capacity_after": 1.1657341758564144e-15
+    }
+  ],
+  "lines": [
+    {
+      "ticker": "AAPL",
+      "status": "not_in_book",
+      "weights": {},
+      "total": 0.0,
+      "current": {},
+      "current_total": 0.0,
+      "cap": 0.1,
+      "sector": "Technology",
+      "industry_group": "Consumer Electronics",
+      "moves_with": [],
+      "score": -0.003618895050186841,
+      "expected": 0.06718617034503102,
+      "anchor": 0.07065890654132234,
+      "certain": -0.0004727361962913179,
+      "view": 0.0,
+      "cost": 0.003,
+      "edge": -0.0008662303963632989,
+      "beta": 1.0668564863098875,
+      "vol": 0.28822073641698365,
+      "resid_vol": 0.23936322671710972,
+      "best_account": "tfsa",
+      "location_advantage": 0.0025694767933877455,
+      "binding": [],
+      "exclusions": [],
+      "waiting_for_analysis": false,
+      "by_account": {
+        "tfsa": {
+          "account": "tfsa",
+          "before_level": 0.06718617034503094,
+          "held": 0.06718617034503102,
+          "new_dollar": 0.06718617034503102,
+          "edge": -0.0008662303963632989,
+          "score": -0.003618895050186841,
+          "dividend_tax": 0.00047273619629131786,
+          "gain_tax": 0.0,
+          "exit_tax_cad": null
+        },
+        "rrsp": {
+          "account": "rrsp",
+          "before_level": 0.06765890654132223,
+          "held": 0.05867145045089504,
+          "new_dollar": 0.0712332074651357,
+          "edge": -0.0003901818014929309,
+          "score": -0.001630082476929781,
+          "dividend_tax": 0.0,
+          "gain_tax": 0.0,
+          "exit_tax_cad": null
+        },
+        "trading": {
+          "account": "trading",
+          "before_level": 0.06113148042698846,
+          "held": 0.06113148042698836,
+          "new_dollar": 0.06113148042698836,
+          "edge": 0.002279827880701378,
+          "score": 0.00952455359149959,
+          "dividend_tax": 0.0009344418813358382,
+          "gain_tax": 0.008592984232998147,
+          "exit_tax_cad": null
+        }
+      },
+      "notes": [],
+      "tier": "outperform",
+      "view_jump_steps": null,
+      "view_unstable": false
+    },
+    {
+      "ticker": "BCE.TO",
+      "status": "not_in_book",
+      "weights": {},
+      "total": 0.0,
+      "current": {
+        "trading": 0.06678330295839846
+      },
+      "current_total": 0.06678330295839846,
+      "cap": 0.1,
+      "sector": "Communication Services",
+      "industry_group": "Telecom Services",
+      "moves_with": [],
+      "score": 0.0344767892183407,
+      "expected": 0.04609881271667668,
+      "anchor": 0.03885591736691829,
+      "certain": 0.0,
+      "view": 0.007242895349758388,
+      "cost": 0.0,
+      "edge": 0.008548310970901751,
+      "beta": 0.15300070417155548,
+      "vol": 0.24901073543093705,
+      "resid_vol": 0.24794394039321638,
+      "best_account": "tfsa",
+      "location_advantage": 0.0015045886769671363,
+      "binding": [],
+      "exclusions": [],
+      "waiting_for_analysis": false,
+      "by_account": {
+        "tfsa": {
+          "account": "tfsa",
+          "before_level": 0.046098812716676596,
+          "held": 0.04609881271667668,
+          "new_dollar": 0.04609881271667668,
+          "edge": 0.008548310970901751,
+          "score": 0.0344767892183407,
+          "dividend_tax": 0.0,
+          "gain_tax": 0.0,
+          "exit_tax_cad": null
+        },
+        "rrsp": {
+          "account": "rrsp",
+          "before_level": 0.046098812716676596,
+          "held": 0.037292847545650064,
+          "new_dollar": 0.049854604559890735,
+          "edge": 0.008476352062464297,
+          "score": 0.03418656672561378,
+          "dividend_tax": 0.0,
+          "gain_tax": 0.0,
+          "exit_tax_cad": null
+        },
+        "trading": {
+          "account": "trading",
+          "before_level": 0.038979234682213315,
+          "held": 0.03897923468221341,
+          "new_dollar": 0.03897923468221341,
+          "edge": 0.0027482365161802247,
+          "score": 0.011084104381908964,
+          "dividend_tax": 0.003383810964756141,
+          "gain_tax": 0.00373576706970713,
+          "exit_tax_cad": 0.0
+        }
+      },
+      "notes": [],
+      "tier": "outperform",
+      "view_jump_steps": null,
+      "view_unstable": false
+    },
+    {
+      "ticker": "BMO.TO",
+      "status": "in_book",
+      "weights": {
+        "tfsa": 0.024482336859175138
+      },
+      "total": 0.024482336859175138,
+      "current": {},
+      "current_total": 0.0,
+      "cap": 0.1,
+      "sector": "Financials",
+      "industry_group": "Banks - Diversified",
+      "moves_with": [],
+      "score": 0.11023116012262818,
+      "expected": 0.07260569791688487,
+      "anchor": 0.06420035388288259,
+      "certain": 0.0,
+      "view": 0.008405344034002282,
+      "cost": 0.0,
+      "edge": 0.015289551422562254,
+      "beta": 0.7530918928566059,
+      "vol": 0.17911760328740228,
+      "resid_vol": 0.13870444079109012,
+      "best_account": "tfsa",
+      "location_advantage": 0.00024244307288164013,
+      "binding": [
+        "industry group (BMO.TO, RY.TO, TD.TO) counts as one position, cap 10%"
+      ],
+      "exclusions": [],
+      "waiting_for_analysis": false,
+      "by_account": {
+        "tfsa": {
+          "account": "tfsa",
+          "before_level": 0.07260569791688498,
+          "held": 0.07260569791688487,
+          "new_dollar": 0.07260569791688487,
+          "edge": 0.015289551422562254,
+          "score": 0.11023116012262818,
+          "dividend_tax": 0.0,
+          "gain_tax": 0.0,
+          "exit_tax_cad": null
+        },
+        "rrsp": {
+          "account": "rrsp",
+          "before_level": 0.07260569791688476,
+          "held": 0.06357660018416517,
+          "new_dollar": 0.07613835719840584,
+          "edge": 0.015160845361843006,
+          "score": 0.10930324418868127,
+          "dividend_tax": 0.0,
+          "gain_tax": 0.0,
+          "exit_tax_cad": null
+        },
+        "trading": {
+          "account": "trading",
+          "before_level": 0.06373908813257279,
+          "held": 0.06373908813257283,
+          "new_dollar": 0.06373908813257283,
+          "edge": 0.012917731671272262,
+          "score": 0.09313134891425949,
+          "dividend_tax": 0.0018402255083179294,
+          "gain_tax": 0.007026384275994113,
+          "exit_tax_cad": null
+        }
+      },
+      "notes": [],
+      "tier": "outperform",
+      "view_jump_steps": null,
+      "view_unstable": false
+    },
+    {
+      "ticker": "CNQ.TO",
+      "status": "in_book",
+      "weights": {
+        "rrsp": 0.02271250444365156
+      },
+      "total": 0.02271250444365156,
+      "current": {},
+      "current_total": 0.0,
+      "cap": 0.1,
+      "sector": "Energy",
+      "industry_group": "Oil & Gas E&P",
+      "moves_with": [],
+      "score": 0.002724952549099924,
+      "expected": 0.02762338444338508,
+      "anchor": 0.02762338444338508,
+      "certain": 0.0,
+      "view": 0.0,
+      "cost": 0.0,
+      "edge": 0.0007668390752565112,
+      "beta": 0.09005706492213028,
+      "vol": 0.28173988693120694,
+      "resid_vol": 0.2814137352629516,
+      "best_account": "rrsp",
+      "location_advantage": 0.0010779069785045586,
+      "binding": [
+        "CNQ.TO in the RRSP position cap 10% of the account"
+      ],
+      "exclusions": [],
+      "waiting_for_analysis": false,
+      "by_account": {
+        "tfsa": {
+          "account": "tfsa",
+          "before_level": 0.03634726194215743,
+          "held": 0.03634726194215743,
+          "new_dollar": 0.03634726194215743,
+          "edge": 0.0007733490576636026,
+          "score": 0.00274808568579991,
+          "dividend_tax": 0.0,
+          "gain_tax": 0.0,
+          "exit_tax_cad": null
+        },
+        "rrsp": {
+          "account": "rrsp",
+          "before_level": 0.03634726194215743,
+          "held": 0.02762338444338508,
+          "new_dollar": 0.04018514145762575,
+          "edge": 0.0007668390752565112,
+          "score": 0.002724952549099924,
+          "dividend_tax": 0.0,
+          "gain_tax": 0.0,
+          "exit_tax_cad": null
+        },
+        "trading": {
+          "account": "trading",
+          "before_level": 0.02880100220923154,
+          "held": 0.028801002209231583,
+          "new_dollar": 0.028801002209231583,
+          "edge": -0.005996243533831679,
+          "score": -0.02130757238351859,
+          "dividend_tax": 0.0021326354519406094,
+          "gain_tax": 0.005413624280985241,
+          "exit_tax_cad": null
+        }
+      },
+      "notes": [],
+      "tier": "outperform",
+      "view_jump_steps": null,
+      "view_unstable": false
+    },
+    {
+      "ticker": "ENB.TO",
+      "status": "in_book",
+      "weights": {
+        "tfsa": 0.07728749555634828,
+        "rrsp": 0.022712504443651547
+      },
+      "total": 0.09999999999999984,
+      "current": {
+        "trading": 0.12105513806992715
+      },
+      "current_total": 0.12105513806992715,
+      "cap": 0.1,
+      "sector": "Energy",
+      "industry_group": "Oil & Gas Midstream",
+      "moves_with": [],
+      "score": 0.05355349218417013,
+      "expected": 0.04954517881992859,
+      "anchor": 0.04220830966066247,
+      "certain": 0.0,
+      "view": 0.007336869159266124,
+      "cost": 0.0,
+      "edge": 0.00934796047014657,
+      "beta": 0.23104591632882898,
+      "vol": 0.17798298671036059,
+      "resid_vol": 0.17455370488256847,
+      "best_account": "tfsa",
+      "location_advantage": 0.0018123068924344593,
+      "binding": [
+        "ENB.TO in the RRSP position cap 10% of the account",
+        "ENB.TO in the TFSA position cap 10% of the account"
+      ],
+      "exclusions": [],
+      "waiting_for_analysis": false,
+      "by_account": {
+        "tfsa": {
+          "account": "tfsa",
+          "before_level": 0.04954517881992859,
+          "held": 0.04954517881992859,
+          "new_dollar": 0.04954517881992859,
+          "edge": 0.00934796047014657,
+          "score": 0.05355349218417013,
+          "dividend_tax": 0.0,
+          "gain_tax": 0.0,
+          "exit_tax_cad": null
+        },
+        "rrsp": {
+          "account": "rrsp",
+          "before_level": 0.04954517881992859,
+          "held": 0.04071020245081714,
+          "new_dollar": 0.05327195946505781,
+          "edge": 0.009269270184563846,
+          "score": 0.05310268373163306,
+          "dividend_tax": 0.0,
+          "gain_tax": 0.0,
+          "exit_tax_cad": null
+        },
+        "trading": {
+          "account": "trading",
+          "before_level": 0.04273331900093269,
+          "held": 0.04273331900093265,
+          "new_dollar": 0.04273331900093265,
+          "edge": 0.00452867915156565,
+          "score": 0.025944331314035025,
+          "dividend_tax": 0.0037080953666275727,
+          "gain_tax": 0.003103764452368374,
+          "exit_tax_cad": 177.01
+        }
+      },
+      "notes": [],
+      "tier": "strong_outperform",
+      "view_jump_steps": 1.0,
+      "view_unstable": false
+    },
+    {
+      "ticker": "FTS.TO",
+      "status": "not_in_book",
+      "weights": {},
+      "total": 0.0,
+      "current": {},
+      "current_total": 0.0,
+      "cap": 0.1,
+      "sector": "Utilities",
+      "industry_group": "Utilities - Regulated Electric",
+      "moves_with": [],
+      "score": -0.08735955668515834,
+      "expected": 0.030174172901041012,
+      "anchor": 0.04354405280141105,
+      "certain": 0.0,
+      "view": -0.013369879900370037,
+      "cost": 0.0,
+      "edge": -0.011073066698796201,
+      "beta": 0.26306657581356396,
+      "vol": 0.13279130869299488,
+      "resid_vol": 0.12675278033636614,
+      "best_account": "tfsa",
+      "location_advantage": 0.002702982059395863,
+      "binding": [],
+      "exclusions": [],
+      "waiting_for_analysis": false,
+      "by_account": {
+        "tfsa": {
+          "account": "tfsa",
+          "before_level": 0.030174172901040963,
+          "held": 0.030174172901041012,
+          "new_dollar": 0.030174172901041012,
+          "edge": -0.011073066698796201,
+          "score": -0.08735955668515834,
+          "dividend_tax": 0.0,
+          "gain_tax": 0.0,
+          "exit_tax_cad": null
+        },
+        "rrsp": {
+          "account": "rrsp",
+          "before_level": 0.030174172901041185,
+          "held": 0.021502259907373658,
+          "new_dollar": 0.03406401692161433,
+          "edge": -0.010979854625041127,
+          "score": -0.08662417183988934,
+          "dividend_tax": 0.0,
+          "gain_tax": 0.0,
+          "exit_tax_cad": null
+        },
+        "trading": {
+          "account": "trading",
+          "before_level": 0.02425298824900657,
+          "held": 0.02425298824900647,
+          "new_dollar": 0.02425298824900647,
+          "edge": -0.014725521344809422,
+          "score": -0.11617513482333122,
+          "dividend_tax": 0.002088921401006621,
+          "gain_tax": 0.003832263251027923,
+          "exit_tax_cad": null
+        }
+      },
+      "notes": [],
+      "tier": "underperform",
+      "view_jump_steps": null,
+      "view_unstable": false
+    },
+    {
+      "ticker": "JNJ",
+      "status": "in_book",
+      "weights": {
+        "rrsp": 0.02271250444365155
+      },
+      "total": 0.02271250444365155,
+      "current": {},
+      "current_total": 0.0,
+      "cap": 0.1,
+      "sector": "Healthcare",
+      "industry_group": "Pharmaceuticals",
+      "moves_with": [],
+      "score": 0.03134046597072243,
+      "expected": 0.03779886180685292,
+      "anchor": 0.03208247734530745,
+      "certain": 0.0,
+      "view": 0.008691130732937874,
+      "cost": 0.0029747462713923993,
+      "edge": 0.006379151263931328,
+      "beta": 0.3608031002191731,
+      "vol": 0.21066124373885742,
+      "resid_vol": 0.20354359982683698,
+      "best_account": "rrsp",
+      "location_advantage": 0.0031550145522352413,
+      "binding": [
+        "JNJ in the RRSP position cap 10% of the account"
+      ],
+      "exclusions": [],
+      "waiting_for_analysis": false,
+      "by_account": {
+        "tfsa": {
+          "account": "tfsa",
+          "before_level": 0.043612395448606955,
+          "held": 0.04361239544860686,
+          "new_dollar": 0.04361239544860686,
+          "edge": 0.0034365789812667302,
+          "score": 0.01688374866215578,
+          "dividend_tax": 0.0029967272727272724,
+          "gain_tax": 0.0,
+          "exit_tax_cad": null
+        },
+        "rrsp": {
+          "account": "rrsp",
+          "before_level": 0.046609122721334106,
+          "held": 0.03779886180685292,
+          "new_dollar": 0.05036061882109359,
+          "edge": 0.006379151263931328,
+          "score": 0.03134046597072243,
+          "dividend_tax": 0.0,
+          "gain_tax": 0.0,
+          "exit_tax_cad": null
+        },
+        "trading": {
+          "account": "trading",
+          "before_level": 0.036229901160147016,
+          "held": 0.03622990116014706,
+          "new_dollar": 0.03622990116014706,
+          "edge": -0.0008342892209019931,
+          "score": -0.0040988231593219225,
+          "dividend_tax": 0.005923530909090909,
+          "gain_tax": 0.00745569065209617,
+          "exit_tax_cad": null
+        }
+      },
+      "notes": [],
+      "tier": "outperform",
+      "view_jump_steps": null,
+      "view_unstable": false
+    },
+    {
+      "ticker": "RDDT",
+      "status": "not_in_book",
+      "weights": {},
+      "total": 0.0,
+      "current": {
+        "trading": 0.08445417190444623
+      },
+      "current_total": 0.08445417190444623,
+      "cap": 0.1,
+      "sector": "Communication Services",
+      "industry_group": "Internet Content & Information",
+      "moves_with": [],
+      "score": 0.0031048829192194686,
+      "expected": 0.10552090404738539,
+      "anchor": 0.10975420154071935,
+      "certain": 0.0,
+      "view": -0.0012332974933339607,
+      "cost": 0.003,
+      "edge": 0.002068420307138691,
+      "beta": 1.9634637687341998,
+      "vol": 0.7287718168942469,
+      "resid_vol": 0.6661830287818606,
+      "best_account": "tfsa",
+      "location_advantage": 0.003236080011613851,
+      "binding": [],
+      "exclusions": [],
+      "waiting_for_analysis": false,
+      "by_account": {
+        "tfsa": {
+          "account": "tfsa",
+          "before_level": 0.10552090404738546,
+          "held": 0.10552090404738539,
+          "new_dollar": 0.10552090404738539,
+          "edge": 0.002068420307138691,
+          "score": 0.0031048829192194686,
+          "dividend_tax": 0.0,
+          "gain_tax": 0.0,
+          "exit_tax_cad": null
+        },
+        "rrsp": {
+          "account": "rrsp",
+          "before_level": 0.10552090404738523,
+          "held": 0.0962147290871047,
+          "new_dollar": 0.10877648610134537,
+          "edge": 0.002051008532110682,
+          "score": 0.0030787462956854725,
+          "dividend_tax": 0.0,
+          "gain_tax": 0.0,
+          "exit_tax_cad": null
+        },
+        "trading": {
+          "account": "trading",
+          "before_level": 0.09979519058127728,
+          "held": 0.09979519058127732,
+          "new_dollar": 0.09979519058127732,
+          "edge": 0.013275945714447804,
+          "score": 0.019928375747913216,
+          "dividend_tax": 0.0,
+          "gain_tax": 0.008725713466108065,
+          "exit_tax_cad": 301.18
+        }
+      },
+      "notes": [
+        "TFSA: a loss here is gone and uses the room for good, but the upside is tax-free (volatility 73%)"
+      ],
+      "tier": "outperform",
+      "view_jump_steps": 1.8333333333333333,
+      "view_unstable": true
+    },
+    {
+      "ticker": "RY.TO",
+      "status": "in_book",
+      "weights": {
+        "tfsa": 0.02966448484279823
+      },
+      "total": 0.02966448484279823,
+      "current": {
+        "rrsp": 0.13618658455190394
+      },
+      "current_total": 0.13618658455190394,
+      "cap": 0.1,
+      "sector": "Financials",
+      "industry_group": "Banks - Diversified",
+      "moves_with": [],
+      "score": 0.1343512952301116,
+      "expected": 0.0676308243474193,
+      "anchor": 0.05971007274202811,
+      "certain": 0.0,
+      "view": 0.007920751605391185,
+      "cost": 0.0,
+      "edge": 0.014250829785599634,
+      "beta": 0.6198838607617528,
+      "vol": 0.14125647535724023,
+      "resid_vol": 0.10607139857633209,
+      "best_account": "tfsa",
+      "location_advantage": 0.0005637900791338746,
+      "binding": [
+        "industry group (BMO.TO, RY.TO, TD.TO) counts as one position, cap 10%"
+      ],
+      "exclusions": [],
+      "waiting_for_analysis": false,
+      "by_account": {
+        "tfsa": {
+          "account": "tfsa",
+          "before_level": 0.0676308243474193,
+          "held": 0.0676308243474193,
+          "new_dollar": 0.0676308243474193,
+          "edge": 0.014250829785599634,
+          "score": 0.1343512952301116,
+          "dividend_tax": 0.0,
+          "gain_tax": 0.0,
+          "exit_tax_cad": null
+        },
+        "rrsp": {
+          "account": "rrsp",
+          "before_level": 0.0676308243474193,
+          "held": 0.058643604650359706,
+          "new_dollar": 0.07120536166460037,
+          "edge": 0.014130867589653297,
+          "score": 0.13322033818083684,
+          "dividend_tax": 0.0,
+          "gain_tax": 0.0,
+          "exit_tax_cad": 0.0
+        },
+        "trading": {
+          "account": "trading",
+          "before_level": 0.05844286755685513,
+          "held": 0.058442867556855016,
+          "new_dollar": 0.058442867556855016,
+          "edge": 0.010408854751969829,
+          "score": 0.09813064493987332,
+          "dividend_tax": 0.0016099382004818264,
+          "gain_tax": 0.007578018590082447,
+          "exit_tax_cad": null
+        }
+      },
+      "notes": [],
+      "tier": "outperform",
+      "view_jump_steps": 0.0,
+      "view_unstable": false
+    },
+    {
+      "ticker": "SHOP.TO",
+      "status": "in_book",
+      "weights": {
+        "tfsa": 0.05262931400971984
+      },
+      "total": 0.05262931400971984,
+      "current": {
+        "tfsa": 0.1119648582955791
+      },
+      "current_total": 0.1119648582955791,
+      "cap": 0.1,
+      "sector": "Technology",
+      "industry_group": "Software",
+      "moves_with": [],
+      "score": 0.05532668222997196,
+      "expected": 0.12531270725267826,
+      "anchor": 0.11333308984612023,
+      "certain": 0.0,
+      "view": 0.011979617406558028,
+      "cost": 0.0,
+      "edge": 0.03082194897922244,
+      "beta": 1.8839574904846468,
+      "vol": 0.6250842867719895,
+      "resid_vol": 0.5570901369271942,
+      "best_account": "tfsa",
+      "location_advantage": 0.0033582643385767774,
+      "binding": [],
+      "exclusions": [],
+      "waiting_for_analysis": false,
+      "by_account": {
+        "tfsa": {
+          "account": "tfsa",
+          "before_level": 0.1253127072526783,
+          "held": 0.12531270725267826,
+          "new_dollar": 0.12531270725267826,
+          "edge": 0.03082194897922244,
+          "score": 0.05532668222997196,
+          "dividend_tax": 0.0,
+          "gain_tax": 0.0,
+          "exit_tax_cad": 0.0
+        },
+        "rrsp": {
+          "account": "rrsp",
+          "before_level": 0.1253127072526783,
+          "held": 0.11583992668346371,
+          "new_dollar": 0.12840168369770438,
+          "edge": 0.030562492600995986,
+          "score": 0.05486094722403994,
+          "dividend_tax": 0.0,
+          "gain_tax": 0.0,
+          "exit_tax_cad": null
+        },
+        "trading": {
+          "account": "trading",
+          "before_level": 0.11333027620267111,
+          "held": 0.11333027620267108,
+          "new_dollar": 0.11333027620267108,
+          "edge": 0.03508708140440292,
+          "score": 0.06298277258674287,
+          "dividend_tax": 0.0,
+          "gain_tax": 0.01198243105000718,
+          "exit_tax_cad": null
+        }
+      },
+      "notes": [
+        "TFSA: a loss here is gone and uses the room for good, but the upside is tax-free (volatility 63%)"
+      ],
+      "tier": "outperform",
+      "view_jump_steps": 0.08333333333333333,
+      "view_unstable": false
+    },
+    {
+      "ticker": "TD.TO",
+      "status": "in_book",
+      "weights": {
+        "tfsa": 0.045853178298026966
+      },
+      "total": 0.045853178298026966,
+      "current": {
+        "trading": 0.16822069719204136
+      },
+      "current_total": 0.16822069719204136,
+      "cap": 0.1,
+      "sector": "Financials",
+      "industry_group": "Banks - Diversified",
+      "moves_with": [],
+      "score": 0.12110882100841354,
+      "expected": 0.06892210964444848,
+      "anchor": 0.058882798223393484,
+      "certain": 1.734723475976807e-18,
+      "view": 0.01003931142105499,
+      "cost": 0.0,
+      "edge": 0.015579579717068387,
+      "beta": 0.6353597093304216,
+      "vol": 0.16028330939103883,
+      "resid_vol": 0.12864116409808052,
+      "best_account": "tfsa",
+      "location_advantage": 0.0005853894646008911,
+      "binding": [
+        "industry group (BMO.TO, RY.TO, TD.TO) counts as one position, cap 10%"
+      ],
+      "exclusions": [],
+      "waiting_for_analysis": false,
+      "by_account": {
+        "tfsa": {
+          "account": "tfsa",
+          "before_level": 0.06892210964444856,
+          "held": 0.06892210964444848,
+          "new_dollar": 0.06892210964444848,
+          "edge": 0.015579579717068387,
+          "score": 0.12110882100841354,
+          "dividend_tax": 0.0,
+          "gain_tax": 0.0,
+          "exit_tax_cad": null
+        },
+        "rrsp": {
+          "account": "rrsp",
+          "before_level": 0.06892210964444856,
+          "held": 0.05992402002457354,
+          "new_dollar": 0.0724857770388142,
+          "edge": 0.015448432224403168,
+          "score": 0.12008933790916836,
+          "dividend_tax": 0.0,
+          "gain_tax": 0.0,
+          "exit_tax_cad": null
+        },
+        "trading": {
+          "account": "trading",
+          "before_level": 0.059712553468417084,
+          "held": 0.05971255346841718,
+          "new_dollar": 0.05971255346841718,
+          "edge": 0.011849471596028616,
+          "score": 0.09211259614375197,
+          "dividend_tax": 0.001658820736050653,
+          "gain_tax": 0.007550735439980638,
+          "exit_tax_cad": 213.95
+        }
+      },
+      "notes": [],
+      "tier": "outperform",
+      "view_jump_steps": 0.08333333333333333,
+      "view_unstable": false
+    }
+  ],
+  "parameters": {
+    "view_weight": 1.0,
+    "beta_shrink": 0.6666666666666666,
+    "weeks": 104,
+    "min_weeks": 80,
+    "position_ceiling": 0.15,
+    "cap_margin": 0.1,
+    "min_position": 0.01,
+    "minimum_holding": 500.0,
+    "sell": [],
+    "relocate": true,
+    "allow_stale": true,
+    "retirement_income_share": 0.6,
+    "retirement_years": 25.0,
+    "position_cap": 0.1,
+    "sector_cap": 0.3,
+    "premium": 0.04,
+    "rf": 0.02593049419038196
+  },
+  "warnings": []
+}

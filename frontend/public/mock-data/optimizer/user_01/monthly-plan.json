@@ -1,0 +1,225 @@
+{
+  "portfolio_id": "e3ba3a97-cedc-4d75-9976-0655d9fd9340",
+  "as_of": "2026-11-01",
+  "amount_cad": 5000.0,
+  "account": null,
+  "tax_year": 2026,
+  "income": 85000.0,
+  "income_source": "profile",
+  "rrsp": {
+    "a": 15300.0,
+    "edge_total": 26477.0,
+    "edge_left": 26477.0,
+    "cap_left": 15300.0,
+    "room_left": 28000.0,
+    "binding": "cap"
+  },
+  "deducted_so_far": 0.0,
+  "rrsp_months": 1.0,
+  "rrsp_since": null,
+  "rrsp_suggested": 7650.0,
+  "rrsp_year": {
+    "target": 15300.0,
+    "paid": 0.0,
+    "to_target": 15300.0,
+    "can_still_claim": 15300.0,
+    "needed_per_month": 7650.0,
+    "on_pace": 12750.0,
+    "behind_by": 12750.0,
+    "tax_saved_so_far": 0.0,
+    "tax_saved_this_amount": 1482.5,
+    "tax_saved_at_target": 4536.45
+  },
+  "split": {
+    "rrsp": 5000.0,
+    "tfsa": 0.0,
+    "trading": 0.0
+  },
+  "unplaced_cad": 0.0,
+  "accounts": {
+    "rrsp": {
+      "account": "rrsp",
+      "amount_cad": 5000.0,
+      "cash_cad": 0.0,
+      "cash_usd": 0.0,
+      "to_deploy_cad": 5000.0,
+      "room_before": 28000.0,
+      "room_after": 23000.0,
+      "room_estimated": false
+    },
+    "tfsa": {
+      "account": "tfsa",
+      "amount_cad": 0.0,
+      "cash_cad": 1500.0,
+      "cash_usd": 0.0,
+      "to_deploy_cad": 1500.0,
+      "room_before": 32000.0,
+      "room_after": 32000.0,
+      "room_estimated": false
+    },
+    "trading": {
+      "account": "trading",
+      "amount_cad": 0.0,
+      "cash_cad": 500.0,
+      "cash_usd": 800.0,
+      "to_deploy_cad": 500.0,
+      "room_before": null,
+      "room_after": null,
+      "room_estimated": false
+    }
+  },
+  "reasons": [
+    "RRSP 5,000.00: 1.00 month(s) of the 7,650.00 a month needed to reach the year's target over the 2 month(s) left, for the time since the start (none before); 15,300.00 more can be claimed for 2026 (limited by the owner's cap (15,300.00)), 0.00 so far",
+    "The RRSP amount is limited to the 5,000.00 asked about",
+    "TFSA 0.00: the rest, up to the 32,000.00 of room",
+    "Trading 0.00: nothing is left after the TFSA"
+  ],
+  "warnings": [
+    "The 2026 RRSP amount uses the profile's income of 85,000.00; enter the year's actual taxable income to true it up"
+  ],
+  "income_final": false,
+  "income_notes": [
+    "Dividends were not checked for this answer"
+  ],
+  "benchmark": {
+    "rrsp": {
+      "account": "rrsp",
+      "return_pct": 6.541275548000154,
+      "listing": "VFV.TO",
+      "runner_up": "VOO",
+      "margin_pts": 0.09132435541305295,
+      "break_even_conversion_pct": 1.0433782229347344,
+      "components": {
+        "VFV.TO": {
+          "return_pct": 6.541275548000154,
+          "expected_pct": 6.779951192587093,
+          "fee_pct": 0.09,
+          "withholding_drag_pct": 0.14867564458693816,
+          "withholding_note": "15% withheld inside the fund, not recoverable",
+          "income_tax_pct": 0.0,
+          "conversion_pct": 0.0,
+          "converted_fraction": 0.0
+        },
+        "VOO": {
+          "return_pct": 6.449951192587101,
+          "expected_pct": 6.779951192587101,
+          "fee_pct": 0.03,
+          "withholding_drag_pct": 0.0,
+          "withholding_note": "none: treaty Art. XXI(2) exemption",
+          "income_tax_pct": 0.0,
+          "conversion_pct": 0.3,
+          "converted_fraction": 1.0
+        }
+      },
+      "unavailable": {},
+      "as_of": "2026-10-29",
+      "stale": false,
+      "reason": null
+    },
+    "tfsa": {
+      "account": "tfsa",
+      "return_pct": 6.541275548000154,
+      "listing": "VFV.TO",
+      "runner_up": "VOO",
+      "margin_pts": 0.24902355536080645,
+      "break_even_conversion_pct": 0.2548822231959669,
+      "components": {
+        "VFV.TO": {
+          "return_pct": 6.541275548000154,
+          "expected_pct": 6.779951192587093,
+          "fee_pct": 0.09,
+          "withholding_drag_pct": 0.14867564458693816,
+          "withholding_note": "15% withheld inside the fund, not recoverable",
+          "income_tax_pct": 0.0,
+          "conversion_pct": 0.0,
+          "converted_fraction": 0.0
+        },
+        "VOO": {
+          "return_pct": 6.292251992639348,
+          "expected_pct": 6.779951192587101,
+          "fee_pct": 0.03,
+          "withholding_drag_pct": 0.15769919994775336,
+          "withholding_note": "15%: non-recoverable",
+          "income_tax_pct": 0.0,
+          "conversion_pct": 0.3,
+          "converted_fraction": 1.0
+        }
+      },
+      "unavailable": {},
+      "as_of": "2026-10-29",
+      "stale": false,
+      "reason": null
+    },
+    "trading": {
+      "account": "trading",
+      "return_pct": 6.396069001786912,
+      "listing": "VFV.TO",
+      "runner_up": "VOO",
+      "margin_pts": 0.0502648367546259,
+      "break_even_conversion_pct": 0.6842620172765251,
+      "components": {
+        "VFV.TO": {
+          "return_pct": 6.396069001786912,
+          "expected_pct": 6.779951192587093,
+          "fee_pct": 0.09,
+          "withholding_drag_pct": 0.0,
+          "withholding_note": "15% withheld inside the fund, recovered as a foreign tax credit",
+          "income_tax_pct": 0.2938821908001811,
+          "conversion_pct": 0.0,
+          "converted_fraction": 0.0
+        },
+        "VOO": {
+          "return_pct": 6.345804165032286,
+          "expected_pct": 6.779951192587101,
+          "fee_pct": 0.03,
+          "withholding_drag_pct": 0.0,
+          "withholding_note": "15%: recoverable as a foreign tax credit",
+          "income_tax_pct": 0.3117187518967258,
+          "conversion_pct": 0.09242827565808934,
+          "converted_fraction": 0.3080942521936311
+        }
+      },
+      "unavailable": {},
+      "as_of": "2026-10-29",
+      "stale": false,
+      "reason": null
+    }
+  },
+  "fund_orders": [
+    {
+      "account": "rrsp",
+      "ticker": "VFV.TO",
+      "shares": 26,
+      "price": 192.28,
+      "currency": "CAD",
+      "estimated_cost": 4999.28,
+      "estimated_cost_cad": 4999.28,
+      "commission_cad": 0.0,
+      "conversion_cost_cad": 0.0,
+      "leftover_cad": 0.72,
+      "reason": "parked in the benchmark fund: placeholder until a stock beats it in this account"
+    },
+    {
+      "account": "tfsa",
+      "ticker": "VFV.TO",
+      "shares": 7,
+      "price": 192.28,
+      "currency": "CAD",
+      "estimated_cost": 1345.96,
+      "estimated_cost_cad": 1345.96,
+      "commission_cad": 0.0,
+      "conversion_cost_cad": 0.0,
+      "leftover_cad": 154.04,
+      "reason": "parked in the benchmark fund: placeholder until a stock beats it in this account"
+    }
+  ],
+  "waiting": [
+    {
+      "account": "trading",
+      "ticker": "VFV.TO",
+      "available_cad": 500.0,
+      "needs_more_cad": 76.84,
+      "reason": "waiting: needs 76.84 more to reach the minimum order of 500.00"
+    }
+  ]
+}

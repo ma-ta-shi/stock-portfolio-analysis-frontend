@@ -53,7 +53,6 @@ export interface StockFundamentals {
   ev_ebitda?: number
   price_to_book?: number
   price_to_sales?: number
-  peg_ratio?: number
   revenue_growth_yoy?: number
   earnings_growth_yoy?: number
   gross_margin?: number

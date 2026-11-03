@@ -302,6 +302,95 @@ interface UpdatePositionInput {
   average_cost_basis: number
 }
 
+interface LogDividendInput {
+  holdingId: string
+  totalAmount: number
+  amountPerShare: number
+  paymentDate: string
+  isDrip: boolean
+  dripShares?: number
+  dripPricePerShare?: number
+}
+
+export function useLogDividend() {
+  const { userId } = useUser()
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (input: LogDividendInput) => input,
+    onSuccess: ({ holdingId, totalAmount, isDrip, dripShares, dripPricePerShare, paymentDate, amountPerShare }) => {
+      const holdings = queryClient.getQueryData<Holding[]>(holdingsCacheKey(userId))
+      const holding = holdings?.find((h) => h.holding_id === holdingId)
+      if (!holding) return
+
+      // Update holding: accumulate dividends, optionally add DRIP shares
+      queryClient.setQueryData<Holding[]>(holdingsCacheKey(userId), (old) => {
+        if (!old) return old
+        return old.map((h) => {
+          if (h.holding_id !== holdingId) return h
+          const newShares = isDrip && dripShares ? h.shares + dripShares : h.shares
+          const newBookCost = isDrip && dripShares && dripPricePerShare
+            ? h.shares * h.average_cost_basis + dripShares * dripPricePerShare
+            : h.shares * h.average_cost_basis
+          const newAvgCost = newShares > 0 ? newBookCost / newShares : h.average_cost_basis
+          const market_value = newShares * h.current_price
+          const total_gain_loss = market_value - newBookCost
+          return {
+            ...h,
+            shares: newShares,
+            average_cost_basis: newAvgCost,
+            market_value,
+            total_gain_loss,
+            total_gain_loss_pct: newBookCost > 0 ? total_gain_loss / newBookCost : 0,
+            yield_on_cost: h.annual_dividend_per_share > 0 ? h.annual_dividend_per_share / newAvgCost : 0,
+            total_dividends_received: (h.total_dividends_received ?? 0) + totalAmount,
+            transaction_count: (h.transaction_count ?? 0) + (isDrip ? 2 : 1),
+            last_updated: new Date().toISOString(),
+          }
+        })
+      })
+
+      // Add dividend transaction to cache
+      const divTx: Transaction = {
+        transaction_id: `txn_${Date.now()}`,
+        holding_id: holdingId,
+        user_id: userId,
+        stock: holding.stock,
+        account_type: holding.account_type,
+        transaction_type: 'dividend',
+        shares: null,
+        price_per_share: amountPerShare,
+        total_amount: totalAmount,
+        fees: 0,
+        currency: holding.stock.currency,
+        transaction_date: paymentDate,
+        created_at: new Date().toISOString(),
+      }
+      queryClient.setQueryData<Transaction[]>(['portfolio', 'transactions', userId], (old) => {
+        const updated = old ? [divTx, ...old] : [divTx]
+        if (isDrip && dripShares && dripPricePerShare) {
+          const dripTx: Transaction = {
+            transaction_id: `txn_${Date.now() + 1}`,
+            holding_id: holdingId,
+            user_id: userId,
+            stock: holding.stock,
+            account_type: holding.account_type,
+            transaction_type: 'drip',
+            shares: dripShares,
+            price_per_share: dripPricePerShare,
+            total_amount: dripShares * dripPricePerShare,
+            fees: 0,
+            currency: holding.stock.currency,
+            transaction_date: paymentDate,
+            created_at: new Date().toISOString(),
+          }
+          return [dripTx, ...updated]
+        }
+        return updated
+      })
+    },
+  })
+}
+
 export function useUpdatePosition() {
   const { userId } = useUser()
   const queryClient = useQueryClient()

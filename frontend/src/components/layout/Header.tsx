@@ -22,11 +22,11 @@ export function Header() {
           <NavLink to="/" end className={navLinkClass}>
             Home
           </NavLink>
-          <NavLink to="/watchlist" className={navLinkClass}>
-            Watchlist
-          </NavLink>
           <NavLink to="/portfolio" className={navLinkClass}>
             Portfolio
+          </NavLink>
+          <NavLink to="/watchlist" className={navLinkClass}>
+            Watchlist
           </NavLink>
           <NavLink to="/feedback" className={navLinkClass}>
             Feedback

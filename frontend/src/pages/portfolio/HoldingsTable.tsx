@@ -1,12 +1,13 @@
 import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Pencil, Trash2, TrendingDown, TrendingUp } from 'lucide-react'
+import { Pencil, Trash2, TrendingDown, TrendingUp, DollarSign } from 'lucide-react'
 import { usePortfolioHoldings, useRemoveFromPortfolio } from '@/hooks/use-portfolio'
 import { OutlookBadge } from '@/components/OutlookBadge'
 import { ConfidenceMeter } from '@/components/ConfidenceMeter'
 import { EditPositionDialog } from '@/components/EditPositionDialog'
 import { SellPositionDialog } from '@/components/SellPositionDialog'
 import { BuySharesDialog } from '@/components/BuySharesDialog'
+import { LogDividendDialog } from '@/components/LogDividendDialog'
 import { ClosedPositions } from './ClosedPositions'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -43,6 +44,7 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
   const [editingHolding, setEditingHolding] = useState<Holding | null>(null)
   const [buyingHolding, setBuyingHolding] = useState<Holding | null>(null)
   const [sellingHolding, setSellingHolding] = useState<Holding | null>(null)
+  const [dividendHolding, setDividendHolding] = useState<Holding | null>(null)
   const [removingHolding, setRemovingHolding] = useState<Holding | null>(null)
 
   const holdings = useMemo(
@@ -112,6 +114,15 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
                   <TableCell>
                     <div className="font-medium">{h.stock.ticker}</div>
                     <div className="text-xs text-muted-foreground">{h.stock.name}</div>
+                    {h.stock.pipeline_supported === false && (
+                      <Badge
+                        variant="outline"
+                        className="mt-1 border-amber-500 text-xs text-amber-600"
+                        title={h.stock.unsupported_reason ?? undefined}
+                      >
+                        Unsupported
+                      </Badge>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline" className="text-xs">
@@ -148,10 +159,18 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <OutlookBadge direction={h.stock_outlook} />
+                    {h.stock.pipeline_supported === false ? (
+                      <span className="text-muted-foreground">—</span>
+                    ) : (
+                      <OutlookBadge direction={h.stock_outlook} />
+                    )}
                   </TableCell>
                   <TableCell>
-                    <ConfidenceMeter score={h.confidence_score} />
+                    {h.stock.pipeline_supported === false ? (
+                      <span className="text-muted-foreground">—</span>
+                    ) : (
+                      <ConfidenceMeter score={h.confidence_score} />
+                    )}
                   </TableCell>
                   <TableCell className="text-right text-sm">
                     {pctDisplay(h.annual_dividend_yield)}
@@ -178,6 +197,15 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
                         onClick={() => setSellingHolding(h)}
                       >
                         <TrendingDown className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-muted-foreground hover:text-blue-600"
+                        title="Log dividend"
+                        onClick={() => setDividendHolding(h)}
+                      >
+                        <DollarSign className="w-4 h-4" />
                       </Button>
                       <Button
                         variant="ghost"
@@ -221,6 +249,12 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
         key={buyingHolding?.holding_id ?? 'none-buy'}
         holding={buyingHolding}
         onClose={() => setBuyingHolding(null)}
+      />
+
+      <LogDividendDialog
+        key={dividendHolding?.holding_id ?? 'none-div'}
+        holding={dividendHolding}
+        onClose={() => setDividendHolding(null)}
       />
 
       <SellPositionDialog

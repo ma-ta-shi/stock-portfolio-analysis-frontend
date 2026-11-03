@@ -1,3 +1,6 @@
+// Legacy shape: what PortfolioOptimizerSection and use-portfolio were built on (a model confidence on each suggestion).
+// The backend now returns the types in optimizer-api.ts (a stored run with a code-built write-up). Replace these when the
+// section is rewired to the real routes; until then they stay so the screen keeps compiling.
 export interface SwapSuggestion {
   sell: { ticker: string; account_type: string; rationale: string }
   buy: { ticker: string; account_type: string; rationale: string }
