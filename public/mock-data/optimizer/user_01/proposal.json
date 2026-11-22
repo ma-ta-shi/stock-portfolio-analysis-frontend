@@ -1,0 +1,112 @@
+{
+  "proposal_id": "e8d47bdd-ca7a-4b6b-a8a9-1d3d8944b103",
+  "sequence": 1,
+  "kind": "order",
+  "status": "open",
+  "followed_by": null,
+  "account": "rrsp",
+  "to_account": null,
+  "ticker": "RY.TO",
+  "side": "sell",
+  "shares": 40.0,
+  "price": 286.41,
+  "currency": "CAD",
+  "amount_cad": 11456.4,
+  "rule": "sell_cap",
+  "rule_text": "Trim a holding that is over a limit",
+  "chain": null,
+  "reasons": [
+    {
+      "text": "the book no longer holds it here and 11,456.40 is held",
+      "field": "target_book.lines[RY.TO].weights.rrsp",
+      "value": 0.0
+    },
+    {
+      "text": "the industry group (BMO.TO, RY.TO, TD.TO) holds 25,607.60 against a cap of 8,412.28, 204% over (more than the 50% tolerance), so it is cut back to the cap",
+      "field": null,
+      "value": null
+    },
+    {
+      "text": "it has qualified in 1 weekly run(s) in a row",
+      "field": null,
+      "value": null
+    }
+  ],
+  "costs": {
+    "commission_cad": 0.0,
+    "conversion_cad": 0.0,
+    "cash_effect_cad": 11456.4
+  },
+  "value": {
+    "benefit_cad": 0.0,
+    "benefit_years": 1.0,
+    "costs_cad": 0.0,
+    "noise_margin_cad": 0.0,
+    "tax_cad": 0.0,
+    "tax_exact": false,
+    "loss": false,
+    "jump": false,
+    "signal_to_noise": null,
+    "qualified_runs": 1
+  },
+  "rebuy_not_before": null,
+  "what_would_change": [
+    "FUND: dividend payout falls below 50% and dividend growth stagnates, shifting outlook to somewhat_bearish."
+  ],
+  "view": {
+    "ticker": "RY.TO",
+    "outlook": "bullish",
+    "confidence": 60,
+    "tier": "outperform",
+    "reason_text": "Royal Bank of Canada is a quality compounder with solid ROE, margin, and dividend growth, trading within its industry valuation range, positioning it for medium\u2011term upside.",
+    "dissent_text": "",
+    "falsifier_text": "FUND: dividend payout falls below 50% and dividend growth stagnates, shifting outlook to somewhat_bearish.",
+    "falsifier": null,
+    "flags": [
+      "edge_history_short",
+      "stale"
+    ],
+    "status": "excluded",
+    "exclusions": [
+      "stale"
+    ]
+  },
+  "predicted": {
+    "after_tax_12m": 0.08386645614352273,
+    "total_return_cad": 0.08386645614352273,
+    "baseline_cad": 0.07594570453813154,
+    "view_applied": 0.007920751605391185,
+    "noise_margin_pts": 1.1452810902779413,
+    "sigma": 0.18282122415080806,
+    "market_line_12m": 0.06541275548000156,
+    "score_12m": 0.10093850289668135,
+    "entry_cost": 0.0,
+    "exit_tax_cad": 0.0,
+    "tax_rate_pct": 0.0,
+    "usable": false,
+    "flags": [
+      "edge_history_short",
+      "stale"
+    ],
+    "status": "ok",
+    "reason": null
+  },
+  "alternatives": [
+    {
+      "rank": 1,
+      "account": "rrsp",
+      "ticker": "RY.TO",
+      "action_type": "no_action",
+      "expected_return_at_time": 0.058643604650359706,
+      "reason_not_chosen": "a limit is over, so the rule requires the cut"
+    },
+    {
+      "rank": 2,
+      "account": "rrsp",
+      "ticker": "ENB.TO",
+      "action_type": "deploy",
+      "expected_return_at_time": 0.04071020245081714,
+      "reason_not_chosen": "waiting: the book wants no more of it overall until its holding in another account is sold"
+    }
+  ]
+}
