@@ -1,4 +1,7 @@
 import { useFeedback } from '@/hooks/use-feedback'
+import { formatDate, formatEnumLabel, parseDate } from '@/lib/format'
+import { TONE_TEXT } from '@/lib/labels'
+import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 
 export function CompetenceBoundaries() {
@@ -11,7 +14,7 @@ export function CompetenceBoundaries() {
 
   const { competence_boundaries, learning_journal } = data
   const journal = [...learning_journal].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+    (a, b) => parseDate(b.date).getTime() - parseDate(a.date).getTime(),
   )
 
   return (
@@ -23,7 +26,7 @@ export function CompetenceBoundaries() {
             <div className="text-xs text-muted-foreground mb-1">Best Sectors</div>
             <div className="flex flex-wrap gap-1">
               {competence_boundaries.best_performing_sectors.map((s) => (
-                <Badge key={s} className="text-xs bg-emerald-500/10 text-emerald-700 border-emerald-200">
+                <Badge key={s} className="text-xs bg-emerald-500/10 text-emerald-700 border-emerald-200 dark:text-emerald-400 dark:border-emerald-800">
                   {s}
                 </Badge>
               ))}
@@ -33,7 +36,7 @@ export function CompetenceBoundaries() {
             <div className="text-xs text-muted-foreground mb-1">Weakest Sectors</div>
             <div className="flex flex-wrap gap-1">
               {competence_boundaries.weakest_performing_sectors.map((s) => (
-                <Badge key={s} variant="outline" className="text-xs text-red-600 border-red-200">
+                <Badge key={s} variant="outline" className={cn('text-xs', TONE_TEXT.negative, 'border-red-200 dark:border-red-800')}>
                   {s}
                 </Badge>
               ))}
@@ -41,12 +44,12 @@ export function CompetenceBoundaries() {
           </div>
           <div>
             <div className="text-xs text-muted-foreground mb-1">Best Timeline</div>
-            <span className="font-medium">{competence_boundaries.best_timeline}</span>
+            <span className="font-medium">{formatEnumLabel(competence_boundaries.best_timeline)}</span>
           </div>
           <div>
             <div className="text-xs text-muted-foreground mb-1">Weakest Timeline</div>
             <span className="font-medium text-muted-foreground">
-              {competence_boundaries.weakest_timeline}
+              {formatEnumLabel(competence_boundaries.weakest_timeline)}
             </span>
           </div>
         </div>
@@ -58,10 +61,7 @@ export function CompetenceBoundaries() {
           {journal.map((entry, i) => (
             <li key={i} className="flex gap-3 text-sm">
               <span className="text-xs text-muted-foreground shrink-0 pt-0.5 tabular-nums">
-                {new Date(entry.date).toLocaleDateString('en-CA', {
-                  month: 'short',
-                  day: 'numeric',
-                })}
+                {formatDate(entry.date, { month: 'short', day: 'numeric' })}
               </span>
               <span>{entry.insight}</span>
             </li>

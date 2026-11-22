@@ -12,7 +12,7 @@
     "tfsa_contribution_room": 6000,
     "rrsp_contribution_room": 41200,
     "default_account_type": "rrsp",
-    "default_timeline": "long_term"
+    "default_timeline": "medium_term"
   },
   "context_and_goals": {
     "primary_goal": "wealth_building",

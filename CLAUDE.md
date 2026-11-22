@@ -112,9 +112,9 @@ Implementation phasing: Milestone 2 = single-agent version; Milestone 3 = full 3
 - Always use `AsyncSession` — never sync `Session`
 
 ## Frontend Development Strategy
-Frontend uses mock JSON files (`frontend/mock-data/`) before backend is ready.
-- During frontend-first dev: fetch from `/mock-data/` JSON files
-- When backend ready: swap to `http://localhost:8000/api/`
+Frontend uses mock JSON files (`frontend/public/mock-data/`) before backend is ready.
+- Mock mode: `VITE_USE_MOCK=true` in `frontend/.env.local` (see `frontend/.env.example`)
+- Otherwise the app calls `/api/...`; the Vite dev server proxies it to `http://localhost:8000`
 - TypeScript types in `frontend/src/types/` must mirror backend Pydantic schemas exactly
 
 ## Code Conventions

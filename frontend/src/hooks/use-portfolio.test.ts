@@ -59,7 +59,7 @@ describe('useAddToPortfolio', () => {
     expect(cached?.[1].stock_outlook).toBe('neutral')
   })
 
-  it('initialises cache when it was empty', async () => {
+  it('leaves an unloaded cache alone (the next fetch supplies the holding)', async () => {
     const queryClient = makeQC()
 
     const { useAddToPortfolio } = await import('@/hooks/use-portfolio')
@@ -80,7 +80,7 @@ describe('useAddToPortfolio', () => {
     })
 
     const cached = queryClient.getQueryData<Holding[]>(CACHE_KEY)
-    expect(cached).toHaveLength(1)
+    expect(cached).toBeUndefined()
   })
 })
 

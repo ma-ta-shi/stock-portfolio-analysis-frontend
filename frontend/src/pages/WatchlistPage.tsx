@@ -1,18 +1,19 @@
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowUpDown, Plus, Trash2 } from 'lucide-react'
-import { useWatchlist, useRemoveFromWatchlist } from '@/hooks/use-watchlist'
-import { OutlookBadge } from '@/components/OutlookBadge'
-import { ConfidenceMeter } from '@/components/ConfidenceMeter'
-import { DisagreementIndicator } from '@/components/DisagreementIndicator'
+import { useRemoveFromWatchlist, useWatchlist } from '@/hooks/use-watchlist'
 import { AddStockDialog } from '@/components/AddStockDialog'
-import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { getErrorMessage } from '@/lib/api'
+import { OutlookBadge } from '@/components/OutlookBadge'
+import { ConfidenceMeter } from '@/components/ConfidenceMeter'
+import { DisagreementIndicator } from '@/components/DisagreementIndicator'
+import { Button } from '@/components/ui/button'
 import {
   Table,
   TableBody,
@@ -22,74 +23,66 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { formatDate, formatPct } from '@/lib/utils'
+import { QueryError } from '@/components/QueryError'
+import { clickableRowProps } from '@/lib/a11y'
+import { formatDate, formatNumber, formatPct } from '@/lib/format'
+import { FIT_SHORT_LABELS, FIT_TEXT_COLORS, gainLossColor, TONE_TEXT } from '@/lib/labels'
 import { cn } from '@/lib/utils'
-import type { PortfolioFit, WatchlistItem } from '@/types'
+import { isAwaitingAnalysis, sortWatchlist, type SortDir, type WatchlistSortKey as SortKey } from '@/lib/watchlist'
+import type { WatchlistItem } from '@/types'
 
-type SortKey =
-  | 'projected_return_pct'
-  | 'confidence_score'
-  | 'day_change_pct'
-  | 'last_analyzed_at'
+const EMPTY = <span className="text-xs text-muted-foreground">—</span>
 
-const FIT_COLORS: Record<PortfolioFit, string> = {
-  strong_candidate: 'text-emerald-600 dark:text-emerald-400',
-  worth_monitoring: 'text-amber-600 dark:text-amber-400',
-  poor_fit: 'text-red-600 dark:text-red-400',
-}
-
-const FIT_LABELS: Record<PortfolioFit, string> = {
-  strong_candidate: 'Strong',
-  worth_monitoring: 'Monitor',
-  poor_fit: 'Poor Fit',
-}
-
-function sortItems(items: WatchlistItem[], key: SortKey, dir: 'asc' | 'desc') {
-  return [...items].sort((a, b) => {
-    let cmp = 0
-    if (key === 'projected_return_pct') {
-      cmp = a.projected_return_pct - b.projected_return_pct
-    } else if (key === 'confidence_score') {
-      cmp = a.confidence_score - b.confidence_score
-    } else if (key === 'day_change_pct') {
-      cmp = a.day_change_pct - b.day_change_pct
-    } else if (key === 'last_analyzed_at') {
-      cmp = new Date(a.last_analyzed_at).getTime() - new Date(b.last_analyzed_at).getTime()
-    }
-    return dir === 'asc' ? cmp : -cmp
-  })
-}
-
-interface SortHeaderProps {
+interface SortableHeadProps {
   label: string
   colKey: SortKey
-  activeKey: SortKey
+  sortKey: SortKey
+  sortDir: SortDir
   onSort: (key: SortKey) => void
 }
 
-function SortHeader({ label, colKey, activeKey, onSort }: SortHeaderProps) {
+function SortableHead({ label, colKey, sortKey, sortDir, onSort }: SortableHeadProps) {
+  const active = sortKey === colKey
   return (
-    <button
-      className={cn(
-        'flex items-center gap-1 text-xs font-medium',
-        activeKey === colKey ? 'text-foreground' : 'text-muted-foreground',
-      )}
-      onClick={() => onSort(colKey)}
-    >
-      {label}
-      <ArrowUpDown className="w-3 h-3" />
-    </button>
+    <TableHead aria-sort={active ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none'}>
+      <button
+        type="button"
+        className={cn(
+          'flex items-center gap-1 text-xs font-medium',
+          active ? 'text-foreground' : 'text-muted-foreground',
+        )}
+        onClick={() => onSort(colKey)}
+      >
+        {label}
+        <ArrowUpDown className="w-3 h-3" aria-hidden="true" />
+      </button>
+    </TableHead>
   )
 }
 
 export function WatchlistPage() {
   const navigate = useNavigate()
-  const { data, isLoading, isError, refetch } = useWatchlist()
-  const removeFromWatchlist = useRemoveFromWatchlist()
+  const { data, isLoading, isError, error, refetch } = useWatchlist()
   const [sortKey, setSortKey] = useState<SortKey>('projected_return_pct')
-  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
-  const [addDialogOpen, setAddDialogOpen] = useState(false)
-  const [removingItem, setRemovingItem] = useState<WatchlistItem | null>(null)
+  const [sortDir, setSortDir] = useState<SortDir>('desc')
+  const [addOpen, setAddOpen] = useState(false)
+  const [removing, setRemoving] = useState<WatchlistItem | null>(null)
+  const removeFromWatchlist = useRemoveFromWatchlist()
+
+  async function handleConfirmRemove() {
+    if (!removing) return
+    try {
+      await removeFromWatchlist.mutateAsync(removing.watchlist_id)
+      setRemoving(null)
+    } catch {
+      // Shown from removeFromWatchlist.error in the dialog.
+    }
+  }
+
+  function closeRemoveDialog() {
+    setRemoving(null)
+    removeFromWatchlist.reset()
+  }
 
   function handleSort(key: SortKey) {
     if (key === sortKey) {
@@ -100,48 +93,46 @@ export function WatchlistPage() {
     }
   }
 
-  async function handleConfirmRemove() {
-    if (!removingItem) return
-    await removeFromWatchlist.mutateAsync(removingItem.watchlist_id)
-    setRemovingItem(null)
-  }
-
-  const items = useMemo(
-    () => (data ? sortItems(data.data, sortKey, sortDir) : []),
-    [data, sortKey, sortDir],
-  )
+  const items = data ? sortWatchlist(data.data, sortKey, sortDir) : []
+  const awaitingCount = data?.data.filter(isAwaitingAnalysis).length ?? 0
 
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
+        <h1 className="text-xl font-semibold">Watchlist</h1>
         <div className="flex items-center gap-4">
-          <h1 className="text-xl font-semibold">Watchlist</h1>
           {data?.summary && (
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <span>{data.summary.total} stocks</span>
-              <span className="text-emerald-600 font-medium">
+              <span className={cn(TONE_TEXT.positive, 'font-medium')}>
                 {data.summary.bullish_count} bullish
               </span>
+              {awaitingCount > 0 && <span>{awaitingCount} awaiting analysis</span>}
               {data.summary.changed_since_last_check > 0 && (
-                <span className="text-blue-500">
+                <span className={TONE_TEXT.info}>
                   {data.summary.changed_since_last_check} changed
                 </span>
               )}
             </div>
           )}
+          <Button size="sm" onClick={() => setAddOpen(true)}>
+            <Plus className="w-4 h-4 mr-1" aria-hidden="true" />
+            Add Stock
+          </Button>
         </div>
-        <Button size="sm" onClick={() => setAddDialogOpen(true)}>
-          <Plus className="w-4 h-4 mr-1" />
-          Add Stock
-        </Button>
       </div>
 
       {isLoading ? (
         <div className="h-64 rounded-lg bg-muted animate-pulse" />
       ) : isError ? (
-        <div className="border border-border rounded-lg p-8 text-center space-y-3">
-          <p className="text-sm text-muted-foreground">Failed to load watchlist.</p>
-          <Button size="sm" variant="outline" onClick={() => refetch()}>Retry</Button>
+        <QueryError what="watchlist" error={error} onRetry={refetch} />
+      ) : items.length === 0 ? (
+        <div className="border border-border rounded-lg py-10 text-center space-y-3">
+          <p className="text-muted-foreground text-sm">Your watchlist is empty.</p>
+          <Button size="sm" variant="outline" onClick={() => setAddOpen(true)}>
+            <Plus className="w-4 h-4 mr-1" aria-hidden="true" />
+            Add your first stock
+          </Button>
         </div>
       ) : (
         <div className="border border-border rounded-lg overflow-hidden">
@@ -151,31 +142,24 @@ export function WatchlistPage() {
                 <TableHead>Stock</TableHead>
                 <TableHead>Sector</TableHead>
                 <TableHead>Price</TableHead>
-                <TableHead>
-                  <SortHeader label="Day Δ" colKey="day_change_pct" activeKey={sortKey} onSort={handleSort} />
-                </TableHead>
+                <SortableHead label="Day Δ" colKey="day_change_pct" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
                 <TableHead>Outlook</TableHead>
-                <TableHead>
-                  <SortHeader label="Confidence" colKey="confidence_score" activeKey={sortKey} onSort={handleSort} />
-                </TableHead>
+                <SortableHead label="Confidence" colKey="confidence_score" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
                 <TableHead>Disagreement</TableHead>
-                <TableHead>
-                  <SortHeader label="Proj. Return" colKey="projected_return_pct" activeKey={sortKey} onSort={handleSort} />
-                </TableHead>
+                <SortableHead label="Proj. Return" colKey="projected_return_pct" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
                 <TableHead>Portfolio Fit</TableHead>
                 <TableHead>Account</TableHead>
+                <SortableHead label="Last Analyzed" colKey="last_analyzed_at" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
                 <TableHead>
-                  <SortHeader label="Last Analyzed" colKey="last_analyzed_at" activeKey={sortKey} onSort={handleSort} />
+                  <span className="sr-only">Actions</span>
                 </TableHead>
-                <TableHead />
               </TableRow>
             </TableHeader>
             <TableBody>
               {items.map((item) => (
                 <TableRow
                   key={item.watchlist_id}
-                  className="cursor-pointer hover:bg-muted/50"
-                  onClick={() => navigate(`/stocks/${item.stock.stock_id}`)}
+                  {...clickableRowProps(() => navigate(`/stocks/${item.stock.stock_id}`), `View ${item.stock.ticker}`)}
                 >
                   <TableCell>
                     <div className="font-medium">{item.stock.ticker}</div>
@@ -185,54 +169,82 @@ export function WatchlistPage() {
                     {item.stock.sector}
                   </TableCell>
                   <TableCell className="text-sm font-medium">
-                    {item.current_price.toFixed(2)}{' '}
-                    <span className="text-xs text-muted-foreground">{item.stock.currency}</span>
+                    {item.current_price == null ? (
+                      EMPTY
+                    ) : (
+                      <>
+                        {formatNumber(item.current_price)}{' '}
+                        <span className="text-xs text-muted-foreground">{item.stock.currency}</span>
+                      </>
+                    )}
                   </TableCell>
                   <TableCell>
-                    <span
-                      className={cn(
-                        'text-sm',
-                        item.day_change_pct >= 0 ? 'text-emerald-600' : 'text-red-600',
-                      )}
-                    >
-                      {formatPct(item.day_change_pct * 100)}
-                    </span>
+                    {item.day_change_pct == null ? (
+                      EMPTY
+                    ) : (
+                      <span className={cn('text-sm', gainLossColor(item.day_change_pct))}>
+                        {formatPct(item.day_change_pct)}
+                      </span>
+                    )}
                   </TableCell>
                   <TableCell>
-                    <OutlookBadge direction={item.stock_outlook} />
+                    {isAwaitingAnalysis(item) ? (
+                      <Badge variant="outline" className="text-xs font-normal text-muted-foreground border-dashed">
+                        Awaiting analysis
+                      </Badge>
+                    ) : item.stock_outlook == null ? (
+                      EMPTY
+                    ) : (
+                      <OutlookBadge direction={item.stock_outlook} />
+                    )}
                   </TableCell>
                   <TableCell>
-                    <ConfidenceMeter score={item.confidence_score} />
+                    {item.confidence_score == null ? EMPTY : <ConfidenceMeter score={item.confidence_score} />}
                   </TableCell>
                   <TableCell>
-                    <DisagreementIndicator
-                      label={item.disagreement_label}
-                      score={item.disagreement_score}
-                    />
+                    {item.disagreement_label == null ? (
+                      EMPTY
+                    ) : (
+                      <DisagreementIndicator
+                        label={item.disagreement_label}
+                        score={item.disagreement_score ?? undefined}
+                      />
+                    )}
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm font-medium">
-                      {formatPct(item.projected_return_pct * 100)}
-                    </span>
+                    {item.projected_return_pct == null ? (
+                      EMPTY
+                    ) : (
+                      <span className="text-sm font-medium">{formatPct(item.projected_return_pct)}</span>
+                    )}
                   </TableCell>
                   <TableCell>
-                    <span className={cn('text-sm font-medium', FIT_COLORS[item.portfolio_fit])}>
-                      {FIT_LABELS[item.portfolio_fit]}
-                    </span>
+                    {item.portfolio_fit == null ? (
+                      EMPTY
+                    ) : (
+                      <span className={cn('text-sm font-medium', FIT_TEXT_COLORS[item.portfolio_fit])}>
+                        {FIT_SHORT_LABELS[item.portfolio_fit]}
+                      </span>
+                    )}
                   </TableCell>
                   <TableCell>
-                    <Badge variant="outline" className="text-xs">
-                      {item.suggested_account.toUpperCase()}
-                    </Badge>
+                    {item.suggested_account == null ? (
+                      EMPTY
+                    ) : (
+                      <Badge variant="outline" className="text-xs">
+                        {item.suggested_account.toUpperCase()}
+                      </Badge>
+                    )}
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground">
-                    {formatDate(item.last_analyzed_at)}
+                    {item.last_analyzed_at == null ? 'Not yet' : formatDate(item.last_analyzed_at)}
                   </TableCell>
-                  <TableCell onClick={(e) => e.stopPropagation()}>
+                  <TableCell onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
                     <div className="flex items-center gap-1">
                       <Button
                         variant="outline"
                         size="sm"
+                        aria-label={`View ${item.stock.ticker}`}
                         onClick={() => navigate(`/stocks/${item.stock.stock_id}`)}
                       >
                         View
@@ -241,9 +253,11 @@ export function WatchlistPage() {
                         variant="ghost"
                         size="sm"
                         className="text-muted-foreground hover:text-destructive"
-                        onClick={() => setRemovingItem(item)}
+                        title="Remove from watchlist"
+                        aria-label={`Remove ${item.stock.ticker} from watchlist`}
+                        onClick={() => setRemoving(item)}
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-4 h-4" aria-hidden="true" />
                       </Button>
                     </div>
                   </TableCell>
@@ -254,22 +268,24 @@ export function WatchlistPage() {
         </div>
       )}
 
-      <AddStockDialog
-        mode="watchlist"
-        open={addDialogOpen}
-        onOpenChange={setAddDialogOpen}
-      />
+      <AddStockDialog mode="watchlist" open={addOpen} onOpenChange={setAddOpen} />
 
-      <Dialog open={removingItem !== null} onOpenChange={(open) => { if (!open) setRemovingItem(null) }}>
+      <Dialog open={removing !== null} onOpenChange={(open) => { if (!open) closeRemoveDialog() }}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle>Remove from Watchlist</DialogTitle>
           </DialogHeader>
           <p className="text-sm text-muted-foreground">
-            Remove <span className="font-medium text-foreground">{removingItem?.stock.ticker}</span> ({removingItem?.stock.name}) from your watchlist?
+            Remove <span className="font-medium text-foreground">{removing?.stock.ticker}</span> (
+            {removing?.stock.name}) from your watchlist?
           </p>
+          {removeFromWatchlist.isError && (
+            <p role="alert" className="text-xs text-destructive">
+              {getErrorMessage(removeFromWatchlist.error)}
+            </p>
+          )}
           <div className="flex justify-end gap-2 mt-2">
-            <Button variant="outline" onClick={() => setRemovingItem(null)}>Cancel</Button>
+            <Button variant="outline" onClick={closeRemoveDialog}>Cancel</Button>
             <Button
               variant="destructive"
               onClick={handleConfirmRemove}

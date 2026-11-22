@@ -9,7 +9,7 @@
       "disagreement_score": 0.24,
       "price_at_analysis": 58.26,
       "account_type": "rrsp",
-      "timeline": "long_term",
+      "timeline": "medium_term",
       "analyzed_at": "2026-03-19T14:00:00Z",
       "prediction_status": "pending",
       "prediction_id": "pred_enb_001"
@@ -21,7 +21,7 @@
       "disagreement_score": 0.21,
       "price_at_analysis": 49.80,
       "account_type": "rrsp",
-      "timeline": "long_term",
+      "timeline": "medium_term",
       "analyzed_at": "2025-08-14T10:00:00Z",
       "prediction_status": "scored",
       "prediction_id": "pred_enb_old_001",

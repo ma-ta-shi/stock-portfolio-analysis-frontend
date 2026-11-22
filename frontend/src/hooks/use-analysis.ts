@@ -1,30 +1,16 @@
 import { useQuery } from '@tanstack/react-query'
 import { apiFetch } from '@/lib/api'
-import type { AnalysisSummary, AnalysisRun, AgentResults } from '@/types'
-
-interface RecentAnalysesResponse {
-  data: AnalysisSummary[]
-}
-
-export function useRecentAnalyses() {
-  return useQuery({
-    queryKey: ['analysis', 'recent'],
-    queryFn: () =>
-      apiFetch<RecentAnalysesResponse>(
-        '/mock-data/analysis/recent.json',
-        '/api/analysis/recent',
-      ),
-    select: (res) => res.data,
-  })
-}
+import { queryKeys } from '@/lib/query-keys'
+import type { AnalysisRun, AgentResults } from '@/types'
 
 export function useAnalysisRun(analysisId: string) {
   return useQuery({
-    queryKey: ['analysis', 'run', analysisId],
-    queryFn: () =>
+    queryKey: queryKeys.analysis.run(analysisId),
+    queryFn: ({ signal }) =>
       apiFetch<AnalysisRun>(
         `/mock-data/analysis/${analysisId}.json`,
         `/api/analysis/${analysisId}`,
+        { signal },
       ),
     enabled: !!analysisId,
   })
@@ -32,11 +18,12 @@ export function useAnalysisRun(analysisId: string) {
 
 export function useAgentResults(analysisId: string) {
   return useQuery({
-    queryKey: ['analysis', 'agents', analysisId],
-    queryFn: () =>
+    queryKey: queryKeys.analysis.agents(analysisId),
+    queryFn: ({ signal }) =>
       apiFetch<AgentResults>(
         `/mock-data/analysis/${analysisId}/agents.json`,
         `/api/analysis/${analysisId}/agents`,
+        { signal },
       ),
     enabled: !!analysisId,
   })

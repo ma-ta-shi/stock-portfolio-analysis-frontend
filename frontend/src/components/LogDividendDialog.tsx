@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { useLogDividend } from '@/hooks/use-portfolio'
-import { formatCAD } from '@/lib/utils'
+import { formatCAD } from '@/lib/format'
 import type { Holding } from '@/types'
 
 interface LogDividendDialogProps {

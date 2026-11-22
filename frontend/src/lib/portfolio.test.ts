@@ -1,0 +1,125 @@
+import { describe, expect, it } from 'vitest'
+import { mockHolding, mockUsdHolding } from '@/test/mock-data'
+import {
+  applyTemplate,
+  buildAllocations,
+  buildHoldingSnapshot,
+  disagreementLabel,
+  filterByAccount,
+  holdingPeriod,
+} from './portfolio'
+import { CAD_ONLY } from './fx'
+
+const rates = { CAD: 1, USD: 1.4 } as const
+
+describe('buildHoldingSnapshot', () => {
+  it('returns undefined for no holdings', () => {
+    expect(buildHoldingSnapshot([], rates)).toBeUndefined()
+  })
+
+  it('returns undefined when total shares are zero (no divide-by-zero)', () => {
+    expect(buildHoldingSnapshot([{ ...mockHolding, shares: 0 }], rates)).toBeUndefined()
+  })
+
+  it('aggregates the same stock across accounts with a weighted average cost', () => {
+    const tfsa = { ...mockHolding, shares: 10, average_cost_basis: 100, market_value: 1500, total_gain_loss: 500 }
+    const rrsp = { ...mockHolding, holding_id: 'h_x', account_type: 'rrsp', shares: 30, average_cost_basis: 140, market_value: 4500, total_gain_loss: 300 }
+    const snap = buildHoldingSnapshot([tfsa, rrsp], rates)!
+    expect(snap.shares).toBe(40)
+    expect(snap.book_cost).toBe(10 * 100 + 30 * 140)
+    expect(snap.average_cost).toBeCloseTo(5200 / 40)
+    expect(snap.current_value).toBe(6000)
+    expect(snap.total_return_cad).toBe(800)
+    expect(snap.total_return_pct).toBeCloseTo(800 / 5200)
+    expect(snap.by_account).toHaveLength(2)
+  })
+
+  it('converts the _cad fields of a USD holding to CAD', () => {
+    const snap = buildHoldingSnapshot([mockUsdHolding], rates)!
+    expect(snap.total_return_cad).toBeCloseTo(2158.75 * 1.4)
+    expect(snap.day_change_cad).toBeCloseTo(2.14 * 25 * 1.4)
+    // Share-based amounts stay in USD
+    expect(snap.current_value).toBe(9968.75)
+  })
+
+  it('leaves _cad fields as NaN (rendered as —) when the USD rate is unknown', () => {
+    const snap = buildHoldingSnapshot([mockUsdHolding], CAD_ONLY)!
+    expect(snap.total_return_cad).toBeNaN()
+  })
+})
+
+describe('buildAllocations', () => {
+  it('weights holdings by their CAD value, not the raw mixed-currency sum', () => {
+    const cad = { ...mockHolding, market_value: 1000 }
+    const usd = { ...mockUsdHolding, market_value: 1000 }
+    const { byGeography, totalCad } = buildAllocations([cad, usd], rates)
+    expect(totalCad).toBeCloseTo(2400)
+    const us = byGeography.find((s) => s.name === 'US')!
+    expect(us.share).toBeCloseTo(1400 / 2400)
+  })
+
+  it('excludes and reports holdings whose currency has no rate', () => {
+    const result = buildAllocations([mockHolding, mockUsdHolding], CAD_ONLY)
+    expect(result.missingCurrencies).toEqual(['USD'])
+    expect(result.totalCad).toBe(mockHolding.market_value)
+    expect(result.bySector.map((s) => s.name)).toEqual(['Financials'])
+  })
+
+  it('sorts slices by value descending and shares sum to 1', () => {
+    const { bySector } = buildAllocations([mockHolding, mockUsdHolding], rates)
+    expect(bySector[0].value).toBeGreaterThanOrEqual(bySector[1].value)
+    expect(bySector.reduce((s, x) => s + x.share, 0)).toBeCloseTo(1)
+  })
+})
+
+describe('applyTemplate', () => {
+  it('fills known placeholders', () => {
+    expect(applyTemplate('You hold {{shares}} in {{account_type}}', { shares: 50, account_type: 'TFSA' }))
+      .toBe('You hold 50 in TFSA')
+  })
+  it('leaves unknown placeholders untouched', () => {
+    expect(applyTemplate('{{missing}} stays', {})).toBe('{{missing}} stays')
+  })
+})
+
+describe('disagreementLabel', () => {
+  it.each([
+    [0, 'low'],
+    [0.249, 'low'],
+    [0.25, 'moderate'],
+    [0.49, 'moderate'],
+    [0.5, 'high'],
+  ] as const)('%s → %s', (score, label) => {
+    expect(disagreementLabel(score)).toBe(label)
+  })
+})
+
+describe('filterByAccount', () => {
+  const items = [{ account_type: 'tfsa' }, { account_type: 'rrsp' }]
+  it('returns everything for combined or no filter', () => {
+    expect(filterByAccount(items, 'combined')).toHaveLength(2)
+    expect(filterByAccount(items, undefined)).toHaveLength(2)
+  })
+  it('filters by account', () => {
+    expect(filterByAccount(items, 'tfsa')).toEqual([{ account_type: 'tfsa' }])
+  })
+  it('passes through undefined (still loading)', () => {
+    expect(filterByAccount(undefined, 'tfsa')).toBeUndefined()
+  })
+})
+
+describe('holdingPeriod', () => {
+  it.each([
+    ['2026-01-01', '2026-01-13', '12d'],
+    ['2026-01-01', '2026-06-01', '5mo'],
+    ['2024-01-01', '2024-12-25', '1y'],
+    ['2024-01-01', '2026-04-01', '2y 3mo'],
+    // Regression: the old helper printed "1y 12mo" here
+    ['2024-01-01', '2025-12-30', '2y'],
+  ])('%s → %s is %s', (from, to, expected) => {
+    expect(holdingPeriod(from, to)).toBe(expected)
+  })
+  it('never goes negative', () => {
+    expect(holdingPeriod('2026-02-01', '2026-01-01')).toBe('0d')
+  })
+})

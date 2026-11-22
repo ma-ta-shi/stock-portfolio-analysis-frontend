@@ -9,14 +9,14 @@ import {
   Tooltip,
 } from 'recharts'
 import { useFeedback } from '@/hooks/use-feedback'
+import { formatCAD, formatDate } from '@/lib/format'
 
 function formatYAxis(value: number) {
-  return `$${Math.round(value / 1000)}K`
+  return formatCAD(value, { compact: true })
 }
 
 function formatXAxis(dateStr: string) {
-  const d = new Date(dateStr)
-  return d.toLocaleDateString('en-CA', { month: 'short', year: '2-digit' })
+  return formatDate(dateStr, { month: 'short', year: '2-digit' })
 }
 
 export function EquityCurve() {
@@ -48,13 +48,11 @@ export function EquityCurve() {
             width={52}
           />
           <Tooltip
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            formatter={(value: any, name: any) => [
-              `$${Number(value).toLocaleString('en-CA')}`,
+            formatter={(value, name) => [
+              formatCAD(Number(value)),
               name === 'portfolio_value' ? 'Portfolio' : 'TSX Benchmark',
             ]}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            labelFormatter={(label: any) => formatXAxis(String(label))}
+            labelFormatter={(label) => formatXAxis(String(label))}
           />
           <Legend
             formatter={(value: string) =>

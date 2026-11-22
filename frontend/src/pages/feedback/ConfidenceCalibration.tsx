@@ -43,10 +43,8 @@ export function ConfidenceCalibration() {
             width={40}
           />
           <Tooltip
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            formatter={(value: any) => [`${value}%`, 'Accuracy']}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            labelFormatter={(label: any) => `Confidence: ${label}`}
+            formatter={(value) => [`${value}%`, 'Accuracy']}
+            labelFormatter={(label) => `Confidence: ${label}`}
           />
           <ReferenceLine
             y={50}

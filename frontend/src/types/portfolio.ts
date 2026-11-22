@@ -1,4 +1,4 @@
-import type { Stock } from './stock'
+import type { CurrencyCode, Stock } from './stock'
 import type { StockOutlookDirection, DisagreementLabel } from './watchlist'
 import type { PaginationMeta } from './api'
 
@@ -81,7 +81,7 @@ export interface Transaction {
   price_per_share: number
   total_amount: number
   fees: number
-  currency: string
+  currency: CurrencyCode
   transaction_date: string
   cost_basis_at_sell?: number
   realized_gain_loss?: number

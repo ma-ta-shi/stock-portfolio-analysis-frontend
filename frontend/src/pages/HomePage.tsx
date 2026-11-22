@@ -6,6 +6,7 @@ import { NewsFeedSection } from './home/NewsFeedSection'
 export function HomePage() {
   return (
     <div>
+      <h1 className="sr-only">Home</h1>
       <PortfolioSnapshotBar />
       <WhatChangedSection />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
