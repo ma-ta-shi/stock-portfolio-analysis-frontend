@@ -5,6 +5,12 @@ import { AnalysisPage } from './AnalysisPage'
 
 vi.mock('@/hooks/use-analysis')
 vi.mock('@/hooks/use-portfolio')
+vi.mock('@/hooks/use-user-profile', () => ({
+  useUserProfile: () => ({ data: undefined, isLoading: false, isError: false }),
+}))
+vi.mock('@/hooks/use-fx-rates', () => ({
+  useFxRates: () => ({ rates: { CAD: 1, USD: 1.4 }, isLoading: false }),
+}))
 
 import { useAnalysisRun, useAgentResults } from '@/hooks/use-analysis'
 import { usePortfolioHoldings } from '@/hooks/use-portfolio'

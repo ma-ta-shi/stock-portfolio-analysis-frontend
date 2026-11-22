@@ -29,7 +29,7 @@
       "price_at_recommendation": 157.88,
       "recommended_at": "2026-03-22T10:02:19Z",
       "account_type": "rrsp",
-      "timeline": "long_term",
+      "timeline": "medium_term",
       "checkpoints": [
         { "interval": "1m", "due_at": "2026-04-22", "status": "pending", "score": null },
         { "interval": "3m", "due_at": "2026-06-22", "status": "pending", "score": null },
@@ -85,7 +85,7 @@
       "price_at_recommendation": 354.80,
       "recommended_at": "2025-12-20T10:00:00Z",
       "account_type": "rrsp",
-      "timeline": "long_term",
+      "timeline": "medium_term",
       "checkpoints": [
         { "interval": "3m", "due_at": "2026-03-20", "status": "scored", "score": 0.81, "price_at_checkpoint": 398.75, "return_pct": 0.124, "benchmark_return_pct": 0.041, "direction_correct": true }
       ],

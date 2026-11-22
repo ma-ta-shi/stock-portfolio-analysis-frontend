@@ -75,3 +75,25 @@ export const mockHolding: Holding = {
   added_at: '2025-09-01T00:00:00Z',
   last_updated: '2026-03-26T09:00:00Z',
 }
+
+/** A USD holding (US-listed stock) for cross-currency tests. */
+export const mockUsdHolding: Holding = {
+  ...mockHolding,
+  holding_id: 'h_002',
+  stock: {
+    stock_id: 'stk_msft',
+    ticker: 'MSFT',
+    name: 'Microsoft Corporation',
+    exchange: 'NASDAQ',
+    currency: 'USD',
+    sector: 'Technology',
+  },
+  account_type: 'rrsp',
+  shares: 25,
+  average_cost_basis: 312.4,
+  current_price: 398.75,
+  market_value: 9968.75,
+  total_gain_loss: 2158.75,
+  total_gain_loss_pct: 0.2765,
+  day_change: 2.14,
+}

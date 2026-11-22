@@ -1,4 +1,5 @@
 import { Badge } from '@/components/ui/badge'
+import { BADGE } from '@/lib/labels'
 import { cn } from '@/lib/utils'
 import type { StockOutlookDirection } from '@/types'
 
@@ -8,11 +9,11 @@ interface Props {
 }
 
 const colorMap: Record<StockOutlookDirection, string> = {
-  bullish: 'bg-emerald-600 text-white hover:bg-emerald-600',
-  somewhat_bullish: 'bg-emerald-400 text-white hover:bg-emerald-400',
-  neutral: 'bg-amber-500 text-white hover:bg-amber-500',
-  somewhat_bearish: 'bg-orange-500 text-white hover:bg-orange-500',
-  bearish: 'bg-red-600 text-white hover:bg-red-600',
+  bullish: BADGE.positive,
+  somewhat_bullish: BADGE.positiveSoft,
+  neutral: BADGE.warningSoft,
+  somewhat_bearish: BADGE.cautionSoft,
+  bearish: BADGE.negative,
 }
 
 const labelMap: Record<StockOutlookDirection, string> = {

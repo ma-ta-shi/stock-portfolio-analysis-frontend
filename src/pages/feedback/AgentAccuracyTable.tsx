@@ -1,5 +1,6 @@
 import { useFeedback } from '@/hooks/use-feedback'
-import { Progress, ProgressTrack, ProgressIndicator } from '@/components/ui/progress'
+import { Progress } from '@/components/ui/progress'
+import { TONE_TEXT } from '@/lib/labels'
 import { cn } from '@/lib/utils'
 
 function formatAgentName(key: string): string {
@@ -27,21 +28,22 @@ export function AgentAccuracyTable() {
           const accPct = Math.round(entry.signal_accuracy * 100)
           const accColor =
             accPct >= 70
-              ? 'text-emerald-600'
+              ? TONE_TEXT.positive
               : accPct >= 55
-                ? 'text-amber-500'
-                : 'text-red-600'
+                ? TONE_TEXT.warning
+                : TONE_TEXT.negative
           return (
             <div key={key}>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs text-muted-foreground">{formatAgentName(key)}</span>
                 <span className={cn('text-xs font-medium', accColor)}>{accPct}%</span>
               </div>
-              <Progress value={Math.round(entry.contribution_score * 100)}>
-                <ProgressTrack>
-                  <ProgressIndicator className="bg-emerald-500" />
-                </ProgressTrack>
-              </Progress>
+              <Progress
+                value={Math.round(entry.contribution_score * 100)}
+                aria-label={`${formatAgentName(key)} contribution score`}
+                // Progress renders its own track + indicator; just recolour the indicator.
+                className="[&_[data-slot=progress-indicator]]:bg-emerald-500"
+              />
             </div>
           )
         })}

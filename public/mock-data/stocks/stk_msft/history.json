@@ -9,7 +9,7 @@
       "disagreement_score": 0.12,
       "price_at_analysis": 408.74,
       "account_type": "trading",
-      "timeline": "long_term",
+      "timeline": "medium_term",
       "analyzed_at": "2026-03-25T15:00:00Z",
       "prediction_status": "pending",
       "prediction_id": "pred_msft_001"
@@ -21,7 +21,7 @@
       "disagreement_score": 0.14,
       "price_at_analysis": 375.20,
       "account_type": "trading",
-      "timeline": "long_term",
+      "timeline": "medium_term",
       "analyzed_at": "2025-12-02T14:00:00Z",
       "prediction_status": "scored",
       "prediction_id": "pred_msft_old_001",

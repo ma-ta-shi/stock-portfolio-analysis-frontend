@@ -8,10 +8,12 @@ import {
   LayoutGrid,
 } from 'lucide-react'
 import { useAlerts } from '@/hooks/use-alerts'
-import { formatRelativeTime } from '@/lib/utils'
+import type { ElementType } from 'react'
+import { QueryError } from '@/components/QueryError'
+import { formatRelativeTime } from '@/lib/format'
 import type { AlertType } from '@/types'
 
-const iconMap: Record<AlertType, React.ElementType> = {
+const iconMap: Record<AlertType, ElementType> = {
   outlook_change: TrendingUp,
   portfolio_optimization: LayoutGrid,
   prediction_result: Target,
@@ -28,7 +30,7 @@ function isSafeInternalActionUrl(url: string): boolean {
 }
 
 export function WhatChangedSection() {
-  const { data: alerts, isLoading } = useAlerts()
+  const { data: alerts, isLoading, isError, error, refetch } = useAlerts()
 
   if (isLoading) {
     return (
@@ -46,8 +48,12 @@ export function WhatChangedSection() {
   const displayed = alerts?.slice(0, 8) ?? []
 
   return (
-    <div className="mb-6">
-      <h2 className="text-lg font-semibold mb-3">What Changed</h2>
+    <section aria-labelledby="what-changed-heading" className="mb-6">
+      <h2 id="what-changed-heading" className="text-lg font-semibold mb-3">What Changed</h2>
+      {isError && <QueryError what="alerts" error={error} onRetry={refetch} compact />}
+      {!isError && displayed.length === 0 && (
+        <p className="text-sm text-muted-foreground">Nothing new since your last visit.</p>
+      )}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
         {displayed.map((alert) => {
           const Icon = iconMap[alert.type] ?? Bot
@@ -61,9 +67,11 @@ export function WhatChangedSection() {
             >
               <div className="flex items-start gap-2">
                 <div className="relative shrink-0 mt-0.5">
-                  <Icon className="w-4 h-4 text-muted-foreground" />
+                  <Icon className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
                   {!alert.is_read && (
-                    <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-blue-500" />
+                    <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-blue-500">
+                      <span className="sr-only">Unread</span>
+                    </span>
                   )}
                 </div>
                 <div className="min-w-0">
@@ -92,6 +100,6 @@ export function WhatChangedSection() {
           )
         })}
       </div>
-    </div>
+    </section>
   )
 }

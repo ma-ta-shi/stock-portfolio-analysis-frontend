@@ -1,16 +1,19 @@
 import { useUserProfile } from '@/hooks/use-user-profile'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
-import { formatCAD } from '@/lib/utils'
+import type { ReactNode } from 'react'
+import { QueryError } from '@/components/QueryError'
+import { formatCAD, formatEnumLabel, formatPercent, parseDate } from '@/lib/format'
 import { cn } from '@/lib/utils'
+import { TONE_TEXT } from '@/lib/labels'
 import type { GoalPriority, InvestmentGoalType, RrspContributionStrategy } from '@/types'
 
-function InfoRow({ label, value, note }: { label: string; value: React.ReactNode; note?: string }) {
+function InfoRow({ label, value, note }: { label: string; value: ReactNode; note?: string }) {
   return (
     <div className="flex items-start justify-between py-2 border-b border-border last:border-0">
       <div>
         <span className="text-sm text-muted-foreground">{label}</span>
-        {note && <div className="text-xs text-muted-foreground/60 mt-0.5">{note}</div>}
+        {note && <div className="text-xs text-muted-foreground mt-0.5">{note}</div>}
       </div>
       <span className="text-sm font-medium text-right max-w-xs">{value}</span>
     </div>
@@ -26,7 +29,9 @@ function NotificationRow({ label, enabled }: { label: string; enabled: boolean }
           'inline-block w-2.5 h-2.5 rounded-full',
           enabled ? 'bg-emerald-500' : 'bg-muted-foreground/30',
         )}
-      />
+      >
+        <span className="sr-only">{enabled ? 'On' : 'Off'}</span>
+      </span>
     </div>
   )
 }
@@ -88,7 +93,7 @@ function ProfileTab() {
         <p className="text-xs text-muted-foreground font-mono mt-0.5">{data.user_id}</p>
         <p className="text-xs text-muted-foreground mt-1">
           Member since{' '}
-          {new Date(data.created_at).toLocaleDateString('en-CA', {
+          {parseDate(data.created_at).toLocaleDateString('en-CA', {
             year: 'numeric',
             month: 'long',
           })}
@@ -107,7 +112,7 @@ function ProfileTab() {
           label="Marginal Tax Rate"
           value={
             <div className="flex items-center gap-2">
-              <span>{(f.marginal_tax_rate * 100).toFixed(2)}%</span>
+              <span>{formatPercent(f.marginal_tax_rate)}</span>
               <span className="text-xs text-muted-foreground">
                 {f.marginal_tax_rate_is_manual ? '(manual override)' : '(auto-calculated)'}
               </span>
@@ -216,7 +221,7 @@ function GoalsTab() {
                 <div>
                   <div className="text-xs text-muted-foreground">Target Date</div>
                   <div className="text-sm font-medium">
-                    {new Date(goal.target_date).toLocaleDateString('en-CA', {
+                    {parseDate(goal.target_date).toLocaleDateString('en-CA', {
                       year: 'numeric',
                       month: 'short',
                     })}
@@ -317,7 +322,7 @@ function InvestmentPreferencesTab() {
             prefs.sectors_to_avoid.length > 0 ? (
               <div className="flex flex-wrap gap-1 justify-end">
                 {prefs.sectors_to_avoid.map((s) => (
-                  <Badge key={s} variant="outline" className="text-xs text-red-600">
+                  <Badge key={s} variant="outline" className={cn('text-xs', TONE_TEXT.negative)}>
                     {s}
                   </Badge>
                 ))}
@@ -333,7 +338,7 @@ function InvestmentPreferencesTab() {
         <h3 className="text-sm font-medium mb-2">Position Sizing &amp; Preferences</h3>
         <InfoRow
           label="Max Single Position"
-          value={`${(prefs.max_single_position_pct * 100).toFixed(0)}%`}
+          value={formatPercent(prefs.max_single_position_pct, 0)}
           note="Applies as a hard cap per holding across all accounts"
         />
         <InfoRow
@@ -398,17 +403,21 @@ function NotificationsTab() {
       </div>
       <div className="bg-card border border-border rounded-lg p-4">
         <h3 className="text-sm font-medium mb-2">System</h3>
-        <InfoRow label="LLM Mode" value={s.llm_mode.replace(/_/g, ' ')} />
-        <InfoRow label="Batch Analysis Schedule" value={s.batch_analysis_schedule.replace(/_/g, ' ')} />
+        <InfoRow label="LLM Mode" value={formatEnumLabel(s.llm_mode)} />
+        <InfoRow label="Batch Analysis Schedule" value={formatEnumLabel(s.batch_analysis_schedule)} />
       </div>
     </div>
   )
 }
 
 export function SettingsPage() {
+  // Each tab reads this same (deduplicated) query; report a failure once, above the tabs.
+  const { isError, error, refetch } = useUserProfile()
+
   return (
     <div>
       <h1 className="text-xl font-semibold mb-4">Settings</h1>
+      {isError && <QueryError what="your profile" error={error} onRetry={refetch} className="mb-4" />}
       <Tabs defaultValue="profile">
         <TabsList className="mb-4">
           <TabsTrigger value="profile">Profile</TabsTrigger>

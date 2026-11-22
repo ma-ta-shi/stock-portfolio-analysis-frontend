@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react'
-import { Download } from 'lucide-react'
+import { useId, useMemo } from 'react'
+import { Download, X } from 'lucide-react'
 import { useTransactions } from '@/hooks/use-portfolio'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -11,9 +11,23 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { formatCAD, formatPct } from '@/lib/utils'
+import { QueryError } from '@/components/QueryError'
+import { useTransactionFilters } from '@/hooks/use-transaction-filters'
+import { downloadFile, toCsv } from '@/lib/csv'
+import { formatDate, formatMoney, formatPct, localDateInputValue } from '@/lib/format'
+import { gainLossColor, TONE_TEXT } from '@/lib/labels'
+import { filterByAccount } from '@/lib/portfolio'
+import {
+  filterTransactions,
+  isDateRangeInvalid,
+  tickersIn,
+  TX_TYPE_FILTERS,
+} from '@/lib/transactions'
 import { cn } from '@/lib/utils'
-import type { TransactionType } from '@/types'
+import type { PortfolioAccountView, TransactionType } from '@/types'
+
+const FILTER_CONTROL =
+  'h-8 rounded-md border border-border bg-background px-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary'
 
 const TX_TYPE_LABELS: Record<TransactionType, string> = {
   buy: 'Buy',
@@ -33,98 +47,167 @@ const TX_TYPE_VARIANTS: Record<TransactionType, string> = {
   transfer_out: 'bg-muted text-muted-foreground',
 }
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('en-CA', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
-}
-
 interface TransactionsTabProps {
-  accountFilter?: string
+  accountFilter?: PortfolioAccountView
 }
 
 export function TransactionsTab({ accountFilter }: TransactionsTabProps) {
-  const { data: allTransactions, isLoading, isError, refetch } = useTransactions()
-  const [typeFilter, setTypeFilter] = useState<TransactionType | 'all'>('all')
+  const { data: allTransactions, isLoading, isError, error, refetch } = useTransactions()
+  const { filters, setFilters, clearFilters, isFiltered } = useTransactionFilters()
+  const fieldId = useId()
 
-  const transactions = useMemo(() => {
-    if (!allTransactions) return []
-    return allTransactions
-      .filter((t) => {
-        if (accountFilter && accountFilter !== 'combined' && t.account_type !== accountFilter) return false
-        if (typeFilter !== 'all' && t.transaction_type !== typeFilter) return false
-        return true
-      })
-      .sort((a, b) => new Date(b.transaction_date).getTime() - new Date(a.transaction_date).getTime())
-  }, [allTransactions, accountFilter, typeFilter])
+  // A single position's history ignores the account switcher: the position belongs to
+  // exactly one account, and hiding it because another account is selected would be confusing.
+  const scoped = useMemo(
+    () => (filters.holdingId ? (allTransactions ?? []) : (filterByAccount(allTransactions, accountFilter) ?? [])),
+    [allTransactions, accountFilter, filters.holdingId],
+  )
+  const transactions = useMemo(() => filterTransactions(scoped, filters), [scoped, filters])
+  // Always list the active ticker, even if the current account has none: otherwise the
+  // dropdown would show "All tickers" while the table is still filtered (and empty).
+  const tickers = useMemo(() => {
+    const list = tickersIn(scoped)
+    return filters.ticker && !list.includes(filters.ticker) ? [...list, filters.ticker].sort() : list
+  }, [scoped, filters.ticker])
+  const holdingTx = filters.holdingId
+    ? allTransactions?.find((t) => t.holding_id === filters.holdingId)
+    : undefined
+  const dateRangeInvalid = isDateRangeInvalid(filters)
 
   function handleExportCSV() {
     if (!transactions.length) return
-    const headers = ['Date', 'Ticker', 'Account', 'Type', 'Shares', 'Price', 'Total', 'Fees', 'Realized P&L', 'Notes']
+    const headers = ['Date', 'Ticker', 'Account', 'Type', 'Currency', 'Shares', 'Price', 'Total', 'Fees', 'Realized P&L', 'Notes']
     const rows = transactions.map((t) => [
-      formatDate(t.transaction_date),
+      t.transaction_date.slice(0, 10), // ISO date sorts and imports cleanly in spreadsheets
       t.stock.ticker,
       t.account_type.toUpperCase(),
       TX_TYPE_LABELS[t.transaction_type],
-      t.shares != null ? String(t.shares) : '',
+      t.currency,
+      t.shares ?? '',
       t.price_per_share.toFixed(2),
       t.total_amount.toFixed(2),
       t.fees.toFixed(2),
-      t.realized_gain_loss != null ? t.realized_gain_loss.toFixed(2) : '',
+      t.realized_gain_loss?.toFixed(2) ?? '',
       t.notes ?? '',
     ])
-    const csv = [headers, ...rows].map((r) => r.map((c) => `"${c}"`).join(',')).join('\n')
-    const blob = new Blob([csv], { type: 'text/csv' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'transactions.csv'
-    a.click()
-    URL.revokeObjectURL(url)
+    downloadFile(toCsv([headers, ...rows]), `transactions-${localDateInputValue()}.csv`)
   }
 
   if (isLoading) {
     return <div className="h-48 rounded-lg bg-muted animate-pulse" />
   }
   if (isError) {
-    return (
-      <div className="border border-border rounded-lg p-8 text-center space-y-3">
-        <p className="text-sm text-muted-foreground">Failed to load transactions.</p>
-        <Button size="sm" variant="outline" onClick={() => refetch()}>Retry</Button>
-      </div>
-    )
+    return <QueryError what="transactions" error={error} onRetry={refetch} />
   }
 
   return (
     <div>
+      {filters.holdingId && (
+        <div className="flex items-center justify-between gap-2 mb-3 rounded-md border border-border bg-muted/40 px-3 py-2 text-sm">
+          <span>
+            Showing full history for{' '}
+            <span className="font-medium">
+              {holdingTx ? `${holdingTx.stock.ticker} (${holdingTx.account_type.toUpperCase()})` : 'one position'}
+            </span>
+          </span>
+          <Button size="sm" variant="ghost" onClick={() => setFilters({ holdingId: null })}>
+            Show all transactions
+          </Button>
+        </div>
+      )}
+
       {/* Filters */}
-      <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-        <div className="flex gap-1.5 flex-wrap">
-          {(['all', 'buy', 'sell', 'dividend', 'drip'] as const).map((type) => (
-            <button
-              key={type}
-              onClick={() => setTypeFilter(type)}
-              className={cn(
-                'px-2.5 py-1 text-xs rounded-md border transition-colors',
-                typeFilter === type
-                  ? 'bg-primary text-primary-foreground border-primary'
-                  : 'border-border text-muted-foreground hover:bg-muted',
-              )}
-            >
-              {type === 'all' ? 'All' : TX_TYPE_LABELS[type]}
-            </button>
-          ))}
+      <div className="flex items-end justify-between mb-3 flex-wrap gap-3">
+        <div className="flex items-end gap-3 flex-wrap">
+          <div role="group" aria-label="Transaction type" className="flex gap-1.5 flex-wrap">
+            {TX_TYPE_FILTERS.map((type) => (
+              <button
+                type="button"
+                key={type}
+                aria-pressed={filters.type === type}
+                onClick={() => setFilters({ type })}
+                className={cn(
+                  'px-2.5 py-1 text-xs rounded-md border transition-colors h-8',
+                  filters.type === type
+                    ? 'bg-primary text-primary-foreground border-primary'
+                    : 'border-border text-muted-foreground hover:bg-muted',
+                )}
+              >
+                {type === 'all' ? 'All' : TX_TYPE_LABELS[type as TransactionType]}
+              </button>
+            ))}
+          </div>
+          {!filters.holdingId && (
+            <div className="flex flex-col gap-1">
+              <label htmlFor={`${fieldId}-ticker`} className="text-xs text-muted-foreground">
+                Ticker
+              </label>
+              <select
+                id={`${fieldId}-ticker`}
+                className={FILTER_CONTROL}
+                value={filters.ticker ?? ''}
+                onChange={(e) => setFilters({ ticker: e.target.value || null })}
+              >
+                <option value="">All tickers</option>
+                {tickers.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+          <div className="flex flex-col gap-1">
+            <label htmlFor={`${fieldId}-from`} className="text-xs text-muted-foreground">
+              From
+            </label>
+            <input
+              id={`${fieldId}-from`}
+              type="date"
+              className={FILTER_CONTROL}
+              value={filters.from ?? ''}
+              max={filters.to ?? undefined}
+              onChange={(e) => setFilters({ from: e.target.value || null })}
+              aria-invalid={dateRangeInvalid || undefined}
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor={`${fieldId}-to`} className="text-xs text-muted-foreground">
+              To
+            </label>
+            <input
+              id={`${fieldId}-to`}
+              type="date"
+              className={FILTER_CONTROL}
+              value={filters.to ?? ''}
+              min={filters.from ?? undefined}
+              onChange={(e) => setFilters({ to: e.target.value || null })}
+              aria-invalid={dateRangeInvalid || undefined}
+            />
+          </div>
+          {isFiltered && !filters.holdingId && (
+            <Button size="sm" variant="ghost" onClick={clearFilters}>
+              <X className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
+              Clear filters
+            </Button>
+          )}
         </div>
         <Button size="sm" variant="outline" onClick={handleExportCSV} disabled={!transactions.length}>
-          <Download className="w-3.5 h-3.5 mr-1.5" />
+          <Download className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" />
           Export CSV
         </Button>
       </div>
 
+      {dateRangeInvalid && (
+        <p role="alert" className="text-xs text-destructive mb-3">
+          The “From” date is after the “To” date.
+        </p>
+      )}
+
       {!transactions.length ? (
-        <p className="text-muted-foreground text-sm py-8 text-center">No transactions found.</p>
+        <p className="text-muted-foreground text-sm py-8 text-center">
+          {isFiltered ? 'No transactions match these filters.' : 'No transactions yet.'}
+        </p>
       ) : (
         <div className="border border-border rounded-lg overflow-hidden">
           <Table>
@@ -143,7 +226,7 @@ export function TransactionsTab({ accountFilter }: TransactionsTabProps) {
             </TableHeader>
             <TableBody>
               {transactions.map((t) => {
-                const gainPositive = (t.realized_gain_loss ?? 0) >= 0
+                const gainClass = gainLossColor(t.realized_gain_loss ?? 0)
                 return (
                   <TableRow key={t.transaction_id}>
                     <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
@@ -170,7 +253,7 @@ export function TransactionsTab({ accountFilter }: TransactionsTabProps) {
                     </TableCell>
                     <TableCell className="text-right text-sm">
                       {t.shares != null ? (
-                        <span className={t.shares < 0 ? 'text-red-600' : undefined}>
+                        <span className={t.shares < 0 ? TONE_TEXT.negative : undefined}>
                           {t.shares > 0 ? '+' : ''}{t.shares}
                         </span>
                       ) : (
@@ -178,36 +261,23 @@ export function TransactionsTab({ accountFilter }: TransactionsTabProps) {
                       )}
                     </TableCell>
                     <TableCell className="text-right text-sm">
-                      ${t.price_per_share.toFixed(2)}{' '}
-                      <span className="text-xs text-muted-foreground">{t.currency}</span>
+                      {formatMoney(t.price_per_share, t.currency)}
                     </TableCell>
                     <TableCell className="text-right text-sm font-medium">
-                      {formatCAD(t.total_amount)}
+                      {formatMoney(t.total_amount, t.currency)}
                     </TableCell>
                     <TableCell className="text-right text-sm text-muted-foreground">
-                      {t.fees > 0 ? `$${t.fees.toFixed(2)}` : '—'}
+                      {t.fees > 0 ? formatMoney(t.fees, t.currency) : '—'}
                     </TableCell>
                     <TableCell className="text-right">
                       {t.realized_gain_loss != null ? (
                         <>
-                          <div
-                            className={cn(
-                              'text-sm font-medium',
-                              gainPositive ? 'text-emerald-600' : 'text-red-600',
-                            )}
-                          >
-                            {gainPositive ? '+' : ''}
-                            {formatCAD(t.realized_gain_loss)}
+                          <div className={cn('text-sm font-medium', gainClass)}>
+                            {formatMoney(t.realized_gain_loss, t.currency, { signed: true })}
                           </div>
                           {t.realized_gain_loss_pct != null && (
-                            <div
-                              className={cn(
-                                'text-xs',
-                                gainPositive ? 'text-emerald-600' : 'text-red-600',
-                              )}
-                            >
-                              {gainPositive ? '+' : ''}
-                              {formatPct(t.realized_gain_loss_pct * 100)}
+                            <div className={cn('text-xs', gainClass)}>
+                              {formatPct(t.realized_gain_loss_pct)}
                             </div>
                           )}
                         </>

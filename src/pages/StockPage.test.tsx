@@ -8,6 +8,12 @@ vi.mock('@/hooks/use-stock-detail')
 vi.mock('@/hooks/use-portfolio')
 vi.mock('@/hooks/use-ticker-search')
 vi.mock('@/hooks/use-watchlist')
+vi.mock('@/hooks/use-user-profile', () => ({
+  useUserProfile: () => ({ data: undefined, isLoading: false, isError: false }),
+}))
+vi.mock('@/hooks/use-fx-rates', () => ({
+  useFxRates: () => ({ rates: { CAD: 1, USD: 1.4 }, isLoading: false }),
+}))
 vi.mock('@/context/UserContext', () => ({
   UserProvider: ({ children }: { children: React.ReactNode }) => children,
   useUser: () => ({ userId: 'user_01', setUserId: vi.fn() }),
@@ -16,7 +22,7 @@ vi.mock('@/context/UserContext', () => ({
 import { useStockDetail, useStockAnalysisHistory } from '@/hooks/use-stock-detail'
 import { usePortfolioHoldings, useAddToPortfolio, useBuyShares, useSellPosition, useUpdatePosition, useLogDividend } from '@/hooks/use-portfolio'
 import { useTickerSearch } from '@/hooks/use-ticker-search'
-import { useAddToWatchlist } from '@/hooks/use-watchlist'
+import { useAddToWatchlist, useWatchlist } from '@/hooks/use-watchlist'
 
 const mockUseStockDetail = vi.mocked(useStockDetail)
 const mockUseStockAnalysisHistory = vi.mocked(useStockAnalysisHistory)
@@ -28,6 +34,7 @@ vi.mocked(useUpdatePosition).mockReturnValue({ mutateAsync: vi.fn(), isPending: 
 vi.mocked(useLogDividend).mockReturnValue({ mutateAsync: vi.fn(), isPending: false } as unknown as ReturnType<typeof useLogDividend>)
 vi.mocked(useTickerSearch).mockReturnValue({ mutateAsync: vi.fn(), isPending: false, reset: vi.fn() } as unknown as ReturnType<typeof useTickerSearch>)
 vi.mocked(useAddToWatchlist).mockReturnValue({ mutateAsync: vi.fn(), isPending: false, reset: vi.fn() } as unknown as ReturnType<typeof useAddToWatchlist>)
+vi.mocked(useWatchlist).mockReturnValue({ data: undefined } as unknown as ReturnType<typeof useWatchlist>)
 
 const mockStock = {
   stock_id: 'stk_ry_to',
@@ -129,5 +136,60 @@ describe('StockPage — error state', () => {
 
     expect(screen.getByText(/stock not found/i)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /retry/i })).toBeNull()
+  })
+})
+
+describe('StockPage — not yet priced or analysed', () => {
+  it('shows "Price not available yet" and "Awaiting analysis" instead of zeros', () => {
+    mockUseStockDetail.mockReturnValue({
+      data: {
+        ...mockStock,
+        current_price: null,
+        day_change: null,
+        day_change_pct: null,
+        week_52_high: null,
+        week_52_low: null,
+        market_cap_cad: null,
+        latest_analysis: undefined,
+        price_history_90d: [100, 101],
+      },
+      isLoading: false,
+      isError: false,
+      refetch: vi.fn(),
+    } as unknown as ReturnType<typeof useStockDetail>)
+    mockUseStockAnalysisHistory.mockReturnValue({ data: { data: [] }, isLoading: false } as unknown as ReturnType<typeof useStockAnalysisHistory>)
+    mockUsePortfolioHoldings.mockReturnValue({ data: [], isLoading: false } as unknown as ReturnType<typeof usePortfolioHoldings>)
+
+    renderStockPage()
+
+    expect(screen.getByText('Price not available yet')).toBeInTheDocument()
+    expect(screen.getByText(/Awaiting analysis\./)).toBeInTheDocument()
+    expect(screen.queryByText(/Mkt cap/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/today$/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/\$0\.00|0\.00%/)).not.toBeInTheDocument()
+  })
+})
+
+describe('StockPage — awaiting-analysis note', () => {
+  const unanalysed = { ...mockStock, latest_analysis: undefined }
+  function setup(history: unknown) {
+    mockUseStockDetail.mockReturnValue({ data: unanalysed, isLoading: false, isError: false, refetch: vi.fn() } as unknown as ReturnType<typeof useStockDetail>)
+    mockUseStockAnalysisHistory.mockReturnValue(history as ReturnType<typeof useStockAnalysisHistory>)
+    mockUsePortfolioHoldings.mockReturnValue({ data: [], isLoading: false } as unknown as ReturnType<typeof usePortfolioHoldings>)
+    renderStockPage()
+  }
+
+  it('is not shown when the stock has past analyses', () => {
+    setup({
+      data: { data: [{ analysis_id: 'a1', stock_outlook: 'bullish', confidence_score: 70, disagreement_score: 0.1, price_at_analysis: 140, account_type: 'tfsa', timeline: 'medium_term', prediction_status: 'active', analyzed_at: '2026-03-01T00:00:00Z' }] },
+      isLoading: false,
+      isError: false,
+    })
+    expect(screen.queryByText(/Awaiting analysis\./)).not.toBeInTheDocument()
+  })
+
+  it('is not shown while the history is still loading', () => {
+    setup({ data: undefined, isLoading: true, isError: false })
+    expect(screen.queryByText(/Awaiting analysis\./)).not.toBeInTheDocument()
   })
 })
