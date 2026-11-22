@@ -16,7 +16,9 @@
 - Hooks: use-prefixed files in src/hooks/
 - TypeScript types in src/types/ — must match backend Pydantic schemas exactly
 - TypeScript strict mode — no `any` without justification
-- Mock mode (`VITE_USE_MOCK=true` in `.env.local`) reads `public/mock-data/`; otherwise `/api/...` is called and the Vite dev server proxies it to the backend (see `.env.example`)
+- Mock mode (`VITE_USE_MOCK=true`, set in the gitignored `.env`) reads `public/mock-data/`; otherwise `/api/...` is called and the Vite dev server proxies it to the backend. `npm run dev:live` runs against the real backend (`.env.live`; `VITE_API_PROXY_TARGET` picks another port). Do not put the flag in `.env.local`: Vite loads it in test mode too
+- Generated API types: `npm run gen:api` (backend running) refreshes `openapi.snapshot.json` and `src/types/openapi.gen.ts`; commit both. `src/lib/api-contract.test.ts` fails when a hook calls a path that is not in the snapshot (its allowlist of mock-era paths shrinks as page tickets land)
+- Identity: `useUser()` always returns a real user id (resolved from `GET /api/users` before any page renders; default = the stored user, else the first user who owns a portfolio, else the first user). Portfolio routes are keyed by portfolio id: use `usePortfolioId()`, never the user id
 
 ## Component Patterns
 - Prefer explicit props typing over React.FC
@@ -35,8 +37,8 @@
 
 ## Formatting, Units & Currency
 - Formatting lives in `src/lib/format.ts` (`src/lib/utils.ts` only has `cn`)
-- API ratios are fractions (0.125 = 12.5%): `formatPct(x)` (signed) / `formatPercent(x)` (unsigned) — never `x * 100` at the call site
-  - Exception: the optimizer's `expected_return_improvement_pct` / `*_weight_pct` are whole percents (backend inconsistency, displayed as-is)
+- The formatters take fractions (0.125 = 12.5%): `formatPct(x)` (signed) / `formatPercent(x)` (unsigned) — never `x * 100` at the call site
+- **The API mixes two scales:** `unrealised_pct: 9.11` is a whole percent, `expected_total_return: 0.0678` is a fraction, and the same family can differ by name. Never guess from a name: read every ratio-like API field in a hook's mapper through `asFraction('Schema.field', value)` (`src/lib/units.ts`). A field not classified in `UNITS` does not compile; classify it after checking a live value or the computing code. Points (`view_points`, `noise_margin_pts`) are not ratios and stay as-is
 - Per-holding money is in the holding's currency: `formatMoney(v, h.stock.currency)` (USD renders `US$`). `formatCAD` only for `_cad` fields
 - Signed amounts: `formatMoney(v, cur, { signed: true })` — never prepend `'+'` manually (formatPct/signed money already sign)
 - Combined cross-currency totals: convert with `toCad`/`sumInCad` (`src/lib/fx.ts`) using `useFxRates()`; unknown rates are reported, never summed as CAD
