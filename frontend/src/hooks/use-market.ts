@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { apiFetch } from '@/lib/api'
+import { queryKeys } from '@/lib/query-keys'
 import type { MarketOverview, NewsArticle } from '@/types'
 
 interface NewsResponse {
@@ -8,22 +9,24 @@ interface NewsResponse {
 
 export function useMarketOverview() {
   return useQuery({
-    queryKey: ['market', 'overview'],
-    queryFn: () =>
+    queryKey: queryKeys.market.overview,
+    queryFn: ({ signal }) =>
       apiFetch<MarketOverview>(
         '/mock-data/market/overview.json',
         '/api/market/overview',
+        { signal },
       ),
   })
 }
 
 export function useMarketNews() {
   return useQuery({
-    queryKey: ['market', 'news'],
-    queryFn: () =>
+    queryKey: queryKeys.market.news,
+    queryFn: ({ signal }) =>
       apiFetch<NewsResponse>(
         '/mock-data/market/news.json',
         '/api/market/news',
+        { signal },
       ),
     select: (res) => res.data,
   })

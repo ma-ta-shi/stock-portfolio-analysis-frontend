@@ -1,51 +1,59 @@
 import { useMutation } from '@tanstack/react-query'
+import { apiFetch, USE_MOCK } from '@/lib/api'
+import type { Stock } from '@/types'
 
-export interface TickerResult {
-  ticker: string
-  name: string
-  exchange: string
-  sector: string
-  currency: 'CAD' | 'USD'
-  stock_id: string
+/** A resolved stock from ticker / company-name search. */
+export interface TickerResult extends Stock {
+  current_price?: number
 }
 
-const KNOWN_TICKERS: TickerResult[] = [
-  { ticker: 'RY.TO', name: 'Royal Bank of Canada', exchange: 'TSX', sector: 'Financials', currency: 'CAD', stock_id: 'stk_ry_to' },
-  { ticker: 'TD.TO', name: 'Toronto-Dominion Bank', exchange: 'TSX', sector: 'Financials', currency: 'CAD', stock_id: 'stk_td_to' },
-  { ticker: 'BMO.TO', name: 'Bank of Montreal', exchange: 'TSX', sector: 'Financials', currency: 'CAD', stock_id: 'stk_bmo_to' },
-  { ticker: 'BNS.TO', name: 'Bank of Nova Scotia', exchange: 'TSX', sector: 'Financials', currency: 'CAD', stock_id: 'stk_bns_to' },
-  { ticker: 'CM.TO', name: 'CIBC', exchange: 'TSX', sector: 'Financials', currency: 'CAD', stock_id: 'stk_cm_to' },
-  { ticker: 'WSP.TO', name: 'WSP Global Inc.', exchange: 'TSX', sector: 'Industrials', currency: 'CAD', stock_id: 'stk_wsp_to' },
-  { ticker: 'CNR.TO', name: 'Canadian National Railway', exchange: 'TSX', sector: 'Industrials', currency: 'CAD', stock_id: 'stk_cnr_to' },
-  { ticker: 'CP.TO', name: 'Canadian Pacific Kansas City', exchange: 'TSX', sector: 'Industrials', currency: 'CAD', stock_id: 'stk_cp_to' },
-  { ticker: 'ATD.TO', name: 'Alimentation Couche-Tard', exchange: 'TSX', sector: 'Consumer Staples', currency: 'CAD', stock_id: 'stk_atd_to' },
-  { ticker: 'SU.TO', name: 'Suncor Energy', exchange: 'TSX', sector: 'Energy', currency: 'CAD', stock_id: 'stk_su_to' },
-  { ticker: 'ENB.TO', name: 'Enbridge Inc.', exchange: 'TSX', sector: 'Energy', currency: 'CAD', stock_id: 'stk_enb_to' },
-  { ticker: 'BCE.TO', name: 'BCE Inc.', exchange: 'TSX', sector: 'Communication Services', currency: 'CAD', stock_id: 'stk_bce_to' },
-  { ticker: 'SHOP.TO', name: 'Shopify Inc.', exchange: 'TSX', sector: 'Technology', currency: 'CAD', stock_id: 'stk_shop_to' },
-  { ticker: 'MFC.TO', name: 'Manulife Financial', exchange: 'TSX', sector: 'Financials', currency: 'CAD', stock_id: 'stk_mfc_to' },
-  { ticker: 'TRI.TO', name: 'Thomson Reuters', exchange: 'TSX', sector: 'Industrials', currency: 'CAD', stock_id: 'stk_tri_to' },
-  { ticker: 'AAPL', name: 'Apple Inc.', exchange: 'NASDAQ', sector: 'Technology', currency: 'USD', stock_id: 'stk_aapl' },
-  { ticker: 'MSFT', name: 'Microsoft Corporation', exchange: 'NASDAQ', sector: 'Technology', currency: 'USD', stock_id: 'stk_msft' },
-  { ticker: 'GOOGL', name: 'Alphabet Inc.', exchange: 'NASDAQ', sector: 'Technology', currency: 'USD', stock_id: 'stk_googl' },
-  { ticker: 'AMZN', name: 'Amazon.com Inc.', exchange: 'NASDAQ', sector: 'Consumer Discretionary', currency: 'USD', stock_id: 'stk_amzn' },
-  { ticker: 'NVDA', name: 'NVIDIA Corporation', exchange: 'NASDAQ', sector: 'Technology', currency: 'USD', stock_id: 'stk_nvda' },
-  { ticker: 'BRK.B', name: 'Berkshire Hathaway', exchange: 'NYSE', sector: 'Financials', currency: 'USD', stock_id: 'stk_brk_b' },
-  { ticker: 'JPM', name: 'JPMorgan Chase', exchange: 'NYSE', sector: 'Financials', currency: 'USD', stock_id: 'stk_jpm' },
-  { ticker: 'V', name: 'Visa Inc.', exchange: 'NYSE', sector: 'Financials', currency: 'USD', stock_id: 'stk_v' },
+interface ResolveResponse {
+  query: string
+  data: TickerResult[]
+}
+
+const MOCK_DELAY_MS = 600
+
+// Stocks that have mock detail pages under public/mock-data/stocks/.
+const MOCK_TICKERS: TickerResult[] = [
+  { stock_id: 'stk_ry_to', ticker: 'RY.TO', name: 'Royal Bank of Canada', sector: 'Financials', exchange: 'TSX', currency: 'CAD' },
+  { stock_id: 'stk_td_to', ticker: 'TD.TO', name: 'Toronto-Dominion Bank', sector: 'Financials', exchange: 'TSX', currency: 'CAD' },
+  { stock_id: 'stk_bmo_to', ticker: 'BMO.TO', name: 'Bank of Montreal', sector: 'Financials', exchange: 'TSX', currency: 'CAD' },
+  { stock_id: 'stk_shop_to', ticker: 'SHOP.TO', name: 'Shopify Inc.', sector: 'Technology', exchange: 'TSX', currency: 'CAD' },
+  { stock_id: 'stk_cnr_to', ticker: 'CNR.TO', name: 'Canadian National Railway', sector: 'Industrials', exchange: 'TSX', currency: 'CAD' },
+  { stock_id: 'stk_enb_to', ticker: 'ENB.TO', name: 'Enbridge Inc.', sector: 'Energy', exchange: 'TSX', currency: 'CAD' },
+  { stock_id: 'stk_wsp_to', ticker: 'WSP.TO', name: 'WSP Global Inc.', sector: 'Industrials', exchange: 'TSX', currency: 'CAD' },
+  { stock_id: 'stk_aapl', ticker: 'AAPL', name: 'Apple Inc.', sector: 'Technology', exchange: 'NASDAQ', currency: 'USD' },
+  { stock_id: 'stk_msft', ticker: 'MSFT', name: 'Microsoft Corporation', sector: 'Technology', exchange: 'NASDAQ', currency: 'USD' },
 ]
 
-async function lookupTicker(query: string): Promise<TickerResult | null> {
-  await new Promise((resolve) => setTimeout(resolve, 600))
-  const q = query.trim().toUpperCase()
+/** Exact ticker match first (case-insensitive), then partial company-name match. */
+export function findMockTicker(query: string, tickers: TickerResult[] = MOCK_TICKERS): TickerResult | null {
+  const q = query.trim().toLowerCase()
   if (!q) return null
   return (
-    KNOWN_TICKERS.find((t) => t.ticker.toUpperCase() === q) ??
-    KNOWN_TICKERS.find((t) => t.name.toUpperCase().includes(q)) ??
+    tickers.find((t) => t.ticker.toLowerCase() === q) ??
+    tickers.find((t) => t.name.toLowerCase().includes(q)) ??
     null
   )
 }
 
+/**
+ * Resolve a ticker or company name to a single stock.
+ * Returns `null` when nothing matches.
+ */
 export function useTickerSearch() {
-  return useMutation({ mutationFn: lookupTicker })
+  return useMutation({
+    mutationFn: async (query: string): Promise<TickerResult | null> => {
+      if (USE_MOCK) {
+        await new Promise((resolve) => setTimeout(resolve, MOCK_DELAY_MS))
+        return findMockTicker(query)
+      }
+      const res = await apiFetch<ResolveResponse>(
+        '/mock-data/stocks/resolve.json',
+        `/api/stocks/resolve?q=${encodeURIComponent(query.trim())}`,
+      )
+      return res.data[0] ?? null
+    },
+  })
 }

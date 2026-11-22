@@ -13,84 +13,34 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { formatDate, formatAgentName, formatCAD } from '@/lib/utils'
+import { PortfolioContextCard } from '@/components/PortfolioContextCard'
+import { QueryError } from '@/components/QueryError'
+import { useFxRates } from '@/hooks/use-fx-rates'
+import { isNotFound } from '@/lib/api'
+import { formatAgentName, formatDate, formatEnumLabel, formatMoney } from '@/lib/format'
+import { applyTemplate, buildHoldingSnapshot } from '@/lib/portfolio'
+import { BADGE, TONE_TEXT } from '@/lib/labels'
 import { cn } from '@/lib/utils'
-import type { Holding, HoldingSnapshot, SignalDirection, PortfolioFit } from '@/types'
-
-function applyTemplate(template: string, vars: Record<string, string | number>) {
-  let out = template
-  for (const [key, value] of Object.entries(vars)) {
-    out = out.replaceAll(`{{${key}}}`, String(value))
-  }
-  return out
-}
-
-function buildHoldingSnapshot(holdings: Holding[]): HoldingSnapshot | undefined {
-  if (!holdings.length) return undefined
-
-  const totalShares = holdings.reduce((s, h) => s + h.shares, 0)
-  if (totalShares <= 0) return undefined
-
-  const bookCost = holdings.reduce((s, h) => s + h.shares * h.average_cost_basis, 0)
-  const currentValue = holdings.reduce((s, h) => s + h.market_value, 0)
-  const totalReturnCad = holdings.reduce((s, h) => s + h.total_gain_loss, 0)
-  const dayChangeCad = holdings.reduce((s, h) => s + h.day_change * h.shares, 0)
-
-  // Weighted average yield on cost
-  const yieldOnCost = holdings.reduce((s, h) => s + h.yield_on_cost * h.shares, 0) / totalShares
-
-  return {
-    shares: totalShares,
-    average_cost: bookCost / totalShares,
-    book_cost: bookCost,
-    current_value: currentValue,
-    total_return_cad: totalReturnCad,
-    total_return_pct: bookCost > 0 ? totalReturnCad / bookCost : 0,
-    day_change_cad: dayChangeCad,
-    yield_on_cost: yieldOnCost > 0 ? yieldOnCost : undefined,
-    by_account: holdings.length > 1
-      ? holdings.map((h) => ({
-          account_type: h.account_type,
-          shares: h.shares,
-          value: h.market_value,
-          avg_cost: h.average_cost_basis,
-        }))
-      : undefined,
-  }
-}
+import type { SignalDirection } from '@/types'
 
 const signalColors: Record<SignalDirection, string> = {
-  bullish: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400',
-  neutral: 'bg-muted text-muted-foreground',
-  bearish: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
-}
-
-const fitBoxColors: Record<PortfolioFit, string> = {
-  strong_candidate: 'bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800',
-  worth_monitoring: 'bg-amber-50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800',
-  poor_fit: 'bg-muted border-border',
-}
-
-const fitBadgeColors: Record<PortfolioFit, string> = {
-  strong_candidate: 'bg-emerald-600 text-white',
-  worth_monitoring: 'bg-amber-500 text-white',
-  poor_fit: 'bg-muted-foreground text-white',
-}
-
-const FIT_LABELS: Record<PortfolioFit, string> = {
-  strong_candidate: 'Strong Candidate',
-  worth_monitoring: 'Worth Monitoring',
-  poor_fit: 'Poor Fit',
+  bullish: BADGE.positiveSoft,
+  neutral: BADGE.neutral,
+  bearish: 'bg-red-100 text-red-900 dark:bg-red-900/50 dark:text-red-200',
 }
 
 export function AnalysisPage() {
   const { analysisId } = useParams<{ analysisId: string }>()
   const id = analysisId ?? ''
 
-  const { data: run, isLoading: runLoading, isError: runError, refetch: refetchRun } = useAnalysisRun(id)
-  const { data: agents, isLoading: agentsLoading, isError: agentsError } = useAgentResults(id)
+  const runQuery = useAnalysisRun(id)
+  const agentsQuery = useAgentResults(id)
   const { data: holdings } = usePortfolioHoldings()
+  const { rates } = useFxRates()
+  const run = runQuery.data
+  const agents = agentsQuery.data
+  const runLoading = runQuery.isLoading
+  const agentsLoading = agentsQuery.isLoading
 
   if (runLoading || agentsLoading) {
     return (
@@ -102,11 +52,18 @@ export function AnalysisPage() {
     )
   }
 
-  if (runError || agentsError) {
+  const failed = [runQuery, agentsQuery].find((q) => q.isError && !isNotFound(q.error))
+  if (failed) {
     return (
-      <div className="max-w-3xl mx-auto text-center py-12 space-y-3">
-        <p className="text-sm text-muted-foreground">Failed to load analysis.</p>
-        <Button size="sm" variant="outline" onClick={() => refetchRun()}>Retry</Button>
+      <div className="max-w-3xl mx-auto py-12">
+        <QueryError
+          what="analysis"
+          error={failed.error}
+          onRetry={() => {
+            void runQuery.refetch()
+            void agentsQuery.refetch()
+          }}
+        />
       </div>
     )
   }
@@ -123,13 +80,11 @@ export function AnalysisPage() {
   const l2 = run.layer2_context
   const keyDrivers = rec.stock_outlook.key_drivers ?? []
 
-  const holdingSnapshot = buildHoldingSnapshot(
-    holdings?.filter((h) => h.stock.stock_id === run.stock.stock_id && h.account_type === run.account_type) ??
-      [],
-  )
-  const fallbackHoldingSnapshot = holdingSnapshot
-    ? holdingSnapshot
-    : buildHoldingSnapshot(holdings?.filter((h) => h.stock.stock_id === run.stock.stock_id) ?? [])
+  // Prefer the position in the analysed account; fall back to all accounts holding this stock.
+  const stockHoldings = holdings?.filter((h) => h.stock.stock_id === run.stock.stock_id) ?? []
+  const fallbackHoldingSnapshot =
+    buildHoldingSnapshot(stockHoldings.filter((h) => h.account_type === run.account_type), rates) ??
+    buildHoldingSnapshot(stockHoldings, rates)
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
@@ -159,7 +114,7 @@ export function AnalysisPage() {
           </div>
         </div>
         <div className="text-right text-sm text-muted-foreground">
-          <div>{run.account_type.toUpperCase()} · {run.timeline.replace('_', ' ')}</div>
+          <div>{run.account_type.toUpperCase()} · {formatEnumLabel(run.timeline)}</div>
           <div>{formatDate(run.completed_at)}</div>
         </div>
       </div>
@@ -188,43 +143,18 @@ export function AnalysisPage() {
         )}
       </div>
 
-      {/* Layer 2 — Portfolio Context */}
       {l2 && (
-        <div className={cn('border rounded-lg p-5 space-y-3', fitBoxColors[l2.portfolio_fit])}>
-          <h2 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
-            Layer 2 — Portfolio Context
-          </h2>
-          <div className="flex items-center gap-2">
-            <span className={cn('text-xs font-medium px-2 py-0.5 rounded-full', fitBadgeColors[l2.portfolio_fit])}>
-              {FIT_LABELS[l2.portfolio_fit]}
-            </span>
-            <span className="text-sm text-muted-foreground">{l2.portfolio_fit_rationale}</span>
-          </div>
-          <div className={cn('rounded-md border p-3', fitBoxColors[l2.portfolio_fit])}>
-            <p className="text-sm font-medium">{l2.suggested_action}</p>
-            {l2.suggested_amount_cad != null && (
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Suggested amount: {formatCAD(l2.suggested_amount_cad)}
-              </p>
-            )}
-          </div>
-          {agents.cio.account_specific_note && (
-            <div className="border-t border-border pt-3">
-              <p className="text-xs font-medium text-muted-foreground mb-1">Account Note</p>
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                {applyTemplate(agents.cio.account_specific_note, {
+        <PortfolioContextCard
+          context={l2}
+          accountNote={
+            agents.cio.account_specific_note
+              ? applyTemplate(agents.cio.account_specific_note, {
                   shares: fallbackHoldingSnapshot?.shares ?? 0,
                   account_type: run.account_type.toUpperCase(),
-                })}
-              </p>
-            </div>
-          )}
-          {l2.would_replace && (
-            <p className="text-xs text-muted-foreground">
-              Would replace: <span className="font-medium text-foreground">{l2.would_replace}</span>
-            </p>
-          )}
-        </div>
+                })
+              : undefined
+          }
+        />
       )}
 
       {/* Agent Accordion */}
@@ -271,11 +201,11 @@ export function AnalysisPage() {
                 )}
                 {criticalRisks.length > 0 && (
                   <div>
-                    <p className="text-xs font-medium text-red-600 mb-1.5">Critical Risks</p>
+                    <p className={cn('text-xs font-medium', TONE_TEXT.negative, 'mb-1.5')}>Critical Risks</p>
                     <ul className="space-y-1">
                       {criticalRisks.map((r, i) => (
                         <li key={i} className="text-sm flex gap-2 text-red-700 dark:text-red-400">
-                          <span className="shrink-0">⚠</span>
+                          <span className="shrink-0" aria-hidden="true">⚠</span>
                           <span>{r}</span>
                         </li>
                       ))}
@@ -327,7 +257,7 @@ export function AnalysisPage() {
         <span>
           Price at analysis:{' '}
           <span className="font-medium text-foreground">
-            ${run.data_bundle_summary.price_at_analysis}
+            {formatMoney(run.data_bundle_summary.price_at_analysis, run.stock.currency)}
           </span>
         </span>
         <span>

@@ -48,4 +48,11 @@ describe('ConfidenceMeter', () => {
     const bar = container.querySelector('[style*="width"]') as HTMLElement
     expect(bar.className).toContain('emerald')
   })
+
+  it('exposes the score to screen readers as a meter', () => {
+    render(<ConfidenceMeter score={72} />)
+    const meter = screen.getByRole('meter', { name: 'Confidence' })
+    expect(meter).toHaveAttribute('aria-valuenow', '72')
+    expect(meter).toHaveAttribute('aria-valuetext', '72%')
+  })
 })

@@ -1,14 +1,16 @@
 import { useQuery } from '@tanstack/react-query'
 import { apiFetch } from '@/lib/api'
+import { queryKeys } from '@/lib/query-keys'
 import type { StockDetail, StockAnalysisHistory } from '@/types'
 
 export function useStockDetail(stockId: string) {
   return useQuery({
-    queryKey: ['stocks', stockId],
-    queryFn: () =>
+    queryKey: queryKeys.stocks.detail(stockId),
+    queryFn: ({ signal }) =>
       apiFetch<StockDetail>(
         `/mock-data/stocks/${stockId}.json`,
         `/api/stocks/${stockId}`,
+        { signal },
       ),
     enabled: !!stockId,
   })
@@ -16,11 +18,12 @@ export function useStockDetail(stockId: string) {
 
 export function useStockAnalysisHistory(stockId: string) {
   return useQuery({
-    queryKey: ['stocks', stockId, 'history'],
-    queryFn: () =>
+    queryKey: queryKeys.stocks.history(stockId),
+    queryFn: ({ signal }) =>
       apiFetch<StockAnalysisHistory>(
         `/mock-data/stocks/${stockId}/history.json`,
         `/api/stocks/${stockId}/history`,
+        { signal },
       ),
     enabled: !!stockId,
   })

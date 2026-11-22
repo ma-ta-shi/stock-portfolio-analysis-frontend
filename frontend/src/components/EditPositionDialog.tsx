@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type FormEvent } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -7,7 +7,11 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { FormField } from '@/components/FormField'
+import { MoneyInput } from '@/components/MoneyInput'
 import { useUpdatePosition } from '@/hooks/use-portfolio'
+import { getErrorMessage } from '@/lib/api'
+import { formatMoney, parseAmount } from '@/lib/format'
 import type { Holding } from '@/types'
 
 interface EditPositionDialogProps {
@@ -16,22 +20,29 @@ interface EditPositionDialogProps {
 }
 
 export function EditPositionDialog({ holding, onClose }: EditPositionDialogProps) {
-  const [shares, setShares] = useState(() => holding ? String(holding.shares) : '')
-  const [avgCost, setAvgCost] = useState(() => holding ? String(holding.average_cost_basis) : '')
+  const [shares, setShares] = useState(() => (holding ? String(holding.shares) : ''))
+  const [avgCost, setAvgCost] = useState(() => (holding ? String(holding.average_cost_basis) : ''))
   const update = useUpdatePosition()
 
-  async function handleSave() {
-    if (!holding) return
-    const sharesNum = parseFloat(shares)
-    const avgCostNum = parseFloat(avgCost)
-    if (!sharesNum || !avgCostNum) return
-    await update.mutateAsync({ holdingId: holding.holding_id, shares: sharesNum, average_cost_basis: avgCostNum })
-    onClose()
-  }
+  const sharesNum = parseAmount(shares)
+  const avgCostNum = parseAmount(avgCost)
+  const canSave = holding !== null && sharesNum > 0 && avgCostNum > 0
+  const currency = holding?.stock.currency ?? 'CAD'
 
-  const sharesNum = parseFloat(shares)
-  const avgCostNum = parseFloat(avgCost)
-  const canSave = sharesNum > 0 && avgCostNum > 0
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault()
+    if (!holding || !canSave) return
+    try {
+      await update.mutateAsync({
+        holdingId: holding.holding_id,
+        shares: sharesNum,
+        average_cost_basis: avgCostNum,
+      })
+      onClose()
+    } catch {
+      // Error is shown from update.error below; keep the dialog open.
+    }
+  }
 
   return (
     <Dialog open={holding !== null} onOpenChange={(open) => { if (!open) onClose() }}>
@@ -39,50 +50,43 @@ export function EditPositionDialog({ holding, onClose }: EditPositionDialogProps
         <DialogHeader>
           <DialogTitle>Edit Position — {holding?.stock.ticker}</DialogTitle>
         </DialogHeader>
-        <div className="space-y-3">
+        <form onSubmit={handleSubmit} className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1">
-              <label className="text-xs text-muted-foreground">Shares</label>
-              <Input
-                type="number"
-                min="0"
-                step="any"
-                value={shares}
-                onChange={(e) => setShares(e.target.value)}
-                autoFocus
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="text-xs text-muted-foreground">Avg cost ({holding?.stock.currency})</label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
+            <FormField label="Shares">
+              {(id) => (
                 <Input
+                  id={id}
                   type="number"
+                  inputMode="decimal"
                   min="0"
                   step="any"
-                  className="pl-7"
-                  value={avgCost}
-                  onChange={(e) => setAvgCost(e.target.value)}
+                  value={shares}
+                  onChange={(e) => setShares(e.target.value)}
+                  autoFocus
                 />
-              </div>
-            </div>
+              )}
+            </FormField>
+            <FormField label={`Avg cost (${currency})`}>
+              {(id) => <MoneyInput id={id} value={avgCost} onChange={(e) => setAvgCost(e.target.value)} />}
+            </FormField>
           </div>
-          {sharesNum > 0 && avgCostNum > 0 && (
+          {canSave && (
             <p className="text-xs text-muted-foreground">
-              Book cost:{' '}
-              {holding?.stock.currency} ${(sharesNum * avgCostNum).toLocaleString('en-CA', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
+              Book cost: {formatMoney(sharesNum * avgCostNum, currency)}
             </p>
           )}
-        </div>
-        <div className="flex justify-end gap-2 mt-2">
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button onClick={handleSave} disabled={!canSave || update.isPending}>
-            {update.isPending ? 'Saving…' : 'Save'}
-          </Button>
-        </div>
+          {update.isError && (
+            <p role="alert" className="text-xs text-destructive">
+              {getErrorMessage(update.error)}
+            </p>
+          )}
+          <div className="flex justify-end gap-2 pt-1">
+            <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
+            <Button type="submit" disabled={!canSave || update.isPending}>
+              {update.isPending ? 'Saving…' : 'Save'}
+            </Button>
+          </div>
+        </form>
       </DialogContent>
     </Dialog>
   )

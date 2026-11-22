@@ -16,8 +16,7 @@
 - Hooks: use-prefixed files in src/hooks/
 - TypeScript types in src/types/ — must match backend Pydantic schemas exactly
 - TypeScript strict mode — no `any` without justification
-- During frontend-first dev: fetch from /mock-data/ JSON files
-- When backend ready: swap to real API at http://localhost:8000/api/
+- Mock mode (`VITE_USE_MOCK=true` in `.env.local`) reads `public/mock-data/`; otherwise `/api/...` is called and the Vite dev server proxies it to the backend (see `.env.example`)
 
 ## Component Patterns
 - Prefer explicit props typing over React.FC
@@ -29,7 +28,27 @@
 - TanStack Query (useQuery, useMutation) for ALL server state
 - No useEffect for data fetching — use TanStack Query
 - Optimistic updates for watchlist and portfolio mutations
-- Mock data: frontend/mock-data/ with JSON matching every API response shape
+- Mock data: `public/mock-data/` with JSON matching every API response shape
+- Query keys: always from `queryKeys` in `src/lib/query-keys.ts` (queries and cache updates)
+- Pass TanStack Query's `signal` to `apiFetch`: `queryFn: ({ signal }) => apiFetch(mock, api, { signal })`
+- Every query result must render an error state: `<QueryError what="…" error={error} onRetry={refetch} />`
+
+## Formatting, Units & Currency
+- Formatting lives in `src/lib/format.ts` (`src/lib/utils.ts` only has `cn`)
+- API ratios are fractions (0.125 = 12.5%): `formatPct(x)` (signed) / `formatPercent(x)` (unsigned) — never `x * 100` at the call site
+  - Exception: the optimizer's `expected_return_improvement_pct` / `*_weight_pct` are whole percents (backend inconsistency, displayed as-is)
+- Per-holding money is in the holding's currency: `formatMoney(v, h.stock.currency)` (USD renders `US$`). `formatCAD` only for `_cad` fields
+- Signed amounts: `formatMoney(v, cur, { signed: true })` — never prepend `'+'` manually (formatPct/signed money already sign)
+- Combined cross-currency totals: convert with `toCad`/`sumInCad` (`src/lib/fx.ts`) using `useFxRates()`; unknown rates are reported, never summed as CAD
+- Dates: display API date strings with `formatDate` / `parseDate` — never `new Date(apiString)` (date-only strings parse as UTC midnight = the previous day in Canada). Date inputs default to `localDateInputValue()` and are sent to the API as the `YYYY-MM-DD` string, not `toISOString()`
+- Tests run with `TZ=America/Toronto` (vitest.config.ts) so timezone bugs surface
+
+## Colour, Contrast & Theme
+- Status colours come from `TONE_TEXT` / `BADGE` / `gainLossColor` in `src/lib/labels.ts` — every pair meets WCAG AA (≥ 4.5:1) in light and dark mode. Don't use raw Tailwind 400–600 shades for text or white-on-colour badges (they fail on white)
+- Dark mode follows the OS setting (inline script in `index.html` toggles `.dark`); any new colour class needs a `dark:` counterpart
+- `--destructive` is red-700 in light mode for contrast; don't revert to the shadcn default
+- Verified with axe-core (0 violations on every page, both themes) — re-run after visual changes
+- `src/test/contrast-guard.test.ts` fails the build on low-contrast shades and on `hover:text-x dark:text-y` (must be `dark:hover:text-y`, otherwise the colour applies permanently in dark mode)
 
 ## Pages (from Notion Front End Design spec)
 - Home: morning briefing (alert types: outlook_change, portfolio_optimization, price_movement, etc.)
@@ -57,13 +76,20 @@
 ## Watchlist & Portfolio Mutations
 - `useAddToWatchlist`, `useRemoveFromWatchlist` in `use-watchlist.ts` — update TanStack Query cache directly (mock mode; no API call)
 - `useAddToPortfolio`, `useRemoveFromPortfolio`, `useUpdatePosition` in `use-portfolio.ts` — same pattern; `useUpdatePosition` recalculates `market_value`, `total_gain_loss`, `total_gain_loss_pct`, `yield_on_cost`
-- `useTickerSearch` in `use-ticker-search.ts` — mock lookup against 23 known tickers; matches exact ticker or partial name; 600ms delay; returns `TickerResult | null`
-- `AddStockDialog` — `mode: 'watchlist' | 'portfolio'`; step 1 = search, step 2 = confirm (watchlist) or position input (portfolio)
+- `useTickerSearch` in `use-ticker-search.ts` — mock lookup (exact ticker, then partial name; 600ms delay) in mock mode, `GET /api/stocks/resolve?q=` otherwise (endpoint path assumed — not yet in docs/api-conventions.md); returns `TickerResult | null`
+- `useAllocationAnalysis` in `use-allocation-analysis.ts` — "Analyze allocation" on the Optimizer tab; set `ALLOCATION_ENDPOINT` to connect it to the backend
+- Sell preview maths: `estimateSell()` in `src/lib/sell-preview.ts` (swap for the backend `sell/preview` endpoint when wired)
+- `AddStockDialog` — `mode: 'watchlist' | 'portfolio'`; step 1 = search, step 2 = confirm (watchlist) or position input (portfolio); in watchlist mode a stock already on the watchlist can't be added again
+- Transactions filters (type, ticker, from/to, holding) live in the URL query string via `useTransactionFilters()`; logic in `src/lib/transactions.ts`. Portfolio subtab is `?tab=`. Link to one position's history with `holdingHistoryHref(holdingId)`
 - `EditPositionDialog` — pre-filled shares + avg cost; live book cost preview; calls `useUpdatePosition`
 - When mocking `use-portfolio` in tests, always mock `useRemoveFromPortfolio`, `useUpdatePosition`, `useClosedPositions`, and `useSellPosition` in addition to `usePortfolioHoldings` (they are called by child components rendered inside `HoldingsTable`)
+- Components rendering `SellPositionDialog` or building holding snapshots also need `use-user-profile` and `use-fx-rates` mocked
 
 ## Navigation Pattern
-- Full-row clickable tables: use `onClick={() => navigate(...)}` on `<TableRow>`, NOT `<Link>` on one cell
+- Full-row clickable tables: spread `clickableRowProps(() => navigate(...), 'View TICKER')` (`src/lib/a11y.ts`) on `<TableRow>` — adds keyboard (Tab/Enter) support. Cells with buttons stop click *and* keydown propagation
+- Link-styled buttons: `<ButtonLink to="…" variant="outline">` (`src/components/ButtonLink.tsx`) — renders a real `<a>`. Never nest `<Button>` inside `<Link>`, and never `<Button render={<Link />}>` (Base UI adds `role="button"`, so it's announced as a button)
+- Icon-only buttons need `aria-label`; decorative icons get `aria-hidden="true"`
+- Form fields: use `<FormField label="…">{(id) => <Input id={id} … />}</FormField>` so labels are linked
 - All stock links go to `/stocks/${stock_id}` (e.g. `stk_ry_to`, `stk_shop_to`)
 
 ## Mock Data Conventions
@@ -76,7 +102,10 @@
 - `Recommendation` (`BUY|HOLD|SELL`) is kept only for Pass 2 agents and `Prediction` history — never on live display
 - `StockOutlookDirection`: `'bullish' | 'somewhat_bullish' | 'neutral' | 'somewhat_bearish' | 'bearish'`
 - A holding may exist in multiple accounts (e.g. RY.TO in RRSP + TFSA) — aggregate when building `HoldingSnapshot`
+- `WatchlistItem` market and analysis fields are nullable: a newly added stock is `null` until priced / analysed (`isAwaitingAnalysis()` in `src/lib/watchlist.ts` = `last_analyzed_at == null`). Render "Awaiting analysis" / "—", never placeholder values; sorting puts nulls last
 
 ## Test Patterns
+- Unit/component tests: `src/**/*.test.{ts,tsx}` (Vitest). End-to-end: `e2e/*.spec.ts` (Playwright, `npm run test:e2e`) — runs every route and key flow in light and dark mode, fails on axe-core violations or console errors. Add a flow there for any new user-facing feature
+- `@playwright/test` is pinned to an exact version (each version needs its matching browser build). After changing it, run `npx playwright install chromium`
 - Mock `useNavigate`: `vi.mock('react-router-dom', async (importOriginal) => ({ ...await importOriginal(), useNavigate: vi.fn() }))` then `vi.mocked(useNavigate).mockReturnValue(mockFn)` at module level
 - Partial hook mocks: `{ data: [...], isLoading: false } as unknown as ReturnType<typeof useHook>`

@@ -1,20 +1,19 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '@/lib/api'
+import { queryKeys } from '@/lib/query-keys'
 import { useUser } from '@/context/UserContext'
 import type { PortfolioSummary, PortfolioHoldingsResponse, PortfolioOptimizerResult, Holding, TransactionsResponse, Transaction, ClosedPosition } from '@/types'
 import type { TickerResult } from './use-ticker-search'
 
-// Cache key helper — keeps mutation updaters in sync with the query
-const holdingsCacheKey = (userId: string) => ['portfolio', 'holdings', userId]
-
 export function usePortfolioSummary() {
   const { userId } = useUser()
   return useQuery({
-    queryKey: ['portfolio', 'summary', userId],
-    queryFn: () =>
+    queryKey: queryKeys.portfolio.summary(userId),
+    queryFn: ({ signal }) =>
       apiFetch<PortfolioSummary>(
         `/mock-data/portfolio/${userId}/summary.json`,
         `/api/portfolio/${userId}/summary`,
+        { signal },
       ),
   })
 }
@@ -22,11 +21,12 @@ export function usePortfolioSummary() {
 export function usePortfolioHoldings() {
   const { userId } = useUser()
   return useQuery({
-    queryKey: holdingsCacheKey(userId),
-    queryFn: async () => {
+    queryKey: queryKeys.portfolio.holdings(userId),
+    queryFn: async ({ signal }) => {
       const res = await apiFetch<PortfolioHoldingsResponse>(
         `/mock-data/portfolio/${userId}.json`,
         `/api/portfolio/${userId}`,
+        { signal },
       )
       return res.data
     },
@@ -36,11 +36,12 @@ export function usePortfolioHoldings() {
 export function usePortfolioOptimizer() {
   const { userId } = useUser()
   return useQuery({
-    queryKey: ['portfolio', 'optimizer', userId],
-    queryFn: () =>
+    queryKey: queryKeys.portfolio.optimizer(userId),
+    queryFn: ({ signal }) =>
       apiFetch<PortfolioOptimizerResult>(
         `/mock-data/portfolio/${userId}/optimizer.json`,
         `/api/portfolio/${userId}/optimizer`,
+        { signal },
       ),
   })
 }
@@ -91,9 +92,8 @@ export function useAddToPortfolio() {
       }
     },
     onSuccess: (newHolding) => {
-      queryClient.setQueryData<Holding[]>(holdingsCacheKey(userId), (old) => {
-        if (!old) return [newHolding]
-        return [...old, newHolding]
+      queryClient.setQueryData<Holding[]>(queryKeys.portfolio.holdings(userId), (old) => {
+        return old ? [...old, newHolding] : old
       })
     },
   })
@@ -105,7 +105,7 @@ export function useRemoveFromPortfolio() {
   return useMutation({
     mutationFn: async (holdingId: string) => holdingId,
     onSuccess: (holdingId) => {
-      queryClient.setQueryData<Holding[]>(holdingsCacheKey(userId), (old) => {
+      queryClient.setQueryData<Holding[]>(queryKeys.portfolio.holdings(userId), (old) => {
         if (!old) return old
         return old.filter((h) => h.holding_id !== holdingId)
       })
@@ -116,11 +116,12 @@ export function useRemoveFromPortfolio() {
 export function useTransactions() {
   const { userId } = useUser()
   return useQuery({
-    queryKey: ['portfolio', 'transactions', userId],
-    queryFn: async () => {
+    queryKey: queryKeys.portfolio.transactions(userId),
+    queryFn: async ({ signal }) => {
       const res = await apiFetch<TransactionsResponse>(
         `/mock-data/portfolio/${userId}/transactions.json`,
         `/api/portfolio/${userId}/transactions`,
+        { signal },
       )
       return res.data
     },
@@ -130,11 +131,12 @@ export function useTransactions() {
 export function useClosedPositions() {
   const { userId } = useUser()
   return useQuery({
-    queryKey: ['portfolio', 'closed', userId],
-    queryFn: () =>
+    queryKey: queryKeys.portfolio.closed(userId),
+    queryFn: ({ signal }) =>
       apiFetch<ClosedPosition[]>(
         `/mock-data/portfolio/${userId}/closed.json`,
         `/api/portfolio/${userId}/closed`,
+        { signal },
       ),
   })
 }
@@ -153,7 +155,7 @@ export function useBuyShares() {
   return useMutation({
     mutationFn: async (input: BuySharesInput) => input,
     onSuccess: ({ holdingId, shares, pricePerShare, fees, transactionDate }) => {
-      const holdings = queryClient.getQueryData<Holding[]>(holdingsCacheKey(userId))
+      const holdings = queryClient.getQueryData<Holding[]>(queryKeys.portfolio.holdings(userId))
       const holding = holdings?.find((h) => h.holding_id === holdingId)
       if (!holding) return
 
@@ -164,7 +166,7 @@ export function useBuyShares() {
       const market_value = newTotalShares * holding.current_price
       const total_gain_loss = market_value - newBookCost
 
-      queryClient.setQueryData<Holding[]>(holdingsCacheKey(userId), (old) => {
+      queryClient.setQueryData<Holding[]>(queryKeys.portfolio.holdings(userId), (old) => {
         if (!old) return old
         return old.map((h) => {
           if (h.holding_id !== holdingId) return h
@@ -197,8 +199,10 @@ export function useBuyShares() {
         transaction_date: transactionDate,
         created_at: new Date().toISOString(),
       }
-      queryClient.setQueryData<Transaction[]>(['portfolio', 'transactions', userId], (old) => {
-        return old ? [newTx, ...old] : [newTx]
+      queryClient.setQueryData<Transaction[]>(queryKeys.portfolio.transactions(userId), (old) => {
+        // Never seed an unloaded list: a one-item cache would be treated as fresh and hide
+        // the real list until staleTime expires. The next fetch will include this row.
+        return old ? [newTx, ...old] : old
       })
     },
   })
@@ -218,7 +222,7 @@ export function useSellPosition() {
   return useMutation({
     mutationFn: async (input: SellPositionInput) => input,
     onSuccess: ({ holdingId, shares, pricePerShare, fees, transactionDate }) => {
-      const holdings = queryClient.getQueryData<Holding[]>(['portfolio', 'holdings', userId])
+      const holdings = queryClient.getQueryData<Holding[]>(queryKeys.portfolio.holdings(userId))
       const holding = holdings?.find((h) => h.holding_id === holdingId)
       if (!holding) return
 
@@ -227,7 +231,7 @@ export function useSellPosition() {
       const isClosed = newShares <= 0
 
       // Update holdings cache
-      queryClient.setQueryData<Holding[]>(['portfolio', 'holdings', userId], (old) => {
+      queryClient.setQueryData<Holding[]>(queryKeys.portfolio.holdings(userId), (old) => {
         if (!old) return old
         if (isClosed) {
           return old.filter((h) => h.holding_id !== holdingId)
@@ -265,8 +269,8 @@ export function useSellPosition() {
           first_buy_date: holding.added_at,
           last_sell_date: transactionDate,
         }
-        queryClient.setQueryData<ClosedPosition[]>(['portfolio', 'closed', userId], (old) => {
-          return old ? [newClosed, ...old] : [newClosed]
+        queryClient.setQueryData<ClosedPosition[]>(queryKeys.portfolio.closed(userId), (old) => {
+          return old ? [newClosed, ...old] : old
         })
       }
 
@@ -289,8 +293,10 @@ export function useSellPosition() {
         realized_gain_loss_pct: realizedGainLoss / (holding.average_cost_basis * shares),
         created_at: new Date().toISOString(),
       }
-      queryClient.setQueryData<Transaction[]>(['portfolio', 'transactions', userId], (old) => {
-        return old ? [newTx, ...old] : [newTx]
+      queryClient.setQueryData<Transaction[]>(queryKeys.portfolio.transactions(userId), (old) => {
+        // Never seed an unloaded list: a one-item cache would be treated as fresh and hide
+        // the real list until staleTime expires. The next fetch will include this row.
+        return old ? [newTx, ...old] : old
       })
     },
   })
@@ -318,12 +324,12 @@ export function useLogDividend() {
   return useMutation({
     mutationFn: async (input: LogDividendInput) => input,
     onSuccess: ({ holdingId, totalAmount, isDrip, dripShares, dripPricePerShare, paymentDate, amountPerShare }) => {
-      const holdings = queryClient.getQueryData<Holding[]>(holdingsCacheKey(userId))
+      const holdings = queryClient.getQueryData<Holding[]>(queryKeys.portfolio.holdings(userId))
       const holding = holdings?.find((h) => h.holding_id === holdingId)
       if (!holding) return
 
       // Update holding: accumulate dividends, optionally add DRIP shares
-      queryClient.setQueryData<Holding[]>(holdingsCacheKey(userId), (old) => {
+      queryClient.setQueryData<Holding[]>(queryKeys.portfolio.holdings(userId), (old) => {
         if (!old) return old
         return old.map((h) => {
           if (h.holding_id !== holdingId) return h
@@ -397,7 +403,7 @@ export function useUpdatePosition() {
   return useMutation({
     mutationFn: async (input: UpdatePositionInput) => input,
     onSuccess: ({ holdingId, shares, average_cost_basis }) => {
-      queryClient.setQueryData<Holding[]>(holdingsCacheKey(userId), (old) => {
+      queryClient.setQueryData<Holding[]>(queryKeys.portfolio.holdings(userId), (old) => {
         if (!old) return old
         return old.map((h) => {
           if (h.holding_id !== holdingId) return h
