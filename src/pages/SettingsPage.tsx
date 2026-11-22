@@ -91,13 +91,15 @@ function ProfileTab() {
       <div className="bg-card border border-border rounded-lg p-4">
         <h2 className="text-lg font-semibold">{data.display_name}</h2>
         <p className="text-xs text-muted-foreground font-mono mt-0.5">{data.user_id}</p>
-        <p className="text-xs text-muted-foreground mt-1">
-          Member since{' '}
-          {parseDate(data.created_at).toLocaleDateString('en-CA', {
-            year: 'numeric',
-            month: 'long',
-          })}
-        </p>
+        {data.created_at && (
+          <p className="text-xs text-muted-foreground mt-1">
+            Member since{' '}
+            {parseDate(data.created_at).toLocaleDateString('en-CA', {
+              year: 'numeric',
+              month: 'long',
+            })}
+          </p>
+        )}
       </div>
 
       <div className="bg-card border border-border rounded-lg p-4">

@@ -85,7 +85,8 @@ export interface User {
   user_id: string
   display_name: string
   is_active: boolean
-  created_at: string
+  // The backend profile has no created_at; only the mock data carries one.
+  created_at?: string
 }
 
 export interface UserProfile extends User {

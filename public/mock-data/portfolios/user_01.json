@@ -1,0 +1,14 @@
+{
+  "data": [
+    {
+      "portfolio_id": "pf_01",
+      "user_id": "user_01",
+      "kind": "user",
+      "name": "Portfolio",
+      "settings": {},
+      "is_active": true,
+      "created_at": "2025-09-01T00:00:00"
+    }
+  ],
+  "meta": { "total": 1, "page": 1, "per_page": 20, "pages": 1 }
+}

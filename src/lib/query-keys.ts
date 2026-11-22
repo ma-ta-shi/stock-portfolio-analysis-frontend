@@ -26,6 +26,10 @@ export const queryKeys = {
     search: (query: string) => ['stocks', 'search', query] as const,
   },
   watchlist: (userId: string) => ['watchlist', userId] as const,
+  /** The user's portfolios (the owner's and the read-only agent's); not under `portfolio`, which is the old user-keyed group. */
+  portfolios: (userId: string) => ['portfolios', userId] as const,
+  /** Which users own a portfolio (all users, one call), for choosing the default user. */
+  portfolioOwners: ['portfolios', 'owners'] as const,
   portfolio: {
     all: ['portfolio'] as const,
     summary: (userId: string) => ['portfolio', 'summary', userId] as const,
