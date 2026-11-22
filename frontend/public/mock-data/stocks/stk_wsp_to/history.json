@@ -9,7 +9,7 @@
       "disagreement_score": 0.14,
       "price_at_analysis": 219.26,
       "account_type": "tfsa",
-      "timeline": "long_term",
+      "timeline": "medium_term",
       "analyzed_at": "2026-03-25T11:30:00Z",
       "prediction_status": "pending",
       "prediction_id": "pred_wsp_001"
@@ -21,7 +21,7 @@
       "disagreement_score": 0.16,
       "price_at_analysis": 198.40,
       "account_type": "tfsa",
-      "timeline": "long_term",
+      "timeline": "medium_term",
       "analyzed_at": "2025-11-18T10:00:00Z",
       "prediction_status": "scored",
       "prediction_id": "pred_wsp_old_001",

@@ -1,5 +1,5 @@
 export type AccountType = 'tfsa' | 'rrsp' | 'trading'
-export type Timeline = 'short_term' | 'medium_term' | 'long_term'
+export type Timeline = 'short_term' | 'medium_term'
 export type InvestmentGoalType =
   | 'early_retirement'
   | 'passive_income'

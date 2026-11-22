@@ -9,7 +9,7 @@
       "disagreement_score": 0.31,
       "price_at_analysis": 128.16,
       "account_type": "rrsp",
-      "timeline": "long_term",
+      "timeline": "medium_term",
       "analyzed_at": "2026-03-23T14:15:00Z",
       "prediction_status": "pending",
       "prediction_id": "pred_bmo_001"
@@ -21,7 +21,7 @@
       "disagreement_score": 0.26,
       "price_at_analysis": 118.80,
       "account_type": "rrsp",
-      "timeline": "long_term",
+      "timeline": "medium_term",
       "analyzed_at": "2025-10-20T11:00:00Z",
       "prediction_status": "scored",
       "prediction_id": "pred_bmo_old_001",
