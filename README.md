@@ -24,7 +24,9 @@ Open http://localhost:5173.
 
 | Command | What it does |
 |---|---|
-| `npm run dev` | Dev server with hot reload |
+| `npm run dev` | Dev server with hot reload (uses `.env`; mock data if it sets `VITE_USE_MOCK=true`) |
+| `npm run dev:live` | Dev server against the real backend (`.env.live` sets `VITE_USE_MOCK=false`); point it elsewhere with `VITE_API_PROXY_TARGET=http://localhost:8010` |
+| `npm run gen:api` | Refreshes `src/types/openapi.gen.ts` (the API types) and `src/types/api-routes.gen.json` (every route the backend serves) from a running backend (`API_URL=http://localhost:8010` for another port). Commit both after a backend change. The API itself is documented in the backend repo, `backend/docs/api-reference.md`, generated from the same schema; there is no frontend copy |
 | `npm test` | Run the Vitest suite once |
 | `npm run test:watch` | Vitest in watch mode |
 | `npm run test:e2e` | Playwright: every page and key flow in a real browser (mock mode), light + dark, with axe-core accessibility checks |

@@ -1,6 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { API_TIMEOUT_MS, ApiError, apiFetch, getErrorMessage, isNotFound, jsonBody } from './api'
 
+// `.env` sets VITE_USE_MOCK=true for local dev; the real-mode tests below must not depend on it.
+// (Hoisted so it runs before `./api` is imported and reads the flag.)
+vi.hoisted(() => {
+  vi.stubEnv('VITE_USE_MOCK', 'false')
+})
+
 function jsonResponse(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
 }
