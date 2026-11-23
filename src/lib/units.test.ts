@@ -8,7 +8,7 @@ describe('asFraction', () => {
   it('divides a whole percent and leaves a fraction alone', () => {
     expect(asFraction('PositionLineResponse.unrealised_pct', 9.11)).toBeCloseTo(0.0911)
     expect(asFraction('InstrumentViewResponse.expected_total_return', 0.0678)).toBe(0.0678)
-    expect(asFraction('price_band.vs_current_pct.low', -20.63)).toBeCloseTo(-0.2063)
+    expect(asFraction('PriceVsCurrent.low', -20.63)).toBeCloseTo(-0.2063)
   })
 
   it('passes null and undefined through for both scales', () => {
@@ -16,11 +16,9 @@ describe('asFraction', () => {
     expect(asFraction('InstrumentViewResponse.valuation_edge', undefined)).toBeNull()
   })
 
-  it('does not compile for a field that is points or unverified', () => {
+  it('does not compile for a field that is points or unclassified', () => {
     // @ts-expect-error percentage points are not a ratio the formatters can take
     asFraction('InstrumentViewResponse.view_points', 1.06)
-    // @ts-expect-error a field whose scale is unconfirmed must be checked before it is used
-    asFraction('UserProfileResponse.marginal_tax_rate_override_pct', 30)
     // @ts-expect-error an unclassified field cannot be passed
     asFraction('MatrixCellResponse.total_return_quote', 0.07)
   })
