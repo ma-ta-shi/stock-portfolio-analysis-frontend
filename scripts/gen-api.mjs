@@ -1,33 +1,31 @@
-// Refreshes the two generated API files from a running backend:
-//   openapi.snapshot.json    (read by the contract and units tests, so they need no backend)
-//   src/types/openapi.gen.ts (the raw API types)
+// Refreshes the frontend's two generated API files from a running backend:
+//   src/types/openapi.gen.ts      the API's TypeScript types (openapi-typescript)
+//   src/types/api-routes.gen.json every "METHOD /path" the backend serves ({} for a path parameter)
 // Usage: npm run gen:api            (backend on http://localhost:8000)
 //        API_URL=http://localhost:8010 npm run gen:api
-// Both files are written to temporary names first and moved into place only when the whole run worked, so a failed
-// fetch or generation never leaves a snapshot that disagrees with the types.
+// The API's documentation is the backend's generated reference (backend/docs/api-reference.md), built from the same
+// schema; nothing is copied here.
 import { execFileSync } from 'node:child_process'
-import { renameSync, rmSync, writeFileSync } from 'node:fs'
+import { writeFileSync } from 'node:fs'
 
-const SNAPSHOT = 'openapi.snapshot.json'
-const TYPES = 'src/types/openapi.gen.ts'
 const base = (process.env.API_URL ?? 'http://localhost:8000').replace(/\/$/, '')
+const url = `${base}/openapi.json`
 
 try {
-  const res = await fetch(`${base}/openapi.json`)
-  if (!res.ok) throw new Error(`GET ${base}/openapi.json answered ${res.status}`)
-  // Pretty-printed so a refresh shows only real changes in git.
-  writeFileSync(`${SNAPSHOT}.tmp`, JSON.stringify(await res.json(), null, 2) + '\n')
-  execFileSync(
-    process.execPath,
-    ['node_modules/openapi-typescript/bin/cli.js', `${SNAPSHOT}.tmp`, '-o', `${TYPES}.tmp`],
-    { stdio: 'inherit' },
-  )
-  renameSync(`${SNAPSHOT}.tmp`, SNAPSHOT)
-  renameSync(`${TYPES}.tmp`, TYPES)
+  // Types first: the generator writes nothing when it fails, so a down backend changes nothing.
+  execFileSync(process.execPath, ['node_modules/openapi-typescript/bin/cli.js', url, '-o', 'src/types/openapi.gen.ts'], {
+    stdio: 'inherit',
+  })
+  const { paths } = await (await fetch(url)).json()
+  const routes = Object.entries(paths)
+    .flatMap(([path, item]) =>
+      ['get', 'post', 'put', 'patch', 'delete']
+        .filter((method) => method in item)
+        .map((method) => `${method.toUpperCase()} ${path.replace(/\{[^}]+\}/g, '{}')}`),
+    )
+    .sort()
+  writeFileSync('src/types/api-routes.gen.json', JSON.stringify(routes, null, 2) + '\n')
 } catch (error) {
-  console.error(`gen:api failed, nothing was changed: ${error.message}`)
+  console.error(`gen:api failed: ${error.message}`)
   process.exitCode = 1
-} finally {
-  rmSync(`${SNAPSHOT}.tmp`, { force: true })
-  rmSync(`${TYPES}.tmp`, { force: true })
 }

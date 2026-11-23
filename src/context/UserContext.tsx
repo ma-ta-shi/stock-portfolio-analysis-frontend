@@ -1,9 +1,7 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
 import { PageLoading } from '@/components/PageLoading'
 import { QueryError } from '@/components/QueryError'
-import { usePortfolioOwners } from '@/hooks/use-portfolio-owners'
 import { useUsers } from '@/hooks/use-users'
-import { pickUserId } from '@/lib/default-user'
 import { safeStorage } from '@/lib/storage'
 
 interface UserContextValue {
@@ -16,12 +14,11 @@ const STORAGE_KEY = 'stock-picker-user-id'
 const UserContext = createContext<UserContextValue | null>(null)
 
 /**
- * Resolves the active user from the backend before any page renders, so `useUser()` always returns a real id
- * (rule in `lib/default-user.ts`). A failed owners lookup is ignored; a failed users lookup shows a retry.
+ * Resolves the active user from the backend before any page renders, so `useUser()` always returns a real id:
+ * the stored user if that user still exists (an archived or unknown one is ignored), otherwise the first user.
  */
 export function UserProvider({ children }: { children: ReactNode }) {
   const { data: users, isLoading, isError, error, refetch } = useUsers()
-  const { data: owners, isLoading: ownersLoading } = usePortfolioOwners()
   const [selected, setSelected] = useState<string | null>(() => safeStorage.local.get(STORAGE_KEY))
 
   const setUserId = useCallback((id: string) => {
@@ -29,11 +26,11 @@ export function UserProvider({ children }: { children: ReactNode }) {
     setSelected(id)
   }, [])
 
-  const userId = users ? pickUserId(users, selected, owners ?? null) : null
+  const userId = users?.some((u) => u.user_id === selected) ? selected : (users?.[0]?.user_id ?? null)
 
   const value = useMemo(() => (userId ? { userId, setUserId } : null), [userId, setUserId])
 
-  if (isLoading || ownersLoading) return <PageLoading />
+  if (isLoading) return <PageLoading />
   if (isError) {
     return <QueryError what="profiles" error={error} onRetry={refetch} className="max-w-screen-xl mx-auto mt-6" />
   }

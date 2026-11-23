@@ -13,17 +13,22 @@
  * lines and target book carry fractions under names without `_pct`, and `tax_rate_pct` / `noise_margin_pts` beside them
  * are points, so a name cannot be trusted. A field missing from this table is not known to be anything.
  *
- * `units.test.ts` adds a second net: it fails when the generated API schema gains a field NAMED `_pct` that is not
- * classified here.
+ * The table is also checked against the generated API types at compile time: every field NAMED `_pct` must be listed,
+ * and a key that is not a field of the API (a typo, or a field the backend removed) is an error. `price_band.*` keys are
+ * the exception: that record is an untyped dict, so its keys are listed by hand.
  *
  * Entries below were checked 2026-11-22 on a running backend (the value is quoted) or in the code that computes them.
  */
+import type { components } from '@/types/openapi.gen'
+
 export type Unit = 'percent' | 'fraction' | 'points' | 'unverified'
 
-/** A whole percent (9.11 = 9.11%) as a fraction (0.0911). Null and undefined pass through. */
-export function fromPercent(value: number | null | undefined): number | null {
-  return value == null ? null : value / 100
-}
+type Schemas = components['schemas']
+/** Every `Schema.field` of the generated API types. */
+type FieldKey = { [S in keyof Schemas & string]: `${S}.${keyof Schemas[S] & string}` }[keyof Schemas & string]
+/** The fields named `_pct`: all of them must be in `UNITS`. */
+type PctFieldKey = Extract<FieldKey, `${string}_pct`>
+
 
 export const UNITS = {
   // Typed schema fields ending in `_pct`. All whole percents.
@@ -79,7 +84,7 @@ export const UNITS = {
   'price_band.vs_current_pct.high': 'percent',
   'price_band.vs_current_pct.target_price': 'percent', // 4.03
   'price_band.view_pts': 'points', // 1.06
-} as const satisfies Record<string, Unit>
+} as const satisfies Record<PctFieldKey, Unit> & Partial<Record<FieldKey | `price_band.${string}`, Unit>>
 
 /** The keys whose value is a ratio the app can show as a percent: a whole percent or a fraction. */
 export type RatioKey = {
@@ -91,5 +96,6 @@ export type RatioKey = {
  * conversion; a key that is not classified as `'percent'` or `'fraction'` does not compile. Null and undefined pass through.
  */
 export function asFraction(key: RatioKey, value: number | null | undefined): number | null {
-  return UNITS[key] === 'percent' ? fromPercent(value) : (value ?? null)
+  if (value == null) return null
+  return UNITS[key] === 'percent' ? value / 100 : value
 }

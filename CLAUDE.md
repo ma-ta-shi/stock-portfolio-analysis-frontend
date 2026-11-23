@@ -17,8 +17,8 @@
 - TypeScript types in src/types/ — must match backend Pydantic schemas exactly
 - TypeScript strict mode — no `any` without justification
 - Mock mode (`VITE_USE_MOCK=true`, set in the gitignored `.env`) reads `public/mock-data/`; otherwise `/api/...` is called and the Vite dev server proxies it to the backend. `npm run dev:live` runs against the real backend (`.env.live`; `VITE_API_PROXY_TARGET` picks another port). Do not put the flag in `.env.local`: Vite loads it in test mode too
-- Generated API types: `npm run gen:api` (backend running) refreshes `openapi.snapshot.json` and `src/types/openapi.gen.ts`; commit both. `src/lib/api-contract.test.ts` fails when a hook calls a path that is not in the snapshot (its allowlist of mock-era paths shrinks as page tickets land)
-- Identity: `useUser()` always returns a real user id (resolved from `GET /api/users` before any page renders; default = the stored user, else the first user who owns a portfolio, else the first user). Portfolio routes are keyed by portfolio id: use `usePortfolioId()`, never the user id
+- Generated API types: `npm run gen:api` (backend running) refreshes `src/types/openapi.gen.ts` and `src/types/api-routes.gen.json`; commit both. The API documentation is the backend's generated `backend/docs/api-reference.md` (same schema): read it, do not copy it here. `src/lib/api-contract.test.ts` fails when a hook calls a route the backend does not serve (its allowlist of mock-era paths shrinks as page tickets land)
+- Identity: `useUser()` always returns a real user id (resolved from `GET /api/users` before any page renders; default = the stored user if it still exists, else the first user). Portfolio routes are keyed by portfolio id, not user id: find it with `GET /api/portfolios?user_id=` (`kind: 'user'` is the owner's; `'agent'` is the read-only simulated one)
 
 ## Component Patterns
 - Prefer explicit props typing over React.FC

@@ -1,6 +1,7 @@
 /**
- * Contract guard: every real API path the app calls must exist, with that method, in `openapi.snapshot.json`
- * (refresh it with `npm run gen:api`).
+ * Contract guard: every real API path the app calls must be a route the backend serves, in
+ * `src/types/api-routes.gen.json` (refresh it with `npm run gen:api`; each entry is `METHOD /path` with `{}` for a
+ * path parameter, so `/api/stocks/{}` and `/api/stocks/lookup` are different routes).
  *
  * Limits, so nobody reads more into a pass than it says: this reads source text. It sees a path written as a string
  * or template literal inside an `apiFetch(...)` call and the method from `jsonBody('POST', ...)`; a path built in a
@@ -9,13 +10,13 @@
  * their shapes differ from the hook types until their page tickets).
  */
 import { describe, expect, it } from 'vitest'
-import snapshot from '../../openapi.snapshot.json'
+import servedRoutes from '@/types/api-routes.gen.json'
 
-const openApiPaths = (snapshot as { paths: Record<string, Record<string, unknown>> }).paths
+const served = new Set<string>(servedRoutes)
 
 /**
  * Mock-era paths with no backend route, each owned by the page ticket that replaces it (epic 86bd5z6kr).
- * Ticket 8 deletes this list. A path that starts to exist must be removed from it (the second test enforces that).
+ * Ticket 8 deletes this list. A path that starts to exist must be removed from it (the third test enforces that).
  */
 const KNOWN_DEAD: readonly string[] = [
   'GET /api/alerts/{}',
@@ -67,20 +68,6 @@ function usedRoutes(): string[] {
   return [...found].sort()
 }
 
-function exists(route: string): boolean {
-  const [method, path] = route.split(' ')
-  // A path parameter matches only an interpolated `{}` segment: a literal word like `resolve` is not an id.
-  const segs = path.split('/')
-  return Object.entries(openApiPaths).some(([p, methods]) => {
-    const parts = p.split('/')
-    return (
-      parts.length === segs.length &&
-      parts.every((part, i) => (part.startsWith('{') ? segs[i] === '{}' : part === segs[i])) &&
-      method.toLowerCase() in methods
-    )
-  })
-}
-
 describe('API contract', () => {
   const routes = usedRoutes()
 
@@ -89,23 +76,22 @@ describe('API contract', () => {
     expect(routes).toContain('GET /api/users')
   })
 
-  it('matches a path parameter only against an interpolated segment, and checks the method', () => {
-    expect(exists('GET /api/stocks/{}')).toBe(true)
-    expect(exists('GET /api/stocks/lookup')).toBe(true)
-    // "resolve" is a word, not an id: it must not match the `/api/stocks/{stock_id}` route.
-    expect(exists('GET /api/stocks/resolve')).toBe(false)
-    expect(exists('POST /api/analysis')).toBe(true)
-    expect(exists('DELETE /api/analysis')).toBe(false)
-  })
-
-  it('every path the app calls exists in the OpenAPI snapshot, except the known mock-era ones', () => {
-    const unknown = routes.filter((r) => !exists(r) && !KNOWN_DEAD.includes(r))
+  it('every path the app calls is served by the backend, except the known mock-era ones', () => {
+    const unknown = routes.filter((r) => !served.has(r) && !KNOWN_DEAD.includes(r))
     expect(unknown).toEqual([])
   })
 
   it('the known-dead list holds only paths that are still missing and still used', () => {
-    const nowExist = KNOWN_DEAD.filter((r) => exists(r))
+    const nowServed = KNOWN_DEAD.filter((r) => served.has(r))
     const unused = KNOWN_DEAD.filter((r) => !routes.includes(r))
-    expect({ nowExist, unused }).toEqual({ nowExist: [], unused: [] })
+    expect({ nowServed, unused }).toEqual({ nowServed: [], unused: [] })
+  })
+
+  it('tells a literal path from an id, and checks the method', () => {
+    expect(served.has('GET /api/stocks/{}')).toBe(true)
+    expect(served.has('GET /api/stocks/lookup')).toBe(true)
+    expect(served.has('GET /api/stocks/resolve')).toBe(false) // a word, not an id
+    expect(served.has('POST /api/analysis')).toBe(true)
+    expect(served.has('DELETE /api/analysis')).toBe(false) // the path exists, this method does not
   })
 })

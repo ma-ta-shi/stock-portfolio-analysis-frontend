@@ -1,21 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import snapshot from '../../openapi.snapshot.json'
-import { UNITS, asFraction, fromPercent } from './units'
+import { asFraction } from './units'
 
-type Schema = { properties?: Record<string, unknown> }
-const schemas = (snapshot as { components: { schemas: Record<string, Schema> } }).components.schemas
-
-describe('fromPercent', () => {
-  it('turns a whole percent into a fraction', () => {
-    expect(fromPercent(9.11)).toBeCloseTo(0.0911)
-    expect(fromPercent(-20.63)).toBeCloseTo(-0.2063)
-    expect(fromPercent(0)).toBe(0)
-  })
-  it('passes null and undefined through', () => {
-    expect(fromPercent(null)).toBeNull()
-    expect(fromPercent(undefined)).toBeNull()
-  })
-})
+// The table's keys are checked against the generated API types by the compiler (see `units.ts`): a `_pct` field that is
+// not listed, or a key that is not an API field, fails `tsc`. These tests cover the conversion itself.
 
 describe('asFraction', () => {
   it('divides a whole percent and leaves a fraction alone', () => {
@@ -36,26 +23,5 @@ describe('asFraction', () => {
     asFraction('UserProfileResponse.marginal_tax_rate_override_pct', 30)
     // @ts-expect-error an unclassified field cannot be passed
     asFraction('MatrixCellResponse.total_return_quote', 0.07)
-  })
-})
-
-describe('UNITS', () => {
-  it('classifies every `_pct` field of the generated API schema', () => {
-    const missing: string[] = []
-    for (const [schema, def] of Object.entries(schemas)) {
-      for (const prop of Object.keys(def.properties ?? {})) {
-        if (prop.endsWith('_pct') && !(`${schema}.${prop}` in UNITS)) missing.push(`${schema}.${prop}`)
-      }
-    }
-    // A new `_pct` field must be checked on a running backend, then added to UNITS (src/lib/units.ts).
-    expect(missing).toEqual([])
-  })
-
-  it('lists no typed field that the schema no longer has', () => {
-    const stale = Object.keys(UNITS).filter((key) => {
-      const [schema, prop] = key.split('.')
-      return key in UNITS && schemas[schema] !== undefined && !(prop in (schemas[schema].properties ?? {}))
-    })
-    expect(stale).toEqual([])
   })
 })
