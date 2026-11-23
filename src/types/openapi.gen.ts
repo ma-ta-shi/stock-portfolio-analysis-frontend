@@ -134,7 +134,8 @@ export interface paths {
          * Read the data an analysis was given
          * @description The data bundle the agents were given, as saved when the run built it: company, prices, filings, news and the figures the
          *     pipeline computed itself. Only some runs have one. 404 `ANALYSIS_NOT_FOUND`, or 404 `BUNDLE_NOT_STORED` for a run whose bundle
-         *     was not kept; 500 `BUNDLE_UNREADABLE` when the saved file cannot be read.
+         *     was not kept; 500 `BUNDLE_UNREADABLE` when the saved file cannot be read. It is the stored record as the providers gave it: a news
+         *     time in it is the provider's America/New_York wall clock with no zone, and a day is a date.
          */
         get: operations["get_analysis_inputs_api_analysis__analysis_id__inputs_get"];
         put?: never;
@@ -1511,6 +1512,7 @@ export interface components {
             /**
              * Base As Of
              * Format: date-time
+             * @description A day as the owner wrote it, with no time zone.
              */
             base_as_of: string;
             /** Estimated */
@@ -1529,10 +1531,16 @@ export interface components {
              * Format: date
              */
             day: string;
-            /** Account */
-            account: string;
-            /** Kind */
-            kind: string;
+            /**
+             * Account
+             * @enum {string}
+             */
+            account: "tfsa" | "rrsp" | "trading";
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "buy" | "sell" | "dividend" | "drip" | "transfer_in" | "transfer_out" | "contribution" | "withdrawal" | "fee" | "conversion" | "opening_balance" | "interest" | "adjustment_in" | "adjustment_out";
             /** Ticker */
             ticker: string | null;
             /** Shares */
@@ -1572,26 +1580,29 @@ export interface components {
             /** Is Reversal */
             is_reversal: boolean;
         };
-        /** AgentOutputSummary */
-        AgentOutputSummary: {
-            /** Agent Name */
-            agent_name: string;
-            /** Agent Pass */
-            agent_pass: string;
-            /** Status */
-            status: string;
+        /**
+         * AdvocateAgentOutput
+         * @description The Bull or Bear Advocate.
+         */
+        AdvocateAgentOutput: {
+            /**
+             * Agent Pass
+             * @enum {string}
+             */
+            agent_pass: "pass1" | "pass2" | "synthesis";
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "completed" | "failed" | "timeout" | "skipped";
             /** Recommendation */
-            recommendation: string | null;
+            recommendation: ("bullish" | "somewhat_bullish" | "neutral" | "somewhat_bearish" | "bearish") | null;
             /** Confidence */
             confidence: number | null;
             /** Analysis Confidence */
-            analysis_confidence: string | null;
+            analysis_confidence: ("high" | "medium" | "low" | "insufficient") | null;
             /** Narrative */
             narrative: string | null;
-            /** Structured Output */
-            structured_output: {
-                [key: string]: unknown;
-            } | null;
             /** Latency Ms */
             latency_ms?: number | null;
             /** Tokens Used */
@@ -1600,6 +1611,63 @@ export interface components {
             model_used?: string | null;
             /** Prompt Version */
             prompt_version?: string | null;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            agent_name: "bear" | "bull";
+            structured_output: components["schemas"]["AdvocateOutput"] | null;
+        };
+        /**
+         * AdvocateOutput
+         * @description Bull (`recommendation` bullish, `weakest_point_type` set) and Bear (bearish).
+         */
+        AdvocateOutput: {
+            /**
+             * Caveats
+             * @default []
+             */
+            caveats: string[];
+            /**
+             * Key Factors
+             * @description Absent on runs made after the key-factor cut.
+             */
+            key_factors?: {
+                [key: string]: unknown;
+            }[] | null;
+            /** Narrative */
+            narrative?: string | null;
+            /** Recommendation */
+            recommendation?: ("bullish" | "somewhat_bullish" | "neutral" | "somewhat_bearish" | "bearish") | null;
+            /**
+             * Confidence
+             * @description 0 to 100.
+             */
+            confidence?: number | null;
+            /** Thesis Summary */
+            thesis_summary?: string | null;
+            /** Strongest Argument */
+            strongest_argument?: string | null;
+            /** Weakest Point */
+            weakest_point?: string | null;
+            /**
+             * Weakest Point Type
+             * @description Bull only.
+             */
+            weakest_point_type?: string | null;
+            /**
+             * Thesis Risks
+             * @default []
+             */
+            thesis_risks: {
+                [key: string]: unknown;
+            }[];
+            /** Structured Data */
+            structured_data?: {
+                [key: string]: unknown;
+            } | null;
+        } & {
+            [key: string]: unknown;
         };
         /**
          * AlternativeViewResponse
@@ -1614,7 +1682,10 @@ export interface components {
             ticker: string;
             /** Action Type */
             action_type: string;
-            /** Expected Return At Time */
+            /**
+             * Expected Return At Time
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             expected_return_at_time: number | null;
             /** Reason Not Chosen */
             reason_not_chosen: string;
@@ -1641,8 +1712,11 @@ export interface components {
              * Format: uuid
              */
             analysis_id: string;
-            /** Status */
-            status: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "queued" | "running" | "complete" | "failed";
         };
         /**
          * AnalysisFailure
@@ -1679,14 +1753,17 @@ export interface components {
              * Format: uuid
              */
             analysis_id: string;
-            /** Status */
-            status: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "queued" | "running" | "complete" | "failed";
             /** Stock Outlook Direction */
-            stock_outlook_direction?: string | null;
+            stock_outlook_direction?: ("bullish" | "somewhat_bullish" | "neutral" | "somewhat_bearish" | "bearish") | null;
             /** Overall Confidence */
             overall_confidence?: number | null;
             /** Expected Return Tier */
-            expected_return_tier?: string | null;
+            expected_return_tier?: ("strong_outperform" | "outperform" | "market_perform" | "underperform" | "strong_underperform" | "moderate" | "low" | "minimal") | null;
             /** Key Drivers */
             key_drivers?: unknown[] | null;
             /** Synthesis Narrative */
@@ -1698,26 +1775,16 @@ export interface components {
             /** Disagreement Score */
             disagreement_score?: number | null;
             /** Disagreement Class */
-            disagreement_class?: string | null;
+            disagreement_class?: ("consensus" | "mild_dissent" | "split_decision" | "high_conflict") | null;
             /**
              * Agent Outputs
              * @default []
              */
-            agent_outputs: components["schemas"]["AgentOutputSummary"][];
-            /**
-             * Price Band
-             * @description The code-built price band: a record with status `ok` (current_price, range, slider, target_price, expected_total_return_pct, by_horizon, risk_profile and more) or `unavailable` with a reason. Null on runs made before the band existed or with it switched off. Keys: docs/technical/price-band-design.md section 6.
-             */
-            price_band?: {
-                [key: string]: unknown;
-            } | null;
-            /**
-             * Business Profile
-             * @description The business profile record the Researcher and Macro were given (status `ok`, `none` or `failed`): identity, classification, series, economics, gaps and meta. Null for runs made without one. Keys: docs/technical/business-profile-design.md section 3.
-             */
-            business_profile?: {
-                [key: string]: unknown;
-            } | null;
+            agent_outputs: (components["schemas"]["FundTechOutput"] | components["schemas"]["DataAnalystOutput"] | components["schemas"]["AdvocateAgentOutput"] | components["schemas"]["RiskAgentOutput"] | components["schemas"]["CioAgentOutput"] | components["schemas"]["ShadowCioAgentOutput"] | components["schemas"]["TaxAgentOutput"] | components["schemas"]["CioStageBAgentOutput"])[];
+            /** @description The code-built price band: a record with status `ok` (current_price, range, slider, target_price, expected_total_return_pct, by_horizon, risk_profile and more) or `unavailable` with a reason. Null on runs made before the band existed or with it switched off. Keys: docs/technical/price-band-design.md section 6. */
+            price_band?: components["schemas"]["PriceBand"] | null;
+            /** @description The business profile record the Researcher and Macro were given (status `ok`, `none` or `failed`): identity, classification, series, economics, gaps and meta. Null for runs made without one. Keys: docs/technical/business-profile-design.md section 3. */
+            business_profile?: components["schemas"]["BusinessProfileRead"] | null;
             failure?: components["schemas"]["AnalysisFailure"] | null;
             stock?: components["schemas"]["AnalysisStock"] | null;
             /**
@@ -1761,8 +1828,8 @@ export interface components {
             stock_id: string;
             /** Ticker */
             ticker: string;
-            /** Company Name */
-            company_name: string;
+            /** Name */
+            name: string;
             /**
              * Timeline
              * @description `short_term` or `medium_term`; one old stored run carries a retired timeline value.
@@ -1771,8 +1838,9 @@ export interface components {
             /**
              * Status
              * @description `queued`, `running`, `complete` or `failed`.
+             * @enum {string}
              */
-            status: string;
+            status: "queued" | "running" | "complete" | "failed";
             /**
              * Triggered At
              * Format: date-time
@@ -1786,26 +1854,38 @@ export interface components {
              * Stock Outlook Direction
              * @description Null for a run that failed before the CIO.
              */
-            stock_outlook_direction?: string | null;
+            stock_outlook_direction?: ("bullish" | "somewhat_bullish" | "neutral" | "somewhat_bearish" | "bearish") | null;
             /** Overall Confidence */
             overall_confidence?: number | null;
             /** Expected Return Tier */
-            expected_return_tier?: string | null;
-            /** Expected Return Pct */
+            expected_return_tier?: ("strong_outperform" | "outperform" | "market_perform" | "underperform" | "strong_underperform" | "moderate" | "low" | "minimal") | null;
+            /**
+             * Expected Return Pct
+             * @description Whole percent: 9.11 means 9.11%.
+             */
             expected_return_pct?: number | null;
-            /** Expected Return Low */
+            /**
+             * Expected Return Low
+             * @description The band's 10th percentile. Whole percent: 9.11 means 9.11%.
+             */
             expected_return_low?: number | null;
-            /** Expected Return High */
+            /**
+             * Expected Return High
+             * @description The band's 90th percentile. Whole percent: 9.11 means 9.11%.
+             */
             expected_return_high?: number | null;
             /** Disagreement Class */
-            disagreement_class?: string | null;
+            disagreement_class?: ("consensus" | "mild_dissent" | "split_decision" | "high_conflict") | null;
             /** Pipeline Version */
             pipeline_version?: string | null;
         };
         /** AnalysisStatusResponse */
         AnalysisStatusResponse: {
-            /** Status */
-            status: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "queued" | "running" | "complete" | "failed";
             progress?: components["schemas"]["AnalysisProgress"] | null;
             failure?: components["schemas"]["AnalysisFailure"] | null;
         };
@@ -1942,30 +2022,33 @@ export interface components {
             exit_date?: string | null;
             /**
              * Total Return Pct
-             * @description The stock, from adjusted closes.
+             * @description The stock, from adjusted closes. Whole percent: 9.11 means 9.11%.
              */
             total_return_pct?: number | null;
             /**
              * Market Return Pct
-             * @description Its market fund, the same way.
+             * @description Its market fund, the same way. Whole percent: 9.11 means 9.11%.
              */
             market_return_pct?: number | null;
             /**
              * Required Pct
-             * @description The required return over the horizon: the risk-free rate plus shrunk beta times the equity premium.
+             * @description The required return over the horizon: the risk-free rate plus shrunk beta times the equity premium. Whole percent: 9.11 means 9.11%.
              */
             required_pct?: number | null;
             /**
              * Flat Pct
-             * @description The risk-free rate plus the equity premium over the horizon.
+             * @description The risk-free rate plus the equity premium over the horizon. Whole percent: 9.11 means 9.11%.
              */
             flat_pct?: number | null;
             /**
              * Rf 2Y Pct
-             * @description The 2-year yield used, in percent.
+             * @description The 2-year yield used, Whole percent: 9.11 means 9.11%.
              */
             rf_2y_pct?: number | null;
-            /** Erp */
+            /**
+             * Erp
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             erp?: number | null;
             /**
              * Detail
@@ -2094,15 +2177,24 @@ export interface components {
         BenchmarkLineResponse: {
             /** Account */
             account: string;
-            /** Return Pct */
+            /**
+             * Return Pct
+             * @description Whole percent: 9.11 means 9.11%.
+             */
             return_pct: number | null;
             /** Listing */
             listing: string | null;
             /** Runner Up */
             runner_up: string | null;
-            /** Margin Pts */
+            /**
+             * Margin Pts
+             * @description Percentage points: 1.5 means 1.5 points.
+             */
             margin_pts: number | null;
-            /** Break Even Conversion Pct */
+            /**
+             * Break Even Conversion Pct
+             * @description Whole percent: 9.11 means 9.11%.
+             */
             break_even_conversion_pct: number | null;
             /** Components */
             components: {
@@ -2135,68 +2227,137 @@ export interface components {
             new_money_cad: number;
             /** New Money Placed Cad */
             new_money_placed_cad: number;
-            /** Capacity */
+            /**
+             * Capacity
+             * @description Fraction: 0.25 means 25% of the portfolio.
+             */
             capacity: number;
-            /** Stocks */
+            /**
+             * Stocks
+             * @description Fraction: 0.25 means 25% of the portfolio.
+             */
             stocks: number;
-            /** Fund */
+            /**
+             * Fund
+             * @description Fraction: 0.25 means 25% of the portfolio.
+             */
             fund: number;
             /** Fund Listing */
             fund_listing: string | null;
             /** Full */
             full: boolean;
-            /** Capacity After */
+            /**
+             * Capacity After
+             * @description Fraction: 0.25 means 25% of the portfolio.
+             */
             capacity_after: number;
         };
         /** BookLineResponse */
         BookLineResponse: {
             /** Ticker */
             ticker: string;
-            /** Status */
-            status: string;
-            /** Weights */
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "in_book" | "not_in_book" | "fixed" | "excluded" | "selling";
+            /**
+             * Weights
+             * @description By account: the fraction of the portfolio the book wants there. 0.05 means 5%.
+             */
             weights: {
                 [key: string]: number;
             };
-            /** Total */
+            /**
+             * Total
+             * @description Fraction: 0.25 means 25% of the portfolio.
+             */
             total: number;
-            /** Current */
+            /**
+             * Current
+             * @description By account: the fraction of the portfolio held there now. 0.05 means 5%.
+             */
             current: {
                 [key: string]: number;
             };
-            /** Current Total */
+            /**
+             * Current Total
+             * @description Fraction: 0.25 means 25% of the portfolio.
+             */
             current_total: number;
-            /** Cap */
+            /**
+             * Cap
+             * @description Fraction: 0.25 means 25% of the portfolio.
+             */
             cap: number | null;
-            /** Sector */
+            /**
+             * Sector
+             * @description The class label (data/reference/sector_industry.py), the same in every response; null when not mapped.
+             */
             sector: string | null;
-            /** Industry Group */
+            /**
+             * Industry Group
+             * @description The class label (data/reference/sector_industry.py), the same in every response; null when not mapped.
+             */
             industry_group: string | null;
             /** Moves With */
             moves_with: string[];
-            /** Score */
+            /**
+             * Score
+             * @description Ratio, not a percent: the return over the market line, per unit of volatility.
+             */
             score: number | null;
-            /** Expected */
+            /**
+             * Expected
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             expected: number | null;
-            /** Anchor */
+            /**
+             * Anchor
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             anchor: number | null;
-            /** Certain */
+            /**
+             * Certain
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             certain: number | null;
-            /** View */
+            /**
+             * View
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             view: number | null;
-            /** Cost */
+            /**
+             * Cost
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             cost: number | null;
-            /** Edge */
+            /**
+             * Edge
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             edge: number | null;
-            /** Beta */
+            /**
+             * Beta
+             * @description Ratio to the benchmark: 1.0 moves with it.
+             */
             beta: number | null;
-            /** Vol */
+            /**
+             * Vol
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             vol: number | null;
-            /** Resid Vol */
+            /**
+             * Resid Vol
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             resid_vol: number | null;
             /** Best Account */
             best_account: string | null;
-            /** Location Advantage */
+            /**
+             * Location Advantage
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             location_advantage: number | null;
             /** Binding */
             binding: string[];
@@ -2211,8 +2372,11 @@ export interface components {
             /** Notes */
             notes: string[];
             /** Tier */
-            tier?: string | null;
-            /** View Jump Steps */
+            tier?: ("strong_outperform" | "outperform" | "market_perform" | "underperform" | "strong_underperform" | "moderate" | "low" | "minimal") | null;
+            /**
+             * View Jump Steps
+             * @description Tier steps: the latest weekly reading's change.
+             */
             view_jump_steps?: number | null;
             /**
              * View Unstable
@@ -2242,19 +2406,94 @@ export interface components {
                 [key: string]: unknown;
             };
         };
+        /**
+         * BusinessProfileRead
+         * @description What is stored and returned: the built record plus when and by which schema.
+         */
+        BusinessProfileRead: {
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "ok" | "none" | "failed";
+            /** Reason */
+            reason?: string | null;
+            identity: components["schemas"]["ProfileIdentity"];
+            classification?: components["schemas"]["ProfileClassification"] | null;
+            /**
+             * Series
+             * @default []
+             */
+            series: components["schemas"]["SeriesState"][];
+            /**
+             * Series Left Out
+             * @default {}
+             */
+            series_left_out: {
+                [key: string]: string;
+            };
+            fx?: components["schemas"]["SeriesState"] | null;
+            /**
+             * Input Readings
+             * @default []
+             */
+            input_readings: components["schemas"]["InputReading"][];
+            /**
+             * Labor Bea Share
+             * @description BEA 2017 compensation of employees over output, when the archetype has a BEA industry. Fraction: 0.25 means 25%.
+             */
+            labor_bea_share?: number | null;
+            /**
+             * Gaps
+             * @default []
+             */
+            gaps: string[];
+            filing_parts?: components["schemas"]["FilingParts"] | null;
+            /**
+             * Data Warnings
+             * @default []
+             */
+            data_warnings: string[];
+            /**
+             * @default {
+             *       "horizon_note": "Every direction in this profile is a 12-month change (4 quarters for quarterly series). The Macro agent labels the same series over shorter windows (90 days for rates, commodities and the Canadian dollar), so the two can differ.",
+             *       "series_requested": 0,
+             *       "series_returned": 0,
+             *       "series_stale": 0,
+             *       "parts": []
+             *     }
+             */
+            meta: components["schemas"]["ProfileMeta"];
+            /**
+             * Schema Version
+             * @default 3
+             */
+            schema_version: number;
+            /**
+             * Built At
+             * Format: date-time
+             */
+            built_at: string;
+        };
         /** CapViewResponse */
         CapViewResponse: {
             /** Name */
             name: string;
-            /** Kind */
-            kind: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "position" | "group" | "sector" | "account";
             /** Account */
             account: string | null;
             /** Exposure Cad */
             exposure_cad: number;
             /** Cap Cad */
             cap_cad: number;
-            /** Share Of Cap */
+            /**
+             * Share Of Cap
+             * @description Fraction of the cap used: 0.9 means 90%.
+             */
             share_of_cap: number;
         };
         /** ChangeListResponse */
@@ -2309,6 +2548,188 @@ export interface components {
              * @description UTC.
              */
             changed_at: string;
+        };
+        /**
+         * CioAgentOutput
+         * @description The CIO.
+         */
+        CioAgentOutput: {
+            /**
+             * Agent Pass
+             * @enum {string}
+             */
+            agent_pass: "pass1" | "pass2" | "synthesis";
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "completed" | "failed" | "timeout" | "skipped";
+            /** Recommendation */
+            recommendation: ("bullish" | "somewhat_bullish" | "neutral" | "somewhat_bearish" | "bearish") | null;
+            /** Confidence */
+            confidence: number | null;
+            /** Analysis Confidence */
+            analysis_confidence: ("high" | "medium" | "low" | "insufficient") | null;
+            /** Narrative */
+            narrative: string | null;
+            /** Latency Ms */
+            latency_ms?: number | null;
+            /** Tokens Used */
+            tokens_used?: number | null;
+            /** Model Used */
+            model_used?: string | null;
+            /** Prompt Version */
+            prompt_version?: string | null;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            agent_name: "cio";
+            structured_output: components["schemas"]["CioOutput"] | null;
+        };
+        /**
+         * CioOutput
+         * @description The CIO's call (cio-output-contract.md). The keys after `disagreement_category` are on some runs only; the four that end
+         *     the model are from the retired account-specific second stage.
+         */
+        CioOutput: {
+            /** Stock Outlook */
+            stock_outlook?: ("bullish" | "somewhat_bullish" | "neutral" | "somewhat_bearish" | "bearish") | null;
+            /**
+             * Confidence
+             * @description 0 to 100.
+             */
+            confidence?: number | null;
+            /** Expected Return Tier */
+            expected_return_tier?: ("strong_outperform" | "outperform" | "market_perform" | "underperform" | "strong_underperform" | "moderate" | "low" | "minimal") | null;
+            /** Thesis Summary */
+            thesis_summary?: string | null;
+            /** What Would Change My Mind */
+            what_would_change_my_mind?: string | null;
+            /** Bull Case Assessment */
+            bull_case_assessment?: {
+                [key: string]: unknown;
+            } | null;
+            /** Bear Case Assessment */
+            bear_case_assessment?: {
+                [key: string]: unknown;
+            } | null;
+            /** Risk Reward Consumed As */
+            risk_reward_consumed_as?: string | null;
+            /** Tail Risk Cross Check */
+            tail_risk_cross_check?: string | null;
+            /** Tail Risk Note */
+            tail_risk_note?: string | null;
+            /**
+             * Key Decision Factors
+             * @default []
+             */
+            key_decision_factors: {
+                [key: string]: unknown;
+            }[];
+            /** Accuracy Influence Note */
+            accuracy_influence_note?: string | null;
+            /** Dissent Note */
+            dissent_note?: string | null;
+            /** Parallel Predictions */
+            parallel_predictions?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Disagreement Score
+             * @description Old: min(Bull, Bear) confidence, kept for the API only.
+             */
+            disagreement_score?: number | null;
+            /** Disagreement Category */
+            disagreement_category?: ("consensus" | "mild_dissent" | "split_decision" | "high_conflict") | null;
+            /** Bull Confidence */
+            bull_confidence?: number | null;
+            /** Bear Confidence */
+            bear_confidence?: number | null;
+            /** Technical Trigger */
+            technical_trigger?: {
+                [key: string]: unknown;
+            } | null;
+            /** Advocate Check */
+            advocate_check?: {
+                [key: string]: unknown;
+            } | null;
+            /** Position Sizing Recommendation */
+            position_sizing_recommendation?: string | null;
+            /** Synthesis Narrative */
+            synthesis_narrative?: string | null;
+            /** Tax Summary */
+            tax_summary?: {
+                [key: string]: unknown;
+            } | null;
+            /** Risk Profile Summary */
+            risk_profile_summary?: {
+                [key: string]: unknown;
+            } | null;
+        } & {
+            [key: string]: unknown;
+        };
+        /**
+         * CioStageBAgentOutput
+         * @description The retired CIO second stage, on older runs.
+         */
+        CioStageBAgentOutput: {
+            /**
+             * Agent Pass
+             * @enum {string}
+             */
+            agent_pass: "pass1" | "pass2" | "synthesis";
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "completed" | "failed" | "timeout" | "skipped";
+            /** Recommendation */
+            recommendation: ("bullish" | "somewhat_bullish" | "neutral" | "somewhat_bearish" | "bearish") | null;
+            /** Confidence */
+            confidence: number | null;
+            /** Analysis Confidence */
+            analysis_confidence: ("high" | "medium" | "low" | "insufficient") | null;
+            /** Narrative */
+            narrative: string | null;
+            /** Latency Ms */
+            latency_ms?: number | null;
+            /** Tokens Used */
+            tokens_used?: number | null;
+            /** Model Used */
+            model_used?: string | null;
+            /** Prompt Version */
+            prompt_version?: string | null;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            agent_name: "cio_stage_b";
+            structured_output: components["schemas"]["CioStageBOutput"] | null;
+        };
+        /**
+         * CioStageBOutput
+         * @description Retired 2026-10-11; on older runs only.
+         */
+        CioStageBOutput: {
+            /** Position Sizing Recommendation */
+            position_sizing_recommendation?: string | null;
+            /** Expected Return Tier */
+            expected_return_tier?: ("strong_outperform" | "outperform" | "market_perform" | "underperform" | "strong_underperform" | "moderate" | "low" | "minimal") | null;
+            /** Synthesis Narrative */
+            synthesis_narrative?: string | null;
+            /** Tax Summary */
+            tax_summary?: {
+                [key: string]: unknown;
+            } | null;
+            /** Risk Profile Summary */
+            risk_profile_summary?: {
+                [key: string]: unknown;
+            } | null;
+            /** Stop Loss Suggestion */
+            stop_loss_suggestion?: number | null;
+        } & {
+            [key: string]: unknown;
         };
         /**
          * ComparisonRequest
@@ -2381,6 +2802,56 @@ export interface components {
             /** Overdue */
             overdue: boolean;
         };
+        /** CurrencyShareResponse */
+        CurrencyShareResponse: {
+            /** Value Cad */
+            value_cad: number;
+            /**
+             * Share
+             * @description Fraction: 0.25 means 25% of what is held.
+             */
+            share: number;
+        } & {
+            [key: string]: unknown;
+        };
+        /**
+         * DataAnalystOutput
+         * @description The Sentiment, Macro or Researcher.
+         */
+        DataAnalystOutput: {
+            /**
+             * Agent Pass
+             * @enum {string}
+             */
+            agent_pass: "pass1" | "pass2" | "synthesis";
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "completed" | "failed" | "timeout" | "skipped";
+            /** Recommendation */
+            recommendation: ("bullish" | "somewhat_bullish" | "neutral" | "somewhat_bearish" | "bearish") | null;
+            /** Confidence */
+            confidence: number | null;
+            /** Analysis Confidence */
+            analysis_confidence: ("high" | "medium" | "low" | "insufficient") | null;
+            /** Narrative */
+            narrative: string | null;
+            /** Latency Ms */
+            latency_ms?: number | null;
+            /** Tokens Used */
+            tokens_used?: number | null;
+            /** Model Used */
+            model_used?: string | null;
+            /** Prompt Version */
+            prompt_version?: string | null;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            agent_name: "MACRO" | "RSRCH" | "SENT";
+            structured_output: components["schemas"]["Pass1DataOutput"] | null;
+        };
         /** DatabaseHealth */
         DatabaseHealth: {
             /**
@@ -2399,24 +2870,71 @@ export interface components {
              */
             heads: string[];
         };
+        /** DiagnosisError */
+        DiagnosisError: {
+            /**
+             * Timestamp
+             * Format: date-time
+             */
+            timestamp: string;
+            /** Severity */
+            severity: string;
+            /** Component */
+            component: string;
+            /** Error Type */
+            error_type: string;
+            /** Agent Name */
+            agent_name?: string | null;
+            /** Fingerprint */
+            fingerprint?: string | null;
+            /** Count */
+            count: number;
+            /** Message */
+            message: string;
+            /**
+             * Traceback Tail
+             * @default []
+             */
+            traceback_tail: string[];
+            /**
+             * Context
+             * @description Times in it (keys ending `_at`) are UTC.
+             */
+            context?: {
+                [key: string]: unknown;
+            } | null;
+        } & {
+            [key: string]: unknown;
+        };
+        /**
+         * DiagnosisLiveness
+         * @description Whether a run that has not finished still looks alive.
+         */
+        DiagnosisLiveness: {
+            /** Stale */
+            stale: boolean;
+            /** Reason */
+            reason?: string | null;
+            /** Idle Minutes */
+            idle_minutes?: number | null;
+            /** Last Activity At */
+            last_activity_at?: string | null;
+        } & {
+            [key: string]: unknown;
+        };
         /**
          * DiagnosisResponse
          * @description Everything known about why one run went the way it did (`services/error_report.diagnose_run`), for a developer: the
          *     verdict, the error records with a traceback tail, every agent's status and the failing calls. Local file paths are removed.
          */
         DiagnosisResponse: {
-            /** Run */
-            run: {
-                [key: string]: unknown;
-            };
+            run: components["schemas"]["DiagnosisRun"];
             /** Verdict */
             verdict: {
                 [key: string]: unknown;
             };
             /** Errors */
-            errors: {
-                [key: string]: unknown;
-            }[];
+            errors: components["schemas"]["DiagnosisError"][];
             /** Agents */
             agents: {
                 [key: string]: unknown;
@@ -2435,10 +2953,42 @@ export interface components {
             quality: {
                 [key: string]: unknown;
             } | null;
-            /** Liveness */
-            liveness: {
-                [key: string]: unknown;
-            } | null;
+            liveness: components["schemas"]["DiagnosisLiveness"] | null;
+        };
+        /** DiagnosisRun */
+        DiagnosisRun: {
+            /**
+             * Run Id
+             * Format: uuid
+             */
+            run_id: string;
+            /** Ticker */
+            ticker?: string | null;
+            /** Status */
+            status: string;
+            /** Timeline */
+            timeline: string;
+            /**
+             * Triggered At
+             * Format: date-time
+             */
+            triggered_at: string;
+            /** Completed At */
+            completed_at?: string | null;
+            /**
+             * Error Log
+             * @default []
+             */
+            error_log: unknown[];
+            /**
+             * Prompts Hash
+             * @description Which prompt text the run used; null for a run made before it was recorded.
+             */
+            prompts_hash?: string | null;
+            /** Code Hash */
+            code_hash?: string | null;
+        } & {
+            [key: string]: unknown;
         };
         /**
          * DividendConfirmedResponse
@@ -2541,7 +3091,10 @@ export interface components {
             shares_at_ex: number;
             /** Expected Gross */
             expected_gross: number;
-            /** Withholding Rate Pct */
+            /**
+             * Withholding Rate Pct
+             * @description Whole percent: 9.11 means 9.11%.
+             */
             withholding_rate_pct: number;
             /** Expected Withholding */
             expected_withholding: number;
@@ -2589,10 +3142,16 @@ export interface components {
             held_cad: number;
             /** Target Cad */
             target_cad: number;
-            /** Ratio */
+            /**
+             * Ratio
+             * @description Ratio: held over target, 1.0 is on target.
+             */
             ratio: number | null;
-            /** Status */
-            status: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "within" | "below" | "above" | "exit" | "new";
         };
         /**
          * ErrorDetailResponse
@@ -2840,7 +3399,7 @@ export interface components {
             members: string[];
             /**
              * Weight
-             * @description The combined share of the names the portfolio holds.
+             * @description The combined share of the names the portfolio holds. Fraction: 0.0678 means 6.78%.
              */
             weight: number;
         };
@@ -2857,22 +3416,28 @@ export interface components {
             kind: string;
             /**
              * Direct
-             * @description A share of the portfolio's total value held directly.
+             * @description A share of the portfolio's total value held directly. Fraction: 0.0678 means 6.78%.
              */
             direct: number;
             /**
              * Via Funds
-             * @description A share held inside funds, from the funds' largest holdings.
+             * @description A share held inside funds, from the funds' largest holdings. Fraction: 0.0678 means 6.78%.
              */
             via_funds: number;
             /**
              * Total
-             * @description `direct` plus `via_funds`.
+             * @description `direct` plus `via_funds`. Fraction: 0.0678 means 6.78%.
              */
             total: number;
-            /** Sector */
+            /**
+             * Sector
+             * @description The class label (data/reference/sector_industry.py), the same in every response; null when not mapped.
+             */
             sector?: string | null;
-            /** Industry */
+            /**
+             * Industry
+             * @description The class label (data/reference/sector_industry.py), the same in every response; null when not mapped.
+             */
             industry?: string | null;
             /** Currency */
             currency: string;
@@ -2891,7 +3456,10 @@ export interface components {
             a: string;
             /** B */
             b: string;
-            /** Rho */
+            /**
+             * Rho
+             * @description Correlation of weekly returns, -1 to 1.
+             */
             rho?: number | null;
         };
         /**
@@ -2914,25 +3482,34 @@ export interface components {
             total_value_cad: number;
             /**
              * Cash
-             * @description Cash as a share of the total.
+             * @description Cash as a share of the total. Fraction: 0.0678 means 6.78%.
              */
             cash: number;
             /** Names */
             names: components["schemas"]["ExposureNameResponse"][];
             /**
              * Not Itemised
-             * @description The share of fund holdings the sources do not itemise.
+             * @description The share of fund holdings the sources do not itemise. Fraction: 0.0678 means 6.78%.
              */
             not_itemised: number;
-            /** Sectors */
+            /**
+             * Sectors
+             * @description By sector (the class labels). Each value is a fraction of the portfolio's value: 0.25 means 25%.
+             */
             sectors: {
                 [key: string]: number;
             };
-            /** Industries */
+            /**
+             * Industries
+             * @description By industry (the class labels). Each value is a fraction of the portfolio's value: 0.25 means 25%.
+             */
             industries: {
                 [key: string]: number;
             };
-            /** Currencies */
+            /**
+             * Currencies
+             * @description By currency. Each value is a fraction of the portfolio's value: 0.25 means 25%.
+             */
             currencies: {
                 [key: string]: number;
             };
@@ -2959,7 +3536,7 @@ export interface components {
             correlations: components["schemas"]["ExposurePairResponse"][];
             /**
              * Benchmark Vol
-             * @description The benchmark's own volatility over the same window.
+             * @description The benchmark's own volatility over the same window. Fraction: 0.0678 means 6.78%.
              */
             benchmark_vol?: number | null;
             /**
@@ -2982,29 +3559,38 @@ export interface components {
             weeks: number;
             /**
              * Vol Cad
-             * @description Annualised volatility, a fraction.
+             * @description Annualised volatility. Fraction: 0.0678 means 6.78%.
              */
             vol_cad?: number | null;
             /**
              * Vol Quote
-             * @description The same in the stock's own currency.
+             * @description The same in the stock's own currency. Fraction: 0.0678 means 6.78%.
              */
             vol_quote?: number | null;
             /**
              * Beta
-             * @description To the benchmark, in Canadian dollars.
+             * @description To the benchmark, in Canadian dollars. Ratio to the benchmark in Canadian dollars: 1.0 moves with it.
              */
             beta?: number | null;
-            /** Beta Se */
+            /**
+             * Beta Se
+             * @description Ratio: the standard error of the beta.
+             */
             beta_se?: number | null;
-            /** Beta Shrunk */
+            /**
+             * Beta Shrunk
+             * @description Ratio to the benchmark, shrunk toward 1.
+             */
             beta_shrunk?: number | null;
             /**
              * Resid Vol
-             * @description Annualised volatility the benchmark does not explain.
+             * @description Annualised volatility the benchmark does not explain. Fraction: 0.0678 means 6.78%.
              */
             resid_vol?: number | null;
-            /** R2 */
+            /**
+             * R2
+             * @description Share of variance the benchmark explains, 0 to 1.
+             */
             r2?: number | null;
             /**
              * Flags
@@ -3026,6 +3612,37 @@ export interface components {
             direction: string;
             /** Currency */
             currency?: string | null;
+        };
+        /**
+         * FilingParts
+         * @description What the company's own annual filing says (tickets 3 to 5). A part that is None was not extracted; an empty list was
+         *     extracted and the filing states nothing.
+         *
+         *     Removed 2026-11-19, left in stored cache entries (dropped on load): `production`, the countries where the company says it makes or sources
+         *     goods. It was planned in ClickUp ticket 3 and never built (the ticket closed with "not built: production countries"; a dry run found 11 of 27
+         *     expected countries and read closed plants as production), and was `None` in every stored entry. Company economics (inputs named, revenue per
+         *     employee, sales regions) replaced it in the 2026-11-06 design revision.
+         */
+        FilingParts: {
+            source: components["schemas"]["FilingSource"];
+            /** Version */
+            version: number;
+            /** Inputs */
+            inputs?: components["schemas"]["InputMention"][] | null;
+            labor_intensity?: components["schemas"]["LaborIntensity"] | null;
+            sales?: components["schemas"]["SalesRegions"] | null;
+        };
+        /**
+         * FilingSource
+         * @description The annual filing the filing parts were read from.
+         */
+        FilingSource: {
+            /** Form */
+            form: string;
+            /** Accession */
+            accession: string;
+            /** Filing Date */
+            filing_date: string;
         };
         /** FlowResponse */
         FlowResponse: {
@@ -3052,7 +3669,7 @@ export interface components {
             stale: boolean;
             /**
              * Coverage
-             * @description The part of the fund the listed holdings account for, at most 1.
+             * @description The part of the fund the listed holdings account for, at most 1. Fraction: 0.0678 means 6.78%.
              */
             coverage: number;
             /** Holdings */
@@ -3066,7 +3683,7 @@ export interface components {
             name?: string | null;
             /**
              * Weight
-             * @description A fraction of the fund.
+             * @description A fraction of the fund. Fraction: 0.0678 means 6.78%.
              */
             weight: number;
         };
@@ -3122,14 +3739,70 @@ export interface components {
             end_value: number | null;
             /** Units */
             units: number | null;
-            /** Return Period */
+            /**
+             * Return Period
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             return_period: number | null;
             /** Dollars Added */
             dollars_added: number | null;
-            /** Return Difference */
+            /**
+             * Return Difference
+             * @description The scope's period return less the fund's. Fraction: 0.0678 means 6.78%.
+             */
             return_difference: number | null;
             /** Note */
             note: string | null;
+        };
+        /** FundSlotResponse */
+        FundSlotResponse: {
+            /**
+             * Weight
+             * @description Fraction: 0.25 means 25% of the portfolio.
+             */
+            weight?: number | null;
+            /** Listing */
+            listing?: string | null;
+        } & {
+            [key: string]: unknown;
+        };
+        /**
+         * FundTechOutput
+         * @description The Fundamental or Technical Analyst.
+         */
+        FundTechOutput: {
+            /**
+             * Agent Pass
+             * @enum {string}
+             */
+            agent_pass: "pass1" | "pass2" | "synthesis";
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "completed" | "failed" | "timeout" | "skipped";
+            /** Recommendation */
+            recommendation: ("bullish" | "somewhat_bullish" | "neutral" | "somewhat_bearish" | "bearish") | null;
+            /** Confidence */
+            confidence: number | null;
+            /** Analysis Confidence */
+            analysis_confidence: ("high" | "medium" | "low" | "insufficient") | null;
+            /** Narrative */
+            narrative: string | null;
+            /** Latency Ms */
+            latency_ms?: number | null;
+            /** Tokens Used */
+            tokens_used?: number | null;
+            /** Model Used */
+            model_used?: string | null;
+            /** Prompt Version */
+            prompt_version?: string | null;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            agent_name: "FUND" | "TECH";
+            structured_output: components["schemas"]["Pass1Output"] | null;
         };
         /** GapResponse */
         GapResponse: {
@@ -3146,6 +3819,20 @@ export interface components {
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /**
+         * HarvestLineResponse
+         * @description A Trading loss not sold in this run, and the tax selling it would save (`services/target_book.Harvest`).
+         */
+        HarvestLineResponse: {
+            /** Ticker */
+            ticker: string;
+            /** Loss Cad */
+            loss_cad: number;
+            /** Saving Cad */
+            saving_cad: number;
+        } & {
+            [key: string]: unknown;
         };
         /** HealthResponse */
         HealthResponse: {
@@ -3242,6 +3929,55 @@ export interface components {
             notes: string | null;
         };
         /**
+         * InputMention
+         * @description A sentence in which the company itself names inputs beside a cost word. `generic` marks "raw materials" and
+         *     "commodity prices" with no input named (`inputs` is empty): evidence for a reader, never a confirmation of a table
+         *     input.
+         */
+        InputMention: {
+            /**
+             * Inputs
+             * @default []
+             */
+            inputs: string[];
+            /** Sentence */
+            sentence: string;
+            /**
+             * Sized
+             * @default false
+             */
+            sized: boolean;
+            /**
+             * Generic
+             * @default false
+             */
+            generic: boolean;
+        };
+        /**
+         * InputReading
+         * @description One input the archetype's table expects the company to buy, read as a series (ClickUp 86bctjbfk). `confirmation` says
+         *     whether the company's own filing names the input ("filing") or only the table does ("archetype"). `bea_share` is the BEA
+         *     2017 direct-purchase share of the industry's output for that input when the archetype has one (a 0 can mean a commodity code
+         *     that does not match, so it is shown, not hidden). These readings are chosen independently of the 8-series ranking cap.
+         */
+        InputReading: {
+            /** Input */
+            input: string;
+            /** Filing Name */
+            filing_name?: string | null;
+            /**
+             * Confirmation
+             * @enum {string}
+             */
+            confirmation: "filing" | "archetype";
+            /**
+             * Bea Share
+             * @description The BEA 2017 direct-purchase share of the industry's output. Fraction: 0.25 means 25%.
+             */
+            bea_share?: number | null;
+            state: components["schemas"]["SeriesState"];
+        };
+        /**
          * InstrumentViewResponse
          * @description The optimizer's view of one stock (`services/instrument_view.py`): its newest completed `medium_term` analysis, the band rebuilt at
          *     the live price, and every reason it is out of buys and view-driven sells. Returns are fractions; `view_points` and
@@ -3265,8 +4001,9 @@ export interface components {
             /**
              * Status
              * @description `usable` or `excluded`.
+             * @enum {string}
              */
-            status: string;
+            status: "usable" | "excluded";
             /**
              * Exclusions
              * @description Every reason the stock is excluded; empty when usable.
@@ -3295,28 +4032,31 @@ export interface components {
             target_price?: number | null;
             /**
              * Expected Total Return
-             * @description A fraction over the band's horizon, in the quote currency.
+             * @description Over the band's horizon, in the quote currency. Fraction: 0.0678 means 6.78%.
              */
             expected_total_return?: number | null;
             /** Income Per Share */
             income_per_share?: number | null;
             /** Income Method */
             income_method?: string | null;
-            /** Sigma */
+            /**
+             * Sigma
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             sigma?: number | null;
             /**
              * Market Reference
-             * @description The flat market baseline, a fraction.
+             * @description The flat market baseline. Fraction: 0.0678 means 6.78%.
              */
             market_reference?: number | null;
             /**
              * View Points
-             * @description The CIO's view, in percentage points.
+             * @description The CIO's view, Percentage points: 1.5 means 1.5 points.
              */
             view_points?: number | null;
             /**
              * View Noise Points
-             * @description What one tier step of the label moves the prediction by, in percentage points.
+             * @description What one tier step of the label moves the prediction by, Percentage points: 1.5 means 1.5 points.
              */
             view_noise_points?: number | null;
             /**
@@ -3332,14 +4072,20 @@ export interface components {
             falsifier_text: string;
             falsifier?: components["schemas"]["FalsifierResponse"] | null;
             /** Outlook */
-            outlook?: string | null;
+            outlook?: ("bullish" | "somewhat_bullish" | "neutral" | "somewhat_bearish" | "bearish") | null;
             /** Confidence */
             confidence?: number | null;
             /** Tier */
-            tier?: string | null;
-            /** Sector */
+            tier?: ("strong_outperform" | "outperform" | "market_perform" | "underperform" | "strong_underperform" | "moderate" | "low" | "minimal") | null;
+            /**
+             * Sector
+             * @description The class label (data/reference/sector_industry.py), the same in every response; null when not mapped.
+             */
             sector?: string | null;
-            /** Industry */
+            /**
+             * Industry
+             * @description The class label (data/reference/sector_industry.py), the same in every response; null when not mapped.
+             */
             industry?: string | null;
             /** Balance Group */
             balance_group?: string | null;
@@ -3355,7 +4101,7 @@ export interface components {
             other_listing?: string | null;
             /**
              * View Jump Steps
-             * @description The change in the latest weekly reading since the one before, in tier steps.
+             * @description Tier steps: the change in the latest weekly reading since the one before.
              */
             view_jump_steps?: number | null;
             /**
@@ -3365,11 +4111,23 @@ export interface components {
             view_unstable: boolean;
             /**
              * Valuation Edge
-             * @description The stock's edge over its required return, a fraction over the band's horizon; 0 when it is not valued.
+             * @description The stock's edge over its required return, over the band's horizon; 0 when it is not valued. Fraction: 0.0678 means 6.78%.
              */
             valuation_edge?: number | null;
             /** Usable */
             usable: boolean;
+        };
+        /**
+         * LaborIntensity
+         * @description Trailing revenue per full-time employee, in the statement currency (not converted).
+         */
+        LaborIntensity: {
+            /** Revenue Per Employee */
+            revenue_per_employee: number;
+            /** Employees */
+            employees: number;
+            /** Currency */
+            currency?: string | null;
         };
         /** LlmCallListResponse */
         LlmCallListResponse: {
@@ -3432,9 +4190,15 @@ export interface components {
         };
         /** MarketLineResponse */
         MarketLineResponse: {
-            /** Twelve Month */
+            /**
+             * Twelve Month
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             twelve_month: number | null;
-            /** Holding */
+            /**
+             * Holding
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             holding: number | null;
             /** Listing 12M */
             listing_12m?: string | null;
@@ -3447,14 +4211,20 @@ export interface components {
             ticker: string;
             /** Account */
             account: string;
-            /** Kind */
-            kind: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "stock" | "fund";
             /** Held */
             held: boolean;
             /** Currency */
             currency: string;
-            /** Status */
-            status: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "ok" | "no_number";
             /** Reason */
             reason: string | null;
             /** Flags */
@@ -3463,57 +4233,132 @@ export interface components {
             usable: boolean;
             /** Exclusions */
             exclusions: string[];
-            /** Price Change */
+            /**
+             * Price Change
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             price_change?: number | null;
-            /** Income Yield */
+            /**
+             * Income Yield
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             income_yield?: number | null;
-            /** Total Return Quote */
+            /**
+             * Total Return Quote
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             total_return_quote?: number | null;
-            /** Baseline Own */
+            /**
+             * Baseline Own
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             baseline_own?: number | null;
-            /** Baseline Cad */
+            /**
+             * Baseline Cad
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             baseline_cad?: number | null;
-            /** View */
+            /**
+             * View
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             view?: number | null;
-            /** View Applied */
+            /**
+             * View Applied
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             view_applied?: number | null;
-            /** View Scored */
+            /**
+             * View Scored
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             view_scored?: number | null;
-            /** Currency Line */
+            /**
+             * Currency Line
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             currency_line?: number | null;
-            /** Total Return Cad */
+            /**
+             * Total Return Cad
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             total_return_cad?: number | null;
-            /** Tax Rate Pct */
+            /**
+             * Tax Rate Pct
+             * @description Percentage points: 1.5 means 1.5 points.
+             */
             tax_rate_pct?: number | null;
-            /** Annual Tax */
+            /**
+             * Annual Tax
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             annual_tax?: number | null;
-            /** Fee */
+            /**
+             * Fee
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             fee?: number | null;
-            /** After Tax 12M */
+            /**
+             * After Tax 12M
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             after_tax_12m?: number | null;
-            /** Gain Tax Drag */
+            /**
+             * Gain Tax Drag
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             gain_tax_drag?: number | null;
-            /** After Tax Deferred */
+            /**
+             * After Tax Deferred
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             after_tax_deferred?: number | null;
-            /** Entry Cost */
+            /**
+             * Entry Cost
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             entry_cost?: number | null;
-            /** Entry Cost Spread */
+            /**
+             * Entry Cost Spread
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             entry_cost_spread?: number | null;
             /** Exit Tax Cad */
             exit_tax_cad?: number | null;
-            /** Exit Cost */
+            /**
+             * Exit Cost
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             exit_cost?: number | null;
-            /** Sigma */
+            /**
+             * Sigma
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             sigma?: number | null;
-            /** Noise Margin Pts */
+            /**
+             * Noise Margin Pts
+             * @description Percentage points: 1.5 means 1.5 points.
+             */
             noise_margin_pts?: number | null;
-            /** Market Line 12M */
+            /**
+             * Market Line 12M
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             market_line_12m?: number | null;
-            /** Market Line Holding */
+            /**
+             * Market Line Holding
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             market_line_holding?: number | null;
-            /** Score 12M */
+            /**
+             * Score 12M
+             * @description Ratio, not a percent: the return over the market line, per unit of volatility.
+             */
             score_12m?: number | null;
-            /** Score Holding */
+            /**
+             * Score Holding
+             * @description Ratio, not a percent: the return over the market line, per unit of volatility.
+             */
             score_holding?: number | null;
             /** Tax Mode */
             tax_mode?: string | null;
@@ -3633,6 +4478,7 @@ export interface components {
             /**
              * Transaction Date
              * Format: date-time
+             * @description A day as the owner wrote it, with no time zone.
              */
             transaction_date: string;
             /** Amount Cad */
@@ -3651,6 +4497,70 @@ export interface components {
             notes?: string | null;
         };
         /**
+         * OrderCostsResponse
+         * @description What an order costs, in Canadian dollars; empty for a transfer.
+         */
+        OrderCostsResponse: {
+            /** Commission Cad */
+            commission_cad?: number | null;
+            /** Conversion Cad */
+            conversion_cad?: number | null;
+            /**
+             * Cash Effect Cad
+             * @description The cash the order uses (a buy) or brings in (a sale), net of its costs.
+             */
+            cash_effect_cad?: number | null;
+        } & {
+            [key: string]: unknown;
+        };
+        /**
+         * OrderValueResponse
+         * @description Why the order is worth it, as the rule that made it stored it. A buy carries `gap_cad`, `held_return` and `utility`; a sale
+         *     carries the benefit, years, costs, tax and noise margin. Empty for a transfer.
+         */
+        OrderValueResponse: {
+            /**
+             * Gap Cad
+             * @description A buy: the dollars the book wants here that are not held yet.
+             */
+            gap_cad?: number | null;
+            /**
+             * Held Return
+             * @description A buy: the after-tax return held there. Fraction: 0.0678 means 6.78%.
+             */
+            held_return?: number | null;
+            /**
+             * Utility
+             * @description A buy: the book's utility of the name; null for the fund.
+             */
+            utility?: number | null;
+            /** Benefit Cad */
+            benefit_cad?: number | null;
+            /** Benefit Years */
+            benefit_years?: number | null;
+            /** Costs Cad */
+            costs_cad?: number | null;
+            /** Noise Margin Cad */
+            noise_margin_cad?: number | null;
+            /** Tax Cad */
+            tax_cad?: number | null;
+            /** Tax Exact */
+            tax_exact?: boolean | null;
+            /** Loss */
+            loss?: boolean | null;
+            /** Jump */
+            jump?: boolean | null;
+            /**
+             * Signal To Noise
+             * @description Ratio: the gain after the certain costs over the noise margin; null when there is no noise.
+             */
+            signal_to_noise?: number | null;
+            /** Qualified Runs */
+            qualified_runs?: number | null;
+        } & {
+            [key: string]: unknown;
+        };
+        /**
          * OrderViewResponse
          * @description One step of a run: an order to place, or a transfer between the owner's own accounts.
          */
@@ -3659,10 +4569,16 @@ export interface components {
             proposal_id: string | null;
             /** Sequence */
             sequence: number;
-            /** Kind */
-            kind: string;
-            /** Status */
-            status: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "order" | "transfer";
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "open" | "followed" | "superseded" | "unsaved";
             /** Followed By */
             followed_by: string | null;
             /** Account */
@@ -3671,8 +4587,11 @@ export interface components {
             to_account: string | null;
             /** Ticker */
             ticker: string | null;
-            /** Side */
-            side: string;
+            /**
+             * Side
+             * @enum {string}
+             */
+            side: "buy" | "sell" | "transfer";
             /** Shares */
             shares: number | null;
             /** Price */
@@ -3689,14 +4608,8 @@ export interface components {
             chain: string | null;
             /** Reasons */
             reasons: components["schemas"]["ReasonLineResponse"][];
-            /** Costs */
-            costs: {
-                [key: string]: unknown;
-            };
-            /** Value */
-            value: {
-                [key: string]: unknown;
-            };
+            costs: components["schemas"]["OrderCostsResponse"];
+            value: components["schemas"]["OrderValueResponse"];
             /** Rebuy Not Before */
             rebuy_not_before: string | null;
             /** What Would Change */
@@ -3716,6 +4629,83 @@ export interface components {
             per_page: number;
             /** Pages */
             pages: number;
+        };
+        /**
+         * Pass1DataOutput
+         * @description Sentiment, Macro and Researcher: their reading is in `structured_data`.
+         */
+        Pass1DataOutput: {
+            /**
+             * Caveats
+             * @default []
+             */
+            caveats: string[];
+            /**
+             * Key Factors
+             * @description Absent on runs made after the key-factor cut.
+             */
+            key_factors?: {
+                [key: string]: unknown;
+            }[] | null;
+            /** Narrative */
+            narrative?: string | null;
+            /** Assessment Summary */
+            assessment_summary?: string | null;
+            /** Analysis Confidence */
+            analysis_confidence?: ("high" | "medium" | "low" | "insufficient") | null;
+            /**
+             * Risks
+             * @default []
+             */
+            risks: {
+                [key: string]: unknown;
+            }[];
+            /**
+             * Structured Data
+             * @description News publication times in it (`recent_developments[].date`) are the provider's America/New_York wall clock with no zone.
+             */
+            structured_data?: {
+                [key: string]: unknown;
+            } | null;
+        } & {
+            [key: string]: unknown;
+        };
+        /**
+         * Pass1Output
+         * @description Fundamental and Technical Analysts: their reading is in `interpretive_fields`.
+         */
+        Pass1Output: {
+            /**
+             * Caveats
+             * @default []
+             */
+            caveats: string[];
+            /**
+             * Key Factors
+             * @description Absent on runs made after the key-factor cut.
+             */
+            key_factors?: {
+                [key: string]: unknown;
+            }[] | null;
+            /** Narrative */
+            narrative?: string | null;
+            /** Assessment Summary */
+            assessment_summary?: string | null;
+            /** Analysis Confidence */
+            analysis_confidence?: ("high" | "medium" | "low" | "insufficient") | null;
+            /**
+             * Risks
+             * @default []
+             */
+            risks: {
+                [key: string]: unknown;
+            }[];
+            /** Interpretive Fields */
+            interpretive_fields?: {
+                [key: string]: unknown;
+            } | null;
+        } & {
+            [key: string]: unknown;
         };
         /** PerformanceResponse */
         PerformanceResponse: {
@@ -3741,9 +4731,15 @@ export interface components {
             withdrawn: number;
             /** Profit Cad */
             profit_cad: number;
-            /** Return Period */
+            /**
+             * Return Period
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             return_period: number | null;
-            /** Return Annualised */
+            /**
+             * Return Annualised
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             return_annualised: number | null;
             /** Reason */
             reason: string | null;
@@ -3823,7 +4819,10 @@ export interface components {
             cash_usd: number;
             /** Commission Per Trade */
             commission_per_trade: number;
-            /** Conversion Cost Pct */
+            /**
+             * Conversion Cost Pct
+             * @description Whole percent: 9.11 means 9.11%.
+             */
             conversion_cost_pct: number;
             /** Uses Norberts Gambit */
             uses_norberts_gambit: boolean;
@@ -3843,7 +4842,10 @@ export interface components {
             cash_usd?: number | null;
             /** Commission Per Trade */
             commission_per_trade?: number | null;
-            /** Conversion Cost Pct */
+            /**
+             * Conversion Cost Pct
+             * @description Whole percent: 1.5 means 1.5%.
+             */
             conversion_cost_pct?: number | null;
             /** Uses Norberts Gambit */
             uses_norberts_gambit?: boolean | null;
@@ -3968,9 +4970,15 @@ export interface components {
             unrealised_cad: number | null;
             /** Unrealised Fx Cad */
             unrealised_fx_cad: number | null;
-            /** Unrealised Pct */
+            /**
+             * Unrealised Pct
+             * @description Whole percent: 9.11 means 9.11%.
+             */
             unrealised_pct: number | null;
-            /** Weight Pct */
+            /**
+             * Weight Pct
+             * @description Whole percent: 9.11 means 9.11%.
+             */
             weight_pct: number | null;
         };
         /**
@@ -3998,34 +5006,61 @@ export interface components {
          *     Returns, rates and costs are fractions (0.0797 is 7.97%); `noise_margin_pts` and `tax_rate_pct` are points.
          */
         PredictedLinesResponse: {
-            /** After Tax 12M */
+            /**
+             * After Tax 12M
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             after_tax_12m: number | null;
             /** Total Return Cad */
             total_return_cad: number | null;
             /** Baseline Cad */
             baseline_cad: number | null;
-            /** View Applied */
+            /**
+             * View Applied
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             view_applied: number | null;
-            /** Noise Margin Pts */
+            /**
+             * Noise Margin Pts
+             * @description Percentage points: 1.5 means 1.5 points.
+             */
             noise_margin_pts: number | null;
-            /** Sigma */
+            /**
+             * Sigma
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             sigma: number | null;
-            /** Market Line 12M */
+            /**
+             * Market Line 12M
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             market_line_12m: number | null;
-            /** Score 12M */
+            /**
+             * Score 12M
+             * @description Ratio, not a percent: the return over the market line, per unit of volatility.
+             */
             score_12m: number | null;
-            /** Entry Cost */
+            /**
+             * Entry Cost
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             entry_cost: number | null;
             /** Exit Tax Cad */
             exit_tax_cad: number | null;
-            /** Tax Rate Pct */
+            /**
+             * Tax Rate Pct
+             * @description Percentage points: 1.5 means 1.5 points.
+             */
             tax_rate_pct: number | null;
             /** Usable */
             usable: boolean;
             /** Flags */
             flags: string[];
-            /** Status */
-            status: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "ok" | "no_number";
             /** Reason */
             reason: string | null;
         };
@@ -4038,8 +5073,9 @@ export interface components {
             /**
              * Interval
              * @description `1m`, `3m`, `6m` or `12m`.
+             * @enum {string}
              */
-            interval: string;
+            interval: "1m" | "3m" | "6m" | "12m";
             /**
              * Due Date
              * Format: date-time
@@ -4048,8 +5084,9 @@ export interface components {
             /**
              * Status
              * @description `pending`, `resolved` or `needs_review`.
+             * @enum {string}
              */
-            status: string;
+            status: "pending" | "resolved" | "needs_review";
             /**
              * Status Reason
              * @description Why a pending or needs-review checkpoint is waiting.
@@ -4065,19 +5102,22 @@ export interface components {
             benchmark_dividends_per_share?: number | null;
             /**
              * Actual Total Return Pct
-             * @description Price change plus dividends, over the price at the call.
+             * @description Price change plus dividends, over the price at the call. Whole percent: 9.11 means 9.11%.
              */
             actual_total_return_pct?: number | null;
-            /** Benchmark Total Return Pct */
+            /**
+             * Benchmark Total Return Pct
+             * @description Whole percent: 9.11 means 9.11%.
+             */
             benchmark_total_return_pct?: number | null;
             /**
              * Excess Return Pct
-             * @description The stock's total return minus the benchmark's.
+             * @description The stock's total return minus the benchmark's. Whole percent: 9.11 means 9.11%.
              */
             excess_return_pct?: number | null;
             /**
              * Interpolated Expected
-             * @description The return the band expected by this date.
+             * @description The return the band expected by this date. Whole percent: 9.11 means 9.11%.
              */
             interpolated_expected?: number | null;
             /**
@@ -4133,24 +5173,28 @@ export interface components {
              * Predicted Return Tier
              * @description `strong_outperform`, `outperform`, `market_perform`, `underperform` or `strong_underperform`.
              */
-            predicted_return_tier?: string | null;
-            /** Predicted Return Pct */
+            predicted_return_tier?: ("strong_outperform" | "outperform" | "market_perform" | "underperform" | "strong_underperform" | "moderate" | "low" | "minimal") | null;
+            /**
+             * Predicted Return Pct
+             * @description Whole percent: 9.11 means 9.11%.
+             */
             predicted_return_pct?: number | null;
             /**
              * Predicted Return Low
-             * @description The band's 10th percentile.
+             * @description The band's 10th percentile. Whole percent: 9.11 means 9.11%.
              */
             predicted_return_low?: number | null;
             /**
              * Predicted Return High
-             * @description The band's 90th percentile.
+             * @description The band's 90th percentile. Whole percent: 9.11 means 9.11%.
              */
             predicted_return_high?: number | null;
             /**
              * Stock Outlook Direction
              * @description The CIO's outlook on the run the prediction came from.
+             * @enum {string}
              */
-            stock_outlook_direction: string;
+            stock_outlook_direction: "bullish" | "somewhat_bullish" | "neutral" | "somewhat_bearish" | "bearish";
             /** Overall Confidence */
             overall_confidence: number;
             /**
@@ -4160,11 +5204,131 @@ export interface components {
             checkpoints: components["schemas"]["PredictionCheckpointResponse"][];
             shadow?: components["schemas"]["ShadowPredictionResponse"] | null;
         };
+        /**
+         * PriceBand
+         * @description The code-built price band (`build_band`, docs/technical/price-band-design.md section 6). `status` is `ok`, or
+         *     `unavailable` with a `reason`, in which case only `ticker`, `timeline`, `as_of_date` and `flags` are also set.
+         */
+        PriceBand: {
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "ok" | "unavailable";
+            /** Ticker */
+            ticker?: string | null;
+            /** Timeline */
+            timeline?: string | null;
+            /** As Of Date */
+            as_of_date?: string | null;
+            /**
+             * Flags
+             * @default []
+             */
+            flags: string[];
+            /** Reason */
+            reason?: string | null;
+            /** Current Price */
+            current_price?: number | null;
+            /** Price Source */
+            price_source?: string | null;
+            /** Currency */
+            currency?: string | null;
+            /**
+             * Horizon Years
+             * @description Years.
+             */
+            horizon_years?: number | null;
+            range?: components["schemas"]["PriceRange"] | null;
+            /** Model Range */
+            model_range?: {
+                [key: string]: unknown;
+            } | null;
+            /** By Horizon */
+            by_horizon?: {
+                [key: string]: unknown;
+            } | null;
+            slider?: components["schemas"]["PriceSlider"] | null;
+            /** Target Price */
+            target_price?: number | null;
+            vs_current_pct?: components["schemas"]["PriceVsCurrent"] | null;
+            /** Income Per Share */
+            income_per_share?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Expected Total Return Pct
+             * @description Whole percent: 9.11 means 9.11%.
+             */
+            expected_total_return_pct?: number | null;
+            /**
+             * Stock Baseline Pct
+             * @description Whole percent: 9.11 means 9.11%.
+             */
+            stock_baseline_pct?: number | null;
+            /**
+             * Market Reference Pct
+             * @description Whole percent: 9.11 means 9.11%. Absent on older runs.
+             */
+            market_reference_pct?: number | null;
+            /**
+             * View Pts
+             * @description Percentage points: 1.5 means 1.5 points.
+             */
+            view_pts?: number | null;
+            /**
+             * View Per Unit Risk
+             * @description Ratio, not a percent: the view over the band's volatility.
+             */
+            view_per_unit_risk?: number | null;
+            /** Inputs */
+            inputs?: {
+                [key: string]: unknown;
+            } | null;
+            /** Risk Profile */
+            risk_profile?: {
+                [key: string]: unknown;
+            } | null;
+            /** Stretch */
+            stretch?: {
+                [key: string]: unknown;
+            } | null;
+            /** Settings */
+            settings?: {
+                [key: string]: unknown;
+            } | null;
+        } & {
+            [key: string]: unknown;
+        };
         /** PriceListResponse */
         PriceListResponse: {
             /** Data */
             data: components["schemas"]["PriceResponse"][];
             meta: components["schemas"]["PaginationMeta"];
+        };
+        /** PriceRange */
+        PriceRange: {
+            /**
+             * Low
+             * @description Price in the quote currency.
+             */
+            low?: number | null;
+            /** Low Percentile */
+            low_percentile?: number | null;
+            /**
+             * Median
+             * @description Price in the quote currency.
+             */
+            median?: number | null;
+            /**
+             * High
+             * @description Price in the quote currency.
+             */
+            high?: number | null;
+            /** High Percentile */
+            high_percentile?: number | null;
+        } & {
+            [key: string]: unknown;
         };
         /**
          * PriceResponse
@@ -4198,6 +5362,125 @@ export interface components {
              * Format: date-time
              */
             recorded_at: string;
+        };
+        /** PriceSlider */
+        PriceSlider: {
+            /**
+             * No View Position
+             * @description Fraction of the range, 0 to 1, with no view.
+             */
+            no_view_position?: number | null;
+            /** Shift */
+            shift?: number | null;
+            /**
+             * Position
+             * @description Fraction of the range, 0 to 1, with the CIO's view.
+             */
+            position?: number | null;
+        } & {
+            [key: string]: unknown;
+        };
+        /** PriceVsCurrent */
+        PriceVsCurrent: {
+            /**
+             * Low
+             * @description Whole percent: 9.11 means 9.11%.
+             */
+            low?: number | null;
+            /**
+             * Median
+             * @description Whole percent: 9.11 means 9.11%.
+             */
+            median?: number | null;
+            /**
+             * High
+             * @description Whole percent: 9.11 means 9.11%.
+             */
+            high?: number | null;
+            /**
+             * Target Price
+             * @description Whole percent: 9.11 means 9.11%.
+             */
+            target_price?: number | null;
+        } & {
+            [key: string]: unknown;
+        };
+        /** ProfileClassification */
+        ProfileClassification: {
+            /** Industry */
+            industry: string | null;
+            /** Label Reason */
+            label_reason: string | null;
+            /** Archetype */
+            archetype: string | null;
+            /** Evidence Tier */
+            evidence_tier: string;
+            /** Tier Note */
+            tier_note: string | null;
+            /** Shown To Advocates */
+            shown_to_advocates: boolean;
+            /** Ppe To Revenue */
+            ppe_to_revenue?: number | null;
+            labels?: components["schemas"]["ProfileLabels"] | null;
+        };
+        /** ProfileIdentity */
+        ProfileIdentity: {
+            /** Ticker */
+            ticker: string;
+            /**
+             * As Of
+             * Format: date
+             */
+            as_of: string;
+            /** Domicile */
+            domicile: string;
+            /** Series Basis */
+            series_basis: string | null;
+            /** Us Ticker */
+            us_ticker?: string | null;
+            /** Form Type */
+            form_type?: string | null;
+        };
+        /**
+         * ProfileLabels
+         * @description What a model read off the company's description against closed lists. Shown beside the profile and never used to
+         *     choose which series appear: demand and inputs come from the archetype.
+         */
+        ProfileLabels: {
+            /** Chain Position */
+            chain_position: string;
+            /** End Demand */
+            end_demand: string;
+            /** Product Category */
+            product_category: string;
+        };
+        /** ProfileMeta */
+        ProfileMeta: {
+            /**
+             * Horizon Note
+             * @default Every direction in this profile is a 12-month change (4 quarters for quarterly series). The Macro agent labels the same series over shorter windows (90 days for rates, commodities and the Canadian dollar), so the two can differ.
+             */
+            horizon_note: string;
+            /**
+             * Series Requested
+             * @default 0
+             */
+            series_requested: number;
+            /**
+             * Series Returned
+             * @default 0
+             */
+            series_returned: number;
+            /**
+             * Series Stale
+             * @default 0
+             */
+            series_stale: number;
+            /**
+             * Parts
+             * @default []
+             */
+            parts: string[];
         };
         /** ProfitLinesResponse */
         ProfitLinesResponse: {
@@ -4352,7 +5635,10 @@ export interface components {
             conversion_cost_cad: number;
             /** Gain Cad */
             gain_cad: number | null;
-            /** Cost Per Dollar */
+            /**
+             * Cost Per Dollar
+             * @description Tax, commission and conversion per dollar in hand. Fraction: 0.0678 means 6.78%.
+             */
             cost_per_dollar: number;
             /** Room Consequence */
             room_consequence: string;
@@ -4360,7 +5646,10 @@ export interface components {
             room_used_cad: number;
             /** Room Returns On */
             room_returns_on: string | null;
-            /** Weight Pct */
+            /**
+             * Weight Pct
+             * @description Whole percent: 9.11 means 9.11%.
+             */
             weight_pct: number | null;
             /** Target Book Effect */
             target_book_effect: string;
@@ -4481,34 +5770,33 @@ export interface components {
         ReportBlockResponse: {
             /** Caps */
             caps: components["schemas"]["CapViewResponse"][];
-            /** Currency Share */
+            /**
+             * Currency Share
+             * @description By currency.
+             */
             currency_share: {
-                [key: string]: unknown;
+                [key: string]: components["schemas"]["CurrencyShareResponse"];
             };
-            /** Room */
-            room: {
-                [key: string]: unknown;
-            };
+            room: components["schemas"]["RoomBlockResponse"];
             /** Ytd Gain Cad */
             ytd_gain_cad: number | null;
             /** Run Sale Tax Cad */
             run_sale_tax_cad: number | null;
             /** Harvest */
-            harvest: {
-                [key: string]: unknown;
-            }[];
+            harvest: components["schemas"]["HarvestLineResponse"][];
             /** Excluded */
             excluded: components["schemas"]["ExcludedViewResponse"][];
-            /** Parked Share */
+            /**
+             * Parked Share
+             * @description Fraction: 0.25 means 25% of the portfolio.
+             */
             parked_share: number | null;
             /** Fund By Account */
             fund_by_account: {
-                [key: string]: unknown;
+                [key: string]: components["schemas"]["FundSlotResponse"];
             };
             /** Unfilled */
-            unfilled: {
-                [key: string]: unknown;
-            }[];
+            unfilled: components["schemas"]["UnfilledLineResponse"][];
             /** Breaches */
             breaches: string[];
             /** View Notes */
@@ -4580,6 +5868,98 @@ export interface components {
              * @default 100
              */
             actions_limit: number;
+        };
+        /**
+         * RiskAgentOutput
+         * @description The Risk Advisor.
+         */
+        RiskAgentOutput: {
+            /**
+             * Agent Pass
+             * @enum {string}
+             */
+            agent_pass: "pass1" | "pass2" | "synthesis";
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "completed" | "failed" | "timeout" | "skipped";
+            /** Recommendation */
+            recommendation: ("bullish" | "somewhat_bullish" | "neutral" | "somewhat_bearish" | "bearish") | null;
+            /** Confidence */
+            confidence: number | null;
+            /** Analysis Confidence */
+            analysis_confidence: ("high" | "medium" | "low" | "insufficient") | null;
+            /** Narrative */
+            narrative: string | null;
+            /** Latency Ms */
+            latency_ms?: number | null;
+            /** Tokens Used */
+            tokens_used?: number | null;
+            /** Model Used */
+            model_used?: string | null;
+            /** Prompt Version */
+            prompt_version?: string | null;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            agent_name: "risk";
+            structured_output: components["schemas"]["RiskOutput"] | null;
+        };
+        /** RiskOutput */
+        RiskOutput: {
+            /**
+             * Caveats
+             * @default []
+             */
+            caveats: string[];
+            /**
+             * Key Factors
+             * @description Absent on runs made after the key-factor cut.
+             */
+            key_factors?: {
+                [key: string]: unknown;
+            }[] | null;
+            /** Narrative */
+            narrative?: string | null;
+            /**
+             * Groundedness Score
+             * @description 0 to 100.
+             */
+            groundedness_score?: number | null;
+            /** Thesis Summary */
+            thesis_summary?: string | null;
+            /** Strongest Signal */
+            strongest_signal?: string | null;
+            /** Risk Profile */
+            risk_profile?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Stage B
+             * @description Present on runs made while the CIO had a second stage.
+             */
+            stage_b?: {
+                [key: string]: unknown;
+            } | null;
+        } & {
+            [key: string]: unknown;
+        };
+        /** RoomBlockResponse */
+        RoomBlockResponse: {
+            /** Rrsp Limit Cad */
+            rrsp_limit_cad?: number | null;
+            /** Rrsp Room Cad */
+            rrsp_room_cad?: number | null;
+            /** Tfsa Limit Cad */
+            tfsa_limit_cad?: number | null;
+            /** Rrsp Open */
+            rrsp_open?: boolean | null;
+            /** Rrsp Closed Reason */
+            rrsp_closed_reason?: string | null;
+        } & {
+            [key: string]: unknown;
         };
         /** RoomEventResponse */
         RoomEventResponse: {
@@ -4720,8 +6100,11 @@ export interface components {
              * Format: uuid
              */
             run_id: string;
-            /** Kind */
-            kind: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "weekly" | "adhoc" | "inquiry";
             /**
              * As Of
              * Format: date
@@ -4752,8 +6135,11 @@ export interface components {
              * Format: uuid
              */
             portfolio_id: string;
-            /** Kind */
-            kind: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "weekly" | "adhoc" | "inquiry";
             /**
              * As Of
              * Format: date
@@ -4788,6 +6174,64 @@ export interface components {
             missing: string[];
             /** Superseded Proposal Ids */
             superseded_proposal_ids: string[];
+        };
+        /**
+         * SalesRegion
+         * @description One region the company tags its revenue to, as tagged (a country or a region member), with its share of total.
+         */
+        SalesRegion: {
+            /** Name */
+            name: string;
+            /** Value */
+            value: number;
+            /**
+             * Share
+             * @description Of the undimensioned total. Fraction: 0.25 means 25%.
+             */
+            share: number;
+        };
+        /**
+         * SalesRegions
+         * @description Where the company books its revenue, from its own XBRL (ticket 4). Geography is not currency: this says where revenue
+         *     is booked, nothing about exposure. `outside_us_share` exists only for a US-domiciled company; for a Canadian one it
+         *     would be the home market. A split that does not add up to the total within 5 percent is never stored.
+         */
+        SalesRegions: {
+            /** Fiscal Year End */
+            fiscal_year_end: string;
+            /** Concept */
+            concept: string;
+            /**
+             * Basis
+             * @default geographic axis
+             */
+            basis: string;
+            /**
+             * Regions
+             * @default []
+             */
+            regions: components["schemas"]["SalesRegion"][];
+            /**
+             * United States Share
+             * @description Fraction: 0.25 means 25%.
+             */
+            united_states_share?: number | null;
+            /**
+             * Outside Us Share
+             * @description Fraction: 0.25 means 25%.
+             */
+            outside_us_share?: number | null;
+            /**
+             * China Share
+             * @description Fraction: 0.25 means 25%.
+             */
+            china_share?: number | null;
+            /**
+             * Coverage
+             * @description The regions over the total; below 0.99 a line says so. Fraction: 0.99 means 99%.
+             * @default 1
+             */
+            coverage: number;
         };
         /** ScopeReportResponse */
         ScopeReportResponse: {
@@ -4877,23 +6321,138 @@ export interface components {
             }[];
             meta: components["schemas"]["PaginationMeta"];
         };
+        /** SeriesState */
+        SeriesState: {
+            /** Series Id */
+            series_id: string;
+            /** Source */
+            source: string;
+            /** Region */
+            region: string;
+            /** Title */
+            title: string;
+            /** Role */
+            role: string;
+            /** Link */
+            link: string | null;
+            /** Strength */
+            strength: string;
+            /**
+             * As Of
+             * Format: date
+             */
+            as_of: string;
+            /** Latest */
+            latest: number;
+            /** Change 12M */
+            change_12m: number;
+            /**
+             * Change Kind
+             * @enum {string}
+             */
+            change_kind: "pct" | "diff" | "level";
+            /** Percentile */
+            percentile: number | null;
+            /**
+             * Direction
+             * @enum {string}
+             */
+            direction: "rising" | "falling" | "flat" | "cad_stronger" | "cad_weaker";
+            /**
+             * Horizon
+             * @default 12m
+             * @constant
+             */
+            horizon: "12m";
+            /** Direction Text */
+            direction_text: string;
+            /** Stale */
+            stale: boolean;
+            /** Reason */
+            reason: string;
+        };
+        /**
+         * ShadowCioAgentOutput
+         * @description The Shadow CIO.
+         */
+        ShadowCioAgentOutput: {
+            /**
+             * Agent Pass
+             * @enum {string}
+             */
+            agent_pass: "pass1" | "pass2" | "synthesis";
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "completed" | "failed" | "timeout" | "skipped";
+            /** Recommendation */
+            recommendation: ("bullish" | "somewhat_bullish" | "neutral" | "somewhat_bearish" | "bearish") | null;
+            /** Confidence */
+            confidence: number | null;
+            /** Analysis Confidence */
+            analysis_confidence: ("high" | "medium" | "low" | "insufficient") | null;
+            /** Narrative */
+            narrative: string | null;
+            /** Latency Ms */
+            latency_ms?: number | null;
+            /** Tokens Used */
+            tokens_used?: number | null;
+            /** Model Used */
+            model_used?: string | null;
+            /** Prompt Version */
+            prompt_version?: string | null;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            agent_name: "shadow_cio";
+            structured_output: components["schemas"]["ShadowCioOutput"] | null;
+        };
+        /** ShadowCioOutput */
+        ShadowCioOutput: {
+            /** Stock Outlook */
+            stock_outlook?: ("bullish" | "somewhat_bullish" | "neutral" | "somewhat_bearish" | "bearish") | null;
+            /** Confidence */
+            confidence?: number | null;
+            /** Expected Return Tier */
+            expected_return_tier?: ("strong_outperform" | "outperform" | "market_perform" | "underperform" | "strong_underperform" | "moderate" | "low" | "minimal") | null;
+            /** Thesis Summary */
+            thesis_summary?: string | null;
+            /** Bear Weighting Application Note */
+            bear_weighting_application_note?: string | null;
+            /** What Would Change My Mind */
+            what_would_change_my_mind?: string | null;
+            /** Parallel Predictions */
+            parallel_predictions?: {
+                [key: string]: unknown;
+            } | null;
+        } & {
+            [key: string]: unknown;
+        };
         /**
          * ShadowPredictionResponse
          * @description The shadow CIO's call on the same run: what it said beside the primary CIO, and how far apart they were.
          */
         ShadowPredictionResponse: {
-            /** Primary Outlook Direction */
-            primary_outlook_direction: string;
+            /**
+             * Primary Outlook Direction
+             * @enum {string}
+             */
+            primary_outlook_direction: "bullish" | "somewhat_bullish" | "neutral" | "somewhat_bearish" | "bearish";
             /** Primary Confidence */
             primary_confidence: number;
             /** Primary Expected Return Tier */
-            primary_expected_return_tier?: string | null;
-            /** Shadow Outlook Direction */
-            shadow_outlook_direction: string;
+            primary_expected_return_tier?: ("strong_outperform" | "outperform" | "market_perform" | "underperform" | "strong_underperform" | "moderate" | "low" | "minimal") | null;
+            /**
+             * Shadow Outlook Direction
+             * @enum {string}
+             */
+            shadow_outlook_direction: "bullish" | "somewhat_bullish" | "neutral" | "somewhat_bearish" | "bearish";
             /** Shadow Confidence */
             shadow_confidence: number;
             /** Shadow Expected Return Tier */
-            shadow_expected_return_tier?: string | null;
+            shadow_expected_return_tier?: ("strong_outperform" | "outperform" | "market_perform" | "underperform" | "strong_underperform" | "moderate" | "low" | "minimal") | null;
             /**
              * Divergence Magnitude
              * @description `none`, `minor`, `moderate` or `major`.
@@ -4946,18 +6505,24 @@ export interface components {
              * @description The canonical ticker, e.g. `SHOP.TO` or `KO`.
              */
             ticker: string;
-            /** Company Name */
-            company_name: string;
-            /** Primary Exchange */
-            primary_exchange: string;
+            /** Name */
+            name: string;
+            /** Exchange */
+            exchange: string;
             /**
              * Currency
              * @description The currency the stock trades in.
              */
             currency: string;
-            /** Sector */
+            /**
+             * Sector
+             * @description The class label (data/reference/sector_industry.py), the same in every response; null when not mapped.
+             */
             sector?: string | null;
-            /** Industry */
+            /**
+             * Industry
+             * @description The class label (data/reference/sector_industry.py), the same in every response; null when not mapped.
+             */
             industry?: string | null;
             /**
              * Instrument Type
@@ -4995,18 +6560,24 @@ export interface components {
              * @description The canonical ticker, e.g. `SHOP.TO` or `KO`.
              */
             ticker: string;
-            /** Company Name */
-            company_name: string;
-            /** Primary Exchange */
-            primary_exchange: string;
+            /** Name */
+            name: string;
+            /** Exchange */
+            exchange: string;
             /**
              * Currency
              * @description The currency the stock trades in.
              */
             currency: string;
-            /** Sector */
+            /**
+             * Sector
+             * @description The class label (data/reference/sector_industry.py), the same in every response; null when not mapped.
+             */
             sector?: string | null;
-            /** Industry */
+            /**
+             * Industry
+             * @description The class label (data/reference/sector_industry.py), the same in every response; null when not mapped.
+             */
             industry?: string | null;
             /**
              * Instrument Type
@@ -5038,7 +6609,10 @@ export interface components {
             ticker: string;
             /** Name */
             name: string;
-            /** Sector */
+            /**
+             * Sector
+             * @description The class label (data/reference/sector_industry.py), the same in every response; null when not mapped.
+             */
             sector?: string | null;
             /** Exchange */
             exchange: string;
@@ -5073,27 +6647,57 @@ export interface components {
             as_of: string;
             /** Total Value Cad */
             total_value_cad: number;
-            /** Stock Share */
+            /**
+             * Stock Share
+             * @description Fraction: 0.25 means 25% of the portfolio.
+             */
             stock_share: number;
-            /** Parked */
+            /**
+             * Parked
+             * @description Fraction: 0.25 means 25% of the portfolio.
+             */
             parked: number;
-            /** Expected Return */
+            /**
+             * Expected Return
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             expected_return: number;
-            /** Volatility */
+            /**
+             * Volatility
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             volatility: number;
-            /** Tracking Volatility */
+            /**
+             * Tracking Volatility
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             tracking_volatility: number;
-            /** Benchmark Return */
+            /**
+             * Benchmark Return
+             * @description By account: the benchmark fund's return. Fraction: 0.0678 means 6.78%.
+             */
             benchmark_return: {
                 [key: string]: number;
             };
-            /** Certain Part */
+            /**
+             * Certain Part
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             certain_part: number;
-            /** View Part */
+            /**
+             * View Part
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             view_part: number;
-            /** Risk Aversion */
+            /**
+             * Risk Aversion
+             * @description Ratio, not a percent.
+             */
             risk_aversion: number;
-            /** Benchmark Vol */
+            /**
+             * Benchmark Vol
+             * @description Fraction: 0.0678 means 6.78%.
+             */
             benchmark_vol: number;
             /** Dropped */
             dropped: string[];
@@ -5118,6 +6722,44 @@ export interface components {
             /** Warnings */
             warnings: string[];
         };
+        /**
+         * TaxAgentOutput
+         * @description The retired Tax Strategist, on older runs.
+         */
+        TaxAgentOutput: {
+            /**
+             * Agent Pass
+             * @enum {string}
+             */
+            agent_pass: "pass1" | "pass2" | "synthesis";
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "completed" | "failed" | "timeout" | "skipped";
+            /** Recommendation */
+            recommendation: ("bullish" | "somewhat_bullish" | "neutral" | "somewhat_bearish" | "bearish") | null;
+            /** Confidence */
+            confidence: number | null;
+            /** Analysis Confidence */
+            analysis_confidence: ("high" | "medium" | "low" | "insufficient") | null;
+            /** Narrative */
+            narrative: string | null;
+            /** Latency Ms */
+            latency_ms?: number | null;
+            /** Tokens Used */
+            tokens_used?: number | null;
+            /** Model Used */
+            model_used?: string | null;
+            /** Prompt Version */
+            prompt_version?: string | null;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            agent_name: "tax";
+            structured_output: components["schemas"]["TaxOutput"] | null;
+        };
         /** TaxEstimateResponse */
         TaxEstimateResponse: {
             /** Capital Gains Tax Cad */
@@ -5134,6 +6776,38 @@ export interface components {
             not_estimated: string[];
             /** Note */
             note: string;
+        };
+        /**
+         * TaxOutput
+         * @description Retired 2026-10-11; on older runs only.
+         */
+        TaxOutput: {
+            /**
+             * Caveats
+             * @default []
+             */
+            caveats: string[];
+            /**
+             * Key Factors
+             * @description Absent on runs made after the key-factor cut.
+             */
+            key_factors?: {
+                [key: string]: unknown;
+            }[] | null;
+            /** Narrative */
+            narrative?: string | null;
+            /** Groundedness Score */
+            groundedness_score?: number | null;
+            /** Thesis Summary */
+            thesis_summary?: string | null;
+            /** Strongest Signal */
+            strongest_signal?: string | null;
+            /** Tax Profile */
+            tax_profile?: {
+                [key: string]: unknown;
+            } | null;
+        } & {
+            [key: string]: unknown;
         };
         /** TimeSensitiveCashNeed */
         TimeSensitiveCashNeed: {
@@ -5187,6 +6861,7 @@ export interface components {
             /**
              * Transaction Date
              * Format: date-time
+             * @description A day as the owner wrote it, with no time zone.
              */
             transaction_date: string;
             /** Amount Cad */
@@ -5266,6 +6941,7 @@ export interface components {
             /**
              * Transaction Date
              * Format: date-time
+             * @description A day as the owner wrote it, with no time zone.
              */
             transaction_date: string;
             /** Amount Cad */
@@ -5313,7 +6989,10 @@ export interface components {
             cost_basis_at_sell: number | null;
             /** Realized Gain Loss */
             realized_gain_loss: number | null;
-            /** Realized Gain Loss Pct */
+            /**
+             * Realized Gain Loss Pct
+             * @description Whole percent: 9.11 means 9.11%.
+             */
             realized_gain_loss_pct: number | null;
             /** Realized Gain Loss Cad */
             realized_gain_loss_cad: number | null;
@@ -5331,6 +7010,20 @@ export interface components {
              */
             created_at: string;
         };
+        /**
+         * UnfilledLineResponse
+         * @description Room of a registered account the run leaves open while Trading still holds something (`services/target_book.Unfilled`).
+         */
+        UnfilledLineResponse: {
+            /** Account */
+            account: string;
+            /** Left Cad */
+            left_cad: number;
+            /** Reasons */
+            reasons: string[];
+        } & {
+            [key: string]: unknown;
+        };
         /** UserListResponse */
         UserListResponse: {
             /** Data */
@@ -5341,7 +7034,10 @@ export interface components {
         UserProfileCreate: {
             /** Province */
             province?: "ON" | null;
-            /** Marginal Tax Rate Override Pct */
+            /**
+             * Marginal Tax Rate Override Pct
+             * @description Whole percent: 9.11 means 9.11%.
+             */
             marginal_tax_rate_override_pct?: number | null;
             /** Income Annual */
             income_annual?: number | null;
@@ -5355,9 +7051,15 @@ export interface components {
             rrsp_room_as_of?: string | null;
             /** Time Sensitive Cash Needs */
             time_sensitive_cash_needs?: components["schemas"]["TimeSensitiveCashNeed"][] | null;
-            /** Max Position Size Pct */
+            /**
+             * Max Position Size Pct
+             * @description Whole percent: 9.11 means 9.11%.
+             */
             max_position_size_pct?: number | null;
-            /** Max Sector Weight Pct */
+            /**
+             * Max Sector Weight Pct
+             * @description Whole percent: 9.11 means 9.11%.
+             */
             max_sector_weight_pct?: number | null;
             /** Rrsp Annual Contribution Cap */
             rrsp_annual_contribution_cap?: number | null;
@@ -5379,7 +7081,10 @@ export interface components {
         UserProfileResponse: {
             /** Province */
             province?: "ON" | null;
-            /** Marginal Tax Rate Override Pct */
+            /**
+             * Marginal Tax Rate Override Pct
+             * @description Whole percent: 9.11 means 9.11%.
+             */
             marginal_tax_rate_override_pct?: number | null;
             /** Income Annual */
             income_annual?: number | null;
@@ -5393,9 +7098,15 @@ export interface components {
             rrsp_room_as_of?: string | null;
             /** Time Sensitive Cash Needs */
             time_sensitive_cash_needs?: components["schemas"]["TimeSensitiveCashNeed"][] | null;
-            /** Max Position Size Pct */
+            /**
+             * Max Position Size Pct
+             * @description Whole percent: 9.11 means 9.11%.
+             */
             max_position_size_pct?: number | null;
-            /** Max Sector Weight Pct */
+            /**
+             * Max Sector Weight Pct
+             * @description Whole percent: 9.11 means 9.11%.
+             */
             max_sector_weight_pct?: number | null;
             /** Rrsp Annual Contribution Cap */
             rrsp_annual_contribution_cap?: number | null;
@@ -5419,7 +7130,10 @@ export interface components {
         UserProfileUpdate: {
             /** Province */
             province?: "ON" | null;
-            /** Marginal Tax Rate Override Pct */
+            /**
+             * Marginal Tax Rate Override Pct
+             * @description Whole percent: 9.11 means 9.11%.
+             */
             marginal_tax_rate_override_pct?: number | null;
             /** Income Annual */
             income_annual?: number | null;
@@ -5433,9 +7147,15 @@ export interface components {
             rrsp_room_as_of?: string | null;
             /** Time Sensitive Cash Needs */
             time_sensitive_cash_needs?: components["schemas"]["TimeSensitiveCashNeed"][] | null;
-            /** Max Position Size Pct */
+            /**
+             * Max Position Size Pct
+             * @description Whole percent: 9.11 means 9.11%.
+             */
             max_position_size_pct?: number | null;
-            /** Max Sector Weight Pct */
+            /**
+             * Max Sector Weight Pct
+             * @description Whole percent: 9.11 means 9.11%.
+             */
             max_sector_weight_pct?: number | null;
             /** Rrsp Annual Contribution Cap */
             rrsp_annual_contribution_cap?: number | null;
@@ -5471,11 +7191,11 @@ export interface components {
             /** Ticker */
             ticker: string;
             /** Outlook */
-            outlook: string | null;
+            outlook: ("bullish" | "somewhat_bullish" | "neutral" | "somewhat_bearish" | "bearish") | null;
             /** Confidence */
             confidence: number | null;
             /** Tier */
-            tier: string | null;
+            tier: ("strong_outperform" | "outperform" | "market_perform" | "underperform" | "strong_underperform" | "moderate" | "low" | "minimal") | null;
             /** Reason Text */
             reason_text: string;
             /** Dissent Text */
@@ -5489,7 +7209,7 @@ export interface components {
             /** Flags */
             flags: string[];
             /** Status */
-            status: string | null;
+            status: ("usable" | "excluded") | null;
             /** Exclusions */
             exclusions: string[];
         };
@@ -5606,12 +7326,18 @@ export interface components {
         };
         /** WhyLineResponse */
         WhyLineResponse: {
-            /** Initiated By */
-            initiated_by: string;
+            /**
+             * Initiated By
+             * @enum {string}
+             */
+            initiated_by: "owner" | "system";
             /** Reason Code */
-            reason_code: string | null;
-            /** Kind */
-            kind: string;
+            reason_code: ("life_need" | "rebalancing" | "opinion" | "other") | null;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "buy" | "sell" | "dividend" | "drip" | "transfer_in" | "transfer_out" | "contribution" | "withdrawal" | "fee" | "conversion" | "opening_balance" | "interest" | "adjustment_in" | "adjustment_out";
             /** Count */
             count: number;
             /** Amount Cad */

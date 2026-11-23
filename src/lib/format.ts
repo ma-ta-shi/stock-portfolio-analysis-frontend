@@ -106,13 +106,14 @@ export function formatRelativeTime(isoString: string, now: number = Date.now()):
  * that calendar day — `new Date('2026-03-24')` is UTC midnight, which is the *previous*
  * day anywhere in Canada. Always use this instead of `new Date(apiString)` for display.
  *
- * A date-time with no UTC offset ("2026-11-21T13:49:10") is read as UTC: the backend stores and sends UTC without an
- * offset, and `new Date` would read it as local time, five hours off in Toronto. A string that has an offset ("Z" or
- * "+05:00") is left alone, so this stays correct once the backend sends the offset.
+ * A date-time has one of two meanings, and the API says which by its ending. With an offset ("2026-11-21T13:49:10Z", the form
+ * of every system time) it is an instant and is read as one. With none ("2026-10-22T00:00:00": a transaction date, a room
+ * "as of" date, a first buy) it is a day the owner wrote and is read as that day in local time, so a sale on the 22nd stays the
+ * 22nd. Reading it as UTC would show the 21st in Toronto.
  */
 export function parseDate(value: string): Date {
   if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return new Date(`${value}T00:00:00`)
-  return new Date(/^\d{4}-\d{2}-\d{2}T[\d:.]+$/.test(value) ? `${value}Z` : value)
+  return new Date(value) // an offset makes it an instant; none makes it the owner's day, in local time
 }
 
 /** "Mar 24, 2026" by default; pass `options` for other shapes (e.g. { month: 'short', day: 'numeric' }). */
