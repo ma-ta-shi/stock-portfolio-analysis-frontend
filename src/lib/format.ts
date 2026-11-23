@@ -90,7 +90,7 @@ export function formatNumber(value: Num, decimals = 2): string {
 
 /** "5m ago", "3h ago", "2d ago". Future timestamps (clock skew) read as "just now". */
 export function formatRelativeTime(isoString: string, now: number = Date.now()): string {
-  const time = new Date(isoString).getTime()
+  const time = parseDate(isoString).getTime()
   if (Number.isNaN(time)) return EMPTY
   const diff = now - time
   if (diff < 60_000) return 'just now'
@@ -105,9 +105,14 @@ export function formatRelativeTime(isoString: string, now: number = Date.now()):
  * Parse an API date string. Date-only strings ("2026-03-24") become local midnight of
  * that calendar day — `new Date('2026-03-24')` is UTC midnight, which is the *previous*
  * day anywhere in Canada. Always use this instead of `new Date(apiString)` for display.
+ *
+ * A date-time with no UTC offset ("2026-11-21T13:49:10") is read as UTC: the backend stores and sends UTC without an
+ * offset, and `new Date` would read it as local time, five hours off in Toronto. A string that has an offset ("Z" or
+ * "+05:00") is left alone, so this stays correct once the backend sends the offset.
  */
 export function parseDate(value: string): Date {
-  return /^\d{4}-\d{2}-\d{2}$/.test(value) ? new Date(`${value}T00:00:00`) : new Date(value)
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return new Date(`${value}T00:00:00`)
+  return new Date(/^\d{4}-\d{2}-\d{2}T[\d:.]+$/.test(value) ? `${value}Z` : value)
 }
 
 /** "Mar 24, 2026" by default; pass `options` for other shapes (e.g. { month: 'short', day: 'numeric' }). */

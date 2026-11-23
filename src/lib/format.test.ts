@@ -125,6 +125,21 @@ describe('formatRelativeTime', () => {
   it('handles invalid input', () => {
     expect(formatRelativeTime('not a date')).toBe('—')
   })
+  it('reads a date-time with no offset as UTC, as the backend sends it', () => {
+    // 11:30 UTC, 30 minutes before "now"; read as Toronto local time it would be 4.5 hours in the future
+    expect(formatRelativeTime('2026-03-26T11:30:00')).toBe('30m ago')
+    expect(formatRelativeTime('2026-03-26T08:59:00.786604')).toBe('3h ago')
+  })
+})
+
+describe('parseDate', () => {
+  it('reads a date-time with no offset as UTC and leaves one with an offset alone', () => {
+    const utc = Date.UTC(2026, 10, 21, 13, 49, 10)
+    expect(parseDate('2026-11-21T13:49:10').getTime()).toBe(utc)
+    expect(parseDate('2026-11-21T13:49:10Z').getTime()).toBe(utc)
+    expect(parseDate('2026-11-21T08:49:10-05:00').getTime()).toBe(utc)
+    expect(parseDate('2026-11-21T13:49:10.123456').getTime()).toBe(utc + 123)
+  })
 })
 
 describe('formatDate', () => {
