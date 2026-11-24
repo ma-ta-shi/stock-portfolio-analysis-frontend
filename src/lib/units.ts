@@ -2,24 +2,25 @@
  * Units of the backend's percentage-like numbers.
  *
  * The API mixes two scales: some fields are whole percents (`unrealised_pct: 9.11` means 9.11%), others are fractions
- * (`expected_total_return: 0.0678` means 6.78%). The backend states each field's unit in its description ("Whole percent:
- * 9.11 means 9.11%." and so on), so the API reference (backend/docs/api-reference.md) is where a unit is documented; this
- * table is only the typed guard that makes the app convert correctly. The app's formatters (`formatPct`, `formatPercent`)
- * take fractions, so a whole percent passed straight in would print 911%.
+ * (`expected_total_return: 0.0678` means 6.78%), and a few are percentage points. The backend declares each field's unit once
+ * (`backend/src/data/reference/units.py`), states it in the field's description ("Whole percent: 9.11 means 9.11%.") and marks
+ * it `x-unit` in the OpenAPI; `npm run gen:api` turns the markers into `src/types/units.gen.ts`, which this file imports.
+ * Nothing here is kept by hand. The app's formatters (`formatPct`, `formatPercent`) take fractions, so a whole percent passed
+ * straight in would print 911%.
  *
  * Rule: convert once, at the boundary. A hook's view-model mapper reads every ratio-like field through
- * `asFraction('Schema.field', value)`, so components only ever see fractions and keep `formatPct`. The key is checked
- * by the compiler: a field that is not in `UNITS` as `'percent'` or `'fraction'` cannot be passed, so the first screen
- * that uses a field classifies it here from the API reference. A name cannot be trusted (the optimizer's matrix, predicted
- * lines and target book carry fractions under names without `_pct`, and `tax_rate_pct` / `noise_margin_pts` beside them
- * are points), so the description is the source.
+ * `asFraction('Schema.field', value)`, so components only ever see fractions and keep `formatPct`. The key is checked by the
+ * compiler: a field that is not a `'percent'` or `'fraction'` in the generated table cannot be passed. A name cannot be
+ * trusted (the optimizer's matrix, predicted lines and target book carry fractions under names without `_pct`, and
+ * `tax_rate_pct` / `noise_margin_pts` beside them are points), which is why the unit comes from the backend, not the name.
  *
- * The table is also checked against the generated API types at compile time: every field NAMED `_pct` must be listed,
- * and a key that is not a field of the API (a typo, or a field the backend removed) is an error.
+ * The table is also checked against the generated API types at compile time: every field NAMED `_pct` must be in it, and a
+ * key that is not a field of the API is an error.
  */
 import type { components } from '@/types/openapi.gen'
+import { UNIT_BY_FIELD } from '@/types/units.gen'
 
-export type Unit = 'percent' | 'fraction' | 'points' | 'unverified'
+export type Unit = 'percent' | 'fraction' | 'points'
 
 type Schemas = components['schemas']
 /** Every `Schema.field` of the generated API types. */
@@ -28,61 +29,7 @@ type FieldKey = { [S in keyof Schemas & string]: `${S}.${keyof Schemas[S] & stri
 type PctFieldKey = Extract<FieldKey, `${string}_pct`>
 
 
-export const UNITS = {
-  // Typed schema fields ending in `_pct`. All whole percents.
-  'PositionLineResponse.unrealised_pct': 'percent', // 9.11 for 878.8 gain on 9643.2 cost
-  'PositionLineResponse.weight_pct': 'percent', // 13.62
-  'RaiseOptionResponse.weight_pct': 'percent', // 27.38
-  'AnalysisRunSummary.expected_return_pct': 'percent', // 6.78, equals the band's expected_total_return_pct
-  'PredictionResponse.predicted_return_pct': 'percent', // 6.99
-  'PredictionCheckpointResponse.actual_total_return_pct': 'percent', // code: stock_total * 100
-  'PredictionCheckpointResponse.benchmark_total_return_pct': 'percent', // code: market_total * 100
-  'PredictionCheckpointResponse.excess_return_pct': 'percent', // code: (stock - market) * 100
-  'TransactionResponse.realized_gain_loss_pct': 'percent', // code: gain / cost removed * 100
-  'DividendEventResponse.withholding_rate_pct': 'percent', // code: "the percent withheld at source" (0 for a Canadian listing)
-  'MatrixCellResponse.tax_rate_pct': 'percent', // 6.39
-  'PredictedLinesResponse.tax_rate_pct': 'percent',
-  'PortfolioAccountResponse.conversion_cost_pct': 'percent', // 1.5
-  'PortfolioAccountUpdate.conversion_cost_pct': 'percent',
-  'BenchmarkLineResponse.return_pct': 'percent', // 6.54
-  'BenchmarkLineResponse.break_even_conversion_pct': 'percent', // 1.11
-  'UserProfileResponse.max_position_size_pct': 'percent', // 10
-  'UserProfileCreate.max_position_size_pct': 'percent',
-  'UserProfileUpdate.max_position_size_pct': 'percent',
-  'UserProfileResponse.max_sector_weight_pct': 'percent', // 30
-  'UserProfileCreate.max_sector_weight_pct': 'percent',
-  'UserProfileUpdate.max_sector_weight_pct': 'percent',
-  'BaselineOutcomeResponse.total_return_pct': 'percent', // code: (close / close - 1) * 100; no rows stored yet
-  'BaselineOutcomeResponse.market_return_pct': 'percent',
-  'BaselineOutcomeResponse.required_pct': 'percent',
-  'BaselineOutcomeResponse.flat_pct': 'percent',
-  'BaselineOutcomeResponse.rf_2y_pct': 'percent', // code: rf_pct / 100 is the fraction, so rf_pct is a percent
-  // A whole percent: it is used directly as the marginal rate, and the computed rate is a whole percent (tax_metrics.py).
-  'UserProfileResponse.marginal_tax_rate_override_pct': 'percent',
-  'UserProfileCreate.marginal_tax_rate_override_pct': 'percent',
-  'UserProfileUpdate.marginal_tax_rate_override_pct': 'percent',
-
-  // Fractions without a `_pct` suffix (not scanned by the test; listed because they sit beside percent fields).
-  'InstrumentViewResponse.expected_total_return': 'fraction', // 0.0678
-  'InstrumentViewResponse.market_reference': 'fraction', // 0.0757
-  'InstrumentViewResponse.valuation_edge': 'fraction', // -0.0167
-  'InstrumentViewResponse.sigma': 'fraction', // 0.189
-  'InstrumentViewResponse.view_points': 'points', // 1.06, percentage points
-  'InstrumentViewResponse.view_noise_points': 'points', // 1.16
-  'PerformanceResponse.return_period': 'fraction', // reports: -0.0493
-  'ExposureResponse.cash': 'fraction', // 0.0588 of total value
-  'ExposureNameResponse.total': 'fraction', // 0.136 for RY.TO
-
-  // The price band in the analysis result is typed (`PriceBand`).
-  'PriceBand.expected_total_return_pct': 'percent', // 6.78
-  'PriceBand.stock_baseline_pct': 'percent', // 5.72
-  'PriceBand.market_reference_pct': 'percent', // 7.57
-  'PriceVsCurrent.low': 'percent', // -20.63
-  'PriceVsCurrent.median': 'percent',
-  'PriceVsCurrent.high': 'percent',
-  'PriceVsCurrent.target_price': 'percent', // 4.03
-  'PriceBand.view_pts': 'points', // 1.06
-} as const satisfies Record<PctFieldKey, Unit> & Partial<Record<FieldKey, Unit>>
+export const UNITS = UNIT_BY_FIELD satisfies Record<PctFieldKey, Unit> & Partial<Record<FieldKey, Unit>>
 
 /** The keys whose value is a ratio the app can show as a percent: a whole percent or a fraction. */
 export type RatioKey = {
