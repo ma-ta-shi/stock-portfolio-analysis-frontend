@@ -338,7 +338,7 @@ export interface paths {
         };
         /**
          * List a portfolio's holdings
-         * @description Stored fields only; live price, outlook and yield come from other routes. Filter by `account_type`; closed positions are left out unless `include_closed` is true. 404 `PORTFOLIO_NOT_FOUND`.
+         * @description The stored fields of each holding. Filter by `account_type`; closed positions are left out unless `include_closed` is true. `include=snapshot` attaches each stock's price, changes and latest call, and `include=position` its position at the latest recorded price, so a row needs no further calls; without them the rows are the stored fields only. 404 `PORTFOLIO_NOT_FOUND`.
          */
         get: operations["portfolios_list_holdings"];
         put?: never;
@@ -378,7 +378,7 @@ export interface paths {
         };
         /**
          * List a portfolio's transactions
-         * @description Newest first; filter by `account_type` or `holding_id`. There is no write route: the event processor writes transactions, with a preview first (`POST .../events` and `.../moves`). 404 `PORTFOLIO_NOT_FOUND`.
+         * @description Newest first; filter by `account_type`, `holding_id`, `type`, `ticker` and a `from` to `to` range of days. There is no write route: the event processor writes transactions, with a preview first (`POST .../events` and `.../moves`). 404 `PORTFOLIO_NOT_FOUND` or `STOCK_NOT_FOUND` (an unknown `ticker`); 422 `INVALID_DATE_RANGE` when `from` is after `to`.
          */
         get: operations["portfolios_list_transactions"];
         put?: never;
@@ -418,7 +418,7 @@ export interface paths {
         };
         /**
          * List a person's watchlist
-         * @description `user_id` is required; removed entries are left out unless `include_inactive` is true.
+         * @description `user_id` is required; removed entries are left out unless `include_inactive` is true. `include=snapshot` attaches each stock's price, changes and latest call, so a row needs no further calls.
          */
         get: operations["watchlist_list_watchlist"];
         put?: never;
@@ -661,6 +661,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/portfolios/{portfolio_id}/value-history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read how a portfolio's value changed over time
+         * @description The value of the portfolio (or one account) on each day from `from` to `to` that has a recorded close of something it held, oldest first: positions at
+         *     the latest close plus cash, with the cost base, in Canadian dollars. Each day is the same figure `positions` and the reports give for it. A day with
+         *     no recorded close for a holding carries that holding at cost and names it in `unpriced`; it is never counted as zero. Prices are the recorded
+         *     closes (`scripts/record_prices.py`, scheduled as the `prices` job), so a line is only as recent as the last recorded day. A US stock needs the Bank of
+         *     Canada's rates, fetched in one call. 404 `PORTFOLIO_NOT_FOUND`; 422 `INVALID_DATE_RANGE` when `from` is after `to` or the range is over 400 days.
+         */
+        get: operations["ledger_get_value_history"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/portfolios/{portfolio_id}/room": {
         parameters: {
             query?: never;
@@ -755,7 +779,7 @@ export interface paths {
         /**
          * Report a portfolio's profit, costs and taxes
          * @description What the portfolio's actions earned and cost over a period, for the whole portfolio, each account and each stock,
-         *     with the actions one by one. An empty body is the current tax year to today. 404 `PORTFOLIO_NOT_FOUND`.
+         *     with the actions one by one. An empty body is the current tax year to today. The benchmark comparison reads the recorded closes of the benchmark fund (price only, no distributions): until the fund is seeded and its prices recorded, `fund` is unavailable and `warnings` says what to run. 404 `PORTFOLIO_NOT_FOUND`.
          */
         post: operations["plan_report"];
         delete?: never;
@@ -905,6 +929,74 @@ export interface paths {
          *     Nothing is sold, invested or recorded; saved as an inquiry only with `store`. Refused with 403 `AGENT_PORTFOLIO_READ_ONLY` for the agent portfolio when `store` is set. 422 `EMPTY_PORTFOLIO`, `NO_BENCHMARK_HISTORY`, `NO_BENCHMARK_LINE` or `TARGET_BOOK_FAILED` when the target book cannot be built.
          */
         post: operations["optimizer_ask"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/activity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List what changed for a person
+         * @description Events since `since`, newest first: an outlook that changed on a stock the person holds or watches (`outlook_change`), a new proposal list for one
+         *     of their portfolios (`portfolio_optimization`) and a prediction checkpoint that resolved on one of those stocks (`prediction_result`). After them,
+         *     the states that stay until dealt with and that `since` never hides: a dividend whose ex-date has passed and is not confirmed (`dividend_waiting`)
+         *     and a position or cash balance not confirmed against the broker for over 45 days (`confirmation_overdue`). Each item has the route of the app it
+         *     points to. Read only, and nothing is marked read: the app does not store that. 404 `USER_NOT_FOUND`.
+         */
+        get: operations["activity_list_activity"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/macro": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read the macro snapshot from the newest stored data bundle
+         * @description The Bank of Canada rate and its 90-day change, the Canadian bond yields and curve shape, Canadian inflation and its trend, the unemployment change and
+         *     the CAD/USD rate, from the newest completed analysis (of any stock) that kept a data bundle, with that run and day. Each figure has the age of its
+         *     latest observation; one the sources did not give is null. As old as that analysis (up to a week); nothing is fetched. With no bundle on record
+         *     `run_id` and every figure are null.
+         */
+        get: operations["macro_get_macro_snapshot"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/order-settings/schema": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read the order settings a portfolio may carry
+         * @description Every key of `portfolios.settings` the optimizer reads, with its default and allowed range, so a screen can show and check them before
+         *     the portfolio update (the settings field when a portfolio is updated). The same table the update validates against (`data/precompute/order_settings.py`), so the two cannot disagree.
+         */
+        get: operations["optimizer_get_order_settings_schema"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1198,6 +1290,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/stocks/snapshots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read a row of a screen for each of up to 100 stocks
+         * @description For each stock: the newest recorded price and its day, the change over a day, a week and a month, the latest completed analysis (outlook, confidence,
+         *     tier, expected return and range, income, the Bull and Bear disagreement, the outlook before it) and whether that analysis can be used or why not
+         *     (`status`, `exclusions`). One call replaces the several a holdings or watchlist row needed. A stock with no recorded price or no analysis answers with
+         *     those parts null, not an error. 404 `STOCK_NOT_FOUND` naming any id that is not a stock.
+         */
+        get: operations["stocks_get_snapshots"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/stocks/{stock_id}": {
         parameters: {
             query?: never;
@@ -1254,6 +1369,29 @@ export interface paths {
          *     fix). A stock with no usable analysis, or one the pipeline cannot analyse, answers 200 with `status: excluded`. 404 `STOCK_NOT_FOUND`.
          */
         get: operations["stocks_get_instrument_view"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/stocks/{stock_id}/fundamentals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read a stock's fundamentals from its newest stored data bundle
+         * @description The valuation, growth, profitability, balance sheet, risk, price and dividend figures the newest completed analysis that kept a data bundle was
+         *     given, with that run and day and when the data was gathered. Nothing is fetched from a provider: the figures are as old as that analysis (up to a
+         *     week). A stock with no bundle on record answers 200 with `run_id` and every group null. A figure that does not exist for the company is null,
+         *     never zero. 404 `STOCK_NOT_FOUND`.
+         */
+        get: operations["stocks_get_fundamentals"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1581,6 +1719,50 @@ export interface components {
             is_reversal: boolean;
         };
         /**
+         * ActivityItemResponse
+         * @description One thing worth a look. The first three are events (`happened_at` says when, and `since` filters them); the last two are states that stay
+         *     until dealt with (`happened_at` is null for a confirmation never made, and `since` does not hide them).
+         */
+        ActivityItemResponse: {
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "outlook_change" | "portfolio_optimization" | "prediction_result" | "dividend_waiting" | "confirmation_overdue";
+            /** Title */
+            title: string;
+            /** Message */
+            message: string;
+            /**
+             * Ticker
+             * @description The stock it is about, when it is about one.
+             */
+            ticker?: string | null;
+            /**
+             * Portfolio Id
+             * @description The portfolio it is about, when it is about one.
+             */
+            portfolio_id?: string | null;
+            /**
+             * Happened At
+             * @description When it happened; null for a state with no moment (a confirmation never made).
+             */
+            happened_at?: string | null;
+            /**
+             * Action Url
+             * @description A route of the app to open: `/analysis/{run id}`, `/portfolio` or `/feedback`.
+             */
+            action_url?: string | null;
+            /** @description The figures behind it, by type (outlooks, the interval and returns, the amount, the ages). */
+            meta: components["schemas"]["StoredRecord"];
+        };
+        /** ActivityListResponse */
+        ActivityListResponse: {
+            /** Data */
+            data: components["schemas"]["ActivityItemResponse"][];
+            meta: components["schemas"]["PaginationMeta"];
+        };
+        /**
          * AdvocateAgentOutput
          * @description The Bull or Bear Advocate.
          */
@@ -1689,6 +1871,68 @@ export interface components {
             expected_return_at_time: number | null;
             /** Reason Not Chosen */
             reason_not_chosen: string;
+        };
+        /**
+         * AnalysisCallResponse
+         * @description The newest completed `medium_term` analysis of the stock and what its price band says at the live price.
+         */
+        AnalysisCallResponse: {
+            /**
+             * Run Id
+             * Format: uuid
+             */
+            run_id: string;
+            /**
+             * As Of
+             * @description The day of the analysis.
+             */
+            as_of?: string | null;
+            /** Outlook */
+            outlook?: ("bullish" | "somewhat_bullish" | "neutral" | "somewhat_bearish" | "bearish") | null;
+            /** Confidence */
+            confidence?: number | null;
+            /** Tier */
+            tier?: ("strong_outperform" | "outperform" | "market_perform" | "underperform" | "strong_underperform" | "moderate" | "low" | "minimal") | null;
+            /**
+             * Expected Return
+             * @description Over the band's horizon, in the quote currency; null when the band cannot be used. Fraction: 0.0678 means 6.78%.
+             */
+            expected_return?: number | null;
+            /**
+             * Target Price
+             * @description In the quote currency.
+             */
+            target_price?: number | null;
+            /**
+             * Range Low
+             * @description The band's 10th percentile price, in the quote currency.
+             */
+            range_low?: number | null;
+            /**
+             * Range High
+             * @description The band's 90th percentile price, in the quote currency.
+             */
+            range_high?: number | null;
+            /**
+             * Income Per Share
+             * @description Expected dividends over the band's horizon, in the quote currency.
+             */
+            income_per_share?: number | null;
+            /**
+             * Disagreement Class
+             * @description How far the Bull and Bear advocates disagreed; null when the run did not record it.
+             */
+            disagreement_class?: ("consensus" | "mild_dissent" | "split_decision" | "high_conflict") | null;
+            /**
+             * Previous Outlook
+             * @description The outlook of the analysis before this one; null when this is the first.
+             */
+            previous_outlook?: ("bullish" | "somewhat_bullish" | "neutral" | "somewhat_bearish" | "bearish") | null;
+            /**
+             * Outlook Changed
+             * @description Whether the outlook differs from the previous one; null when there is no previous analysis.
+             */
+            outlook_changed?: boolean | null;
         };
         /** AnalysisCreate */
         AnalysisCreate: {
@@ -1931,6 +2175,36 @@ export interface components {
              * @default false
              */
             store: boolean;
+        };
+        /** BalanceSheetFacts */
+        BalanceSheetFacts: {
+            /**
+             * Debt To Equity
+             * @description Ratio, not a percent.
+             */
+            debt_to_equity?: number | null;
+            /**
+             * Current Ratio
+             * @description Ratio, not a percent.
+             */
+            current_ratio?: number | null;
+            /**
+             * Interest Coverage
+             * @description Operating income divided by interest expense. Ratio, not a percent.
+             */
+            interest_coverage?: number | null;
+            /**
+             * Free Cash Flow
+             * @description Over the latest year, in the stock's reporting currency.
+             */
+            free_cash_flow?: number | null;
+            /**
+             * Cash Position
+             * @description Cash and equivalents, in the stock's reporting currency.
+             */
+            cash_position?: number | null;
+        } & {
+            [key: string]: unknown;
         };
         /** BaselineFitListResponse */
         BaselineFitListResponse: {
@@ -3138,6 +3412,21 @@ export interface components {
              */
             updated_at: string;
         };
+        /** DividendFacts */
+        DividendFacts: {
+            /**
+             * Dividend Yield
+             * @description Fraction: 0.0678 means 6.78%.
+             */
+            dividend_yield?: number | null;
+            /**
+             * Payout Ratio
+             * @description Dividends as a share of earnings. Fraction: 0.0678 means 6.78%.
+             */
+            payout_ratio?: number | null;
+        } & {
+            [key: string]: unknown;
+        };
         /** DriftViewResponse */
         DriftViewResponse: {
             /** Account */
@@ -3821,6 +4110,31 @@ export interface components {
             /** Difference */
             difference: number | null;
         };
+        /** GrowthFacts */
+        GrowthFacts: {
+            /**
+             * Revenue Growth Yoy
+             * @description Revenue growth, the latest quarter against the same quarter a year before. Fraction: 0.0678 means 6.78%.
+             */
+            revenue_growth_yoy?: number | null;
+            /**
+             * Revenue Growth Annual
+             * @description Revenue growth over the latest financial year. Fraction: 0.0678 means 6.78%.
+             */
+            revenue_growth_annual?: number | null;
+            /**
+             * Revenue Growth 3Yr Cagr
+             * @description Compound annual revenue growth over three years. Fraction: 0.0678 means 6.78%.
+             */
+            revenue_growth_3yr_cagr?: number | null;
+            /**
+             * Eps Growth Yoy
+             * @description Earnings per share growth, year over year. Fraction: 0.0678 means 6.78%.
+             */
+            eps_growth_yoy?: number | null;
+        } & {
+            [key: string]: unknown;
+        };
         /**
          * HarvestLineResponse
          * @description A Trading loss not sold in this run, and the tax selling it would save (`services/target_book.Harvest`).
@@ -3912,6 +4226,26 @@ export interface components {
             total_dividends_received: number;
             /** Total Fees Paid */
             total_fees_paid: number;
+            /**
+             * Total Shares Bought
+             * @description Shares bought on the market (buys and reinvestments), kept after the position closes. Transfers and opening balances are not counted.
+             */
+            total_shares_bought: number;
+            /**
+             * Total Shares Sold
+             * @description Shares sold on the market, kept after the position closes.
+             */
+            total_shares_sold: number;
+            /**
+             * Average Buy Price
+             * @description Average price paid per share bought, in the stock's currency, fees left out; null when none was bought.
+             */
+            average_buy_price: number | null;
+            /**
+             * Average Sell Price
+             * @description Average price received per share sold, in the stock's currency, fees left out; null when none was sold.
+             */
+            average_sell_price: number | null;
             /** First Buy Date */
             first_buy_date: string | null;
             /** Last Transaction Date */
@@ -3928,6 +4262,10 @@ export interface components {
             last_updated: string;
             /** Notes */
             notes: string | null;
+            /** @description The stock's price, changes and latest call; present only when `include=snapshot` was asked for. */
+            snapshot?: components["schemas"]["StockSnapshotResponse"] | null;
+            /** @description The holding at the latest recorded price; present only when `include=position` was asked for, and null for a closed holding or one with no priced position. */
+            position?: components["schemas"]["PositionLineResponse"] | null;
         };
         /**
          * InputMention
@@ -4115,6 +4453,21 @@ export interface components {
              * @description The stock's edge over its required return, over the band's horizon; 0 when it is not valued. Fraction: 0.0678 means 6.78%.
              */
             valuation_edge?: number | null;
+            /**
+             * Range Low
+             * @description The band's 10th percentile price at the live price, in the quote currency.
+             */
+            range_low?: number | null;
+            /**
+             * Range High
+             * @description The band's 90th percentile price at the live price, in the quote currency.
+             */
+            range_high?: number | null;
+            /**
+             * Next Earnings Date
+             * @description The next earnings date the analysis knew of; null when it knew of none or there is no analysis. A date before today means earnings were reported since (`earnings_since` is then in `exclusions`).
+             */
+            next_earnings_date?: string | null;
             /** Usable */
             usable: boolean;
         };
@@ -4188,6 +4541,98 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+        };
+        /**
+         * MacroSnapshotResponse
+         * @description The macro picture in the newest stored data bundle of any stock. Each figure has the age of its latest observation, in days; null where the
+         *     sources gave none. With no bundle on record `run_id` is null and every figure is null.
+         */
+        MacroSnapshotResponse: {
+            /**
+             * Run Id
+             * @description The analysis whose data bundle these figures come from.
+             */
+            run_id?: string | null;
+            /**
+             * Run Day
+             * @description The owner's day of that analysis.
+             */
+            run_day?: string | null;
+            /**
+             * Data Vintage
+             * @description When the bundle's data was gathered.
+             */
+            data_vintage?: string | null;
+            /**
+             * Boc Rate
+             * @description The Bank of Canada overnight rate. Whole percent: 9.11 means 9.11%.
+             */
+            boc_rate?: number | null;
+            /**
+             * Boc Rate Age Days
+             * @description Days since that observation.
+             */
+            boc_rate_age_days?: number | null;
+            /**
+             * Boc Rate 90D Delta Bp
+             * @description The change in the rate over 90 days. Basis points: 25 means 0.25 percentage points.
+             */
+            boc_rate_90d_delta_bp?: number | null;
+            /**
+             * Boc Rate Trend
+             * @description Where the rate is heading, from the 90-day change.
+             */
+            boc_rate_trend?: ("tightening" | "pausing" | "easing") | null;
+            /**
+             * Canada Bond 2Y
+             * @description The Government of Canada 2-year yield. Whole percent: 9.11 means 9.11%.
+             */
+            canada_bond_2y?: number | null;
+            /**
+             * Canada Bond 10Y
+             * @description The Government of Canada 10-year yield. Whole percent: 9.11 means 9.11%.
+             */
+            canada_bond_10y?: number | null;
+            /**
+             * Ca Curve Shape
+             * @description The Canadian yield curve, 2-year against 10-year.
+             */
+            ca_curve_shape?: ("normal" | "flat" | "inverted") | null;
+            /**
+             * Ca Cpi Yoy
+             * @description Canadian consumer prices against a year earlier. Whole percent: 9.11 means 9.11%.
+             */
+            ca_cpi_yoy?: number | null;
+            /**
+             * Ca Cpi Trend
+             * @description Whether that inflation rate is rising, stable or falling.
+             */
+            ca_cpi_trend?: ("rising" | "stable" | "falling") | null;
+            /**
+             * Cpi Age Days
+             * @description Days since the CPI observation.
+             */
+            cpi_age_days?: number | null;
+            /**
+             * Ca Unemployment 6M Delta
+             * @description The Canadian unemployment rate against six months earlier. Percentage points: 1.5 means 1.5 points.
+             */
+            ca_unemployment_6m_delta?: number | null;
+            /**
+             * Unemployment Age Days
+             * @description Days since the unemployment observation.
+             */
+            unemployment_age_days?: number | null;
+            /**
+             * Cad Usd
+             * @description US dollars per Canadian dollar.
+             */
+            cad_usd?: number | null;
+            /**
+             * Cad Usd Age Days
+             * @description Days since that exchange rate.
+             */
+            cad_usd_age_days?: number | null;
         };
         /** MarketLineResponse */
         MarketLineResponse: {
@@ -4513,6 +4958,71 @@ export interface components {
             cash_effect_cad?: number | null;
         } & {
             [key: string]: unknown;
+        };
+        /**
+         * OrderSettingResponse
+         * @description One setting in `portfolios.settings`: `{group: {key: value}}`. A missing key takes the default; a value outside the range is refused with 422 `INVALID_ORDER_SETTINGS`.
+         */
+        OrderSettingResponse: {
+            /**
+             * Group
+             * @description The object the key sits in, such as `orders` or `drift`.
+             */
+            group: string;
+            /** Key */
+            key: string;
+            /**
+             * Type
+             * @description `number` or `whole number`.
+             */
+            type: string;
+            /** Default */
+            default: number;
+            /**
+             * Minimum
+             * @description The lowest value allowed (or the bound it must exceed, see `minimum_allowed`); null when there is none.
+             */
+            minimum: number | null;
+            /**
+             * Maximum
+             * @description The highest value allowed (or the bound it must stay below, see `maximum_allowed`); null when there is none.
+             */
+            maximum: number | null;
+            /**
+             * Minimum Allowed
+             * @description Whether `minimum` itself is allowed.
+             */
+            minimum_allowed: boolean;
+            /**
+             * Maximum Allowed
+             * @description Whether `maximum` itself is allowed.
+             */
+            maximum_allowed: boolean;
+            /**
+             * Rule
+             * @description The rule in the words the refusal uses.
+             */
+            rule: string;
+            /**
+             * Meaning
+             * @description What the setting does, with its unit.
+             */
+            meaning: string;
+        };
+        /** OrderSettingsSchemaResponse */
+        OrderSettingsSchemaResponse: {
+            /** Settings */
+            settings: components["schemas"]["OrderSettingResponse"][];
+            /**
+             * Sell
+             * @description `sell` is a further key of the settings object: a list of tickers the owner has told the book to sell. It has no range.
+             */
+            sell: string;
+            /**
+             * Other Keys
+             * @description What happens to keys not listed here.
+             */
+            other_keys: string;
         };
         /**
          * OrderValueResponse
@@ -4947,7 +5457,10 @@ export interface components {
             /** Total Fees Paid Cad */
             total_fees_paid_cad: number;
         };
-        /** PositionLineResponse */
+        /**
+         * PositionLineResponse
+         * @description What is held in one account at the latest recorded price (`services/portfolio_reports.PositionLine`). Money is Canadian dollars unless said.
+         */
         PositionLineResponse: {
             /** Ticker */
             ticker: string;
@@ -5301,6 +5814,33 @@ export interface components {
         } & {
             [key: string]: unknown;
         };
+        /** PriceFacts */
+        PriceFacts: {
+            /**
+             * Current Price
+             * @description When the data was gathered, in the quote currency.
+             */
+            current_price?: number | null;
+            /**
+             * Market Cap
+             * @description In the quote currency; null where the providers give none.
+             */
+            market_cap?: number | null;
+            /** Currency */
+            currency?: string | null;
+            /**
+             * High 52W
+             * @description The 52-week high, in the quote currency.
+             */
+            high_52w?: number | null;
+            /**
+             * Low 52W
+             * @description The 52-week low, in the quote currency.
+             */
+            low_52w?: number | null;
+        } & {
+            [key: string]: unknown;
+        };
         /** PriceListResponse */
         PriceListResponse: {
             /** Data */
@@ -5527,6 +6067,41 @@ export interface components {
             profit_cad: number;
             /** Unexplained Cad */
             unexplained_cad: number | null;
+        };
+        /** ProfitabilityFacts */
+        ProfitabilityFacts: {
+            /**
+             * Gross Margin
+             * @description Fraction: 0.0678 means 6.78%.
+             */
+            gross_margin?: number | null;
+            /**
+             * Operating Margin
+             * @description Fraction: 0.0678 means 6.78%.
+             */
+            operating_margin?: number | null;
+            /**
+             * Net Margin
+             * @description Fraction: 0.0678 means 6.78%.
+             */
+            net_margin?: number | null;
+            /**
+             * Roe
+             * @description Return on equity. Fraction: 0.0678 means 6.78%.
+             */
+            roe?: number | null;
+            /**
+             * Fcf To Net Income
+             * @description Free cash flow divided by net income. Ratio, not a percent.
+             */
+            fcf_to_net_income?: number | null;
+            /**
+             * Margin Trend
+             * @description `expanding`, `stable` or `contracting`: the direction of the net margin.
+             */
+            margin_trend?: string | null;
+        } & {
+            [key: string]: unknown;
         };
         /**
          * ProposalRunCreate
@@ -5907,6 +6482,31 @@ export interface components {
              */
             agent_name: "risk";
             structured_output: components["schemas"]["RiskOutput"] | null;
+        };
+        /** RiskFacts */
+        RiskFacts: {
+            /**
+             * Beta
+             * @description Against the stock's market benchmark. Ratio, not a percent.
+             */
+            beta?: number | null;
+            /**
+             * Annualized Vol Pct
+             * @description Annualised volatility over a year. Whole percent: 9.11 means 9.11%.
+             */
+            annualized_vol_pct?: number | null;
+            /**
+             * Max Drawdown 1Yr Pct
+             * @description The largest fall from a peak in the last year. Whole percent: 9.11 means 9.11%.
+             */
+            max_drawdown_1yr_pct?: number | null;
+            /**
+             * Max Drawdown 3Yr Pct
+             * @description The largest fall from a peak in the last three years. Whole percent: 9.11 means 9.11%.
+             */
+            max_drawdown_3yr_pct?: number | null;
+        } & {
+            [key: string]: unknown;
         };
         /** RiskOutput */
         RiskOutput: {
@@ -6484,6 +7084,41 @@ export interface components {
             /** Trading */
             trading: number;
         };
+        /**
+         * StockFundamentalsResponse
+         * @description A stock's figures from its newest stored data bundle. With no bundle on record `run_id` is null and every group is null.
+         */
+        StockFundamentalsResponse: {
+            /**
+             * Stock Id
+             * Format: uuid
+             */
+            stock_id: string;
+            /** Ticker */
+            ticker: string;
+            /**
+             * Run Id
+             * @description The analysis whose data bundle these figures come from.
+             */
+            run_id?: string | null;
+            /**
+             * Run Day
+             * @description The owner's day of that analysis.
+             */
+            run_day?: string | null;
+            /**
+             * Data Vintage
+             * @description When the bundle's data was gathered.
+             */
+            data_vintage?: string | null;
+            valuation?: components["schemas"]["ValuationFacts"] | null;
+            growth?: components["schemas"]["GrowthFacts"] | null;
+            profitability?: components["schemas"]["ProfitabilityFacts"] | null;
+            balance_sheet?: components["schemas"]["BalanceSheetFacts"] | null;
+            risk?: components["schemas"]["RiskFacts"] | null;
+            price?: components["schemas"]["PriceFacts"] | null;
+            dividend?: components["schemas"]["DividendFacts"] | null;
+        };
         /** StockListResponse */
         StockListResponse: {
             /** Data */
@@ -6596,6 +7231,79 @@ export interface components {
              */
             industry?: string | null;
         };
+        /** StockSnapshotListResponse */
+        StockSnapshotListResponse: {
+            /** Data */
+            data: components["schemas"]["StockSnapshotResponse"][];
+            meta: components["schemas"]["PaginationMeta"];
+        };
+        /**
+         * StockSnapshotResponse
+         * @description What a holdings or watchlist row shows about the stock. A stock with no recorded price has null prices and changes; one with no
+         *     analysis has `analysis` null and `status` `excluded` with its reasons.
+         */
+        StockSnapshotResponse: {
+            /**
+             * Stock Id
+             * Format: uuid
+             */
+            stock_id: string;
+            /** Ticker */
+            ticker: string;
+            /**
+             * Currency
+             * @description The currency the stock trades in.
+             */
+            currency: string;
+            /**
+             * Price
+             * @description The newest recorded close, in the quote currency.
+             */
+            price?: number | null;
+            /**
+             * Price Day
+             * @description The trading day of that close.
+             */
+            price_day?: string | null;
+            /**
+             * Change Day
+             * @description The close against the one before it; null when there is no earlier recorded close. Fraction: 0.0678 means 6.78%.
+             */
+            change_day?: number | null;
+            /**
+             * Change Week
+             * @description The close against the last close on or before seven days earlier; null when the recorded history does not reach back. Fraction: 0.0678 means 6.78%.
+             */
+            change_week?: number | null;
+            /**
+             * Change Month
+             * @description The close against the last close on or before thirty days earlier; null when the recorded history does not reach back. Fraction: 0.0678 means 6.78%.
+             */
+            change_month?: number | null;
+            /**
+             * Status
+             * @description `usable`, or `excluded` with the reasons below (a stale or missing analysis is normal, not an error).
+             * @enum {string}
+             */
+            status: "usable" | "excluded";
+            /**
+             * Exclusions
+             * @description Every reason the stock is excluded; empty when usable.
+             */
+            exclusions: string[];
+            /**
+             * Rerun Reasons
+             * @description The part of `exclusions` a new analysis would fix.
+             */
+            rerun_reasons: string[];
+            /**
+             * Next Earnings Date
+             * @description The next earnings date the analysis knew of.
+             */
+            next_earnings_date?: string | null;
+            /** @description Null when the stock has no completed analysis. */
+            analysis?: components["schemas"]["AnalysisCallResponse"] | null;
+        };
         /**
          * StockSummary
          * @description Mirrors the frontend `Stock` type.
@@ -6640,6 +7348,14 @@ export interface components {
              * @description The class label (data/reference/sector_industry.py), the same in every response; null when not mapped.
              */
             sector?: string | null;
+        };
+        /**
+         * StoredRecord
+         * @description A record the code stored as a dict, typed for the screens that read it. A key the model does not list passes through
+         *     (`extra="allow"`), so a key added later, or on an older run, never fails a response.
+         */
+        StoredRecord: {
+            [key: string]: unknown;
         };
         /**
          * TargetBookResponse
@@ -7138,6 +7854,11 @@ export interface components {
             display_name: string;
             /** Is Active */
             is_active: boolean;
+            /**
+             * Marginal Tax Rate Pct
+             * @description The combined federal and provincial rate on the next dollar of income: the override when one is set, otherwise computed from province and income (`compute_marginal_tax_rate`, the one definition the reports and the agents use); null when neither is known. Whole percent: 9.11 means 9.11%.
+             */
+            readonly marginal_tax_rate_pct: number | null;
         };
         /** UserProfileUpdate */
         UserProfileUpdate: {
@@ -7182,6 +7903,111 @@ export interface components {
             display_name?: string | null;
             /** Is Active */
             is_active?: boolean | null;
+        };
+        /** ValuationFacts */
+        ValuationFacts: {
+            /**
+             * Pe Ratio
+             * @description Price to earnings, trailing. Ratio, not a percent.
+             */
+            pe_ratio?: number | null;
+            /**
+             * Forward Pe
+             * @description Price to expected earnings. Ratio, not a percent.
+             */
+            forward_pe?: number | null;
+            /**
+             * Pb Ratio
+             * @description Price to book value. Ratio, not a percent.
+             */
+            pb_ratio?: number | null;
+            /**
+             * Ps Ratio
+             * @description Price to sales. Ratio, not a percent.
+             */
+            ps_ratio?: number | null;
+            /**
+             * Peg Ratio
+             * @description Price to earnings relative to growth. Ratio, not a percent.
+             */
+            peg_ratio?: number | null;
+            /**
+             * Ev Ebitda
+             * @description Enterprise value to EBITDA. Ratio, not a percent.
+             */
+            ev_ebitda?: number | null;
+        } & {
+            [key: string]: unknown;
+        };
+        /**
+         * ValueHistoryResponse
+         * @description The portfolio's value over time: a line for a chart. The day change is the last two points.
+         */
+        ValueHistoryResponse: {
+            /**
+             * Portfolio Id
+             * Format: uuid
+             */
+            portfolio_id: string;
+            /**
+             * Start
+             * Format: date
+             */
+            start: string;
+            /**
+             * End
+             * Format: date
+             */
+            end: string;
+            /**
+             * Account
+             * @description The account the figures cover; null for the whole portfolio.
+             */
+            account: ("tfsa" | "rrsp" | "trading") | null;
+            /**
+             * Points
+             * @description Oldest first; empty when nothing the portfolio held has a recorded close in the range.
+             */
+            points: components["schemas"]["ValuePointResponse"][];
+            /**
+             * Warnings
+             * @description What could not be valued, such as a day with no exchange rate.
+             */
+            warnings: string[];
+        };
+        /** ValuePointResponse */
+        ValuePointResponse: {
+            /**
+             * Day
+             * Format: date
+             * @description A day on which something the portfolio held has a recorded close.
+             */
+            day: string;
+            /**
+             * Value Cad
+             * @description Positions at their latest close plus cash, in Canadian dollars.
+             */
+            value_cad: number;
+            /**
+             * Positions Cad
+             * @description The positions' part of `value_cad`.
+             */
+            positions_cad: number;
+            /**
+             * Cash Cad
+             * @description The cash's part of `value_cad`.
+             */
+            cash_cad: number;
+            /**
+             * Cost Cad
+             * @description The tax cost base of the positions held that day, in Canadian dollars.
+             */
+            cost_cad: number;
+            /**
+             * Unpriced
+             * @description Tickers held that day with no close within a week; they are carried at cost, not at zero.
+             */
+            unpriced: string[];
         };
         /**
          * ViewNoteResponse
@@ -7287,6 +8113,8 @@ export interface components {
              * Format: date-time
              */
             added_at: string;
+            /** @description The stock's price, changes and latest call; present only when `include=snapshot` was asked for. */
+            snapshot?: components["schemas"]["StockSnapshotResponse"] | null;
         };
         /** WatchlistUpdate */
         WatchlistUpdate: {
@@ -7617,6 +8445,10 @@ export interface operations {
                 /** @description Search: the ticker or the company name contains this text. */
                 q?: string | null;
                 stock_id?: string | null;
+                /** @description Only runs of these stocks (at most 100). */
+                stock_ids?: string[] | null;
+                /** @description Only the newest run of each stock that matches the other filters; completed runs unless `status` says otherwise. */
+                latest?: boolean;
                 user_id?: string | null;
                 status?: ("queued" | "running" | "complete" | "failed") | null;
                 /** @description Runs triggered on or after this day (a UTC day, as the times are stored). */
@@ -8487,6 +9319,8 @@ export interface operations {
             query?: {
                 account_type?: ("tfsa" | "rrsp" | "trading") | null;
                 include_closed?: boolean;
+                /** @description Extras to attach to each row: `snapshot` (the stock's price, changes and latest call) and `position` (the holding at the latest recorded price). */
+                include?: ("snapshot" | "position")[];
                 page?: number;
                 per_page?: number;
             };
@@ -8591,6 +9425,14 @@ export interface operations {
             query?: {
                 account_type?: ("tfsa" | "rrsp" | "trading") | null;
                 holding_id?: string | null;
+                /** @description Only this kind of transaction. */
+                type?: ("buy" | "sell" | "dividend" | "drip" | "transfer_in" | "transfer_out" | "contribution" | "withdrawal" | "fee" | "conversion" | "opening_balance" | "interest" | "adjustment_in" | "adjustment_out") | null;
+                /** @description Only this stock's transactions (its canonical ticker). */
+                ticker?: string | null;
+                /** @description Transactions dated on or after this day (the owner's day, as entered). */
+                from?: string | null;
+                /** @description Transactions dated on or before this day (the owner's day, as entered). */
+                to?: string | null;
                 page?: number;
                 per_page?: number;
             };
@@ -8611,7 +9453,7 @@ export interface operations {
                     "application/json": components["schemas"]["TransactionListResponse"];
                 };
             };
-            /** @description `PORTFOLIO_NOT_FOUND`: No portfolio with that id. */
+            /** @description `PORTFOLIO_NOT_FOUND`: No portfolio with that id. `STOCK_NOT_FOUND`: No stock for the ticker, after a look-up at the providers. */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -8620,7 +9462,7 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
-            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. `INVALID_DATE_RANGE`: `from` is after `to`, or the range is longer than the route allows; details name the range. */
             422: {
                 headers: {
                     [name: string]: unknown;
@@ -8695,6 +9537,8 @@ export interface operations {
             query: {
                 user_id: string;
                 include_inactive?: boolean;
+                /** @description `snapshot` attaches each stock's price, changes and latest call. */
+                include?: "snapshot"[];
                 page?: number;
                 per_page?: number;
             };
@@ -9470,6 +10314,62 @@ export interface operations {
             };
         };
     };
+    ledger_get_value_history: {
+        parameters: {
+            query?: {
+                /** @description The first day; 90 days before `to` by default. */
+                from?: string | null;
+                /** @description The last day; today (Toronto) by default. */
+                to?: string | null;
+                /** @description One account; the whole portfolio by default. */
+                account_type?: ("tfsa" | "rrsp" | "trading") | null;
+            };
+            header?: never;
+            path: {
+                portfolio_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValueHistoryResponse"];
+                };
+            };
+            /** @description `PORTFOLIO_NOT_FOUND`: No portfolio with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. `INVALID_DATE_RANGE`: `from` is after `to`, or the range is longer than the route allows; details name the range. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
     ledger_get_room: {
         parameters: {
             query?: never;
@@ -10118,6 +11018,117 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    activity_list_activity: {
+        parameters: {
+            query: {
+                user_id: string;
+                /** @description Events from this day on (a UTC day, as the times are stored); 7 days ago by default. */
+                since?: string | null;
+                page?: number;
+                per_page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActivityListResponse"];
+                };
+            };
+            /** @description `USER_NOT_FOUND`: No user profile with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    macro_get_macro_snapshot: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MacroSnapshotResponse"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    optimizer_get_order_settings_schema: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderSettingsSchemaResponse"];
                 };
             };
             /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
@@ -10816,6 +11827,56 @@ export interface operations {
             };
         };
     };
+    stocks_get_snapshots: {
+        parameters: {
+            query: {
+                /** @description The stocks, in the order to return them (at most 100). */
+                stock_ids: string[];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StockSnapshotListResponse"];
+                };
+            };
+            /** @description `STOCK_NOT_FOUND`: No stock for the ticker, after a look-up at the providers. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
     stocks_get_stock: {
         parameters: {
             query?: never;
@@ -10939,6 +12000,55 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["InstrumentViewResponse"];
+                };
+            };
+            /** @description `STOCK_NOT_FOUND`: No stock for the ticker, after a look-up at the providers. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    stocks_get_fundamentals: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                stock_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StockFundamentalsResponse"];
                 };
             };
             /** @description `STOCK_NOT_FOUND`: No stock for the ticker, after a look-up at the providers. */
