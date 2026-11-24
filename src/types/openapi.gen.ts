@@ -15,13 +15,13 @@ export interface paths {
          * List user profiles
          * @description The active profiles, in pages; `include_inactive` adds the archived ones.
          */
-        get: operations["read_all_api_users_get"];
+        get: operations["users_read_all"];
         put?: never;
         /**
          * Create a user profile
          * @description Creates a profile and answers 201. There is no authentication: identity is the profile's id, sent as `user_id` where a route needs it.
          */
-        post: operations["create_api_users_post"];
+        post: operations["users_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -39,21 +39,21 @@ export interface paths {
          * Read a user profile
          * @description One profile. 404 `USER_NOT_FOUND`.
          */
-        get: operations["read_one_api_users__user_id__get"];
+        get: operations["users_read_one"];
         put?: never;
         post?: never;
         /**
          * Archive a user profile
          * @description Archives the profile and answers 204: `is_active` goes false, the change is kept in the history, and nothing is deleted (portfolios, watchlist entries and analyses refer to it). It leaves the list; `GET /api/users/{user_id}` still reads it and `PATCH is_active` true restores it. Repeating it changes nothing. 404 `USER_NOT_FOUND`.
          */
-        delete: operations["delete_api_users__user_id__delete"];
+        delete: operations["users_delete"];
         options?: never;
         head?: never;
         /**
          * Update a user profile
          * @description A body sends only what changes, and every field that changes keeps its old value in the history (`GET /api/history`). `is_active` can only be set to true here (restore); archive with DELETE: 422 `USE_DELETE_TO_ARCHIVE`. 404 `USER_NOT_FOUND`.
          */
-        patch: operations["update_api_users__user_id__patch"];
+        patch: operations["users_update"];
         trace?: never;
     };
     "/api/analysis": {
@@ -70,13 +70,13 @@ export interface paths {
          *     of those. Newest first by default. This list only reads: a run stuck in a non-terminal state shows as `running` until its status
          *     or result is read, which ends it.
          */
-        get: operations["list_analyses_api_analysis_get"];
+        get: operations["analysis_list_analyses"];
         put?: never;
         /**
          * Start an analysis
          * @description Queues an analysis of one ticker and answers 202 with its `analysis_id` at once. The run takes about three minutes and runs one at a time, in the order asked: poll `GET /api/analysis/{analysis_id}/status`. Refused with 422 `UNSUPPORTED_EXCHANGE` or `UNSUPPORTED_ASSET_TYPE`, 404 `USER_NOT_FOUND` or `STOCK_NOT_FOUND`, 409 `ANALYSIS_IN_PROGRESS` and 503 `PROVIDER_NOT_CONFIGURED`.
          */
-        post: operations["create_analysis_api_analysis_post"];
+        post: operations["analysis_create_analysis"];
         delete?: never;
         options?: never;
         head?: never;
@@ -94,7 +94,7 @@ export interface paths {
          * Read an analysis's status
          * @description `status` is `queued`, `running`, `complete` or `failed`; `progress` (the pass, 1 or 2, and the agents complete) is set while it runs; `failure` names the stage and a short reason once it failed. When it is `complete` or `failed`, read the result. 404 `ANALYSIS_NOT_FOUND`.
          */
-        get: operations["get_analysis_status_api_analysis__analysis_id__status_get"];
+        get: operations["analysis_get_analysis_status"];
         put?: never;
         post?: never;
         delete?: never;
@@ -114,7 +114,7 @@ export interface paths {
          * Read an analysis result
          * @description The full result: the recommendation and every agent output, `price_band` (the code-built price band, null for a run made before it existed or with it switched off) and `business_profile` (the record the Researcher and Macro were given, null for a run made before it existed). Old runs still list the retired `tax` and `cio_stage_b` outputs among `agent_outputs`, as stored. The code-built outputs the result leaves out are on `/outputs`. 404 `ANALYSIS_NOT_FOUND`.
          */
-        get: operations["get_analysis_result_api_analysis__analysis_id__get"];
+        get: operations["analysis_get_analysis_result"];
         put?: never;
         post?: never;
         delete?: never;
@@ -137,7 +137,7 @@ export interface paths {
          *     was not kept; 500 `BUNDLE_UNREADABLE` when the saved file cannot be read. It is the stored record as the providers gave it: a news
          *     time in it is the provider's America/New_York wall clock with no zone, and a day is a date.
          */
-        get: operations["get_analysis_inputs_api_analysis__analysis_id__inputs_get"];
+        get: operations["analysis_get_analysis_inputs"];
         put?: never;
         post?: never;
         delete?: never;
@@ -158,7 +158,7 @@ export interface paths {
          * @description What the run cost and how clean it was: wall time, model time, calls, retries, tokens, validator failures, the two gates and
          *     the agents that left a field empty. 404 `ANALYSIS_NOT_FOUND`, or 404 `QUALITY_NOT_STORED` for a run with no summary.
          */
-        get: operations["get_analysis_quality_api_analysis__analysis_id__quality_get"];
+        get: operations["analysis_get_analysis_quality"];
         put?: never;
         post?: never;
         delete?: never;
@@ -180,7 +180,7 @@ export interface paths {
          *     counts and speed, and whether its answer parsed and validated. Metadata only: the prompt and response text stay on the server.
          *     404 `ANALYSIS_NOT_FOUND`.
          */
-        get: operations["list_analysis_calls_api_analysis__analysis_id__calls_get"];
+        get: operations["analysis_list_analysis_calls"];
         put?: never;
         post?: never;
         delete?: never;
@@ -202,7 +202,7 @@ export interface paths {
          *     agent's status and the calls that failed. Server file paths are removed. There is no access layer on this API, so this
          *     is meant for the owner's own machine. 404 `ANALYSIS_NOT_FOUND`.
          */
-        get: operations["get_analysis_diagnosis_api_analysis__analysis_id__diagnosis_get"];
+        get: operations["analysis_get_analysis_diagnosis"];
         put?: never;
         post?: never;
         delete?: never;
@@ -224,7 +224,7 @@ export interface paths {
          *     `stock_class`, `company_facts` and `shadow_price_band`. They feed calibration and ranking, not the CIO's words, and their keys
          *     change with the pipeline version. A run has the ones its version built. 404 `ANALYSIS_NOT_FOUND`.
          */
-        get: operations["list_analysis_outputs_api_analysis__analysis_id__outputs_get"];
+        get: operations["analysis_list_analysis_outputs"];
         put?: never;
         post?: never;
         delete?: never;
@@ -244,13 +244,13 @@ export interface paths {
          * List a person's portfolios
          * @description The owner's and the agent's active portfolios; `kind` says which. Filter by `user_id` to list one person's; `include_inactive` adds the archived ones.
          */
-        get: operations["list_portfolios_api_portfolios_get"];
+        get: operations["portfolios_list_portfolios"];
         put?: never;
         /**
          * Create a portfolio
          * @description Creates the portfolio and its three accounts (TFSA, RRSP, Trading). 409 `PORTFOLIO_EXISTS` when the person already has a user portfolio; 404 `USER_NOT_FOUND`.
          */
-        post: operations["create_portfolio_api_portfolios_post"];
+        post: operations["portfolios_create_portfolio"];
         delete?: never;
         options?: never;
         head?: never;
@@ -268,21 +268,21 @@ export interface paths {
          * Read a portfolio
          * @description One portfolio with its settings. 404 `PORTFOLIO_NOT_FOUND`.
          */
-        get: operations["get_portfolio_api_portfolios__portfolio_id__get"];
+        get: operations["portfolios_get_portfolio"];
         put?: never;
         post?: never;
         /**
          * Archive a portfolio
          * @description Archives the portfolio and answers 204: `is_active` goes false, the change is kept in the history, and nothing is deleted. It leaves the list; `GET /api/portfolios/{portfolio_id}` still reads it and `PATCH is_active` true restores it. Repeating it changes nothing. 404 `PORTFOLIO_NOT_FOUND`; 403 `AGENT_PORTFOLIO_READ_ONLY` for the agent portfolio.
          */
-        delete: operations["archive_portfolio_api_portfolios__portfolio_id__delete"];
+        delete: operations["portfolios_archive_portfolio"];
         options?: never;
         head?: never;
         /**
          * Update a portfolio
          * @description A body sends only what changes, and every field that changes keeps its old value in the history (`GET /api/history`). `is_active` can only be set to true here (restore); archive with DELETE: 422 `USE_DELETE_TO_ARCHIVE`. 422 `INVALID_ORDER_SETTINGS` for settings that do not make sense.
          */
-        patch: operations["update_portfolio_api_portfolios__portfolio_id__patch"];
+        patch: operations["portfolios_update_portfolio"];
         trace?: never;
     };
     "/api/portfolios/{portfolio_id}/accounts": {
@@ -294,9 +294,9 @@ export interface paths {
         };
         /**
          * List a portfolio's accounts
-         * @description The cash and broker settings of the TFSA, RRSP and Trading accounts.
+         * @description The cash and broker settings of the TFSA, RRSP and Trading accounts. 404 `PORTFOLIO_NOT_FOUND`.
          */
-        get: operations["list_accounts_api_portfolios__portfolio_id__accounts_get"];
+        get: operations["portfolios_list_accounts"];
         put?: never;
         post?: never;
         delete?: never;
@@ -316,7 +316,7 @@ export interface paths {
          * Read one account
          * @description One account by type (`tfsa`, `rrsp` or `trading`). 404 `ACCOUNT_NOT_FOUND`.
          */
-        get: operations["get_account_api_portfolios__portfolio_id__accounts__account_type__get"];
+        get: operations["portfolios_get_account"];
         put?: never;
         post?: never;
         delete?: never;
@@ -326,7 +326,7 @@ export interface paths {
          * Update an account's cash and broker settings
          * @description A body sends only what changes, and every field that changes keeps its old value in the history (`GET /api/history`); null for a field that cannot be empty is a 422. The cash set here is the starting balance: once the account has entries that move its cash, changing it is refused (422 `CASH_SET_BY_ENTRIES`) and the balance comes from the entries; a difference with the broker is a cash adjustment or a reconciliation, which write rows.
          */
-        patch: operations["update_account_api_portfolios__portfolio_id__accounts__account_type__patch"];
+        patch: operations["portfolios_update_account"];
         trace?: never;
     };
     "/api/portfolios/{portfolio_id}/holdings": {
@@ -338,9 +338,9 @@ export interface paths {
         };
         /**
          * List a portfolio's holdings
-         * @description Stored fields only; live price, outlook and yield come from other routes. Filter by `account_type`; closed positions are left out unless `include_closed` is true.
+         * @description Stored fields only; live price, outlook and yield come from other routes. Filter by `account_type`; closed positions are left out unless `include_closed` is true. 404 `PORTFOLIO_NOT_FOUND`.
          */
-        get: operations["list_holdings_api_portfolios__portfolio_id__holdings_get"];
+        get: operations["portfolios_list_holdings"];
         put?: never;
         post?: never;
         delete?: never;
@@ -360,7 +360,7 @@ export interface paths {
          * Read one holding
          * @description The stored fields of one holding and its stock. 404 `HOLDING_NOT_FOUND`.
          */
-        get: operations["get_holding_api_portfolios__portfolio_id__holdings__holding_id__get"];
+        get: operations["portfolios_get_holding"];
         put?: never;
         post?: never;
         delete?: never;
@@ -378,9 +378,9 @@ export interface paths {
         };
         /**
          * List a portfolio's transactions
-         * @description Newest first; filter by `account_type` or `holding_id`. There is no write route: the event processor writes transactions, with a preview first (`POST .../events` and `.../moves`).
+         * @description Newest first; filter by `account_type` or `holding_id`. There is no write route: the event processor writes transactions, with a preview first (`POST .../events` and `.../moves`). 404 `PORTFOLIO_NOT_FOUND`.
          */
-        get: operations["list_transactions_api_portfolios__portfolio_id__transactions_get"];
+        get: operations["portfolios_list_transactions"];
         put?: never;
         post?: never;
         delete?: never;
@@ -400,7 +400,7 @@ export interface paths {
          * Read one transaction
          * @description One ledger row. 404 `TRANSACTION_NOT_FOUND`.
          */
-        get: operations["get_transaction_api_portfolios__portfolio_id__transactions__transaction_id__get"];
+        get: operations["portfolios_get_transaction"];
         put?: never;
         post?: never;
         delete?: never;
@@ -420,13 +420,13 @@ export interface paths {
          * List a person's watchlist
          * @description `user_id` is required; removed entries are left out unless `include_inactive` is true.
          */
-        get: operations["list_watchlist_api_watchlist_get"];
+        get: operations["watchlist_list_watchlist"];
         put?: never;
         /**
          * Add a stock to the watchlist
          * @description The stock is looked up at the providers if unseen. Adding a removed stock reactivates it, and the timeline and notes it held are kept in the history. 409 `ALREADY_WATCHING`; 404 `STOCK_NOT_FOUND` or `USER_NOT_FOUND`; 422 `UNSUPPORTED_INSTRUMENT` for a stock the pipeline cannot analyse (it can still be held), `UNSUPPORTED_CURRENCY`; 503 `STOCK_LOOKUP_UNAVAILABLE`.
          */
-        post: operations["add_to_watchlist_api_watchlist_post"];
+        post: operations["watchlist_add_to_watchlist"];
         delete?: never;
         options?: never;
         head?: never;
@@ -447,14 +447,14 @@ export interface paths {
          * Remove a stock from the watchlist
          * @description Archives the entry and answers 204: `is_active` goes false, the change is kept in the history, and the row stays. Adding the stock again brings it back. 404 `WATCHLIST_ENTRY_NOT_FOUND`.
          */
-        delete: operations["remove_from_watchlist_api_watchlist__watchlist_id__delete"];
+        delete: operations["watchlist_remove_from_watchlist"];
         options?: never;
         head?: never;
         /**
          * Update a watchlist entry
          * @description A body sends only what changes, and every field that changes keeps its old value in the history (`GET /api/history`, subject `watchlist_entry`). 404 `WATCHLIST_ENTRY_NOT_FOUND`.
          */
-        patch: operations["update_watchlist_entry_api_watchlist__watchlist_id__patch"];
+        patch: operations["watchlist_update_watchlist_entry"];
         trace?: never;
     };
     "/api/portfolios/{portfolio_id}/events/preview": {
@@ -469,9 +469,9 @@ export interface paths {
         /**
          * Preview recording events
          * @description What recording these rows would do: the gain or loss, the tax estimate, the room used, a superficial-loss warning
-         *     and the position after. Writes nothing. One to ten rows of one security that belong together.
+         *     and the position after. Writes nothing. One to ten rows of one security that belong together. 404 `PORTFOLIO_NOT_FOUND`.
          */
-        post: operations["preview_events_api_portfolios__portfolio_id__events_preview_post"];
+        post: operations["ledger_preview_events"];
         delete?: never;
         options?: never;
         head?: never;
@@ -491,7 +491,7 @@ export interface paths {
          * Record events
          * @description Records the rows that `events/preview` shows, in one commit and answers 201. A row carrying `recommendation_id` marks that proposal followed; a stale id never fails the entry. 409 `DUPLICATE_ENTRY` for the same event within 30 seconds; 422 `INSUFFICIENT_SHARES`, `CURRENCY_MISMATCH`, `MISSING_FX_RATE`, `MISSING_CAD_AMOUNT`, `MIXED_SECURITIES` or `CONTRIBUTION_EXCEEDS_ROOM` (only for an event the system starts: a contribution the owner made over room is recorded, and the preview warns). Refused with 403 `AGENT_PORTFOLIO_READ_ONLY` for the agent portfolio.
          */
-        post: operations["record_events_api_portfolios__portfolio_id__events_post"];
+        post: operations["ledger_record_events"];
         delete?: never;
         options?: never;
         head?: never;
@@ -509,9 +509,9 @@ export interface paths {
         put?: never;
         /**
          * Preview a move between accounts
-         * @description What moving a security in kind between two accounts would do, shown for the position it leaves. Writes nothing.
+         * @description What moving a security in kind between two accounts would do, shown for the position it leaves. Writes nothing. 404 `PORTFOLIO_NOT_FOUND`.
          */
-        post: operations["preview_move_api_portfolios__portfolio_id__moves_preview_post"];
+        post: operations["ledger_preview_move"];
         delete?: never;
         options?: never;
         head?: never;
@@ -531,7 +531,7 @@ export interface paths {
          * Record a move between accounts
          * @description Records both legs of the move under one `move_id` and answers 201. 409 `DUPLICATE_ENTRY` for the same move within 30 seconds. Refused with 403 `AGENT_PORTFOLIO_READ_ONLY` for the agent portfolio.
          */
-        post: operations["record_move_api_portfolios__portfolio_id__moves_post"];
+        post: operations["ledger_record_move"];
         delete?: never;
         options?: never;
         head?: never;
@@ -551,7 +551,7 @@ export interface paths {
          * Reverse an entry
          * @description Undoes an entry with a correcting row; nothing is deleted. Reversing one leg of a move reverses the move. Answers 201. 404 `TRANSACTION_NOT_FOUND`; 422 `NOT_REVERSIBLE` (the row is itself a reversal, or undoing it would leave a later sale short) or `ALREADY_REVERSED`. Refused with 403 `AGENT_PORTFOLIO_READ_ONLY` for the agent portfolio.
          */
-        post: operations["reverse_event_api_portfolios__portfolio_id__events__transaction_id__reverse_post"];
+        post: operations["ledger_reverse_event"];
         delete?: never;
         options?: never;
         head?: never;
@@ -571,7 +571,7 @@ export interface paths {
          * Preview correcting an entry
          * @description What the correction would do: the position and the cash with the mistaken entry taken out and this one put in, and the earlier sales whose figures change. The body is the corrected entry, the same shape as one row of `events`. Writes nothing. Refuses what `correct` refuses: 404 `TRANSACTION_NOT_FOUND`; 422 `ALREADY_REVERSED` or `NOT_CORRECTABLE`.
          */
-        post: operations["preview_correction_api_portfolios__portfolio_id__events__transaction_id__correct_preview_post"];
+        post: operations["ledger_preview_correction"];
         delete?: never;
         options?: never;
         head?: never;
@@ -591,7 +591,7 @@ export interface paths {
          * Correct an entry
          * @description Replaces a mistaken entry with the corrected one in one commit and answers 201 with two rows: a reversal of the original and the replacement, which points at the original (`supersedes_transaction_id`). The original stays; nothing is edited or deleted. The body is the whole corrected entry, so for a USD entry where the owner gave the rate or the Canadian-dollar amount the first time, it must be sent again (otherwise the Bank of Canada rate of the day is used). The account and the security stay the same: to change either, reverse the entry and record it again. 404 `TRANSACTION_NOT_FOUND`; 422 `ALREADY_REVERSED`; 422 `NOT_CORRECTABLE` (a reversal, one leg of a move, a detected dividend's entry, another account or security, or a correction that would leave a later sale short of shares); `CURRENCY_MISMATCH` and `MISSING_FX_RATE` as for `events`. Refused with 403 `AGENT_PORTFOLIO_READ_ONLY` for the agent portfolio.
          */
-        post: operations["correct_event_api_portfolios__portfolio_id__events__transaction_id__correct_post"];
+        post: operations["ledger_correct_event"];
         delete?: never;
         options?: never;
         head?: never;
@@ -611,7 +611,7 @@ export interface paths {
          * Remove a position entered by mistake
          * @description Reverses every entry of the holding that still counts, in one commit, and answers 201 with the reversing rows. The entries stay in the record; the holding is left with no shares. 404 `HOLDING_NOT_FOUND`; 422 `NOT_REMOVABLE` (nothing left to reverse, part of it moved in kind to or from another account, or a reversal would leave a later sale short). Refused with 403 `AGENT_PORTFOLIO_READ_ONLY` for the agent portfolio.
          */
-        post: operations["remove_position_api_portfolios__portfolio_id__holdings__holding_id__remove_post"];
+        post: operations["ledger_remove_position"];
         delete?: never;
         options?: never;
         head?: never;
@@ -632,7 +632,7 @@ export interface paths {
          *     newest row of a position or account is its "last confirmed". Each one is made by `POST .../reconciliation`, which is the singular path of
          *     this collection. Works for the agent portfolio. 404 `PORTFOLIO_NOT_FOUND`.
          */
-        get: operations["list_reconciliations_api_portfolios__portfolio_id__reconciliations_get"];
+        get: operations["ledger_list_reconciliations"];
         put?: never;
         post?: never;
         delete?: never;
@@ -650,9 +650,9 @@ export interface paths {
         };
         /**
          * Read a portfolio's positions
-         * @description What is held today at the latest recorded prices, for the whole portfolio and each account. Also returns `confirmations`: for every active position and each account's cash, `last_confirmed` (empty: never), `age_days` and `overdue` (past 45 days), so a screen can say which to confirm. The agent portfolio has none.
+         * @description What is held today at the latest recorded prices, for the whole portfolio and each account. Also returns `confirmations`: for every active position and each account's cash, `last_confirmed` (empty: never), `age_days` and `overdue` (past 45 days), so a screen can say which to confirm. The agent portfolio has none. 404 `PORTFOLIO_NOT_FOUND`.
          */
-        get: operations["get_positions_api_portfolios__portfolio_id__positions_get"];
+        get: operations["ledger_get_positions"];
         put?: never;
         post?: never;
         delete?: never;
@@ -672,7 +672,7 @@ export interface paths {
          * Read the TFSA and RRSP contribution room
          * @description The TFSA's and RRSP's contribution room rolled forward from the figure the owner entered. Shows the room today, the events since, any shortfall, and whether the figure is estimated. 422 `PROFILE_INCOMPLETE` names the profile figures it lacks.
          */
-        get: operations["get_room_api_portfolios__portfolio_id__room_get"];
+        get: operations["ledger_get_room"];
         put?: never;
         post?: never;
         delete?: never;
@@ -694,7 +694,7 @@ export interface paths {
          * Reconcile a position or cash with the broker
          * @description The monthly confirm-or-correct: the shares of a position, or the cash of an account, as the broker shows them. Answers 201; a cash difference is written as an adjustment row. 422 `RECONCILIATION_DIFFERENCE` when the broker shows fewer shares than the record, or more with no cost given; `CORRECTION_NOT_VALID`. Refused with 403 `AGENT_PORTFOLIO_READ_ONLY` for the agent portfolio.
          */
-        post: operations["reconcile_with_broker_api_portfolios__portfolio_id__reconciliation_post"];
+        post: operations["ledger_reconcile_with_broker"];
         delete?: never;
         options?: never;
         head?: never;
@@ -715,7 +715,7 @@ export interface paths {
          * @description Where should this money go: the split across the accounts (or the one account asked about), the RRSP year, each
          *     account's cash to deploy, and the benchmark fund orders. Advice only. 422 `PROFILE_INCOMPLETE`, `INVALID_SURPLUS` or `INVALID_ACCOUNT`.
          */
-        post: operations["monthly_plan_api_portfolios__portfolio_id__monthly_plan_post"];
+        post: operations["plan_monthly_plan"];
         delete?: never;
         options?: never;
         head?: never;
@@ -734,9 +734,9 @@ export interface paths {
         /**
          * Plan the cheapest way to raise cash
          * @description The cheapest way to raise this much cash, with tax, withholding, commission, conversion and the room each source
-         *     uses. Advice only: nothing is sold. The RRSP is shown for information and never in the plan.
+         *     uses. Advice only: nothing is sold. The RRSP is shown for information and never in the plan. 404 `PORTFOLIO_NOT_FOUND`.
          */
-        post: operations["raise_cash_plan_api_portfolios__portfolio_id__raise_cash_post"];
+        post: operations["plan_raise_cash_plan"];
         delete?: never;
         options?: never;
         head?: never;
@@ -755,9 +755,9 @@ export interface paths {
         /**
          * Report a portfolio's profit, costs and taxes
          * @description What the portfolio's actions earned and cost over a period, for the whole portfolio, each account and each stock,
-         *     with the actions one by one. An empty body is the current tax year to today.
+         *     with the actions one by one. An empty body is the current tax year to today. 404 `PORTFOLIO_NOT_FOUND`.
          */
-        post: operations["report_api_portfolios__portfolio_id__reports_post"];
+        post: operations["plan_report"];
         delete?: never;
         options?: never;
         head?: never;
@@ -775,9 +775,9 @@ export interface paths {
         put?: never;
         /**
          * Compare two portfolios over the same dates
-         * @description This portfolio beside another over the same dates (the owner's beside the agent's).
+         * @description This portfolio beside another over the same dates (the owner's beside the agent's). 404 `PORTFOLIO_NOT_FOUND` for either portfolio.
          */
-        post: operations["comparison_api_portfolios__portfolio_id__reports_comparison_post"];
+        post: operations["plan_comparison"];
         delete?: never;
         options?: never;
         head?: never;
@@ -796,7 +796,7 @@ export interface paths {
          * @description The latest stored weekly or on-demand run (or the one named): its orders and transfers with reasons, costs and
          *     values, what is waiting and what would release it, how far each holding sits from its target, and the report. Reads storage only; `missing` names what an older run did not keep. 404 `NO_RUN_STORED`.
          */
-        get: operations["get_proposals_api_portfolios__portfolio_id__proposals_get"];
+        get: operations["optimizer_get_proposals"];
         put?: never;
         post?: never;
         delete?: never;
@@ -816,7 +816,7 @@ export interface paths {
          * Read one proposal
          * @description One proposal with its write-up lines. 404 `PROPOSAL_NOT_FOUND`.
          */
-        get: operations["get_proposal_api_portfolios__portfolio_id__proposals__proposal_id__get"];
+        get: operations["optimizer_get_proposal"];
         put?: never;
         post?: never;
         delete?: never;
@@ -834,16 +834,16 @@ export interface paths {
         };
         /**
          * List a portfolio's proposal runs
-         * @description The run history, newest first. Filter by `kind` (weekly, adhoc or inquiry); each run counts its orders, transfers and waiting items.
+         * @description The run history, newest first. Filter by `kind` (weekly, adhoc or inquiry); each run counts its orders, transfers and waiting items. 404 `PORTFOLIO_NOT_FOUND`.
          */
-        get: operations["list_proposal_runs_api_portfolios__portfolio_id__proposal_runs_get"];
+        get: operations["optimizer_list_proposal_runs"];
         put?: never;
         /**
          * Run the optimizer now
          * @description A fresh look at the portfolio, now. It is only shown unless `store` is true; saving replaces the open proposals and
-         *     the answer names them. With `allow_stale` the answer is a dry run, not a basis for orders. Answers 200, not 201, because nothing is created unless `store` is true. Refused with 403 `AGENT_PORTFOLIO_READ_ONLY` for the agent portfolio when `store` is set.
+         *     the answer names them. With `allow_stale` the answer is a dry run, not a basis for orders. Answers 200, not 201, because nothing is created unless `store` is true. Refused with 403 `AGENT_PORTFOLIO_READ_ONLY` for the agent portfolio when `store` is set. 422 `EMPTY_PORTFOLIO`, `NO_BENCHMARK_HISTORY`, `NO_BENCHMARK_LINE` or `TARGET_BOOK_FAILED` when the target book cannot be built.
          */
-        post: operations["run_now_api_portfolios__portfolio_id__proposal_runs_post"];
+        post: operations["optimizer_run_now"];
         delete?: never;
         options?: never;
         head?: never;
@@ -861,7 +861,7 @@ export interface paths {
          * Read a run's account matrix
          * @description The account matrix stored with the latest run (or the one named), narrowed to a ticker or an account. 404 `NO_MATRIX_STORED` for a run stored before the matrix was kept, `NO_RUN_STORED` when there is no run.
          */
-        get: operations["get_account_matrix_api_portfolios__portfolio_id__account_matrix_get"];
+        get: operations["optimizer_get_account_matrix"];
         put?: never;
         post?: never;
         delete?: never;
@@ -881,7 +881,7 @@ export interface paths {
          * Read a run's target book
          * @description The target book stored with the latest run (or the one named): what to hold, in which account, and why. 404 `NO_BOOK_STORED`, or `NO_RUN_STORED` when there is no run.
          */
-        get: operations["get_target_book_api_portfolios__portfolio_id__target_book_get"];
+        get: operations["optimizer_get_target_book"];
         put?: never;
         post?: never;
         delete?: never;
@@ -902,9 +902,9 @@ export interface paths {
         /**
          * Ask where an amount should go
          * @description Where should this money go: the top three investments with their orders, or the benchmark fund when none beats it.
-         *     Nothing is sold, invested or recorded; saved as an inquiry only with `store`. Refused with 403 `AGENT_PORTFOLIO_READ_ONLY` for the agent portfolio when `store` is set.
+         *     Nothing is sold, invested or recorded; saved as an inquiry only with `store`. Refused with 403 `AGENT_PORTFOLIO_READ_ONLY` for the agent portfolio when `store` is set. 422 `EMPTY_PORTFOLIO`, `NO_BENCHMARK_HISTORY`, `NO_BENCHMARK_LINE` or `TARGET_BOOK_FAILED` when the target book cannot be built.
          */
-        post: operations["ask_api_portfolios__portfolio_id__ask_post"];
+        post: operations["optimizer_ask"];
         delete?: never;
         options?: never;
         head?: never;
@@ -921,9 +921,9 @@ export interface paths {
         /**
          * List a portfolio's dividends
          * @description The dividends the portfolio was owed, oldest ex-date first: what is waiting for the owner to confirm, and what
-         *     was decided. Filter by `status` (expected, confirmed or dismissed). The system finds the dividends; no route does.
+         *     was decided. Filter by `status` (expected, confirmed or dismissed). The system finds the dividends; no route does. 404 `PORTFOLIO_NOT_FOUND`.
          */
-        get: operations["list_dividends_api_portfolios__portfolio_id__dividends_get"];
+        get: operations["dividends_list_dividends"];
         put?: never;
         post?: never;
         delete?: never;
@@ -946,7 +946,7 @@ export interface paths {
          * @description What confirming would do, with any corrections: the cash, the position after, and a warning for a probable
          *     duplicate. Writes nothing. 404 `DIVIDEND_EVENT_NOT_FOUND`.
          */
-        post: operations["preview_dividend_api_portfolios__portfolio_id__dividends__event_id__preview_post"];
+        post: operations["dividends_preview_dividend"];
         delete?: never;
         options?: never;
         head?: never;
@@ -967,7 +967,7 @@ export interface paths {
          * @description Accepts the calculated dividend, or corrects it, and records it (with its reinvestment for an account that
          *     reinvests) in one commit and answers 201; the decision is in the history (`GET /api/history`). Refused once decided, before the payment date, or with no shares at the ex-date. 409 `EVENT_NOT_OPEN` once decided, 409 `NOT_PAID_YET` before the payment date, 422 `NO_SHARES_AT_EX`, `NO_REINVESTMENT_PRICE` or `INVALID_CORRECTION`. Refused with 403 `AGENT_PORTFOLIO_READ_ONLY` for the agent portfolio.
          */
-        post: operations["confirm_dividend_api_portfolios__portfolio_id__dividends__event_id__confirm_post"];
+        post: operations["dividends_confirm_dividend"];
         delete?: never;
         options?: never;
         head?: never;
@@ -987,7 +987,7 @@ export interface paths {
          * Dismiss a dividend
          * @description The dividend was not received, or is already in the record. It is not found again unless it is reopened (`POST .../reopen`); the decision is in the history. 409 `EVENT_NOT_OPEN` once decided. Refused with 403 `AGENT_PORTFOLIO_READ_ONLY` for the agent portfolio.
          */
-        post: operations["dismiss_dividend_api_portfolios__portfolio_id__dividends__event_id__dismiss_post"];
+        post: operations["dividends_dismiss_dividend"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1007,7 +1007,7 @@ export interface paths {
          * Reopen a decided dividend
          * @description Takes a decision back so the dividend can be decided again. A dismissed dividend becomes expected; a confirmed one first has its dividend and reinvestment entries reversed (they stay in the record) and then becomes expected, in one commit. Each change of status is in the history (`GET /api/history`). 409 `EVENT_NOT_DECIDED` when the dividend is still expected; 422 `NOT_REVERSIBLE` when reversing would leave a later sale short of shares. Refused with 403 `AGENT_PORTFOLIO_READ_ONLY` for the agent portfolio.
          */
-        post: operations["reopen_dividend_api_portfolios__portfolio_id__dividends__event_id__reopen_post"];
+        post: operations["dividends_reopen_dividend"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1029,7 +1029,7 @@ export interface paths {
          *     price is in; only a resolved one has outcomes. Only columns that are written are returned: the stored scores and the
          *     accuracy and cost estimates are never filled, so they are not here.
          */
-        get: operations["list_predictions_api_predictions_get"];
+        get: operations["predictions_list_predictions"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1051,7 +1051,7 @@ export interface paths {
          *     and model each was declared with, what changed, and whether its view is comparable with the previous version's. A run
          *     records its version in its result. 500 `PIPELINE_REGISTRY_UNREADABLE` when the registry file cannot be read.
          */
-        get: operations["list_pipeline_versions_api_pipeline_versions_get"];
+        get: operations["pipeline-versions_list_pipeline_versions"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1078,7 +1078,7 @@ export interface paths {
          *     to its rows. A scorecard from an older scorer may lack a part, which then comes back empty. The scoring set is empty until
          *     batch runs of the current cohort resolve. 404 `SCORECARD_NOT_FOUND`.
          */
-        get: operations["get_scorecard_api_scorecard_get"];
+        get: operations["scorecard_get_scorecard"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1102,7 +1102,7 @@ export interface paths {
          *     not outcomes, so it has no rows; a baseline figure has rows only when the scorecard saved its baseline observations.
          *     404 `SCORECARD_NOT_FOUND`, or 404 `FIGURE_NOT_FOUND` when the scorecard has no such figure.
          */
-        get: operations["get_scorecard_figure_api_scorecard_figures__figure_id__get"];
+        get: operations["scorecard_get_scorecard_figure"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1123,7 +1123,7 @@ export interface paths {
          * @description The weekly fits of the baseline, newest first: when each was made, the settings version, how many stocks were on the list
          *     and usable, what failed, the fitted model and how the gaps drifted since the previous fit.
          */
-        get: operations["list_baseline_fits_api_baseline_fits_get"];
+        get: operations["baseline_list_baseline_fits"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1145,7 +1145,7 @@ export interface paths {
          *     gap, the revision and the edge, and the outcomes (1, 3, 6 and 12 months) once each has fallen due and been resolved.
          *     404 `BASELINE_FIT_NOT_FOUND` for an unknown `fit_id`, or when no fit is stored.
          */
-        get: operations["list_baseline_universe_api_baseline_universe_get"];
+        get: operations["baseline_list_baseline_universe"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1166,7 +1166,7 @@ export interface paths {
          * @description Every stock the system knows (analysed, held or watched), by ticker. `pipeline_supported` is false for an ETF, a preferred share or a
          *     NEO or CSE stock: it can be held but never analysed.
          */
-        get: operations["list_stocks_api_stocks_get"];
+        get: operations["stocks_list_stocks"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1189,7 +1189,7 @@ export interface paths {
          *     data providers (`source: provider`). **Nothing is recorded.** 404 `STOCK_NOT_FOUND` when no provider knows it; 503 `STOCK_LOOKUP_UNAVAILABLE`
          *     when the providers cannot be reached.
          */
-        get: operations["lookup_ticker_api_stocks_lookup_get"];
+        get: operations["stocks_lookup_ticker"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1209,7 +1209,7 @@ export interface paths {
          * Read a stock
          * @description One stock. 404 `STOCK_NOT_FOUND`.
          */
-        get: operations["get_stock_api_stocks__stock_id__get"];
+        get: operations["stocks_get_stock"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1231,7 +1231,7 @@ export interface paths {
          *     (held, watched and the benchmark fund's listings) have rows, and they are refreshed only inside the Friday optimizer job, so the newest
          *     day can be several days old. 404 `STOCK_NOT_FOUND`.
          */
-        get: operations["list_stock_prices_api_stocks__stock_id__prices_get"];
+        get: operations["stocks_list_stock_prices"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1253,7 +1253,7 @@ export interface paths {
          *     the CIO's words, the class and labels, and every reason the stock is excluded (`exclusions`; `rerun_reasons` is the part a new analysis would
          *     fix). A stock with no usable analysis, or one the pipeline cannot analyse, answers 200 with `status: excluded`. 404 `STOCK_NOT_FOUND`.
          */
-        get: operations["get_instrument_view_api_stocks__stock_id__instrument_view_get"];
+        get: operations["stocks_get_instrument_view"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1275,7 +1275,7 @@ export interface paths {
          *     week old) and its contents (the largest holdings and the part of the fund they cover; `stale` when over 35 days old). The funds are the
          *     listings the market line is drawn from (`VFV.TO`, `VOO`). 404 `FUND_NOT_FOUND` for any other ticker, or a fund with no record stored yet.
          */
-        get: operations["get_fund_api_funds__ticker__get"];
+        get: operations["funds_get_fund"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1297,7 +1297,7 @@ export interface paths {
          *     days only. They are fetched from the Bank on every request, through the request's provider scope, and not stored. 422 `INVALID_DATE_RANGE`
          *     when `from` is after `to` or the range is over 400 days; 503 `EXCHANGE_RATE_UNAVAILABLE` when the Bank cannot be reached or answers nothing usable.
          */
-        get: operations["list_exchange_rates_api_exchange_rates_get"];
+        get: operations["exchange-rates_list_exchange_rates"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1321,7 +1321,7 @@ export interface paths {
          *     short history is a `warnings` entry, not an error. `as_of` defaults to today (Toronto). Works for the owner's portfolio and the agent's.
          *     404 `PORTFOLIO_NOT_FOUND`.
          */
-        get: operations["get_exposure_api_portfolios__portfolio_id__exposure_get"];
+        get: operations["portfolios_get_exposure"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1343,7 +1343,7 @@ export interface paths {
          *     out the stack trace, the context and the resolution notes; `GET /api/errors/{error_id}` has them. Read only: no error is ever acknowledged or
          *     resolved through the API yet, so `status` is `open` throughout.
          */
-        get: operations["list_errors_api_errors_get"];
+        get: operations["errors_list_errors"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1364,7 +1364,7 @@ export interface paths {
          * @description One error in full: its message, the stack trace and the context the system recorded (the server's folders are removed from every path) and the
          *     resolution fields. 404 `ERROR_NOT_FOUND`.
          */
-        get: operations["get_error_api_errors__error_id__get"];
+        get: operations["errors_get_error"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1387,7 +1387,7 @@ export interface paths {
          *     `week.pending` lists everything still open) and the list itself. The list is the file `backend/batch_list.json`, outside the database.
          *     503 `BATCH_LIST_UNAVAILABLE` when it cannot be read or is not valid.
          */
-        get: operations["get_weekly_batch_api_weekly_batch_get"];
+        get: operations["weekly-batch_get_weekly_batch"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1409,7 +1409,7 @@ export interface paths {
          *     variable name and never by value (`providers`), for a Canadian stock, a Canadian stock also listed in the US, and a US stock. `status` is `ok`
          *     or `degraded`; the answer is always 200, since the body is the answer. The model server is not checked: only the agents may reach it.
          */
-        get: operations["get_health_api_health_get"];
+        get: operations["health_get_health"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1432,7 +1432,7 @@ export interface paths {
          *     confirm, dismiss and reopen are changes of its `status`. A thing that was never changed has an empty list, whether or not it
          *     exists.
          */
-        get: operations["list_changes_api_history_get"];
+        get: operations["history_list_changes"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3820,11 +3820,6 @@ export interface components {
             second: number | null;
             /** Difference */
             difference: number | null;
-        };
-        /** HTTPValidationError */
-        HTTPValidationError: {
-            /** Detail */
-            detail?: components["schemas"]["ValidationError"][];
         };
         /**
          * HarvestLineResponse
@@ -7188,19 +7183,6 @@ export interface components {
             /** Is Active */
             is_active?: boolean | null;
         };
-        /** ValidationError */
-        ValidationError: {
-            /** Location */
-            loc: (string | number)[];
-            /** Message */
-            msg: string;
-            /** Error Type */
-            type: string;
-            /** Input */
-            input?: unknown;
-            /** Context */
-            ctx?: Record<string, never>;
-        };
         /**
          * ViewNoteResponse
          * @description The CIO's words and labels for a name, kept with the run. For information only.
@@ -7363,6 +7345,27 @@ export interface components {
             /** Gain Cad */
             gain_cad: number;
         };
+        /**
+         * ErrorEnvelope
+         * @description The body of every error the API returns.
+         */
+        ErrorEnvelope: {
+            error: components["schemas"]["ErrorBody"];
+        };
+        /** ErrorBody */
+        ErrorBody: {
+            /**
+             * Code
+             * @enum {string}
+             */
+            code: "VALIDATION_ERROR" | "NOT_FOUND" | "METHOD_NOT_ALLOWED" | "INTERNAL_ERROR" | "ACCOUNT_NOT_FOUND" | "AGENT_PORTFOLIO_READ_ONLY" | "ALREADY_REVERSED" | "ALREADY_WATCHING" | "ANALYSIS_IN_PROGRESS" | "ANALYSIS_NOT_FOUND" | "BASELINE_FIT_NOT_FOUND" | "BATCH_LIST_UNAVAILABLE" | "BUNDLE_NOT_STORED" | "BUNDLE_UNREADABLE" | "CONTRIBUTION_EXCEEDS_ROOM" | "CORRECTION_NOT_VALID" | "CURRENCY_MISMATCH" | "DIVIDEND_EVENT_NOT_FOUND" | "DUPLICATE_ENTRY" | "EMPTY_PORTFOLIO" | "EVENT_NOT_OPEN" | "FIGURE_NOT_FOUND" | "ERROR_NOT_FOUND" | "EXCHANGE_RATE_UNAVAILABLE" | "FUND_NOT_FOUND" | "HOLDING_NOT_FOUND" | "INSUFFICIENT_SHARES" | "INVALID_ACCOUNT" | "INVALID_CORRECTION" | "INVALID_DATE_RANGE" | "INVALID_ORDER_SETTINGS" | "INVALID_SURPLUS" | "MISSING_CAD_AMOUNT" | "MISSING_FX_RATE" | "MIXED_SECURITIES" | "NOT_PAID_YET" | "USE_DELETE_TO_ARCHIVE" | "CASH_SET_BY_ENTRIES" | "EVENT_NOT_DECIDED" | "NOT_CORRECTABLE" | "NOT_REMOVABLE" | "NOT_REVERSIBLE" | "NO_BENCHMARK_HISTORY" | "NO_BENCHMARK_LINE" | "NO_BOOK_STORED" | "NO_MATRIX_STORED" | "NO_REINVESTMENT_PRICE" | "NO_RUN_STORED" | "NO_SHARES_AT_EX" | "PIPELINE_REGISTRY_UNREADABLE" | "PORTFOLIO_EXISTS" | "PORTFOLIO_NOT_FOUND" | "PROFILE_INCOMPLETE" | "PROPOSAL_NOT_FOUND" | "PROVIDER_NOT_CONFIGURED" | "QUALITY_NOT_STORED" | "RECONCILIATION_DIFFERENCE" | "SCORECARD_NOT_FOUND" | "STOCK_LOOKUP_UNAVAILABLE" | "STOCK_NOT_FOUND" | "TARGET_BOOK_FAILED" | "TRANSACTION_NOT_FOUND" | "UNSUPPORTED_ASSET_TYPE" | "UNSUPPORTED_CURRENCY" | "UNSUPPORTED_EXCHANGE" | "UNSUPPORTED_INSTRUMENT" | "USER_NOT_FOUND" | "WATCHLIST_ENTRY_NOT_FOUND" | "HTTP_400" | "HTTP_401" | "HTTP_402" | "HTTP_403" | "HTTP_406" | "HTTP_407" | "HTTP_408" | "HTTP_409" | "HTTP_410" | "HTTP_411" | "HTTP_412" | "HTTP_413" | "HTTP_414" | "HTTP_415" | "HTTP_416" | "HTTP_417" | "HTTP_418" | "HTTP_421" | "HTTP_422" | "HTTP_423" | "HTTP_424" | "HTTP_425" | "HTTP_426" | "HTTP_428" | "HTTP_429" | "HTTP_431" | "HTTP_451" | "HTTP_500" | "HTTP_501" | "HTTP_502" | "HTTP_503" | "HTTP_504" | "HTTP_505" | "HTTP_506" | "HTTP_507" | "HTTP_508" | "HTTP_510" | "HTTP_511";
+            /** Message */
+            message: string;
+            /** Details */
+            details: {
+                [key: string]: unknown;
+            };
+        };
     };
     responses: never;
     parameters: never;
@@ -7372,7 +7375,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    read_all_api_users_get: {
+    users_read_all: {
         parameters: {
             query?: {
                 /** @description Also list archived profiles. */
@@ -7395,18 +7398,27 @@ export interface operations {
                     "application/json": components["schemas"]["UserListResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    create_api_users_post: {
+    users_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -7428,18 +7440,27 @@ export interface operations {
                     "application/json": components["schemas"]["UserProfileResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    read_one_api_users__user_id__get: {
+    users_read_one: {
         parameters: {
             query?: never;
             header?: never;
@@ -7459,18 +7480,36 @@ export interface operations {
                     "application/json": components["schemas"]["UserProfileResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `USER_NOT_FOUND`: No user profile with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    delete_api_users__user_id__delete: {
+    users_delete: {
         parameters: {
             query?: never;
             header?: never;
@@ -7488,18 +7527,36 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Validation Error */
+            /** @description `USER_NOT_FOUND`: No user profile with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    update_api_users__user_id__patch: {
+    users_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -7523,18 +7580,36 @@ export interface operations {
                     "application/json": components["schemas"]["UserProfileResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `USER_NOT_FOUND`: No user profile with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. `USE_DELETE_TO_ARCHIVE`: is_active cannot be set to false by an update; archive with DELETE (nothing is destroyed) and restore with is_active true. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    list_analyses_api_analysis_get: {
+    analysis_list_analyses: {
         parameters: {
             query?: {
                 /** @description A canonical ticker, exactly (`RY.TO`). */
@@ -7567,18 +7642,27 @@ export interface operations {
                     "application/json": components["schemas"]["AnalysisListResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    create_analysis_api_analysis_post: {
+    analysis_create_analysis: {
         parameters: {
             query?: never;
             header?: never;
@@ -7600,18 +7684,54 @@ export interface operations {
                     "application/json": components["schemas"]["AnalysisCreateResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `USER_NOT_FOUND`: No user profile with that id. `STOCK_NOT_FOUND`: No stock for the ticker, after a look-up at the providers. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `ANALYSIS_IN_PROGRESS`: An analysis of this ticker is already running. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. `UNSUPPORTED_EXCHANGE`: The ticker is on the NEO Exchange (.NE) or the Canadian Securities Exchange (.CN); supported are the TSX (.TO), the TSX Venture Exchange (.V) and US exchanges. `UNSUPPORTED_ASSET_TYPE`: The ticker is an ETF, fund or other non-equity; the analysis covers individual equities only. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `PROVIDER_NOT_CONFIGURED`: The server lacks a setting this ticker's analysis needs (a provider key or the EDGAR identity); details.missing names the variables, never their values. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    get_analysis_status_api_analysis__analysis_id__status_get: {
+    analysis_get_analysis_status: {
         parameters: {
             query?: never;
             header?: never;
@@ -7631,18 +7751,36 @@ export interface operations {
                     "application/json": components["schemas"]["AnalysisStatusResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `ANALYSIS_NOT_FOUND`: No analysis with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    get_analysis_result_api_analysis__analysis_id__get: {
+    analysis_get_analysis_result: {
         parameters: {
             query?: never;
             header?: never;
@@ -7662,18 +7800,36 @@ export interface operations {
                     "application/json": components["schemas"]["AnalysisResultResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `ANALYSIS_NOT_FOUND`: No analysis with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    get_analysis_inputs_api_analysis__analysis_id__inputs_get: {
+    analysis_get_analysis_inputs: {
         parameters: {
             query?: never;
             header?: never;
@@ -7695,18 +7851,36 @@ export interface operations {
                     };
                 };
             };
-            /** @description Validation Error */
+            /** @description `ANALYSIS_NOT_FOUND`: No analysis with that id. `BUNDLE_NOT_STORED`: The input data of the run was not kept; only some runs have it. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `BUNDLE_UNREADABLE`: The saved input data of the run is there but cannot be read; the cause is in the log. `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    get_analysis_quality_api_analysis__analysis_id__quality_get: {
+    analysis_get_analysis_quality: {
         parameters: {
             query?: never;
             header?: never;
@@ -7726,18 +7900,36 @@ export interface operations {
                     "application/json": components["schemas"]["RunQualityResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `ANALYSIS_NOT_FOUND`: No analysis with that id. `QUALITY_NOT_STORED`: No quality summary was stored for the run. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    list_analysis_calls_api_analysis__analysis_id__calls_get: {
+    analysis_list_analysis_calls: {
         parameters: {
             query?: {
                 page?: number;
@@ -7760,18 +7952,36 @@ export interface operations {
                     "application/json": components["schemas"]["LlmCallListResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `ANALYSIS_NOT_FOUND`: No analysis with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    get_analysis_diagnosis_api_analysis__analysis_id__diagnosis_get: {
+    analysis_get_analysis_diagnosis: {
         parameters: {
             query?: never;
             header?: never;
@@ -7791,18 +8001,36 @@ export interface operations {
                     "application/json": components["schemas"]["DiagnosisResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `ANALYSIS_NOT_FOUND`: No analysis with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    list_analysis_outputs_api_analysis__analysis_id__outputs_get: {
+    analysis_list_analysis_outputs: {
         parameters: {
             query?: {
                 page?: number;
@@ -7825,18 +8053,36 @@ export interface operations {
                     "application/json": components["schemas"]["HiddenOutputListResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `ANALYSIS_NOT_FOUND`: No analysis with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    list_portfolios_api_portfolios_get: {
+    portfolios_list_portfolios: {
         parameters: {
             query?: {
                 user_id?: string | null;
@@ -7860,18 +8106,27 @@ export interface operations {
                     "application/json": components["schemas"]["PortfolioListResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    create_portfolio_api_portfolios_post: {
+    portfolios_create_portfolio: {
         parameters: {
             query?: never;
             header?: never;
@@ -7893,18 +8148,45 @@ export interface operations {
                     "application/json": components["schemas"]["PortfolioResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `USER_NOT_FOUND`: No user profile with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `PORTFOLIO_EXISTS`: The person already has a user portfolio. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    get_portfolio_api_portfolios__portfolio_id__get: {
+    portfolios_get_portfolio: {
         parameters: {
             query?: never;
             header?: never;
@@ -7924,18 +8206,36 @@ export interface operations {
                     "application/json": components["schemas"]["PortfolioResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `PORTFOLIO_NOT_FOUND`: No portfolio with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    archive_portfolio_api_portfolios__portfolio_id__delete: {
+    portfolios_archive_portfolio: {
         parameters: {
             query?: never;
             header?: never;
@@ -7953,18 +8253,45 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Validation Error */
+            /** @description `AGENT_PORTFOLIO_READ_ONLY`: A write was sent for the agent portfolio, which its own follower writes; only its settings can change. Previews and reads work. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `PORTFOLIO_NOT_FOUND`: No portfolio with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    update_portfolio_api_portfolios__portfolio_id__patch: {
+    portfolios_update_portfolio: {
         parameters: {
             query?: never;
             header?: never;
@@ -7988,18 +8315,27 @@ export interface operations {
                     "application/json": components["schemas"]["PortfolioResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. `USE_DELETE_TO_ARCHIVE`: is_active cannot be set to false by an update; archive with DELETE (nothing is destroyed) and restore with is_active true. `INVALID_ORDER_SETTINGS`: The portfolio's order settings are not valid. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    list_accounts_api_portfolios__portfolio_id__accounts_get: {
+    portfolios_list_accounts: {
         parameters: {
             query?: {
                 page?: number;
@@ -8022,18 +8358,36 @@ export interface operations {
                     "application/json": components["schemas"]["AccountListResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `PORTFOLIO_NOT_FOUND`: No portfolio with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    get_account_api_portfolios__portfolio_id__accounts__account_type__get: {
+    portfolios_get_account: {
         parameters: {
             query?: never;
             header?: never;
@@ -8054,18 +8408,36 @@ export interface operations {
                     "application/json": components["schemas"]["PortfolioAccountResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `ACCOUNT_NOT_FOUND`: The portfolio has no account of that type. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    update_account_api_portfolios__portfolio_id__accounts__account_type__patch: {
+    portfolios_update_account: {
         parameters: {
             query?: never;
             header?: never;
@@ -8090,18 +8462,27 @@ export interface operations {
                     "application/json": components["schemas"]["PortfolioAccountResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. `CASH_SET_BY_ENTRIES`: The account already has entries that move its cash, so its balance is not set directly any more; record a cash adjustment or reconcile with the broker. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    list_holdings_api_portfolios__portfolio_id__holdings_get: {
+    portfolios_list_holdings: {
         parameters: {
             query?: {
                 account_type?: ("tfsa" | "rrsp" | "trading") | null;
@@ -8126,18 +8507,36 @@ export interface operations {
                     "application/json": components["schemas"]["HoldingListResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `PORTFOLIO_NOT_FOUND`: No portfolio with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    get_holding_api_portfolios__portfolio_id__holdings__holding_id__get: {
+    portfolios_get_holding: {
         parameters: {
             query?: never;
             header?: never;
@@ -8158,18 +8557,36 @@ export interface operations {
                     "application/json": components["schemas"]["HoldingResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `HOLDING_NOT_FOUND`: No holding with that id in the portfolio. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    list_transactions_api_portfolios__portfolio_id__transactions_get: {
+    portfolios_list_transactions: {
         parameters: {
             query?: {
                 account_type?: ("tfsa" | "rrsp" | "trading") | null;
@@ -8194,18 +8611,36 @@ export interface operations {
                     "application/json": components["schemas"]["TransactionListResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `PORTFOLIO_NOT_FOUND`: No portfolio with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    get_transaction_api_portfolios__portfolio_id__transactions__transaction_id__get: {
+    portfolios_get_transaction: {
         parameters: {
             query?: never;
             header?: never;
@@ -8226,18 +8661,36 @@ export interface operations {
                     "application/json": components["schemas"]["TransactionResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `TRANSACTION_NOT_FOUND`: No transaction with that id in the portfolio. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    list_watchlist_api_watchlist_get: {
+    watchlist_list_watchlist: {
         parameters: {
             query: {
                 user_id: string;
@@ -8260,18 +8713,27 @@ export interface operations {
                     "application/json": components["schemas"]["WatchlistListResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    add_to_watchlist_api_watchlist_post: {
+    watchlist_add_to_watchlist: {
         parameters: {
             query?: never;
             header?: never;
@@ -8293,18 +8755,54 @@ export interface operations {
                     "application/json": components["schemas"]["WatchlistResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `STOCK_NOT_FOUND`: No stock for the ticker, after a look-up at the providers. `USER_NOT_FOUND`: No user profile with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `ALREADY_WATCHING`: The stock is already on the person's watchlist. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. `UNSUPPORTED_INSTRUMENT`: A watchlist add for a stock the pipeline cannot analyse; the owner can still hold and trade it. `UNSUPPORTED_CURRENCY`: An unseen ticker trades in a currency other than CAD or USD. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `STOCK_LOOKUP_UNAVAILABLE`: The ticker is unseen and the data providers could not be reached to look it up; nothing was recorded. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    remove_from_watchlist_api_watchlist__watchlist_id__delete: {
+    watchlist_remove_from_watchlist: {
         parameters: {
             query?: never;
             header?: never;
@@ -8322,18 +8820,36 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Validation Error */
+            /** @description `WATCHLIST_ENTRY_NOT_FOUND`: No watchlist entry with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    update_watchlist_entry_api_watchlist__watchlist_id__patch: {
+    watchlist_update_watchlist_entry: {
         parameters: {
             query?: never;
             header?: never;
@@ -8357,18 +8873,36 @@ export interface operations {
                     "application/json": components["schemas"]["WatchlistResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `WATCHLIST_ENTRY_NOT_FOUND`: No watchlist entry with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    preview_events_api_portfolios__portfolio_id__events_preview_post: {
+    ledger_preview_events: {
         parameters: {
             query?: never;
             header?: never;
@@ -8392,18 +8926,36 @@ export interface operations {
                     "application/json": components["schemas"]["EventPreviewResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `PORTFOLIO_NOT_FOUND`: No portfolio with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    record_events_api_portfolios__portfolio_id__events_post: {
+    ledger_record_events: {
         parameters: {
             query?: never;
             header?: never;
@@ -8427,18 +8979,45 @@ export interface operations {
                     "application/json": components["schemas"]["RecordedEventsResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `AGENT_PORTFOLIO_READ_ONLY`: A write was sent for the agent portfolio, which its own follower writes; only its settings can change. Previews and reads work. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `DUPLICATE_ENTRY`: The same event or move was recorded in the last 30 seconds; nothing was written. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. `INSUFFICIENT_SHARES`: A sale or transfer out takes more shares than the record holds on that date. `CURRENCY_MISMATCH`: A row's currency differs from the currency the stock trades in. `MISSING_FX_RATE`: The Bank of Canada rate of the day could not be had; details.day and details.reason say which. `MISSING_CAD_AMOUNT`: A USD row needs an exchange rate or a CAD amount. `MIXED_SECURITIES`: Rows sent together in one events body were of more than one security; record each security on its own. `CONTRIBUTION_EXCEEDS_ROOM`: An event the system starts would put more into a TFSA or RRSP than its contribution room allows. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    preview_move_api_portfolios__portfolio_id__moves_preview_post: {
+    ledger_preview_move: {
         parameters: {
             query?: never;
             header?: never;
@@ -8462,18 +9041,36 @@ export interface operations {
                     "application/json": components["schemas"]["EventPreviewResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `PORTFOLIO_NOT_FOUND`: No portfolio with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    record_move_api_portfolios__portfolio_id__moves_post: {
+    ledger_record_move: {
         parameters: {
             query?: never;
             header?: never;
@@ -8497,18 +9094,45 @@ export interface operations {
                     "application/json": components["schemas"]["RecordedEventsResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `AGENT_PORTFOLIO_READ_ONLY`: A write was sent for the agent portfolio, which its own follower writes; only its settings can change. Previews and reads work. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `DUPLICATE_ENTRY`: The same event or move was recorded in the last 30 seconds; nothing was written. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    reverse_event_api_portfolios__portfolio_id__events__transaction_id__reverse_post: {
+    ledger_reverse_event: {
         parameters: {
             query?: never;
             header?: never;
@@ -8529,18 +9153,45 @@ export interface operations {
                     "application/json": components["schemas"]["RecordedEventsResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `AGENT_PORTFOLIO_READ_ONLY`: A write was sent for the agent portfolio, which its own follower writes; only its settings can change. Previews and reads work. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `TRANSACTION_NOT_FOUND`: No transaction with that id in the portfolio. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. `NOT_REVERSIBLE`: The entry cannot be undone (it is itself a reversal, or undoing it would leave a later sale short of shares). `ALREADY_REVERSED`: The entry was already undone. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    preview_correction_api_portfolios__portfolio_id__events__transaction_id__correct_preview_post: {
+    ledger_preview_correction: {
         parameters: {
             query?: never;
             header?: never;
@@ -8565,18 +9216,36 @@ export interface operations {
                     "application/json": components["schemas"]["EventPreviewResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `TRANSACTION_NOT_FOUND`: No transaction with that id in the portfolio. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. `ALREADY_REVERSED`: The entry was already undone. `NOT_CORRECTABLE`: The entry cannot be corrected in one step (it is a reversal, one leg of a move, a detected dividend's entry, or the correction would change the account or the security or leave a later sale short of shares); the message says what to do instead. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    correct_event_api_portfolios__portfolio_id__events__transaction_id__correct_post: {
+    ledger_correct_event: {
         parameters: {
             query?: never;
             header?: never;
@@ -8601,18 +9270,45 @@ export interface operations {
                     "application/json": components["schemas"]["RecordedEventsResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `AGENT_PORTFOLIO_READ_ONLY`: A write was sent for the agent portfolio, which its own follower writes; only its settings can change. Previews and reads work. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `TRANSACTION_NOT_FOUND`: No transaction with that id in the portfolio. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. `ALREADY_REVERSED`: The entry was already undone. `NOT_CORRECTABLE`: The entry cannot be corrected in one step (it is a reversal, one leg of a move, a detected dividend's entry, or the correction would change the account or the security or leave a later sale short of shares); the message says what to do instead. `CURRENCY_MISMATCH`: A row's currency differs from the currency the stock trades in. `MISSING_FX_RATE`: The Bank of Canada rate of the day could not be had; details.day and details.reason say which. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    remove_position_api_portfolios__portfolio_id__holdings__holding_id__remove_post: {
+    ledger_remove_position: {
         parameters: {
             query?: never;
             header?: never;
@@ -8633,18 +9329,45 @@ export interface operations {
                     "application/json": components["schemas"]["RecordedEventsResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `AGENT_PORTFOLIO_READ_ONLY`: A write was sent for the agent portfolio, which its own follower writes; only its settings can change. Previews and reads work. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `HOLDING_NOT_FOUND`: No holding with that id in the portfolio. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. `NOT_REMOVABLE`: The position cannot be removed (every entry is already reversed, part of it moved in kind between accounts, or reversing it would leave a later sale short of shares). */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    list_reconciliations_api_portfolios__portfolio_id__reconciliations_get: {
+    ledger_list_reconciliations: {
         parameters: {
             query?: {
                 account_type?: ("tfsa" | "rrsp" | "trading") | null;
@@ -8669,18 +9392,36 @@ export interface operations {
                     "application/json": components["schemas"]["ReconciliationListResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `PORTFOLIO_NOT_FOUND`: No portfolio with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    get_positions_api_portfolios__portfolio_id__positions_get: {
+    ledger_get_positions: {
         parameters: {
             query?: never;
             header?: never;
@@ -8700,18 +9441,36 @@ export interface operations {
                     "application/json": components["schemas"]["PositionsResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `PORTFOLIO_NOT_FOUND`: No portfolio with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    get_room_api_portfolios__portfolio_id__room_get: {
+    ledger_get_room: {
         parameters: {
             query?: never;
             header?: never;
@@ -8731,18 +9490,27 @@ export interface operations {
                     "application/json": components["schemas"]["RoomResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. `PROFILE_INCOMPLETE`: The profile lacks figures the call needs; details.missing names them. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    reconcile_with_broker_api_portfolios__portfolio_id__reconciliation_post: {
+    ledger_reconcile_with_broker: {
         parameters: {
             query?: never;
             header?: never;
@@ -8766,18 +9534,36 @@ export interface operations {
                     "application/json": components["schemas"]["ReconciliationsResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `AGENT_PORTFOLIO_READ_ONLY`: A write was sent for the agent portfolio, which its own follower writes; only its settings can change. Previews and reads work. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. `RECONCILIATION_DIFFERENCE`: The broker shows fewer shares than the record, or more with no cost given. `CORRECTION_NOT_VALID`: A reconciliation correction was given in a way that cannot be applied (a price or amount that is not valid). */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    monthly_plan_api_portfolios__portfolio_id__monthly_plan_post: {
+    plan_monthly_plan: {
         parameters: {
             query?: never;
             header?: never;
@@ -8801,18 +9587,27 @@ export interface operations {
                     "application/json": components["schemas"]["MonthlyPlanResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. `PROFILE_INCOMPLETE`: The profile lacks figures the call needs; details.missing names them. `INVALID_SURPLUS`: The amount to invest is not zero or more. `INVALID_ACCOUNT`: The account is not one of rrsp, tfsa or trading. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    raise_cash_plan_api_portfolios__portfolio_id__raise_cash_post: {
+    plan_raise_cash_plan: {
         parameters: {
             query?: never;
             header?: never;
@@ -8836,18 +9631,36 @@ export interface operations {
                     "application/json": components["schemas"]["RaiseCashResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `PORTFOLIO_NOT_FOUND`: No portfolio with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    report_api_portfolios__portfolio_id__reports_post: {
+    plan_report: {
         parameters: {
             query?: never;
             header?: never;
@@ -8871,18 +9684,36 @@ export interface operations {
                     "application/json": components["schemas"]["ReportResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `PORTFOLIO_NOT_FOUND`: No portfolio with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    comparison_api_portfolios__portfolio_id__reports_comparison_post: {
+    plan_comparison: {
         parameters: {
             query?: never;
             header?: never;
@@ -8906,18 +9737,36 @@ export interface operations {
                     "application/json": components["schemas"]["ComparisonResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `PORTFOLIO_NOT_FOUND`: No portfolio with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    get_proposals_api_portfolios__portfolio_id__proposals_get: {
+    optimizer_get_proposals: {
         parameters: {
             query?: {
                 run_id?: string | null;
@@ -8940,18 +9789,36 @@ export interface operations {
                     "application/json": components["schemas"]["RunViewResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `NO_RUN_STORED`: No weekly or on-demand run is stored for the portfolio, or the run named does not exist. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    get_proposal_api_portfolios__portfolio_id__proposals__proposal_id__get: {
+    optimizer_get_proposal: {
         parameters: {
             query?: never;
             header?: never;
@@ -8972,18 +9839,36 @@ export interface operations {
                     "application/json": components["schemas"]["OrderViewResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `PROPOSAL_NOT_FOUND`: No proposal with that id in the portfolio. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    list_proposal_runs_api_portfolios__portfolio_id__proposal_runs_get: {
+    optimizer_list_proposal_runs: {
         parameters: {
             query?: {
                 kind?: string | null;
@@ -9007,18 +9892,36 @@ export interface operations {
                     "application/json": components["schemas"]["RunListResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `PORTFOLIO_NOT_FOUND`: No portfolio with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    run_now_api_portfolios__portfolio_id__proposal_runs_post: {
+    optimizer_run_now: {
         parameters: {
             query?: never;
             header?: never;
@@ -9042,18 +9945,36 @@ export interface operations {
                     "application/json": components["schemas"]["RunViewResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `AGENT_PORTFOLIO_READ_ONLY`: A write was sent for the agent portfolio, which its own follower writes; only its settings can change. Previews and reads work. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. `EMPTY_PORTFOLIO`: The portfolio has no value, so the target book has nothing to place. `NO_BENCHMARK_HISTORY`: The benchmark fund's price history is missing, so the target book has no betas. `NO_BENCHMARK_LINE`: The benchmark fund has no usable record in every account, or there is no Canadian-dollar baseline. `TARGET_BOOK_FAILED`: The target book could not be solved; the message says why. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    get_account_matrix_api_portfolios__portfolio_id__account_matrix_get: {
+    optimizer_get_account_matrix: {
         parameters: {
             query?: {
                 run_id?: string | null;
@@ -9077,18 +9998,36 @@ export interface operations {
                     "application/json": components["schemas"]["AccountMatrixResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `NO_MATRIX_STORED`: The account matrix was not kept for this run (a run stored before it was kept). `NO_RUN_STORED`: No weekly or on-demand run is stored for the portfolio, or the run named does not exist. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    get_target_book_api_portfolios__portfolio_id__target_book_get: {
+    optimizer_get_target_book: {
         parameters: {
             query?: {
                 run_id?: string | null;
@@ -9110,18 +10049,36 @@ export interface operations {
                     "application/json": components["schemas"]["TargetBookResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `NO_BOOK_STORED`: The target book was not kept for this run. `NO_RUN_STORED`: No weekly or on-demand run is stored for the portfolio, or the run named does not exist. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    ask_api_portfolios__portfolio_id__ask_post: {
+    optimizer_ask: {
         parameters: {
             query?: never;
             header?: never;
@@ -9145,18 +10102,36 @@ export interface operations {
                     "application/json": components["schemas"]["RunViewResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `AGENT_PORTFOLIO_READ_ONLY`: A write was sent for the agent portfolio, which its own follower writes; only its settings can change. Previews and reads work. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. `EMPTY_PORTFOLIO`: The portfolio has no value, so the target book has nothing to place. `NO_BENCHMARK_HISTORY`: The benchmark fund's price history is missing, so the target book has no betas. `NO_BENCHMARK_LINE`: The benchmark fund has no usable record in every account, or there is no Canadian-dollar baseline. `TARGET_BOOK_FAILED`: The target book could not be solved; the message says why. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    list_dividends_api_portfolios__portfolio_id__dividends_get: {
+    dividends_list_dividends: {
         parameters: {
             query?: {
                 status?: string | null;
@@ -9180,18 +10155,36 @@ export interface operations {
                     "application/json": components["schemas"]["DividendEventListResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `PORTFOLIO_NOT_FOUND`: No portfolio with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    preview_dividend_api_portfolios__portfolio_id__dividends__event_id__preview_post: {
+    dividends_preview_dividend: {
         parameters: {
             query?: never;
             header?: never;
@@ -9216,18 +10209,36 @@ export interface operations {
                     "application/json": components["schemas"]["EventPreviewResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `DIVIDEND_EVENT_NOT_FOUND`: No dividend event with that id in the portfolio. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    confirm_dividend_api_portfolios__portfolio_id__dividends__event_id__confirm_post: {
+    dividends_confirm_dividend: {
         parameters: {
             query?: never;
             header?: never;
@@ -9252,18 +10263,45 @@ export interface operations {
                     "application/json": components["schemas"]["DividendConfirmedResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `AGENT_PORTFOLIO_READ_ONLY`: A write was sent for the agent portfolio, which its own follower writes; only its settings can change. Previews and reads work. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `EVENT_NOT_OPEN`: The dividend event is already decided. `NOT_PAID_YET`: The dividend's payment date is after the day asked about; confirm once the cash has arrived. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. `NO_SHARES_AT_EX`: The record shows no shares held on the dividend's ex-date, so nothing is owed; dismiss the event. `NO_REINVESTMENT_PRICE`: A reinvestment has no price known and the owner gave none. `INVALID_CORRECTION`: A dividend correction (gross, withholding, dates, reinvestment) is not valid. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    dismiss_dividend_api_portfolios__portfolio_id__dividends__event_id__dismiss_post: {
+    dividends_dismiss_dividend: {
         parameters: {
             query?: never;
             header?: never;
@@ -9288,18 +10326,45 @@ export interface operations {
                     "application/json": components["schemas"]["DividendEventResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `AGENT_PORTFOLIO_READ_ONLY`: A write was sent for the agent portfolio, which its own follower writes; only its settings can change. Previews and reads work. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `EVENT_NOT_OPEN`: The dividend event is already decided. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    reopen_dividend_api_portfolios__portfolio_id__dividends__event_id__reopen_post: {
+    dividends_reopen_dividend: {
         parameters: {
             query?: never;
             header?: never;
@@ -9320,18 +10385,45 @@ export interface operations {
                     "application/json": components["schemas"]["DividendEventResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `AGENT_PORTFOLIO_READ_ONLY`: A write was sent for the agent portfolio, which its own follower writes; only its settings can change. Previews and reads work. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `EVENT_NOT_DECIDED`: The dividend is still waiting for a decision, so there is nothing to reopen. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. `NOT_REVERSIBLE`: The entry cannot be undone (it is itself a reversal, or undoing it would leave a later sale short of shares). */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    list_predictions_api_predictions_get: {
+    predictions_list_predictions: {
         parameters: {
             query?: {
                 /** @description A canonical ticker, exactly (`RY.TO`). */
@@ -9360,18 +10452,27 @@ export interface operations {
                     "application/json": components["schemas"]["PredictionListResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    list_pipeline_versions_api_pipeline_versions_get: {
+    "pipeline-versions_list_pipeline_versions": {
         parameters: {
             query?: {
                 page?: number;
@@ -9392,18 +10493,27 @@ export interface operations {
                     "application/json": components["schemas"]["PipelineVersionListResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `PIPELINE_REGISTRY_UNREADABLE`: The pipeline version registry file cannot be read; the cause is in the log. `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    get_scorecard_api_scorecard_get: {
+    scorecard_get_scorecard: {
         parameters: {
             query?: {
                 section?: "page" | "overview" | "scoring" | "descriptive" | "consistency" | "baseline";
@@ -9425,18 +10535,36 @@ export interface operations {
                     "application/json": components["schemas"]["ScorecardResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `SCORECARD_NOT_FOUND`: No scorecard is saved, or none for the day asked about; details.available lists the saved days. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    get_scorecard_figure_api_scorecard_figures__figure_id__get: {
+    scorecard_get_scorecard_figure: {
         parameters: {
             query?: {
                 /** @description The day of a saved scorecard; the newest by default. */
@@ -9461,18 +10589,36 @@ export interface operations {
                     "application/json": components["schemas"]["ScorecardFigureResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `SCORECARD_NOT_FOUND`: No scorecard is saved, or none for the day asked about; details.available lists the saved days. `FIGURE_NOT_FOUND`: The saved scorecard has no figure with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    list_baseline_fits_api_baseline_fits_get: {
+    baseline_list_baseline_fits: {
         parameters: {
             query?: {
                 page?: number;
@@ -9493,18 +10639,27 @@ export interface operations {
                     "application/json": components["schemas"]["BaselineFitListResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    list_baseline_universe_api_baseline_universe_get: {
+    baseline_list_baseline_universe: {
         parameters: {
             query?: {
                 /** @description A fit from `/fits`; the latest by default. */
@@ -9530,18 +10685,36 @@ export interface operations {
                     "application/json": components["schemas"]["BaselineUniverseListResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `BASELINE_FIT_NOT_FOUND`: No baseline fit with that id, or none is stored. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    list_stocks_api_stocks_get: {
+    stocks_list_stocks: {
         parameters: {
             query?: {
                 /** @description Matches part of the ticker or the company name, ignoring case. */
@@ -9564,18 +10737,27 @@ export interface operations {
                     "application/json": components["schemas"]["StockListResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    lookup_ticker_api_stocks_lookup_get: {
+    stocks_lookup_ticker: {
         parameters: {
             query: {
                 /** @description Any case; trimmed. Letters, digits, `.` and `-` only (`RY.TO`, `BRK-B`): the text goes to the data providers. */
@@ -9596,18 +10778,45 @@ export interface operations {
                     "application/json": components["schemas"]["StockLookupResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `STOCK_NOT_FOUND`: No stock for the ticker, after a look-up at the providers. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `STOCK_LOOKUP_UNAVAILABLE`: The ticker is unseen and the data providers could not be reached to look it up; nothing was recorded. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    get_stock_api_stocks__stock_id__get: {
+    stocks_get_stock: {
         parameters: {
             query?: never;
             header?: never;
@@ -9627,18 +10836,36 @@ export interface operations {
                     "application/json": components["schemas"]["StockResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `STOCK_NOT_FOUND`: No stock for the ticker, after a look-up at the providers. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    list_stock_prices_api_stocks__stock_id__prices_get: {
+    stocks_list_stock_prices: {
         parameters: {
             query?: {
                 /** @description On or after this day. */
@@ -9665,18 +10892,36 @@ export interface operations {
                     "application/json": components["schemas"]["PriceListResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `STOCK_NOT_FOUND`: No stock for the ticker, after a look-up at the providers. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    get_instrument_view_api_stocks__stock_id__instrument_view_get: {
+    stocks_get_instrument_view: {
         parameters: {
             query?: never;
             header?: never;
@@ -9696,18 +10941,36 @@ export interface operations {
                     "application/json": components["schemas"]["InstrumentViewResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `STOCK_NOT_FOUND`: No stock for the ticker, after a look-up at the providers. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    get_fund_api_funds__ticker__get: {
+    funds_get_fund: {
         parameters: {
             query?: never;
             header?: never;
@@ -9727,18 +10990,36 @@ export interface operations {
                     "application/json": components["schemas"]["FundResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `FUND_NOT_FOUND`: The ticker is not a benchmark fund, or the fund has no record stored yet. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    list_exchange_rates_api_exchange_rates_get: {
+    "exchange-rates_list_exchange_rates": {
         parameters: {
             query?: {
                 pair?: "USDCAD";
@@ -9764,18 +11045,36 @@ export interface operations {
                     "application/json": components["schemas"]["ExchangeRateListResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. `INVALID_DATE_RANGE`: `from` is after `to`, or the range is longer than the route allows; details name the range. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `EXCHANGE_RATE_UNAVAILABLE`: The Bank of Canada could not be reached or answered no usable USD/CAD rate; nothing is stored. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    get_exposure_api_portfolios__portfolio_id__exposure_get: {
+    portfolios_get_exposure: {
         parameters: {
             query?: {
                 as_of?: string | null;
@@ -9797,18 +11096,36 @@ export interface operations {
                     "application/json": components["schemas"]["ExposureResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `PORTFOLIO_NOT_FOUND`: No portfolio with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    list_errors_api_errors_get: {
+    errors_list_errors: {
         parameters: {
             query?: {
                 severity?: ("critical" | "high" | "medium" | "low") | null;
@@ -9840,18 +11157,27 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorListResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    get_error_api_errors__error_id__get: {
+    errors_get_error: {
         parameters: {
             query?: never;
             header?: never;
@@ -9871,18 +11197,36 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorDetailResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `ERROR_NOT_FOUND`: No recorded error with that id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    get_weekly_batch_api_weekly_batch_get: {
+    "weekly-batch_get_weekly_batch": {
         parameters: {
             query?: {
                 as_of?: string | null;
@@ -9902,18 +11246,36 @@ export interface operations {
                     "application/json": components["schemas"]["WeeklyBatchResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `BATCH_LIST_UNAVAILABLE`: The weekly batch list file cannot be read or is not valid; the message says which. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
     };
-    get_health_api_health_get: {
+    health_get_health: {
         parameters: {
             query?: never;
             header?: never;
@@ -9931,9 +11293,18 @@ export interface operations {
                     "application/json": components["schemas"]["HealthResponse"];
                 };
             };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
         };
     };
-    list_changes_api_history_get: {
+    history_list_changes: {
         parameters: {
             query: {
                 /** @description What kind of thing. */
@@ -9958,13 +11329,22 @@ export interface operations {
                     "application/json": components["schemas"]["ChangeListResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description `VALIDATION_ERROR`: The request is not valid; details.errors names where, what and which rule. */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
