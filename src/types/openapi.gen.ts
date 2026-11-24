@@ -1684,7 +1684,7 @@ export interface components {
             action_type: string;
             /**
              * Expected Return At Time
-             * @description Fraction: 0.0678 means 6.78%.
+             * @description The after-tax return held there. Fraction: 0.0678 means 6.78%.
              */
             expected_return_at_time: number | null;
             /** Reason Not Chosen */
@@ -1896,13 +1896,19 @@ export interface components {
              * Format: uuid
              */
             stock_id: string;
-            /** Ticker */
+            /**
+             * Ticker
+             * @description The canonical ticker, e.g. `SHOP.TO` or `KO`.
+             */
             ticker: string;
             /** Name */
             name: string;
             /** Exchange */
             exchange: string;
-            /** Currency */
+            /**
+             * Currency
+             * @description The currency the stock trades in.
+             */
             currency: string;
         };
         /**
@@ -2042,7 +2048,7 @@ export interface components {
             flat_pct?: number | null;
             /**
              * Rf 2Y Pct
-             * @description The 2-year yield used, Whole percent: 9.11 means 9.11%.
+             * @description The 2-year yield used. Whole percent: 9.11 means 9.11%.
              */
             rf_2y_pct?: number | null;
             /**
@@ -2229,17 +2235,17 @@ export interface components {
             new_money_placed_cad: number;
             /**
              * Capacity
-             * @description Fraction: 0.25 means 25% of the portfolio.
+             * @description Share of the portfolio. Fraction: 0.0678 means 6.78%.
              */
             capacity: number;
             /**
              * Stocks
-             * @description Fraction: 0.25 means 25% of the portfolio.
+             * @description Share of the portfolio. Fraction: 0.0678 means 6.78%.
              */
             stocks: number;
             /**
              * Fund
-             * @description Fraction: 0.25 means 25% of the portfolio.
+             * @description Share of the portfolio. Fraction: 0.0678 means 6.78%.
              */
             fund: number;
             /** Fund Listing */
@@ -2248,7 +2254,7 @@ export interface components {
             full: boolean;
             /**
              * Capacity After
-             * @description Fraction: 0.25 means 25% of the portfolio.
+             * @description Share of the portfolio. Fraction: 0.0678 means 6.78%.
              */
             capacity_after: number;
         };
@@ -2263,31 +2269,31 @@ export interface components {
             status: "in_book" | "not_in_book" | "fixed" | "excluded" | "selling";
             /**
              * Weights
-             * @description By account: the fraction of the portfolio the book wants there. 0.05 means 5%.
+             * @description By account: the share of the portfolio the book wants there. Fraction: 0.0678 means 6.78%.
              */
             weights: {
                 [key: string]: number;
             };
             /**
              * Total
-             * @description Fraction: 0.25 means 25% of the portfolio.
+             * @description Share of the portfolio. Fraction: 0.0678 means 6.78%.
              */
             total: number;
             /**
              * Current
-             * @description By account: the fraction of the portfolio held there now. 0.05 means 5%.
+             * @description By account: the share of the portfolio held there now. Fraction: 0.0678 means 6.78%.
              */
             current: {
                 [key: string]: number;
             };
             /**
              * Current Total
-             * @description Fraction: 0.25 means 25% of the portfolio.
+             * @description Share of the portfolio. Fraction: 0.0678 means 6.78%.
              */
             current_total: number;
             /**
              * Cap
-             * @description Fraction: 0.25 means 25% of the portfolio.
+             * @description Share of the portfolio. Fraction: 0.0678 means 6.78%.
              */
             cap: number | null;
             /**
@@ -2304,7 +2310,7 @@ export interface components {
             moves_with: string[];
             /**
              * Score
-             * @description Ratio, not a percent: the return over the market line, per unit of volatility.
+             * @description The return over the market line, per unit of volatility. Ratio, not a percent.
              */
             score: number | null;
             /**
@@ -2339,7 +2345,7 @@ export interface components {
             edge: number | null;
             /**
              * Beta
-             * @description Ratio to the benchmark: 1.0 moves with it.
+             * @description Sensitivity to the benchmark: 1.0 moves with it. Ratio, not a percent.
              */
             beta: number | null;
             /**
@@ -2375,7 +2381,7 @@ export interface components {
             tier?: ("strong_outperform" | "outperform" | "market_perform" | "underperform" | "strong_underperform" | "moderate" | "low" | "minimal") | null;
             /**
              * View Jump Steps
-             * @description Tier steps: the latest weekly reading's change.
+             * @description The latest weekly reading's change. Tier steps, not a percent.
              */
             view_jump_steps?: number | null;
             /**
@@ -2440,7 +2446,7 @@ export interface components {
             input_readings: components["schemas"]["InputReading"][];
             /**
              * Labor Bea Share
-             * @description BEA 2017 compensation of employees over output, when the archetype has a BEA industry. Fraction: 0.25 means 25%.
+             * @description BEA 2017 compensation of employees over output, when the archetype has a BEA industry. Fraction: 0.0678 means 6.78%.
              */
             labor_bea_share?: number | null;
             /**
@@ -2492,7 +2498,7 @@ export interface components {
             cap_cad: number;
             /**
              * Share Of Cap
-             * @description Fraction of the cap used: 0.9 means 90%.
+             * @description Share of the cap used. Fraction: 0.0678 means 6.78%.
              */
             share_of_cap: number;
         };
@@ -2808,7 +2814,7 @@ export interface components {
             value_cad: number;
             /**
              * Share
-             * @description Fraction: 0.25 means 25% of what is held.
+             * @description Share of what is held. Fraction: 0.0678 means 6.78%.
              */
             share: number;
         } & {
@@ -3144,7 +3150,7 @@ export interface components {
             target_cad: number;
             /**
              * Ratio
-             * @description Ratio: held over target, 1.0 is on target.
+             * @description Held over target, 1.0 is on target. Ratio, not a percent.
              */
             ratio: number | null;
             /**
@@ -3458,7 +3464,7 @@ export interface components {
             b: string;
             /**
              * Rho
-             * @description Correlation of weekly returns, -1 to 1.
+             * @description Between the weekly returns of the two names. Correlation, from -1 to 1.
              */
             rho?: number | null;
         };
@@ -3494,21 +3500,21 @@ export interface components {
             not_itemised: number;
             /**
              * Sectors
-             * @description By sector (the class labels). Each value is a fraction of the portfolio's value: 0.25 means 25%.
+             * @description By sector (the class labels): each value is a share of the portfolio's value. Fraction: 0.0678 means 6.78%.
              */
             sectors: {
                 [key: string]: number;
             };
             /**
              * Industries
-             * @description By industry (the class labels). Each value is a fraction of the portfolio's value: 0.25 means 25%.
+             * @description By industry (the class labels): each value is a share of the portfolio's value. Fraction: 0.0678 means 6.78%.
              */
             industries: {
                 [key: string]: number;
             };
             /**
              * Currencies
-             * @description By currency. Each value is a fraction of the portfolio's value: 0.25 means 25%.
+             * @description By currency: each value is a share of the portfolio's value. Fraction: 0.0678 means 6.78%.
              */
             currencies: {
                 [key: string]: number;
@@ -3569,17 +3575,17 @@ export interface components {
             vol_quote?: number | null;
             /**
              * Beta
-             * @description To the benchmark, in Canadian dollars. Ratio to the benchmark in Canadian dollars: 1.0 moves with it.
+             * @description Sensitivity to the benchmark in Canadian dollars: 1.0 moves with it. Ratio, not a percent.
              */
             beta?: number | null;
             /**
              * Beta Se
-             * @description Ratio: the standard error of the beta.
+             * @description The standard error of the beta. Ratio, not a percent.
              */
             beta_se?: number | null;
             /**
              * Beta Shrunk
-             * @description Ratio to the benchmark, shrunk toward 1.
+             * @description Sensitivity to the benchmark, shrunk toward 1. Ratio, not a percent.
              */
             beta_shrunk?: number | null;
             /**
@@ -3589,7 +3595,7 @@ export interface components {
             resid_vol?: number | null;
             /**
              * R2
-             * @description Share of variance the benchmark explains, 0 to 1.
+             * @description Share of variance the benchmark explains. Fraction: 0.0678 means 6.78%.
              */
             r2?: number | null;
             /**
@@ -3758,7 +3764,7 @@ export interface components {
         FundSlotResponse: {
             /**
              * Weight
-             * @description Fraction: 0.25 means 25% of the portfolio.
+             * @description Share of the portfolio. Fraction: 0.0678 means 6.78%.
              */
             weight?: number | null;
             /** Listing */
@@ -3972,7 +3978,7 @@ export interface components {
             confirmation: "filing" | "archetype";
             /**
              * Bea Share
-             * @description The BEA 2017 direct-purchase share of the industry's output. Fraction: 0.25 means 25%.
+             * @description The BEA 2017 direct-purchase share of the industry's output. Fraction: 0.0678 means 6.78%.
              */
             bea_share?: number | null;
             state: components["schemas"]["SeriesState"];
@@ -4051,12 +4057,12 @@ export interface components {
             market_reference?: number | null;
             /**
              * View Points
-             * @description The CIO's view, Percentage points: 1.5 means 1.5 points.
+             * @description The CIO's view. Percentage points: 1.5 means 1.5 points.
              */
             view_points?: number | null;
             /**
              * View Noise Points
-             * @description What one tier step of the label moves the prediction by, Percentage points: 1.5 means 1.5 points.
+             * @description What one tier step of the label moves the prediction by. Percentage points: 1.5 means 1.5 points.
              */
             view_noise_points?: number | null;
             /**
@@ -4101,7 +4107,7 @@ export interface components {
             other_listing?: string | null;
             /**
              * View Jump Steps
-             * @description Tier steps: the change in the latest weekly reading since the one before.
+             * @description The change in the latest weekly reading since the one before. Tier steps, not a percent.
              */
             view_jump_steps?: number | null;
             /**
@@ -4352,12 +4358,12 @@ export interface components {
             market_line_holding?: number | null;
             /**
              * Score 12M
-             * @description Ratio, not a percent: the return over the market line, per unit of volatility.
+             * @description The return over the market line, per unit of volatility. Ratio, not a percent.
              */
             score_12m?: number | null;
             /**
              * Score Holding
-             * @description Ratio, not a percent: the return over the market line, per unit of volatility.
+             * @description The return over the market line, per unit of volatility. Ratio, not a percent.
              */
             score_holding?: number | null;
             /** Tax Mode */
@@ -4552,7 +4558,7 @@ export interface components {
             jump?: boolean | null;
             /**
              * Signal To Noise
-             * @description Ratio: the gain after the certain costs over the noise margin; null when there is no noise.
+             * @description The gain after the certain costs over the noise margin; null when there is no noise. Ratio, not a percent.
              */
             signal_to_noise?: number | null;
             /** Qualified Runs */
@@ -4844,7 +4850,7 @@ export interface components {
             commission_per_trade?: number | null;
             /**
              * Conversion Cost Pct
-             * @description Whole percent: 1.5 means 1.5%.
+             * @description Whole percent: 9.11 means 9.11%.
              */
             conversion_cost_pct?: number | null;
             /** Uses Norberts Gambit */
@@ -5037,7 +5043,7 @@ export interface components {
             market_line_12m: number | null;
             /**
              * Score 12M
-             * @description Ratio, not a percent: the return over the market line, per unit of volatility.
+             * @description The return over the market line, per unit of volatility. Ratio, not a percent.
              */
             score_12m: number | null;
             /**
@@ -5268,7 +5274,7 @@ export interface components {
             stock_baseline_pct?: number | null;
             /**
              * Market Reference Pct
-             * @description Whole percent: 9.11 means 9.11%. Absent on older runs.
+             * @description Absent on older runs. Whole percent: 9.11 means 9.11%.
              */
             market_reference_pct?: number | null;
             /**
@@ -5278,7 +5284,7 @@ export interface components {
             view_pts?: number | null;
             /**
              * View Per Unit Risk
-             * @description Ratio, not a percent: the view over the band's volatility.
+             * @description The view over the band's volatility. Ratio, not a percent.
              */
             view_per_unit_risk?: number | null;
             /** Inputs */
@@ -5367,14 +5373,14 @@ export interface components {
         PriceSlider: {
             /**
              * No View Position
-             * @description Fraction of the range, 0 to 1, with no view.
+             * @description Position in the range, with no view. Fraction: 0.0678 means 6.78%.
              */
             no_view_position?: number | null;
             /** Shift */
             shift?: number | null;
             /**
              * Position
-             * @description Fraction of the range, 0 to 1, with the CIO's view.
+             * @description Position in the range, with the CIO's view. Fraction: 0.0678 means 6.78%.
              */
             position?: number | null;
         } & {
@@ -5788,7 +5794,7 @@ export interface components {
             excluded: components["schemas"]["ExcludedViewResponse"][];
             /**
              * Parked Share
-             * @description Fraction: 0.25 means 25% of the portfolio.
+             * @description Share of the portfolio. Fraction: 0.0678 means 6.78%.
              */
             parked_share: number | null;
             /** Fund By Account */
@@ -6186,7 +6192,7 @@ export interface components {
             value: number;
             /**
              * Share
-             * @description Of the undimensioned total. Fraction: 0.25 means 25%.
+             * @description Of the undimensioned total. Fraction: 0.0678 means 6.78%.
              */
             share: number;
         };
@@ -6213,22 +6219,22 @@ export interface components {
             regions: components["schemas"]["SalesRegion"][];
             /**
              * United States Share
-             * @description Fraction: 0.25 means 25%.
+             * @description Fraction: 0.0678 means 6.78%.
              */
             united_states_share?: number | null;
             /**
              * Outside Us Share
-             * @description Fraction: 0.25 means 25%.
+             * @description Fraction: 0.0678 means 6.78%.
              */
             outside_us_share?: number | null;
             /**
              * China Share
-             * @description Fraction: 0.25 means 25%.
+             * @description Fraction: 0.0678 means 6.78%.
              */
             china_share?: number | null;
             /**
              * Coverage
-             * @description The regions over the total; below 0.99 a line says so. Fraction: 0.99 means 99%.
+             * @description The regions over the total; below 0.99 a line says so. Fraction: 0.0678 means 6.78%.
              * @default 1
              */
             coverage: number;
@@ -6496,6 +6502,21 @@ export interface components {
          */
         StockLookupResponse: {
             /**
+             * Instrument Type
+             * @description `equity`, `etf` or `other`; null for a row that never recorded one (an equity the pipeline already served).
+             */
+            instrument_type?: string | null;
+            /**
+             * Pipeline Supported
+             * @description Whether the analysis pipeline can serve it. An unsupported instrument can still be held; it is never analysed or traded by the optimizer.
+             */
+            pipeline_supported: boolean;
+            /**
+             * Unsupported Reason
+             * @description Why not, when `pipeline_supported` is false.
+             */
+            unsupported_reason?: string | null;
+            /**
              * Stock Id
              * @description Null for a ticker the database has not seen.
              */
@@ -6525,6 +6546,17 @@ export interface components {
              */
             industry?: string | null;
             /**
+             * Source
+             * @description `database` when the stock is already known (no provider was asked), `provider` when the data providers answered.
+             */
+            source: string;
+        };
+        /**
+         * StockResponse
+         * @description A stock the system knows: one row of the directory.
+         */
+        StockResponse: {
+            /**
              * Instrument Type
              * @description `equity`, `etf` or `other`; null for a row that never recorded one (an equity the pipeline already served).
              */
@@ -6539,17 +6571,6 @@ export interface components {
              * @description Why not, when `pipeline_supported` is false.
              */
             unsupported_reason?: string | null;
-            /**
-             * Source
-             * @description `database` when the stock is already known (no provider was asked), `provider` when the data providers answered.
-             */
-            source: string;
-        };
-        /**
-         * StockResponse
-         * @description A stock the system knows: one row of the directory.
-         */
-        StockResponse: {
             /**
              * Stock Id
              * Format: uuid
@@ -6579,6 +6600,12 @@ export interface components {
              * @description The class label (data/reference/sector_industry.py), the same in every response; null when not mapped.
              */
             industry?: string | null;
+        };
+        /**
+         * StockSummary
+         * @description Mirrors the frontend `Stock` type.
+         */
+        StockSummary: {
             /**
              * Instrument Type
              * @description `equity`, `etf` or `other`; null for a row that never recorded one (an equity the pipeline already served).
@@ -6594,39 +6621,30 @@ export interface components {
              * @description Why not, when `pipeline_supported` is false.
              */
             unsupported_reason?: string | null;
-        };
-        /**
-         * StockSummary
-         * @description Mirrors the frontend `Stock` type.
-         */
-        StockSummary: {
             /**
              * Stock Id
              * Format: uuid
              */
             stock_id: string;
-            /** Ticker */
+            /**
+             * Ticker
+             * @description The canonical ticker, e.g. `SHOP.TO` or `KO`.
+             */
             ticker: string;
             /** Name */
             name: string;
+            /** Exchange */
+            exchange: string;
+            /**
+             * Currency
+             * @description The currency the stock trades in.
+             */
+            currency: string;
             /**
              * Sector
              * @description The class label (data/reference/sector_industry.py), the same in every response; null when not mapped.
              */
             sector?: string | null;
-            /** Exchange */
-            exchange: string;
-            /** Currency */
-            currency: string;
-            /**
-             * Pipeline Supported
-             * @default true
-             */
-            pipeline_supported: boolean;
-            /** Instrument Type */
-            instrument_type?: string | null;
-            /** Unsupported Reason */
-            unsupported_reason?: string | null;
         };
         /**
          * TargetBookResponse
@@ -6649,12 +6667,12 @@ export interface components {
             total_value_cad: number;
             /**
              * Stock Share
-             * @description Fraction: 0.25 means 25% of the portfolio.
+             * @description Share of the portfolio. Fraction: 0.0678 means 6.78%.
              */
             stock_share: number;
             /**
              * Parked
-             * @description Fraction: 0.25 means 25% of the portfolio.
+             * @description Share of the portfolio. Fraction: 0.0678 means 6.78%.
              */
             parked: number;
             /**

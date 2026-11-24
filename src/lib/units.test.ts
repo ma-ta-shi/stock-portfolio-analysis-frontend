@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { asFraction } from './units'
 
-// The table's keys are checked against the generated API types by the compiler (see `units.ts`): a `_pct` field that is
-// not listed, or a key that is not an API field, fails `tsc`. These tests cover the conversion itself.
+// The table is generated from the backend's `x-unit` markers and checked against the generated API types by the compiler (see
+// `units.ts`): a `_pct` field with no unit, or a key that is not an API field, fails `tsc`. These tests cover the conversion itself.
 
 describe('asFraction', () => {
   it('divides a whole percent and leaves a fraction alone', () => {
@@ -16,10 +16,10 @@ describe('asFraction', () => {
     expect(asFraction('InstrumentViewResponse.valuation_edge', undefined)).toBeNull()
   })
 
-  it('does not compile for a field that is points or unclassified', () => {
+  it('does not compile for a field that is points or has no unit', () => {
     // @ts-expect-error percentage points are not a ratio the formatters can take
     asFraction('InstrumentViewResponse.view_points', 1.06)
-    // @ts-expect-error an unclassified field cannot be passed
-    asFraction('MatrixCellResponse.total_return_quote', 0.07)
+    // @ts-expect-error a field the backend gives no unit cannot be passed
+    asFraction('MatrixCellResponse.ticker', 0.07)
   })
 })
