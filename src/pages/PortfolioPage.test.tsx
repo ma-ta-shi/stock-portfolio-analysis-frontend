@@ -6,6 +6,8 @@ import { PortfolioPage } from './PortfolioPage'
 
 // The subtab sections have their own tests; stub them to see which one is shown and with what filter.
 vi.mock('./portfolio/HoldingsTable', () => ({ HoldingsTable: ({ accountFilter }: { accountFilter: string }) => <div>holdings:{accountFilter}</div> }))
+vi.mock('./portfolio/DividendsTab', () => ({ DividendsTab: () => null }))
+vi.mock('./portfolio/BrokerChecks', () => ({ BrokerChecks: () => null }))
 vi.mock('./portfolio/TransactionsTab', () => ({ TransactionsTab: ({ accountFilter }: { accountFilter: string }) => <div>transactions:{accountFilter}</div> }))
 vi.mock('./portfolio/PortfolioOptimizerSection', () => ({ PortfolioOptimizerSection: () => <div>optimizer-section</div> }))
 vi.mock('./portfolio/AllocationCharts', () => ({ AllocationCharts: () => <div>allocation-charts</div> }))

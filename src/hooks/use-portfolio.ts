@@ -1,16 +1,16 @@
 /**
  * The Portfolio screen's server state. Everything is keyed by the owner's portfolio id (`usePortfolioId`), read through the
- * mappers in `lib/portfolio-mappers.ts`, and nothing here edits a cache by hand: a write that is not wired yet throws
- * `notConnected(gap)` so the dialog shows what is missing (the writes ticket, 86bd5z6mq, replaces each stub).
+ * mappers in `lib/portfolio-mappers.ts`, and nothing here edits a cache by hand: a write goes through `useLedgerPreview` and
+ * `useLedgerRecord`, which refresh every portfolio query once the server confirms.
  */
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { apiFetch, apiQuery, getErrorMessage, jsonBody, notConnected } from '@/lib/api'
 import { fillRoute, type LedgerRoute } from '@/lib/ledger-routes'
+import { mapDividendEvent, type ApiDividendEvent } from '@/screens/portfolio/dividends'
 import type { EventPreview } from '@/screens/portfolio/preview'
-import type { GapId } from '@/lib/gaps'
 import { fetchAllPages } from '@/lib/fetch-all-pages'
-import { localDateInputValue } from '@/lib/format'
+import { dayFromToday, localDateInputValue } from '@/lib/format'
 import { queryKeys } from '@/lib/query-keys'
 import {
   accountParam,
@@ -37,7 +37,7 @@ function usePortfolioPath(): { id: string | null; path: (rest: string) => string
   return { id: portfolioId, path: (rest) => `/api/portfolios/${portfolioId}${rest}` }
 }
 
-/** What the portfolio holds, valued at the latest recorded prices; the whole and each account, with the broker confirmations. */
+/** What the portfolio holds, valued at the latest recorded prices; the whole and each account. */
 export function usePositions() {
   const { id, path } = usePortfolioPath()
   return useQuery({
@@ -60,10 +60,7 @@ function useRawHoldings() {
 /** Every holding, active and closed, with its position, price, changes and call: one request, mapped once. */
 function useHoldingRows() {
   const raw = useRawHoldings()
-  const positions = usePositions()
-  // The confirmations come with the positions; a holding is still shown if they could not be read.
-  const confirmations = positions.data?.confirmations
-  const data = useMemo(() => (raw.data ? mapHoldings(raw.data, confirmations ?? []) : undefined), [raw.data, confirmations])
+  const data = useMemo(() => (raw.data ? mapHoldings(raw.data) : undefined), [raw.data])
   return { data, isLoading: raw.isLoading, isError: raw.isError, error: raw.error, refetch: raw.refetch }
 }
 
@@ -81,14 +78,22 @@ export function useClosedPositions() {
   return { ...rows, data }
 }
 
-function useReport() {
+/** The report since inception, or for an inclusive range of days (mock mode serves the 30-day recording for any range). */
+function useReport(range?: { start: string; end: string }) {
   const { id, path } = usePortfolioPath()
   return useQuery({
-    queryKey: queryKeys.portfolio.report(id ?? ''),
+    queryKey: queryKeys.portfolio.report(id ?? '', range ? `${range.start}:${range.end}` : undefined),
     enabled: !!id,
     queryFn: ({ signal }) =>
-      apiQuery<Api['ReportResponse']>(`${DIR}/report.json`, path('/reports'), { preset: 'since_inception' }, { signal }),
+      apiQuery<Api['ReportResponse']>(`${DIR}/${range ? 'report-30d' : 'report'}.json`, path('/reports'), range ?? { preset: 'since_inception' }, { signal }),
   })
+}
+
+/** Dividends received after tax in the last 30 days, in CAD, for the account shown (the report's own figure). */
+export function useDividendsReceived(view: PortfolioAccountView) {
+  const { data: report, isError } = useReport({ start: dayFromToday(-30), end: localDateInputValue() })
+  const part = view === 'combined' ? report?.total : report?.accounts[view]
+  return { data: report ? (part?.profit.dividends_net_cad ?? 0) : undefined, isError }
 }
 
 function useValueHistory(view: PortfolioAccountView) {
@@ -98,7 +103,7 @@ function useValueHistory(view: PortfolioAccountView) {
     queryKey: queryKeys.portfolio.history(id ?? '', view),
     enabled: !!id,
     queryFn: ({ signal }) => {
-      const from = localDateInputValue(new Date(Date.now() - 30 * 86_400_000))
+      const from = dayFromToday(-30)
       return apiFetch<Api['ValueHistoryResponse']>(
         `${DIR}/value-history.json`,
         path(`/value-history?from=${from}${account ? `&account_type=${account}` : ''}`),
@@ -208,6 +213,19 @@ export async function fetchAllTransactions(
   return mapTransactions(rows)
 }
 
+/**
+ * Every ledger row of a filter, for the Dividends tab and a stock's history.
+ * shortcut: reads all pages at once, page it as the Transactions tab does if a history grows past a few hundred rows.
+ */
+export function useTransactionHistory(filters: TransactionFilters, view: PortfolioAccountView) {
+  const { id } = usePortfolioPath()
+  return useQuery({
+    queryKey: queryKeys.portfolio.allTransactions(id ?? '', transactionsQuery(filters, view)),
+    enabled: !!id,
+    queryFn: ({ signal }) => fetchAllTransactions(id ?? '', filters, view, signal),
+  })
+}
+
 /** The Optimizer tab's suggestions (still the retired model; the Optimizer ticket, 86bd5z6n5, replaces it). */
 export function usePortfolioOptimizer() {
   const { userId } = useUser()
@@ -218,18 +236,19 @@ export function usePortfolioOptimizer() {
   })
 }
 
-// --- Writes: not wired yet. Each raises the error the gap registry words (`lib/gaps.json`); the writes ticket replaces them.
-
-/**
- * A write that is not wired yet: it takes the input the real call will take and raises the registered gap, so the dialog says what is
- * missing (the writes ticket, 86bd5z6mq, replaces each use with the real call).
- */
-function notConnectedWrite<Input>(gap: GapId) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  return async (_input: Input): Promise<never> => {
-    throw notConnected(gap)
-  }
+/** The dividends the system found (waiting, confirmed and dismissed) in one request; the panel splits them by status. */
+export function useDividends() {
+  const { id, path } = usePortfolioPath()
+  const result = useQuery({
+    queryKey: queryKeys.portfolio.dividends(id ?? ''),
+    enabled: !!id,
+    queryFn: ({ signal }) => fetchAllPages<ApiDividendEvent>(`${DIR}/dividends.json`, path('/dividends'), { signal }),
+  })
+  const data = useMemo(() => result.data?.map(mapDividendEvent), [result.data])
+  return { ...result, data }
 }
+
+// --- Writes: one preview hook and one record hook for every ledger route (lib/ledger-routes.ts).
 
 export interface LedgerCall {
   params?: Record<string, string>
@@ -266,25 +285,19 @@ export function useLedgerRecord<T = Api['RecordedEventsResponse']>(route: Ledger
   })
 }
 
+/** What the original Edit position dialog sends. */
 export interface UpdatePositionInput {
   holdingId: string
   shares: number
   average_cost_basis: number
 }
+
+/** Editing a position is not connected: the ledger has no route that sets shares and average cost (gap P-W4). */
 export function useUpdatePosition() {
   return useMutation({
-    mutationFn: notConnectedWrite<UpdatePositionInput>('P-W4'),
-  })
-}
-
-export function useCorrectTransaction() {
-  return useMutation({
-    mutationFn: notConnectedWrite<string>('P-W7'),
-  })
-}
-
-export function useReverseTransaction() {
-  return useMutation({
-    mutationFn: notConnectedWrite<string>('P-W8'),
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    mutationFn: async (_input: UpdatePositionInput): Promise<never> => {
+      throw notConnected('P-W4')
+    },
   })
 }

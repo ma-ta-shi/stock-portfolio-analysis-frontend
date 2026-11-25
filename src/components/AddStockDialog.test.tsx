@@ -4,7 +4,6 @@ import { AddStockDialog } from './AddStockDialog'
 import type { TickerResult } from '@/hooks/use-ticker-search'
 import { fromLookup } from '@/hooks/use-ticker-search'
 import { mockLedgerHooks } from '@/test/ledger-mocks'
-import { useAccounts } from '@/hooks/use-portfolio'
 import type { StockLookup } from '@/screens/portfolio/lookup'
 
 vi.mock('@/hooks/use-watchlist')
@@ -75,37 +74,36 @@ describe('AddStockDialog: finding the stock', () => {
   })
 })
 
+// The original Add Stock form: shares, average cost and account.
 describe('AddStockDialog: recording the position', () => {
-  const pick = (name: RegExp) => fireEvent.click(screen.getByRole('radio', { name }))
-
-  it('records "I bought it" as a buy in the chosen account, with the account commission as the fee', async () => {
+  it('asks for the account, the shares and the average cost only', () => {
     render(<AddStockDialog mode="portfolio" open onOpenChange={vi.fn()} defaultStock={fromLookup({ ...bnsLookup, stock_id: 's1' })} />)
-    fireEvent.change(screen.getByLabelText('Account'), { target: { value: 'rrsp' } })
-    fireEvent.change(screen.getByLabelText(/Shares to buy/), { target: { value: '10' } })
-    fireEvent.change(screen.getByLabelText(/Price per share/), { target: { value: '80' } })
+    expect(screen.getByLabelText('Account', { exact: true })).toBeInTheDocument()
+    expect(screen.getByLabelText('Shares')).toBeInTheDocument()
+    expect(screen.getByLabelText(/Avg cost \(CAD\)/)).toHaveValue(null)
+    expect(screen.queryByLabelText(/Fees/)).not.toBeInTheDocument()
+    expect(screen.queryByLabelText(/Reason/)).not.toBeInTheDocument()
+    expect(screen.queryByLabelText(/Notes/)).not.toBeInTheDocument()
+    expect(screen.queryByRole('radio')).not.toBeInTheDocument()
+  })
+
+  it('records an opening balance in the chosen account, as of today, with no fee', async () => {
+    render(<AddStockDialog mode="portfolio" open onOpenChange={vi.fn()} defaultStock={fromLookup({ ...bnsLookup, stock_id: 's1' })} />)
+    fireEvent.change(screen.getByLabelText('Account', { exact: true }), { target: { value: 'rrsp' } })
+    fireEvent.change(screen.getByLabelText('Shares'), { target: { value: '5' } })
+    fireEvent.change(screen.getByLabelText(/Avg cost/), { target: { value: '70' } })
     fireEvent.click(screen.getByRole('button', { name: 'Review' }))
-    expect(ledger.calls.preview[0].body).toMatchObject({ events: [{ account_type: 'rrsp', transaction_type: 'buy', ticker: 'BNS.TO', shares: 10, price_per_share: 80, total_amount: 800, fees: 9.99, currency: 'CAD' }] })
-    fireEvent.click(await screen.findByRole('button', { name: 'Buy shares' }))
+    const row = (ledger.calls.preview[0].body as { events: Record<string, unknown>[] }).events[0]
+    expect(row).toMatchObject({ account_type: 'rrsp', transaction_type: 'opening_balance', ticker: 'BNS.TO', shares: 5, price_per_share: 70, total_amount: 350, currency: 'CAD' })
+    expect(row).not.toHaveProperty('fees')
+    fireEvent.click(await screen.findByRole('button', { name: 'Add to Portfolio' }))
     await waitFor(() => expect(ledger.calls.record).toHaveLength(1))
   })
 
-  it('records "I already hold it" as an opening balance with no fee', () => {
-    render(<AddStockDialog mode="portfolio" open onOpenChange={vi.fn()} defaultStock={fromLookup({ ...bnsLookup, stock_id: 's1' })} />)
-    pick(/I already hold it/)
-    expect(screen.queryByLabelText(/Fees/)).not.toBeInTheDocument()
-    fireEvent.change(screen.getByLabelText(/Shares held/), { target: { value: '5' } })
-    fireEvent.change(screen.getByLabelText(/Average cost per share/), { target: { value: '70' } })
-    fireEvent.click(screen.getByRole('button', { name: 'Review' }))
-    const row = (ledger.calls.preview[0].body as { events: Record<string, unknown>[] }).events[0]
-    expect(row).toMatchObject({ transaction_type: 'opening_balance', shares: 5, total_amount: 350 })
-    expect(row).not.toHaveProperty('fees')
-  })
-
-  it('needs the exchange rate for a US stock already held', () => {
+  it('needs the exchange rate for a US stock', () => {
     render(<AddStockDialog mode="portfolio" open onOpenChange={vi.fn()} defaultStock={usd} />)
-    pick(/I already hold it/)
-    fireEvent.change(screen.getByLabelText(/Shares held/), { target: { value: '5' } })
-    fireEvent.change(screen.getByLabelText(/Average cost per share/), { target: { value: '300' } })
+    fireEvent.change(screen.getByLabelText('Shares'), { target: { value: '5' } })
+    fireEvent.change(screen.getByLabelText(/Avg cost/), { target: { value: '300' } })
     expect(screen.getByRole('button', { name: 'Review' })).toBeDisabled()
     fireEvent.change(screen.getByLabelText(/Exchange rate/), { target: { value: '1.3' } })
     expect(screen.getByRole('button', { name: 'Review' })).toBeEnabled()
@@ -114,29 +112,9 @@ describe('AddStockDialog: recording the position', () => {
   it('cannot hold a stock quoted in another currency', () => {
     render(<AddStockDialog mode="portfolio" open onOpenChange={vi.fn()} defaultStock={{ ...usd, currency: 'EUR' as TickerResult['currency'] }} />)
     expect(screen.getByRole('alert')).toHaveTextContent('Only Canadian and US dollar stocks')
-    fireEvent.change(screen.getByLabelText(/Shares to buy/), { target: { value: '5' } })
-    fireEvent.change(screen.getByLabelText(/Price per share/), { target: { value: '5' } })
+    fireEvent.change(screen.getByLabelText('Shares'), { target: { value: '5' } })
+    fireEvent.change(screen.getByLabelText(/Avg cost/), { target: { value: '5' } })
     expect(screen.getByRole('button', { name: 'Review' })).toBeDisabled()
-  })
-
-  it('starts the price blank: a lookup has none', () => {
-    render(<AddStockDialog mode="portfolio" open onOpenChange={vi.fn()} defaultStock={usd} />)
-    expect(screen.getByLabelText(/Price per share/)).toHaveValue(null)
-  })
-})
-
-describe('AddStockDialog: the fee follows the account', () => {
-  it('shows the commission of the account chosen, not the one it opened with, and keeps what was typed', () => {
-    const accounts = ['tfsa', 'rrsp', 'trading'].map((account_type, i) => ({ account_type, commission_per_trade: [0, 4.99, 9.99][i] }))
-    vi.mocked(useAccounts).mockReturnValue({ data: { data: accounts }, isLoading: false } as unknown as ReturnType<typeof useAccounts>)
-    render(<AddStockDialog mode="portfolio" open onOpenChange={vi.fn()} defaultStock={fromLookup({ ...bnsLookup, stock_id: 's1' })} />)
-    const fees = () => screen.getByLabelText(/Fees/)
-    expect(fees()).toHaveValue(null) // the TFSA charges nothing
-    fireEvent.change(screen.getByLabelText('Account', { exact: true }), { target: { value: 'rrsp' } })
-    expect(fees()).toHaveValue(4.99)
-    fireEvent.change(fees(), { target: { value: '7' } })
-    fireEvent.change(screen.getByLabelText('Account', { exact: true }), { target: { value: 'trading' } })
-    expect(fees()).toHaveValue(7) // typed over: the account no longer decides
   })
 })
 

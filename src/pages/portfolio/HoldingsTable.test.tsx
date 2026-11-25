@@ -4,6 +4,7 @@ import { MemoryRouter, useNavigate } from 'react-router-dom'
 import { HoldingsTable } from './HoldingsTable'
 import { fixtureHolding, mockHolding, mockUsdHolding } from '@/test/mock-data'
 import { ApiError } from '@/lib/api'
+import { formatMoney, formatPct } from '@/lib/format'
 import { mockLedgerHooks } from '@/test/ledger-mocks'
 
 vi.mock('@/hooks/use-portfolio')
@@ -18,10 +19,10 @@ vi.mock('react-router-dom', async (importOriginal) => {
   return { ...actual, useNavigate: vi.fn() }
 })
 
-import { usePortfolioHoldings, useUpdatePosition, useClosedPositions } from '@/hooks/use-portfolio'
+import { usePortfolioHoldings, useClosedPositions, useUpdatePosition } from '@/hooks/use-portfolio'
 const mockUsePortfolioHoldings = vi.mocked(usePortfolioHoldings)
-vi.mocked(useUpdatePosition).mockReturnValue({ mutateAsync: vi.fn(), isPending: false } as unknown as ReturnType<typeof useUpdatePosition>)
 vi.mocked(useClosedPositions).mockReturnValue({ data: [] } as unknown as ReturnType<typeof useClosedPositions>)
+vi.mocked(useUpdatePosition).mockReturnValue({ mutateAsync: vi.fn(), isPending: false, isError: false, error: null } as unknown as ReturnType<typeof useUpdatePosition>)
 const mockNavigate = vi.fn()
 vi.mocked(useNavigate).mockReturnValue(mockNavigate)
 
@@ -71,10 +72,10 @@ describe('HoldingsTable', () => {
     expect(mockNavigate).toHaveBeenCalledWith(`/stocks/${mockHolding.stock.stock_id}`)
   })
 
-  it('shows the call of a usable analysis: outlook, confidence and its age', () => {
+  it('shows the call of a usable analysis: the direction, the tier and a link to the analysis', () => {
     show(mockHolding)
     expect(screen.getByText('Bullish')).toBeInTheDocument()
-    expect(screen.getByText(/Analysed/)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Analysis' })).toBeInTheDocument()
   })
 
   it('names why a stale call cannot be used, and still shows the call', () => {
@@ -134,17 +135,42 @@ describe('HoldingsTable', () => {
     expect(screen.getByRole('dialog')).toHaveTextContent('Sell RY.TO')
   })
 
-  it('keeps Log dividend and Remove in the Actions strip of the expanded row, and opens their dialogs', () => {
+  it('has the original five row icons, and each opens its own dialog without navigating', () => {
     show(mockHolding)
-    expect(screen.queryByRole('button', { name: 'Remove' })).not.toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'Show details of RY.TO (RRSP)' }))
-    const strip = screen.getByRole('group', { name: 'Actions for RY.TO (RRSP)' })
-    fireEvent.click(within(strip).getByRole('button', { name: 'Log dividend' }))
-    expect(screen.getByRole('dialog')).toHaveTextContent('Log dividend RY.TO')
-    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
-    fireEvent.click(within(strip).getByRole('button', { name: 'Remove' }))
-    expect(screen.getByRole('dialog')).toHaveTextContent('Remove from Portfolio')
+    const open = (name: string, text: string) => {
+      fireEvent.click(screen.getByRole('button', { name }))
+      expect(screen.getByRole('dialog')).toHaveTextContent(text)
+      fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+    }
+    open('Log dividend for RY.TO (RRSP)', 'Log dividend RY.TO')
+    open('Edit RY.TO (RRSP)', 'RY.TO')
+    open('Remove RY.TO (RRSP)', 'Remove from Portfolio')
     expect(mockNavigate).not.toHaveBeenCalled()
+  })
+
+  it('has no Actions strip, Move or Confirm with broker', () => {
+    show(mockHolding)
+    fireEvent.click(screen.getByRole('button', { name: 'Show details of RY.TO (RRSP)' }))
+    expect(screen.queryByRole('group', { name: /Actions for/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Move to another account|Confirm with broker/ })).not.toBeInTheDocument()
+  })
+
+  it('shows the Book cost column just left of Market value, and no Confirmed column', () => {
+    show(mockHolding)
+    const headers = screen.getAllByRole('columnheader').map((h) => h.textContent)
+    expect(headers.indexOf('Book cost')).toBeGreaterThan(-1)
+    expect(headers.indexOf('Book cost') + 1).toBe(headers.indexOf('Market value'))
+    expect(headers).not.toContain('Confirmed')
+  })
+
+  it('has the target price in its own column after the Call, with the expected return', () => {
+    show(mockHolding)
+    const headers = screen.getAllByRole('columnheader').map((h) => h.textContent)
+    expect(headers.indexOf('Target price (12 months)')).toBe(headers.indexOf('Call') + 1)
+    const analysis = mockHolding.call!.analysis!
+    const row = screen.getByRole('row', { name: 'View RY.TO' })
+    expect(within(row).getByText(formatMoney(analysis.targetPrice!, 'CAD'))).toBeInTheDocument()
+    expect(within(row).getByText(formatPct(analysis.expectedReturn!))).toBeInTheDocument()
   })
 
   it('shows an error with retry when holdings fail to load', () => {

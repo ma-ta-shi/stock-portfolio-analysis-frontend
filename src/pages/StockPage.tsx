@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { TrendingUp, TrendingDown, Pencil, Plus, DollarSign } from 'lucide-react'
+import { TrendingUp, TrendingDown, Plus, DollarSign, Pencil } from 'lucide-react'
 import { useStockDetail, useStockAnalysisHistory } from '@/hooks/use-stock-detail'
 import { useHoldingActions } from '@/hooks/use-holding-actions'
-import { usePortfolioHoldings } from '@/hooks/use-portfolio'
+import { usePortfolioHoldings, useTransactionHistory } from '@/hooks/use-portfolio'
 import { StockInfoSection } from '@/components/StockInfoSection'
 import { OutlookBadge } from '@/components/OutlookBadge'
 import { ConfidenceMeter } from '@/components/ConfidenceMeter'
@@ -11,6 +11,7 @@ import { DisagreementIndicator } from '@/components/DisagreementIndicator'
 import { SparklineChart } from '@/components/SparklineChart'
 import { HoldingActionDialogs } from '@/components/ledger/HoldingActionDialogs'
 import { AddStockDialog } from '@/components/AddStockDialog'
+import { LedgerTable } from '@/components/ledger/LedgerTable'
 import { Button } from '@/components/ui/button'
 import { ButtonLink } from '@/components/ButtonLink'
 import { Badge } from '@/components/ui/badge'
@@ -29,6 +30,7 @@ import { isNotFound } from '@/lib/api'
 import { formatDate, formatEnumLabel, formatMoney, formatPct } from '@/lib/format'
 import { gainLossColor, TONE_TEXT } from '@/lib/labels'
 import { applyTemplate, buildHoldingSnapshot, disagreementLabel } from '@/lib/portfolio'
+import { EMPTY_FILTERS } from '@/lib/transactions'
 import { cn } from '@/lib/utils'
 import type { StockAnalysisHistoryEntry } from '@/types'
 
@@ -42,6 +44,23 @@ function ReturnCell({ entry }: { entry: StockAnalysisHistoryEntry }) {
   const value = entry.return_at_3m ?? entry.return_at_1m
   if (value == null) return <span className="text-xs text-muted-foreground">—</span>
   return <span className={cn('text-sm font-medium', gainLossColor(value))}>{formatPct(value, 1)}</span>
+}
+
+/** Every ledger row of one stock, in every account; nothing is drawn until there is one. */
+function StockHistory({ ticker }: { ticker: string }) {
+  const { data, isError, error, refetch } = useTransactionHistory({ ...EMPTY_FILTERS, ticker }, 'combined')
+  // A stock the ledger has never heard of has no history, not an error.
+  if (isError && !isNotFound(error)) {
+    return <QueryError what="transaction history" error={error} onRetry={refetch} compact />
+  }
+  const rows = data?.filter((t) => t.stock?.ticker === ticker)
+  if (!rows?.length) return null
+  return (
+    <section aria-label="Transactions and dividends" className="space-y-2">
+      <h2 className="text-sm font-semibold">Transactions and dividends</h2>
+      <LedgerTable rows={rows} oneStock />
+    </section>
+  )
 }
 
 export function StockPage() {
@@ -172,11 +191,7 @@ export function StockPage() {
                     <DollarSign className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
                     Log Dividend
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => actions.open('edit', h)}
-                  >
+                  <Button size="sm" variant="outline" onClick={() => actions.open('edit', h)}>
                     <Pencil className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
                     Edit
                   </Button>
@@ -194,6 +209,8 @@ export function StockPage() {
           </Button>
         </div>
       ) : null}
+
+      <StockHistory ticker={stock.ticker} />
 
       {/* Price Chart */}
       {stock.price_history_90d && stock.price_history_90d.length > 0 && (

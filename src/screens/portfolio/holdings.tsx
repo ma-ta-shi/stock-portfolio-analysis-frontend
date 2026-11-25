@@ -26,7 +26,7 @@ export const HOLDING_FIELDS = defineFields<Holding>([
     render: (h) => (
       <>
         <div className="font-medium">{h.stock.ticker}</div>
-        <div className="text-xs text-muted-foreground">{h.stock.name}</div>
+        <div className="max-w-36 whitespace-normal text-xs leading-tight text-muted-foreground">{h.stock.name}</div>
         {h.stock.pipeline_supported === false && (
           <Badge variant="outline" className={cn('mt-1 border-amber-500 text-xs', TONE_TEXT.warning)} title={h.stock.unsupported_reason ?? undefined}>
             Unsupported
@@ -47,7 +47,6 @@ export const HOLDING_FIELDS = defineFields<Holding>([
   { id: 'is_active', label: 'Position', source: 'HoldingResponse.is_active', get: (h) => h.is_active, format: (v) => (v ? 'Open' : 'Closed'), places: ['detail', 'csv'] },
   { id: 'shares', label: 'Shares', source: 'HoldingResponse.shares', get: (h) => h.shares, places: ['column', 'csv'] },
   { id: 'average_cost', label: 'Avg cost', source: 'HoldingResponse.average_cost_basis', get: (h) => h.average_cost_basis, format: (v, h) => money(h, v), tooltip: "Per share, in the stock's currency", places: ['column', 'csv'] },
-  { id: 'book_cost', label: 'Book cost', source: 'HoldingResponse.total_book_cost', get: (h) => h.total_book_cost, format: (v, h) => money(h, v), tooltip: "In the stock's currency, for the shares held now", places: ['detail', 'csv'] },
   { id: 'book_cost_cad', label: 'Book cost (CAD)', source: 'HoldingResponse.total_book_cost_cad', get: (h) => h.total_book_cost_cad, format: (v) => formatCAD(v as number | null), places: ['detail', 'csv'] },
   { id: 'total_shares_bought', label: 'Shares bought', source: 'HoldingResponse.total_shares_bought', get: (h) => h.total_shares_bought, tooltip: 'Bought on the market (buys and reinvestments), kept after the position closes', places: ['detail', 'csv'] },
   { id: 'total_shares_sold', label: 'Shares sold', source: 'HoldingResponse.total_shares_sold', get: (h) => h.total_shares_sold, tooltip: 'Sold on the market, kept after the position closes', places: ['detail', 'csv'] },
@@ -86,6 +85,7 @@ export const HOLDING_FIELDS = defineFields<Holding>([
   { id: 'change_day', label: 'Change (day)', source: 'StockSnapshotResponse.change_day', get: (h) => h.change_day, format: (v) => signedPct(v), places: ['detail', 'csv'] },
   { id: 'change_week', label: 'Change (week)', source: 'StockSnapshotResponse.change_week', get: (h) => h.change_week, format: (v) => signedPct(v), places: ['detail', 'csv'] },
   { id: 'change_month', label: 'Change (month)', source: 'StockSnapshotResponse.change_month', get: (h) => h.change_month, format: (v) => signedPct(v), places: ['detail', 'csv'] },
+  { id: 'book_cost', label: 'Book cost', source: 'HoldingResponse.total_book_cost', get: (h) => h.total_book_cost, format: (v, h) => money(h, v), tooltip: "In the stock's currency, for the shares held now", places: ['column', 'detail', 'csv'] },
   {
     id: 'market_value',
     label: 'Market value',
@@ -130,7 +130,25 @@ export const HOLDING_FIELDS = defineFields<Holding>([
     get: (h) => h.call?.analysis?.outlook ?? null,
     format: (v) => (v ? OUTLOOK_LABELS[v as keyof typeof OUTLOOK_LABELS] : 'No call'),
     places: ['column', 'csv'],
-    render: (h) => <StockCall call={h.call} supported={h.stock.pipeline_supported !== false} />,
+    render: (h) => <StockCall call={h.call} supported={h.stock.pipeline_supported !== false} compact />,
+  },
+  {
+    id: 'target_price',
+    label: 'Target price (12 months)',
+    source: ['AnalysisCallResponse.target_price', 'AnalysisCallResponse.expected_return'],
+    get: (h) => h.call?.analysis?.targetPrice,
+    format: (v, h) => (v == null ? '—' : `${money(h, v)} (${signedPct(h.call?.analysis?.expectedReturn)})`),
+    tooltip: "The analysis's 12-month target price, and its expected total return (price change plus dividends)",
+    places: ['column', 'detail', 'csv'],
+    render: (h) =>
+      h.call?.analysis?.targetPrice == null ? (
+        <span className="text-muted-foreground">—</span>
+      ) : (
+        <>
+          <div>{money(h, h.call.analysis.targetPrice)}</div>
+          <div className="text-xs text-muted-foreground">{signedPct(h.call.analysis.expectedReturn)}</div>
+        </>
+      ),
   },
   { id: 'status', label: 'Call usable', source: 'StockSnapshotResponse.status', get: (h) => h.call?.status, format: (v) => (v === 'usable' ? 'Usable' : v === 'excluded' ? 'Excluded' : '—'), places: ['detail', 'csv'] },
   { id: 'exclusions', label: 'Why not usable', source: 'StockSnapshotResponse.exclusions', get: (h) => h.call?.exclusions ?? [], format: list, places: ['detail', 'csv'] },
@@ -144,28 +162,12 @@ export const HOLDING_FIELDS = defineFields<Holding>([
   { id: 'confidence', label: 'Confidence', source: 'AnalysisCallResponse.confidence', get: (h) => h.call?.analysis?.confidence, format: (v) => (v == null ? '—' : `${v as number}%`), places: ['detail', 'csv'] },
   { id: 'tier', label: 'Tier', source: 'AnalysisCallResponse.tier', get: (h) => h.call?.analysis?.tier, format: (v) => (v ? TIER_LABELS[v as keyof typeof TIER_LABELS] : '—'), tooltip: "Against the stock's own valuation baseline, not the market", places: ['detail', 'csv'] },
   { id: 'expected_return', label: 'Expected return', source: 'AnalysisCallResponse.expected_return', get: (h) => h.call?.analysis?.expectedReturn, format: (v) => signedPct(v), tooltip: "Over the band's horizon, in the stock's currency", places: ['detail', 'csv'] },
-  { id: 'target_price', label: 'Target price', source: 'AnalysisCallResponse.target_price', get: (h) => h.call?.analysis?.targetPrice, format: (v, h) => money(h, v), places: ['detail', 'csv'] },
   { id: 'range_low', label: 'Range low (10th signedPct)', source: 'AnalysisCallResponse.range_low', get: (h) => h.call?.analysis?.rangeLow, format: (v, h) => money(h, v), places: ['detail', 'csv'] },
   { id: 'range_high', label: 'Range high (90th signedPct)', source: 'AnalysisCallResponse.range_high', get: (h) => h.call?.analysis?.rangeHigh, format: (v, h) => money(h, v), places: ['detail', 'csv'] },
   { id: 'disagreement', label: 'Disagreement', source: 'AnalysisCallResponse.disagreement_class', get: (h) => h.call?.analysis?.disagreementClass, format: (v) => (v ? DISAGREEMENT_CLASS_LABELS[v as keyof typeof DISAGREEMENT_CLASS_LABELS].label : '—'), places: ['detail', 'csv'] },
-  { id: 'income_per_share', label: 'Expected income / share', source: 'AnalysisCallResponse.income_per_share', get: (h) => h.expected_income_per_share, format: (v, h) => money(h, v), tooltip: "Dividends the analysis expects over its horizon, in the stock's currency", places: ['detail', 'csv'] },
+  { id: 'income_per_share', label: 'Expected dividends / share', source: 'AnalysisCallResponse.income_per_share', get: (h) => h.expected_income_per_share, format: (v, h) => money(h, v), tooltip: "The dividends the analysis expects per share over the next 12 months, in the stock's currency. Your expected dividend income is this times your shares", places: ['detail', 'csv'] },
   { id: 'dividend_yield', label: 'Div yield', source: ['AnalysisCallResponse.income_per_share', 'PositionLineResponse.price'], get: (h) => h.dividend_yield, format: (v) => formatPercent(v as number | null), tooltip: 'Expected income over price', places: ['column', 'csv'] },
   { id: 'yield_on_cost', label: 'YoC', source: ['AnalysisCallResponse.income_per_share', 'HoldingResponse.average_cost_basis'], get: (h) => h.yield_on_cost, format: (v) => formatPercent(v as number | null), tooltip: 'Expected income over your average cost', places: ['column', 'csv'] },
-
-  // Confirmed with the broker
-  {
-    id: 'confirmation',
-    label: 'Confirmed',
-    source: ['ConfirmationResponse.last_confirmed', 'ConfirmationResponse.age_days', 'ConfirmationResponse.overdue'],
-    get: (h) => h.confirmation,
-    format: (v) => {
-      const c = v as Holding['confirmation']
-      if (!c) return '—'
-      return `${c.lastConfirmed ? `${c.ageDays} days ago` : 'never'}${c.overdue ? ' (overdue)' : ''}`
-    },
-    tooltip: 'When this position was last checked against the broker; overdue after 45 days',
-    places: ['column', 'detail', 'csv'],
-  },
 ])
 
 const repeats = 'Repeats the holding'
@@ -187,7 +189,10 @@ export const HOLDING_NOT_SHOWN: Partial<Record<ApiFieldKey, NotShown>> = {
   'PositionLineResponse.account': { reason: repeats },
   'PositionLineResponse.currency': { reason: repeats },
   'PositionLineResponse.shares': { reason: repeats },
-  'ConfirmationResponse.kind': { reason: 'Matches the confirmation to a position or to an account cash balance' },
-  'ConfirmationResponse.account_type': { reason: 'Matches the confirmation to its account' },
-  'ConfirmationResponse.what': { reason: 'Matches the confirmation to its ticker' },
+  'ConfirmationResponse.kind': { reason: 'Confirming positions with the broker has no screen in the original design' },
+  'ConfirmationResponse.account_type': { reason: 'Confirming positions with the broker has no screen in the original design' },
+  'ConfirmationResponse.what': { reason: 'Confirming positions with the broker has no screen in the original design' },
+  'ConfirmationResponse.last_confirmed': { reason: 'Confirming positions with the broker has no screen in the original design' },
+  'ConfirmationResponse.age_days': { reason: 'Confirming positions with the broker has no screen in the original design' },
+  'ConfirmationResponse.overdue': { reason: 'Confirming positions with the broker has no screen in the original design' },
 }

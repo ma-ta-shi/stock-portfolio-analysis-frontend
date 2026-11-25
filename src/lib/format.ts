@@ -140,6 +140,9 @@ export function formatEnumLabel(value: string): string {
 }
 
 /** Today's date in the user's local timezone as YYYY-MM-DD (for <input type="date">). */
+/** The `YYYY-MM-DD` day this many days after today (before it when negative). */
+export const dayFromToday = (days: number) => localDateInputValue(new Date(Date.now() + days * 86_400_000))
+
 export function localDateInputValue(date: Date = new Date()): string {
   const y = date.getFullYear()
   const m = String(date.getMonth() + 1).padStart(2, '0')

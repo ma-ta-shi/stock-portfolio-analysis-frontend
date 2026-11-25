@@ -173,12 +173,16 @@ export const WRITE_ERRORS: Readonly<Record<string, string>> = {
   MISSING_FX_RATE: 'No USD/CAD rate was found for that day. Type the exchange rate your broker used, or try again later.',
   STOCK_LOOKUP_UNAVAILABLE: 'The stock could not be looked up just now. Try again in a moment.',
   NOT_REMOVABLE: 'This position cannot be removed: some entries are part of a move between accounts, or a later sale depends on them. Reverse those first.',
+  NOT_CORRECTABLE: 'This entry cannot be corrected in one step (a reversal, one leg of a move, an entry of a detected dividend, or a correction that would leave a later sale short of shares). Reverse it and record it again.',
+  NOT_REVERSIBLE: 'This entry cannot be reversed: it is itself a reversal, or undoing it would leave a later sale short of shares.',
+  ALREADY_REVERSED: 'This entry was already reversed.',
+  NOT_PAID_YET: 'This dividend has not been paid yet. It can be confirmed from its payment day.',
+  EVENT_NOT_OPEN: 'This dividend was already decided. Reopen it to decide again.',
+  EVENT_NOT_DECIDED: 'This dividend has not been decided, so there is nothing to reopen.',
+  NO_SHARES_AT_EX: 'The record shows no shares held on the ex-date, so there is no dividend to confirm.',
+  NO_REINVESTMENT_PRICE: 'There is no price to reinvest at. Type the reinvestment price, or choose not to reinvest.',
+  INVALID_CORRECTION: 'One of the corrections is not valid (for example tax above the dividend, or a reinvestment above what was paid).',
 }
 
-/** Why the owner made an entry (`reason_code`); sent only when chosen. */
-export const REASON_LABELS: Record<NonNullable<components['schemas']['TransactionCreate']['reason_code']>, string> = {
-  life_need: 'Needed the money',
-  rebalancing: 'Rebalancing',
-  opinion: 'Changed my view of the stock',
-  other: 'Other',
-}
+/** The words for a dividend event's status. */
+export const DIVIDEND_STATUS_LABELS = { expected: 'Waiting', confirmed: 'Confirmed', dismissed: 'Dismissed' } as const

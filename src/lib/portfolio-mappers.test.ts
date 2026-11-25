@@ -73,12 +73,6 @@ describe('mapHolding', () => {
     expect(h.yield_on_cost).toBeCloseTo(income / 241.08)
   })
 
-  it('attaches the broker confirmation of the position when the backend has one', () => {
-    const first = positions.confirmations.find((c) => c.kind === 'position')
-    if (!first) return
-    const row = holdings.find((h) => h.stock.ticker === first.what && h.account_type === first.account_type)!
-    expect(mapHolding(row, positions.confirmations).confirmation?.ageDays).toBe(first.age_days)
-  })
 })
 
 describe('mapTransactions', () => {

@@ -34,6 +34,13 @@
     "why": "The value history does not say how much cash moved each day; net_flow_cad is requested from the backend. Until then the figure is flagged when the cost base or cash changed between the two days.",
     "ticket": "86bd6r34c"
   },
+  "P-W4": {
+    "screen": "portfolio",
+    "kind": "not-connected",
+    "what": "Editing a position",
+    "why": "The ledger never overwrites and has no route that sets a position's shares and average cost. A mistake is fixed with Correct or Reverse in Transactions; setting the figures directly needs a backend route (handoff for 86bd6r34c).",
+    "ticket": "86bd6r34c"
+  },
   "P-C1": {
     "screen": "portfolio",
     "kind": "missing",
@@ -104,27 +111,6 @@
     "why": "It is an untyped record in the API.",
     "ticket": "86bd6r34c"
   },
-  "P-W4": {
-    "screen": "portfolio",
-    "kind": "not-connected",
-    "what": "Editing a position",
-    "why": "The ledger never overwrites: this becomes Correct, Remove and Confirm with the broker in the writes ticket.",
-    "ticket": "86bd5z6mq"
-  },
-  "P-W7": {
-    "screen": "portfolio",
-    "kind": "not-connected",
-    "what": "Correcting a ledger entry",
-    "why": "The correct preview and call are the writes ticket.",
-    "ticket": "86bd5z6mq"
-  },
-  "P-W8": {
-    "screen": "portfolio",
-    "kind": "not-connected",
-    "what": "Reversing a ledger entry",
-    "why": "The reverse call is the writes ticket.",
-    "ticket": "86bd5z6mq"
-  },
   "P-T1": {
     "screen": "portfolio",
     "kind": "missing",
@@ -173,5 +159,75 @@
     "what": "Adding a stock by company name",
     "why": "The backend lookup (GET /api/stocks/lookup) takes a ticker only, so Add Stock and the Watchlist search by ticker.",
     "ticket": "86bd6r34c"
+  },
+  "P-N1": {
+    "screen": "portfolio",
+    "kind": "documented",
+    "what": "Entering cash by hand: contributions, withdrawals, fees, interest and currency conversions (POST /events). The cash balance is shown read-only",
+    "why": "The original design has no such screen (owner decision, 2026-11-25). A candidate for the owner to design; nothing was built.",
+    "ticket": "86bd5z6kr"
+  },
+  "P-N2": {
+    "screen": "portfolio",
+    "kind": "documented",
+    "what": "Moving shares in kind between accounts (POST /moves and /moves/preview)",
+    "why": "The original design has no such screen (owner decision, 2026-11-25). A candidate for the owner to design; nothing was built.",
+    "ticket": "86bd5z6kr"
+  },
+  "P-N3": {
+    "screen": "portfolio",
+    "kind": "documented",
+    "what": "Confirming a position or an account's cash against the broker, and the history of those checks (POST /reconciliation, GET /reconciliations, the confirmations on positions)",
+    "why": "The original design has no such screen (owner decision, 2026-11-25). A candidate for the owner to design; nothing was built. Not confirming only produces a warning on the backend plans.",
+    "ticket": "86bd5z6kr"
+  },
+  "P-N4": {
+    "screen": "portfolio",
+    "kind": "documented",
+    "what": "A reason and a note on an entry (reason_code, notes)",
+    "why": "The original design has no such screen (owner decision, 2026-11-25). A candidate for the owner to design; nothing was built.",
+    "ticket": "86bd5z6kr"
+  },
+  "P-N5": {
+    "screen": "portfolio",
+    "kind": "documented",
+    "what": "The rest of the performance report in the header: estimated tax (capital gains, dividends and interest on the Trading account), fees, profit lines, return per year, the benchmark fund comparison, and money in and out",
+    "why": "The original design has no such screen (owner decision, 2026-11-25). A candidate for the owner to design; nothing was built.",
+    "ticket": "86bd5z6kr"
+  },
+  "P-N6": {
+    "screen": "portfolio",
+    "kind": "documented",
+    "what": "Per-account settings: commission, conversion cost, Norbert's gambit, reinvesting dividends (shown nowhere; the commission is used as the default fee of a Buy or Sell)",
+    "why": "The original design has no such screen (owner decision, 2026-11-25). A candidate for the owner to design; nothing was built.",
+    "ticket": "86bd5z6kr"
+  },
+  "P-N7": {
+    "screen": "portfolio",
+    "kind": "documented",
+    "what": "Contribution room events and shortfalls",
+    "why": "The original design has no such screen (owner decision, 2026-11-25). A candidate for the owner to design; nothing was built.",
+    "ticket": "86bd5z6kr"
+  },
+  "P-N8": {
+    "screen": "portfolio",
+    "kind": "documented",
+    "what": "Allocation beyond the three donuts: industry, each company directly and through funds, correlated groups and pairs, risk figures, and the exposure warnings",
+    "why": "The original design has no such screen (owner decision, 2026-11-25). A candidate for the owner to design; nothing was built.",
+    "ticket": "86bd5z6kr"
+  },
+  "S-1": {
+    "screen": "stock",
+    "kind": "missing",
+    "what": "The latest call on the Stock page: outlook, tier, confidence, 12-month target price, expected return and the price band, as the Holdings Call and Target columns show them",
+    "why": "Owner decision, 2026-11-25: not added with the Portfolio writes; it belongs to the Stock and Analysis pages ticket and must not be missed there.",
+    "ticket": "86bd5z6n0"
+  },
+  "P-H6": {
+    "screen": "portfolio",
+    "kind": "documented",
+    "what": "The Remove icon is shown on every holding",
+    "why": "The original design showed it only for a holding with no transactions (transaction_count). The API serves no transaction count, so the icon is always shown and the server decides (it reverses every entry; NOT_REMOVABLE when it cannot).",
+    "ticket": "86bd5z6kr"
   }
 }

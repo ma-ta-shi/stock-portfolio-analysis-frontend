@@ -16,11 +16,10 @@ type TransactionCreate = components['schemas']['TransactionCreate']
 
 /** A `TransactionCreate` without the three fields the API defaults (`in_kind`, `initiated_by`) or that may be left out (`fees`). */
 export type EntryBody = Omit<TransactionCreate, 'in_kind' | 'initiated_by' | 'fees'> & { fees?: number }
-export type ReasonCode = NonNullable<TransactionCreate['reason_code']>
 export type Currency = TransactionCreate['currency']
 
 export interface TradeInput {
-  kind: 'buy' | 'sell' | 'opening_balance'
+  kind: 'buy' | 'sell' | 'opening_balance' | 'drip'
   account: AccountType
   ticker: string
   currency: Currency
@@ -32,8 +31,6 @@ export interface TradeInput {
   date: string
   /** CAD per USD, typed by the owner; used only for a USD row. */
   rate?: number
-  reason?: ReasonCode | ''
-  notes?: string
   /** What the position holds, so a sale cannot exceed it. */
   maxShares?: number
 }
@@ -49,17 +46,14 @@ export function isDay(value: string): boolean {
   return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day
 }
 
-/** The optional fields every entry shares: only what was filled in is sent. */
-export function optionalFields(input: { fees?: number; reason?: ReasonCode | ''; notes?: string }) {
-  const out: Pick<EntryBody, 'fees' | 'reason_code' | 'notes'> = {}
+/** The optional field every entry shares: the fee, only when above zero. */
+export function optionalFields(input: { fees?: number }) {
+  const out: Pick<EntryBody, 'fees'> = {}
   if (input.fees != null && input.fees > 0) out.fees = round2(input.fees)
-  if (input.reason) out.reason_code = input.reason
-  const notes = input.notes?.trim()
-  if (notes) out.notes = notes
   return out
 }
 
-/** A buy, a sale or an opening balance of one stock in one account; `null` until the inputs are valid. */
+/** A buy, a sale, an opening balance or a reinvestment (drip) of one stock in one account; `null` until the inputs are valid. */
 export function tradeEntry(input: TradeInput): EntryBody | null {
   const { kind, account, ticker, currency, shares, price, date } = input
   if (!(shares > 0) || !(price > 0) || !isDay(date) || !ticker) return null
@@ -75,48 +69,9 @@ export function tradeEntry(input: TradeInput): EntryBody | null {
     total_amount: round2(shares * price),
     currency,
     transaction_date: date,
-    ...optionalFields({ ...input, fees: kind === 'opening_balance' ? 0 : input.fees }),
+    ...optionalFields({ ...input, fees: kind === 'opening_balance' || kind === 'drip' ? 0 : input.fees }),
   }
   if (currency === 'USD' && input.rate != null && input.rate > 0) body.fx_rate_to_cad = input.rate
-  return body
-}
-
-export type CashKind = 'contribution' | 'withdrawal' | 'fee' | 'interest' | 'conversion'
-
-export interface CashInput {
-  kind: CashKind
-  account: AccountType
-  /** What went in or out (for a conversion, what left), in `currency`. */
-  amount: number
-  currency: Currency
-  date: string
-  /** A conversion only: what arrived. */
-  counter?: { currency: Currency; amount: number }
-  /** CAD per USD for a US row; never sent for a conversion (the API always uses the Bank of Canada's rate to measure its cost). */
-  rate?: number
-  reason?: ReasonCode | ''
-  notes?: string
-}
-
-/** A contribution, withdrawal, fee, interest or conversion in one account; `null` until the inputs are valid. */
-export function cashEntry(input: CashInput): EntryBody | null {
-  const { kind, account, amount, currency, date, counter } = input
-  if (!(amount > 0) || !isDay(date)) return null
-  if (kind === 'conversion' && !(counter && counter.amount > 0 && counter.currency !== currency)) return null
-  const body: EntryBody = {
-    account_type: account,
-    transaction_type: kind,
-    total_amount: round2(amount),
-    currency,
-    transaction_date: date,
-    ...optionalFields(input),
-  }
-  if (kind === 'conversion') {
-    body.counter_currency = counter!.currency
-    body.counter_amount = round2(counter!.amount)
-  } else if (currency === 'USD' && input.rate != null && input.rate > 0) {
-    body.fx_rate_to_cad = input.rate
-  }
   return body
 }
 
@@ -133,8 +88,10 @@ export interface DividendInput {
   /** Shares bought with it, at the price paid. */
   reinvest?: { shares: number; price: number }
   rate?: number
-  notes?: string
 }
+
+/** The shares a dividend buys when all of it is reinvested: fractions kept to six places, as the backend calculates them. */
+export const reinvestedShares = (net: number, price: number) => (net > 0 && price > 0 ? Math.round((net / price) * 1e6) / 1e6 : 0)
 
 /** What is wrong with a dividend entry, in words for the form, or null: tax above the dividend, or more reinvested than was paid. */
 export function dividendProblem(input: Pick<DividendInput, 'gross' | 'withholding' | 'reinvest'>): string | null {
@@ -163,7 +120,6 @@ export function dividendEntries(input: DividendInput): EntryBody[] | null {
     transaction_date: date,
     ...(withholding > 0 ? { withholding_tax: round2(withholding) } : {}),
     ...rate,
-    ...optionalFields({ notes: input.notes }),
   }
   if (!reinvest) return [dividend]
   const drip: EntryBody = {
@@ -183,4 +139,40 @@ export function dividendEntries(input: DividendInput): EntryBody[] | null {
 /** The body of `POST events` and `events/preview`: one to ten entries of one security (the API's rule). */
 export function eventsBody(entries: EntryBody[]) {
   return { events: entries }
+}
+
+export type DividendCorrectionsBody = components['schemas']['DividendCorrections']
+
+/** What the owner typed over a waiting dividend; every field is optional and a blank one keeps the calculated figure. */
+export interface DividendCorrectionInput {
+  gross?: number
+  withholding?: number
+  /** `YYYY-MM-DD`. */
+  paymentDate?: string
+  /** `null`/undefined: the account's own setting. */
+  reinvest?: boolean | null
+  reinvestShares?: number
+  reinvestPrice?: number
+  reinvestDate?: string
+}
+
+/**
+ * The corrections to a waiting dividend: only what was typed, so `{}` confirms the calculated figures. `null` when something typed
+ * cannot be sent (a gross or price of zero, a negative tax, a day that is not a day, tax above the dividend).
+ */
+export function dividendCorrections(input: DividendCorrectionInput): DividendCorrectionsBody | null {
+  const out: DividendCorrectionsBody = {}
+  const positive = (v: number | undefined) => v === undefined || v > 0
+  if (!positive(input.gross) || !positive(input.reinvestShares) || !positive(input.reinvestPrice)) return null
+  if (input.withholding !== undefined && !(input.withholding >= 0)) return null
+  for (const day of [input.paymentDate, input.reinvestDate]) if (day !== undefined && !isDay(day)) return null
+  if (input.gross !== undefined && input.withholding !== undefined && dividendProblem({ gross: input.gross, withholding: input.withholding })) return null
+  if (input.gross !== undefined) out.gross = round2(input.gross)
+  if (input.withholding !== undefined) out.withholding_tax = round2(input.withholding)
+  if (input.paymentDate) out.payment_date = input.paymentDate
+  if (input.reinvest != null) out.reinvest = input.reinvest
+  if (input.reinvestShares !== undefined) out.reinvest_shares = input.reinvestShares
+  if (input.reinvestPrice !== undefined) out.reinvest_price = input.reinvestPrice
+  if (input.reinvestDate) out.reinvest_date = input.reinvestDate
+  return out
 }

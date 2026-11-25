@@ -10,9 +10,7 @@ import { useUpdatePosition } from '@/hooks/use-portfolio'
 
 beforeEach(() => {
   mockLedgerHooks()
-  // Edit is connected in the next PR; until then its dialog calls the not-connected stub.
-  const stub = { mutateAsync: vi.fn(), isPending: false, isError: false, error: null }
-  vi.mocked(useUpdatePosition).mockReturnValue(stub as unknown as ReturnType<typeof useUpdatePosition>)
+  vi.mocked(useUpdatePosition).mockReturnValue({ mutateAsync: vi.fn(), isPending: false, isError: false, error: null } as unknown as ReturnType<typeof useUpdatePosition>)
 })
 
 /** A page that lists one holding with a button for each action, as the Holdings table and the Stock page do. */

@@ -89,3 +89,8 @@ export function holdingPeriod(firstBuy: string, lastSell: string): string {
   const rest = months % 12
   return rest > 0 ? `${years}y ${rest}mo` : `${years}y`
 }
+
+/** A position as the owner names it: "RY.TO (RRSP)". Also the name screen readers get for its buttons and rows. */
+export function positionLabel(item: { stock: { ticker: string }; account_type: string }): string {
+  return `${item.stock.ticker} (${item.account_type.toUpperCase()})`
+}

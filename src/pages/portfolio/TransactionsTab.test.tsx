@@ -13,19 +13,16 @@ vi.mock('@/lib/csv', async (importOriginal) => ({ ...(await importOriginal<typeo
 import {
   fetchAllTransactions,
   useClosedPositions,
-  useCorrectTransaction,
   usePortfolioHoldings,
-  useReverseTransaction,
   useTransactions,
 } from '@/hooks/use-portfolio'
 import { downloadFile } from '@/lib/csv'
 import { ApiError } from '@/lib/api'
+import { mockLedgerHooks } from '@/test/ledger-mocks'
 
 // The ledger rows are the recorded API response (public/mock-data/portfolio/transactions.json) through the real mapper.
 const rows = mapTransactions((transactionsFixture.data as unknown as ApiTransaction[]).slice(0, 5))
 const meta = { total: 41, page: 1, per_page: 20, pages: 3 }
-const correct = vi.fn()
-const reverse = vi.fn()
 
 function mockLedger(over: Record<string, unknown> = {}) {
   vi.mocked(useTransactions).mockReturnValue({ data: { rows, meta }, isLoading: false, isError: false, isPlaceholderData: false, ...over } as unknown as ReturnType<typeof useTransactions>)
@@ -36,11 +33,8 @@ beforeEach(() => {
   mockLedger()
   vi.mocked(usePortfolioHoldings).mockReturnValue({ data: mockHoldings.filter((h) => h.is_active) } as unknown as ReturnType<typeof usePortfolioHoldings>)
   vi.mocked(useClosedPositions).mockReturnValue({ data: mockHoldings.filter((h) => !h.is_active) } as unknown as ReturnType<typeof useClosedPositions>)
-  vi.mocked(useCorrectTransaction).mockReturnValue({ mutate: correct, error: null } as unknown as ReturnType<typeof useCorrectTransaction>)
-  vi.mocked(useReverseTransaction).mockReturnValue({ mutate: reverse, error: null } as unknown as ReturnType<typeof useReverseTransaction>)
+  mockLedgerHooks()
   vi.mocked(downloadFile).mockClear()
-  correct.mockClear()
-  reverse.mockClear()
 })
 
 function LocationProbe() {
@@ -145,20 +139,45 @@ describe('TransactionsTab', () => {
     expect(screen.getByText('No transactions yet.')).toBeInTheDocument()
   })
 
-  it('expands an entry to every detail field, with Correct and Reverse', () => {
+  it('expands an entry to every detail field', () => {
     renderAt('/portfolio?tab=transactions')
     fireEvent.click(screen.getAllByRole('button', { name: 'Show details of this entry' })[0])
     expect(screen.getByText('Entry id')).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'Correct' }))
-    expect(correct).toHaveBeenCalledWith(rows[0].transaction_id)
-    fireEvent.click(screen.getByRole('button', { name: 'Reverse' }))
-    expect(reverse).toHaveBeenCalledWith(rows[0].transaction_id)
   })
 
-  it('shows the not-connected error a Correct or Reverse raises', () => {
-    vi.mocked(useReverseTransaction).mockReturnValue({ mutate: reverse, error: new ApiError('Reversing a ledger entry is not connected yet (P-W8, ticket 86bd5z6mq).', null, 'not_connected', '') } as unknown as ReturnType<typeof useReverseTransaction>)
+  it('opens the correction form for a row, from the entry\'s own values', () => {
     renderAt('/portfolio?tab=transactions')
-    expect(screen.getByRole('alert')).toHaveTextContent('P-W8')
+    fireEvent.click(screen.getAllByRole('button', { name: 'Show details of this entry' })[0])
+    fireEvent.click(screen.getByRole('button', { name: 'Correct' }))
+    const dialog = screen.getByRole('dialog')
+    expect(dialog).toHaveTextContent('Correct dividend')
+    expect(within(dialog).getByLabelText(/Dividend before tax/)).toHaveValue(rows[0].total_amount)
+  })
+
+  it('opens the reverse confirmation for a row', () => {
+    renderAt('/portfolio?tab=transactions')
+    fireEvent.click(screen.getAllByRole('button', { name: 'Show details of this entry' })[0])
+    fireEvent.click(screen.getByRole('button', { name: 'Reverse' }))
+    expect(screen.getByRole('dialog')).toHaveTextContent('Reverse the dividend of')
+  })
+
+  it('disables Correct and Reverse for a reversal row, and says why', () => {
+    mockLedger({ data: { rows: [{ ...rows[0], reverses_transaction_id: 'earlier' }], meta } })
+    renderAt('/portfolio?tab=transactions')
+    fireEvent.click(screen.getByRole('button', { name: 'Show details of this entry' }))
+    expect(screen.getByRole('button', { name: 'Correct' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Reverse' })).toBeDisabled()
+    expect(screen.getByText(/Cannot correct: This row is itself a reversal/)).toBeInTheDocument()
+  })
+
+  it('does not offer Correct for one leg of a move, but allows Reverse (which reverses the move)', () => {
+    mockLedger({ data: { rows: [{ ...rows[0], move_id: 'm1' }], meta } })
+    renderAt('/portfolio?tab=transactions')
+    fireEvent.click(screen.getByRole('button', { name: 'Show details of this entry' }))
+    expect(screen.getByRole('button', { name: 'Correct' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Reverse' })).toBeEnabled()
+    fireEvent.click(screen.getByRole('button', { name: 'Reverse' }))
+    expect(screen.getByRole('dialog')).toHaveTextContent('reversing it reverses the whole move')
   })
 
   it('exports every row of the filter as CSV from the registry', async () => {

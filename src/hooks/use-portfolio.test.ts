@@ -1,17 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { act, renderHook, waitFor } from '@testing-library/react'
+import { renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createElement } from 'react'
 import { installFixtureFetch } from '@/test/fixture-fetch'
 import {
   useClosedPositions,
-  useCorrectTransaction,
+  useDividends,
   useExposure,
   usePortfolioHoldings,
   usePortfolioSummary,
-  useReverseTransaction,
   useTransactions,
-  useUpdatePosition,
 } from '@/hooks/use-portfolio'
 import { EMPTY_FILTERS } from '@/lib/transactions'
 
@@ -76,21 +74,12 @@ describe('portfolio reads (recorded API responses)', () => {
   })
 })
 
-describe('writes that are not connected yet', () => {
-  const stubs = [
-    ['useUpdatePosition', useUpdatePosition, {}, 'P-W4'],
-    ['useCorrectTransaction', useCorrectTransaction, 't1', 'P-W7'],
-    ['useReverseTransaction', useReverseTransaction, 't1', 'P-W8'],
-  ] as const
-
-  it.each(stubs)('%s raises an error naming gap %s', async (_name, useHook, input, gap) => {
-    const { result } = renderHook(() => (useHook as () => { mutateAsync: (v: unknown) => Promise<unknown> })(), { wrapper: makeWrapper() })
-    let message = ''
-    await act(async () => {
-      await result.current.mutateAsync(input).catch((e: Error) => {
-        message = e.message
-      })
-    })
-    expect(message).toContain(gap)
+describe('dividends and broker checks (recorded API responses)', () => {
+  it('lists every dividend the system found, with the withholding rate as a fraction', async () => {
+    const { result } = renderHook(() => useDividends(), { wrapper: makeWrapper() })
+    await waitFor(() => expect(result.current.data).toBeDefined())
+    expect(result.current.data!.length).toBeGreaterThan(0)
+    expect(result.current.data!.every((e) => e.withholding_rate != null && e.withholding_rate_pct / 100 === e.withholding_rate)).toBe(true)
+    expect(result.current.data!.map((e) => e.status)).toContain('expected')
   })
 })

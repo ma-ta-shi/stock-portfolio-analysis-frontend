@@ -1,7 +1,7 @@
 /**
  * The form controls every ledger form is made of, so label, control, hint and error are wired the same way everywhere (they were
  * repeated about twenty times across the old dialogs): `NumberField`, `MoneyField`, `DateField`, and `CommonFields`, the four
- * inputs every entry shares (date, exchange rate for a US row, reason, notes).
+ * inputs every entry shares (date, and the exchange rate for a US row).
  */
 import type { ComponentProps, ReactNode } from 'react'
 import { FormField } from '@/components/FormField'
@@ -11,9 +11,8 @@ import { Input } from '@/components/ui/input'
 import { localDateInputValue } from '@/lib/format'
 import type { CommonValues } from '@/components/ledger/common-values'
 import { ACCOUNT_LABELS, ACCOUNT_TYPES } from '@/lib/accounts'
-import { REASON_LABELS } from '@/lib/labels'
 import type { AccountType } from '@/types/user'
-import type { Currency, ReasonCode } from '@/lib/ledger-entry'
+import type { Currency } from '@/lib/ledger-entry'
 
 interface FieldProps {
   label: ReactNode
@@ -41,7 +40,7 @@ export function MoneyField({ label, hint, error, className, ...input }: FieldPro
 }
 
 /** A day picker: the value is the `YYYY-MM-DD` string the API takes; the latest day is today. */
-function DateField({ label = 'Transaction date', hint, error, className, ...input }: Partial<FieldProps> & Omit<ComponentProps<typeof Input>, 'type'>) {
+export function DateField({ label = 'Transaction date', hint, error, className, ...input }: Partial<FieldProps> & Omit<ComponentProps<typeof Input>, 'type'>) {
   return (
     <FormField label={label} hint={hint} error={error} className={className}>
       {(id, describedBy) => <Input id={id} type="date" max={localDateInputValue()} aria-invalid={error ? true : undefined} aria-describedby={describedBy} {...input} />}
@@ -57,20 +56,20 @@ interface CommonFieldsProps {
   before?: ReactNode
   /** What the date is called ("Transaction date" by default; "As of" for an opening balance, "Payment date" for a dividend). */
   dateLabel?: string
-  /** False where the entry takes no reason (a dividend). */
-  showReason?: boolean
-  /** False where the API never takes a rate (a conversion). A rate shows only for a US row. */
+  /** False where the entry has no day to ask for (Add Stock records what is held today). */
+  showDate?: boolean
+  /** A rate shows only for a US row. */
   showRate?: boolean
   /** True where the rate cannot be left blank (a US opening balance has no day to look one up for). */
   rateRequired?: boolean
 }
 
-export function CommonFields({ values, onChange, currency, before, dateLabel, showReason = true, showRate = true, rateRequired = false }: CommonFieldsProps) {
+export function CommonFields({ values, onChange, currency, before, dateLabel, showDate = true, showRate = true, rateRequired = false }: CommonFieldsProps) {
   const set = (patch: Partial<CommonValues>) => onChange({ ...values, ...patch })
   return (
     <div className="grid grid-cols-2 gap-3">
       {before}
-      <DateField label={dateLabel} value={values.date} onChange={(e) => set({ date: e.target.value })} />
+      {showDate && <DateField label={dateLabel} value={values.date} onChange={(e) => set({ date: e.target.value })} />}
       {currency === 'USD' && showRate && (
         <NumberField
           label={rateRequired ? 'Exchange rate (CAD per USD), required' : 'Exchange rate (CAD per USD)'}
@@ -80,23 +79,6 @@ export function CommonFields({ values, onChange, currency, before, dateLabel, sh
           onChange={(e) => set({ rate: e.target.value })}
         />
       )}
-      {showReason && (
-        <FormField label="Reason (optional)">
-          {(id) => (
-            <NativeSelect id={id} value={values.reason} onChange={(e) => set({ reason: e.target.value as ReasonCode | '' })}>
-              <option value="">No reason given</option>
-              {(Object.keys(REASON_LABELS) as ReasonCode[]).map((code) => (
-                <option key={code} value={code}>
-                  {REASON_LABELS[code]}
-                </option>
-              ))}
-            </NativeSelect>
-          )}
-        </FormField>
-      )}
-      <FormField label="Notes (optional)" className="col-span-2">
-        {(id) => <Input id={id} value={values.notes} onChange={(e) => set({ notes: e.target.value })} />}
-      </FormField>
     </div>
   )
 }
@@ -115,5 +97,51 @@ export function AccountField({ value, onChange }: { value: AccountType; onChange
         </NativeSelect>
       )}
     </FormField>
+  )
+}
+
+/** The dividend before tax and the tax withheld, with the reason a pair of figures cannot be sent. */
+export function DividendFields({
+  currency, gross, onGross, withholding, onWithholding, problem, grossPlaceholder, withholdingPlaceholder,
+}: {
+  currency: Currency
+  gross: string
+  onGross: (v: string) => void
+  withholding: string
+  onWithholding: (v: string) => void
+  problem: string | null
+  grossPlaceholder?: string
+  withholdingPlaceholder?: string
+}) {
+  return (
+    <>
+      <div className="grid grid-cols-2 gap-3">
+        <MoneyField label={`Dividend before tax (${currency})`} value={gross} placeholder={grossPlaceholder} onChange={(e) => onGross(e.target.value)} autoFocus />
+        <MoneyField label={`Tax withheld (${currency}, optional)`} value={withholding} placeholder={withholdingPlaceholder} onChange={(e) => onWithholding(e.target.value)} />
+      </div>
+      {problem && (
+        <p role="alert" className="text-xs text-destructive">
+          {problem}
+        </p>
+      )}
+    </>
+  )
+}
+
+/** The price and the number of shares a dividend bought. */
+export function ReinvestInputs({ currency, price, onPrice, shares, onShares, pricePlaceholder, sharesPlaceholder }: {
+  currency: Currency
+  price: string
+  onPrice: (v: string) => void
+  shares: string
+  onShares: (v: string) => void
+  pricePlaceholder?: string
+  sharesPlaceholder?: string
+}) { // fmt: skip
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      <MoneyField label={`Price per share (${currency})`} value={price} placeholder={pricePlaceholder} onChange={(e) => onPrice(e.target.value)} />
+      <NumberField label="Shares bought" value={shares} placeholder={sharesPlaceholder} onChange={(e) => onShares(e.target.value)} />
+    </div>
   )
 }

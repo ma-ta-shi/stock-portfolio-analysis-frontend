@@ -49,38 +49,20 @@ function FoundCard({ found }: { found: TickerResult }) {
   )
 }
 
-/** Portfolio step 2: how the stock came to be held, then the trade form, reviewed and recorded through the shared shell. */
+/**
+ * Portfolio step 2: the original Add Stock fields (account, shares, average cost) through the shared trade form, reviewed with the
+ * server and recorded as an opening balance as of today, so nothing is taken from any cash.
+ */
 function PortfolioEntry({ found, summary, onDone }: { found: TickerResult; summary: ReactNode; onDone: () => void }) {
-  const [kind, setKind] = useState<'buy' | 'opening_balance'>('buy')
-  const form = useTradeForm({ kind, ticker: found.ticker, currency: found.currency })
+  const form = useTradeForm({ kind: 'opening_balance', ticker: found.ticker, currency: found.currency })
   return (
     <LedgerPanel
-      summary={
-        <>
-          {summary}
-          <fieldset className="space-y-1">
-            <legend className="text-sm font-medium">Your position</legend>
-            {(
-              [
-                ['buy', 'I bought it', 'Takes the cash from the account'],
-                ['opening_balance', 'I already hold it', 'Records what you hold, with no cash taken'],
-              ] as const
-            ).map(([value, label, hint]) => (
-              <label key={value} className="flex cursor-pointer items-start gap-2 text-sm">
-                <input type="radio" name="add-stock-kind" className="mt-1" checked={kind === value} onChange={() => setKind(value)} />
-                <span>
-                  {label} <span className="text-xs text-muted-foreground">({hint})</span>
-                </span>
-              </label>
-            ))}
-          </fieldset>
-        </>
-      }
+      summary={summary}
       body={form.body}
       previewRoute={LEDGER.eventsPreview}
       recordRoute={LEDGER.events}
       currency={form.currency}
-      submitLabel={kind === 'buy' ? 'Buy shares' : 'Add to Portfolio'}
+      submitLabel="Add to Portfolio"
       onDone={onDone}
     >
       {form.fields}
