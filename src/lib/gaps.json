@@ -104,20 +104,6 @@
     "why": "It is an untyped record in the API.",
     "ticket": "86bd6r34c"
   },
-  "P-W1": {
-    "screen": "portfolio",
-    "kind": "not-connected",
-    "what": "Recording a purchase",
-    "why": "The preview-then-record form is the writes ticket.",
-    "ticket": "86bd5z6mq"
-  },
-  "P-W2": {
-    "screen": "portfolio",
-    "kind": "not-connected",
-    "what": "Recording a sale",
-    "why": "The preview-then-record form is the writes ticket.",
-    "ticket": "86bd5z6mq"
-  },
   "P-W3": {
     "screen": "portfolio",
     "kind": "not-connected",
@@ -166,6 +152,34 @@
     "what": "A transaction's \"reversed by\" link",
     "why": "The API serves reverses_transaction_id on the reversing row only, so the page marks a reversed row only when its reversing row is on the loaded page.",
     "ticket": "86bd6r34c"
+  },
+  "P-W10": {
+    "screen": "portfolio",
+    "kind": "missing",
+    "what": "The entry preview's tax, room and gain figures are untyped",
+    "why": "The preview serves row, estimated_tax and room as untyped objects, so the page reads them by their documented keys: marginal_rate is a whole percent (31.48, no unit marker protects it) and a sale at a loss returns a negative estimated_tax, shown as a saving. Typed models with unit markers are a backend follow-up.",
+    "ticket": "86bd6r34c"
+  },
+  "P-W11": {
+    "screen": "portfolio",
+    "kind": "missing",
+    "what": "Recording an RRSP contribution for the previous tax year (January and February)",
+    "why": "The form does not send tax_year, so a contribution counts for the year of its date; the API allows the prior year during the first 60 days.",
+    "ticket": "86bd5z6mq"
+  },
+  "P-W12": {
+    "screen": "portfolio",
+    "kind": "missing",
+    "what": "Marking a trade as following an optimizer proposal",
+    "why": "recommendation_id is not sent: proposals are shown by the Optimizer ticket, which links a trade to the proposal it follows.",
+    "ticket": "86bd5z6n5"
+  },
+  "P-S2": {
+    "screen": "portfolio",
+    "kind": "missing",
+    "what": "Editing an account's settings (commission per trade, conversion cost, reinvest dividends, Norbert's gambit)",
+    "why": "The PATCH route exists; the form belongs with the account settings in the Settings ticket.",
+    "ticket": "86bd5z6n3"
   },
   "E-1": {
     "screen": "end-to-end",

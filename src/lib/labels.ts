@@ -163,3 +163,22 @@ export const TX_TYPE_BADGE: Record<TransactionType, string> = {
   adjustment_in: TX_OTHER,
   adjustment_out: TX_OTHER,
 }
+
+/**
+ * Backend error codes a ledger write can answer with that the page explains in its own words. Every other code shows the backend's
+ * own message (it is already plain English: "The position holds 40 shares ..."). Used by `getErrorMessage(error, { write: true })`.
+ */
+export const WRITE_ERRORS: Readonly<Record<string, string>> = {
+  DUPLICATE_ENTRY: 'This matches an entry recorded in the last 30 seconds (same stock, amount and day), so nothing was written. If you meant to record it twice, wait a moment and try again.',
+  MISSING_FX_RATE: 'No USD/CAD rate was found for that day. Type the exchange rate your broker used, or try again later.',
+  STOCK_LOOKUP_UNAVAILABLE: 'The stock could not be looked up just now. Try again in a moment.',
+  NOT_REMOVABLE: 'This position cannot be removed: some entries are part of a move between accounts, or a later sale depends on them. Reverse those first.',
+}
+
+/** Why the owner made an entry (`reason_code`); sent only when chosen. */
+export const REASON_LABELS: Record<NonNullable<components['schemas']['TransactionCreate']['reason_code']>, string> = {
+  life_need: 'Needed the money',
+  rebalancing: 'Rebalancing',
+  opinion: 'Changed my view of the stock',
+  other: 'Other',
+}

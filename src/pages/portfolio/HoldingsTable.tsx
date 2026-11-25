@@ -1,29 +1,25 @@
 /**
  * The Holdings tab. Columns and the expanded detail come from the field registry (`screens/portfolio/holdings.tsx`), so every
- * API field the page can reach is either a column, a detail line, or listed there as not shown. The write buttons open the
- * existing dialogs, which show the not-connected error until the writes ticket (86bd5z6mq) wires them.
+ * API field the page can reach is either a column, a detail line, or listed there as not shown. The row buttons open the dialogs
+ * of `useHoldingActions`; Buy and Sell record through the ledger shell, the others are connected in the next PRs.
  */
 import { Fragment, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ChevronDown, ChevronRight, DollarSign, Pencil, Trash2, TrendingDown, TrendingUp } from 'lucide-react'
-import { usePortfolioHoldings, useRemoveFromPortfolio } from '@/hooks/use-portfolio'
-import { EditPositionDialog } from '@/components/EditPositionDialog'
-import { SellPositionDialog } from '@/components/SellPositionDialog'
-import { BuySharesDialog } from '@/components/BuySharesDialog'
-import { LogDividendDialog } from '@/components/LogDividendDialog'
+import { usePortfolioHoldings } from '@/hooks/use-portfolio'
+import { useHoldingActions } from '@/hooks/use-holding-actions'
+import { HoldingActionDialogs } from '@/components/ledger/HoldingActionDialogs'
 import { FieldList } from '@/components/FieldList'
 import { ClosedPositions } from './ClosedPositions'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { QueryError } from '@/components/QueryError'
-import { getErrorMessage } from '@/lib/api'
 import { clickableRowProps } from '@/lib/a11y'
 import { fieldText, fieldsFor } from '@/lib/fields'
 import { filterByAccount } from '@/lib/portfolio'
 import { cn } from '@/lib/utils'
 import { HOLDING_FIELDS } from '@/screens/portfolio/holdings'
-import type { Holding, PortfolioAccountView } from '@/types/portfolio'
+import type { PortfolioAccountView } from '@/types/portfolio'
 
 /** Columns of figures, aligned right. */
 const RIGHT = new Set(['shares', 'average_cost', 'price', 'market_value', 'gain', 'dividend_yield', 'yield_on_cost'])
@@ -35,12 +31,7 @@ interface HoldingsTableProps {
 export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
   const navigate = useNavigate()
   const { data: allHoldings, isLoading, isError, error, refetch } = usePortfolioHoldings()
-  const removeFromPortfolio = useRemoveFromPortfolio()
-  const [editingHolding, setEditingHolding] = useState<Holding | null>(null)
-  const [buyingHolding, setBuyingHolding] = useState<Holding | null>(null)
-  const [sellingHolding, setSellingHolding] = useState<Holding | null>(null)
-  const [dividendHolding, setDividendHolding] = useState<Holding | null>(null)
-  const [removingHolding, setRemovingHolding] = useState<Holding | null>(null)
+  const actions = useHoldingActions()
   const [expanded, setExpanded] = useState<ReadonlySet<string>>(new Set())
 
   const holdings = useMemo(() => filterByAccount(allHoldings, accountFilter), [allHoldings, accountFilter])
@@ -52,16 +43,6 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
       if (!next.delete(id)) next.add(id)
       return next
     })
-  }
-
-  async function handleConfirmRemove() {
-    if (!removingHolding) return
-    try {
-      await removeFromPortfolio.mutateAsync(removingHolding.holding_id)
-      setRemovingHolding(null)
-    } catch {
-      // Shown from removeFromPortfolio.error in the dialog.
-    }
   }
 
   if (isLoading) return <div className="h-48 rounded-lg bg-muted animate-pulse" />
@@ -125,7 +106,7 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
                           className="text-muted-foreground hover:text-emerald-700 dark:hover:text-emerald-400"
                           title="Buy more shares"
                           aria-label={`Buy more ${label}`}
-                          onClick={() => setBuyingHolding(h)}
+                          onClick={() => actions.open('buy', h)}
                         >
                           <TrendingUp className="w-4 h-4" aria-hidden="true" />
                         </Button>
@@ -135,7 +116,7 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
                           className="text-muted-foreground hover:text-red-600 dark:hover:text-red-400"
                           title="Sell shares"
                           aria-label={`Sell ${label}`}
-                          onClick={() => setSellingHolding(h)}
+                          onClick={() => actions.open('sell', h)}
                         >
                           <TrendingDown className="w-4 h-4" aria-hidden="true" />
                         </Button>
@@ -145,7 +126,7 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
                           className="text-muted-foreground hover:text-blue-600"
                           title="Log dividend"
                           aria-label={`Log dividend for ${label}`}
-                          onClick={() => setDividendHolding(h)}
+                          onClick={() => actions.open('dividend', h)}
                         >
                           <DollarSign className="w-4 h-4" aria-hidden="true" />
                         </Button>
@@ -155,7 +136,7 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
                           className="text-muted-foreground hover:text-foreground"
                           title="Edit position"
                           aria-label={`Edit ${label}`}
-                          onClick={() => setEditingHolding(h)}
+                          onClick={() => actions.open('edit', h)}
                         >
                           <Pencil className="w-4 h-4" aria-hidden="true" />
                         </Button>
@@ -165,7 +146,7 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
                           className="text-muted-foreground hover:text-destructive"
                           title="Remove"
                           aria-label={`Remove ${label}`}
-                          onClick={() => setRemovingHolding(h)}
+                          onClick={() => actions.open('remove', h)}
                         >
                           <Trash2 className="w-4 h-4" aria-hidden="true" />
                         </Button>
@@ -187,40 +168,7 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
       </div>
 
       <ClosedPositions accountFilter={accountFilter} />
-
-      <EditPositionDialog key={editingHolding?.holding_id ?? 'none'} holding={editingHolding} onClose={() => setEditingHolding(null)} />
-      <BuySharesDialog key={buyingHolding?.holding_id ?? 'none-buy'} holding={buyingHolding} onClose={() => setBuyingHolding(null)} />
-      <LogDividendDialog key={dividendHolding?.holding_id ?? 'none-div'} holding={dividendHolding} onClose={() => setDividendHolding(null)} />
-      <SellPositionDialog key={sellingHolding?.holding_id ?? 'none-sell'} holding={sellingHolding} onClose={() => setSellingHolding(null)} />
-
-      <Dialog
-        open={removingHolding !== null}
-        onOpenChange={(open) => {
-          if (!open) setRemovingHolding(null)
-        }}
-      >
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Remove from Portfolio</DialogTitle>
-          </DialogHeader>
-          <p className="text-sm text-muted-foreground">
-            Remove <span className="font-medium text-foreground">{removingHolding?.stock.ticker}</span> ({removingHolding?.account_type.toUpperCase()}) from your portfolio?
-          </p>
-          {removeFromPortfolio.isError && (
-            <p role="alert" className="text-xs text-destructive">
-              {getErrorMessage(removeFromPortfolio.error)}
-            </p>
-          )}
-          <div className="flex justify-end gap-2 mt-2">
-            <Button variant="outline" onClick={() => setRemovingHolding(null)}>
-              Cancel
-            </Button>
-            <Button variant="destructive" onClick={handleConfirmRemove} disabled={removeFromPortfolio.isPending}>
-              {removeFromPortfolio.isPending ? 'Removing…' : 'Remove'}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <HoldingActionDialogs actions={actions} />
     </>
   )
 }

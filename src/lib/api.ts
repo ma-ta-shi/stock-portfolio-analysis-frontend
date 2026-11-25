@@ -9,6 +9,7 @@
  */
 
 import { notConnectedMessage, type GapId } from './gaps'
+import { WRITE_ERRORS } from './labels'
 
 export const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
 const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '')
@@ -157,11 +158,31 @@ export function notConnected(gap: GapId): ApiError {
   return new ApiError(notConnectedMessage(gap), null, 'not_connected', '', { gap })
 }
 
+export interface ErrorMessageOptions {
+  /** A ledger write: show the backend's own explanation (including its 404s and field errors) instead of the read-side wording. */
+  write?: boolean
+}
+
+/** What a failed request says for a write: the page's wording where it has some, else the backend's own message. */
+function writeErrorMessage(error: ApiError): string {
+  if (error.code === 'mock_mode_unsupported') return 'Writes need the real backend (run npm run dev:live).'
+  if (error.code === 'VALIDATION_ERROR') {
+    const errors = Array.isArray(error.details?.errors) ? (error.details.errors as { loc?: unknown[]; msg?: string }[]) : []
+    const lines = errors.map((e) => {
+      const field = [...(e.loc ?? [])].reverse().find((part) => typeof part === 'string' && part !== 'body')
+      return field ? `${String(field)}: ${e.msg ?? 'is not valid'}` : (e.msg ?? 'is not valid')
+    })
+    if (lines.length) return lines.join('; ')
+  }
+  return WRITE_ERRORS[error.code] ?? error.message
+}
+
 /** User-facing message for any error thrown by a query or mutation. */
-export function getErrorMessage(error: unknown): string {
+export function getErrorMessage(error: unknown, options: ErrorMessageOptions = {}): string {
   if (error instanceof ApiError) {
     if (error.code === 'timeout') return 'The server took too long to respond.'
     if (error.code === 'network_error') return 'Could not reach the server.'
+    if (options.write) return writeErrorMessage(error)
     if (error.status === 404) return 'Not found.'
     return error.message
   }

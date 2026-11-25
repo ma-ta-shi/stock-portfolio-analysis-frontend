@@ -1,0 +1,13 @@
+[
+  "GET /api/alerts/{}",
+  "GET /api/alerts/{}/unread-count",
+  "GET /api/market/overview",
+  "GET /api/market/news",
+  "GET /api/portfolio/{}/optimizer",
+  "GET /api/predictions/{}",
+  "GET /api/feedback/{}",
+  "GET /api/watchlist/{}",
+  "GET /api/analysis/{}/agents",
+  "GET /api/stocks/{}/history",
+  "GET /api/stocks/resolve"
+]

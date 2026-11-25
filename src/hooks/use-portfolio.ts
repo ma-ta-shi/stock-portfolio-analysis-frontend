@@ -3,9 +3,11 @@
  * mappers in `lib/portfolio-mappers.ts`, and nothing here edits a cache by hand: a write that is not wired yet throws
  * `notConnected(gap)` so the dialog shows what is missing (the writes ticket, 86bd5z6mq, replaces each stub).
  */
-import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { apiFetch, apiQuery, getErrorMessage, notConnected } from '@/lib/api'
+import { apiFetch, apiQuery, getErrorMessage, jsonBody, notConnected } from '@/lib/api'
+import { fillRoute, type LedgerRoute } from '@/lib/ledger-routes'
+import type { EventPreview } from '@/screens/portfolio/preview'
 import type { GapId } from '@/lib/gaps'
 import { fetchAllPages } from '@/lib/fetch-all-pages'
 import { localDateInputValue } from '@/lib/format'
@@ -106,7 +108,8 @@ function useValueHistory(view: PortfolioAccountView) {
   })
 }
 
-function useAccounts() {
+/** The accounts: cash, and the commission each charges per trade (the default fee of a purchase or a sale). */
+export function useAccounts() {
   const { id, path } = usePortfolioPath()
   return useQuery({
     queryKey: queryKeys.portfolio.accounts(id ?? ''),
@@ -240,29 +243,39 @@ export function useAddToPortfolio() {
   })
 }
 
-export interface BuySharesInput {
-  holdingId: string
-  shares: number
-  pricePerShare: number
-  fees: number
-  transactionDate: string
-}
-export function useBuyShares() {
-  return useMutation({
-    mutationFn: notConnectedWrite<BuySharesInput>('P-W1'),
-  })
+/** What a ledger write sends: the path placeholders (`{id}`) and the JSON body, if any. */
+export interface LedgerCall {
+  params?: Record<string, string>
+  body?: unknown
 }
 
-export interface SellPositionInput {
-  holdingId: string
-  shares: number
-  pricePerShare: number
-  fees: number
-  transactionDate: string
+async function postLedger<T>(portfolioId: string | null, route: LedgerRoute, { params, body }: LedgerCall): Promise<T> {
+  if (!portfolioId) throw new Error('No portfolio to write to')
+  const apiPath = `/api/portfolios/${portfolioId}${fillRoute(route, params)}`
+  // A write has no recorded file: mock mode refuses it with `mock_mode_unsupported` before any request.
+  return apiFetch<T>(`${DIR}/ledger.json`, apiPath, jsonBody(route.method, body))
 }
-export function useSellPosition() {
+
+/**
+ * What a ledger entry would do, worked out by the server and written nowhere: the position after, the cash, the realised gain, the
+ * tax estimate, the room, the warnings. One hook for every preview route (`LEDGER.eventsPreview`, and in later PRs the correct, move
+ * and dividend previews); the caller passes `{ params, body }`.
+ */
+export function useLedgerPreview(route: LedgerRoute) {
+  const { id } = usePortfolioPath()
+  return useMutation({ mutationFn: (call: LedgerCall) => postLedger<EventPreview>(id, route, call) })
+}
+
+/**
+ * Records a ledger entry (or reverses, removes, ...: the route says which). When the server confirms it, every portfolio query is
+ * refreshed; nothing is edited in the cache by hand and nothing is optimistic.
+ */
+export function useLedgerRecord<T = Api['RecordedEventsResponse']>(route: LedgerRoute) {
+  const { id } = usePortfolioPath()
+  const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: notConnectedWrite<SellPositionInput>('P-W2'),
+    mutationFn: (call: LedgerCall) => postLedger<T>(id, route, call),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.portfolio.all }),
   })
 }
 

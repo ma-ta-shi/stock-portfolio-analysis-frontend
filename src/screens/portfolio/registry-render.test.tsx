@@ -16,6 +16,7 @@ import roomFixture from '../../../public/mock-data/portfolio/room.json'
 import transactionsFixture from '../../../public/mock-data/portfolio/transactions.json'
 import exposureFixture from '../../../public/mock-data/portfolio/exposure.json'
 import { HOLDING_FIELDS } from './holdings'
+import { PREVIEW_FIELDS, type PreviewRow } from './preview'
 import { TRANSACTION_FIELDS } from './ledger'
 import { ACCOUNT_FIELDS, ROOM_EVENT_FIELDS, ROOM_FIELDS, SUMMARY_FIELDS } from './summary'
 import { EXPOSURE_FIELDS, EXPOSURE_GROUP_FIELDS, EXPOSURE_NAME_FIELDS, EXPOSURE_PAIR_FIELDS, EXPOSURE_RISK_FIELDS, type RiskRow } from './exposure'
@@ -68,3 +69,26 @@ check('exposure groups', EXPOSURE_GROUP_FIELDS, exposure.groups.length ? exposur
 check('exposure pairs', EXPOSURE_PAIR_FIELDS, pairs.length ? pairs : [{ a: 'A', b: 'B', rho: 0.5 }])
 check('exposure risk', EXPOSURE_RISK_FIELDS, Object.entries(exposure.risk).map(([ticker, r]) => ({ ticker, ...r }) as RiskRow))
 check('room events', ROOM_EVENT_FIELDS, events.length ? events : [{ when: '2026-01-01', kind: 'contribution', change: 100, room_after: 900, detail: 'by hand' }])
+
+// The recorded set has no preview, so these are built by hand to match the API's shape (see the seed probe): a CAD purchase, a US sale
+// at a gain with a tax estimate, room, a superficial-loss note and a warning, and a cash entry with no position.
+const preview = (over: Partial<PreviewRow['preview']>, currency: PreviewRow['currency'] = 'CAD'): PreviewRow => ({
+  currency,
+  preview: { row: {}, position: null, cash_before: { CAD: 1000, USD: 0 }, cash_after: { CAD: 1000, USD: 0 }, estimated_tax: null, tax_note: null, warnings: [], notes: [], other_effects: [], room: {}, ...over },
+})
+const position = { shares: 12.5, total_book_cost: 1000, total_book_cost_cad: 1300, average_cost_basis: 80, is_active: true, first_buy_date: '2026-01-02T00:00:00', last_transaction_date: '2026-11-20T00:00:00', total_realized_gain_loss_cad: 0, total_dividends_received_cad: 0, total_fees_paid_cad: 4.99 }
+check('entry preview', PREVIEW_FIELDS, [
+  preview({ position, cash_before: { CAD: 1000, USD: 0 }, cash_after: { CAD: 400, USD: 0 } }),
+  preview(
+    {
+      position: { ...position, is_active: false, shares: 0 },
+      row: { realized_gain_loss: 150, realized_gain_loss_cad: 195, denied_loss_cad: 20, denied_loss_lost_cad: 0 },
+      estimated_tax: { capital_gain: 195, taxable_capital_gain: 97.5, estimated_tax: 30.7, marginal_rate: 31.48 },
+      room: { tfsa: { before: 1000, after: 900, estimated: true } },
+      cash_before: { CAD: 0, USD: 100 }, cash_after: { CAD: 0, USD: 250 },
+      tax_note: 'No tax estimate: the profile has no province', warnings: ['Cash goes negative'], notes: ['A superficial loss'], other_effects: ['An earlier sale changes'],
+    },
+    'USD',
+  ),
+  preview({ cash_after: { CAD: 1500, USD: 0 } }),
+]) // fmt: skip

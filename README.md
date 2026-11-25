@@ -33,6 +33,7 @@ Open http://localhost:5173.
 | `npm run record:fixtures` | Records the Portfolio screen's API responses from a backend on a scratch database into `public/mock-data/portfolio/` (`API_URL=...`) |
 | `npm run test:watch` | Vitest in watch mode |
 | `npm run test:e2e` | Playwright: every page and key flow in a real browser (mock mode), light + dark, with axe-core accessibility checks |
+| `npm run test:e2e:live` | Playwright against a real backend on a seeded scratch database (`scripts/e2e-live.mjs` seeds it with the backend's `seed_e2e.py`, starts the backend and the dev server, runs `e2e-live/`, tears everything down). Needs the backend checkout at `../backend` (or `BACKEND_DIR`) with its `.venv`; never touches `app.db` |
 | `npm run lint` | ESLint |
 | `npx tsc -b` | Type check |
 | `npm run build` | Type check + production build to `dist/` |
@@ -54,7 +55,6 @@ src/
     format.ts      Money / percent / date formatting
     fx.ts          Currency → CAD conversion for combined totals
     portfolio.ts   Holding snapshots, allocations, template filling
-    sell-preview.ts  Client-side sell estimate (stand-in for the backend preview endpoint)
   pages/           One component per route (lazy-loaded), with sub-sections in folders
   types/           API response types — must match the backend Pydantic schemas
   test/            Test setup and shared fixtures
