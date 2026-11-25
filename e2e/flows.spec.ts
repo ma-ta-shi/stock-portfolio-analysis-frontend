@@ -11,11 +11,11 @@ test('USD holdings are shown in USD; in mock mode a write says it needs the real
   expect(consoleErrors).toEqual([])
 })
 
-test('holding rows open the stock page from the keyboard', async ({ page }) => {
+test('watchlist rows open the stock page from the keyboard', async ({ page }) => {
   await page.goto('/watchlist')
   await page.locator('tbody tr').first().focus()
   await page.keyboard.press('Enter')
-  await expect(page).toHaveURL(/\/stocks\/stk_/)
+  await expect(page).toHaveURL(/\/stocks\/[0-9a-f-]{36}$/) // the recorded ids
 })
 
 test('closed position "View history" opens its filtered transactions; Back returns', async ({ page }) => {
@@ -40,32 +40,18 @@ test('transaction filters live in the URL and survive a reload', async ({ page }
   await expect(page).not.toHaveURL(/ticker=/)
 })
 
-test('watchlist: add a stock (awaiting analysis), block duplicates, remove with confirmation', async ({ page, consoleErrors }) => {
+test('watchlist: lists the recorded stocks, expands a row, and says adding needs the real backend', async ({ page }) => {
   await page.goto('/watchlist')
-  const rows = page.locator('tbody tr')
-  await expect(rows).toHaveCount(4)
+  await expect(page.locator('tbody tr')).toHaveCount(3)
+  await page.getByRole('button', { name: 'Show details of TD.TO' }).click()
+  await expect(page.getByText('Why not usable')).toBeVisible()
+  expect(await axeViolations(page)).toEqual([])
 
   await page.getByRole('button', { name: 'Add Stock' }).click()
-  await page.getByLabel('Ticker').fill('RY.TO')
+  await page.getByLabel('Ticker').fill('BMO.TO')
   await page.getByRole('button', { name: 'Look up' }).click()
   await page.getByRole('button', { name: 'Add to Watchlist' }).click()
-  await expect(rows).toHaveCount(5)
-  const added = page.getByRole('row', { name: 'View RY.TO' })
-  await expect(added.getByText('Awaiting analysis')).toBeVisible()
-  await expect(page.getByText('1 awaiting analysis')).toBeVisible()
-
-  await page.getByRole('button', { name: 'Add Stock' }).click()
-  await page.getByLabel('Ticker').fill('TD.TO')
-  await page.getByRole('button', { name: 'Look up' }).click()
-  await expect(page.getByText('TD.TO is already on your watchlist.')).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Add to Watchlist' })).toBeDisabled()
-  expect(await axeViolations(page)).toEqual([])
-  await page.keyboard.press('Escape')
-
-  await page.getByRole('button', { name: 'Remove RY.TO from watchlist' }).click()
-  await page.getByRole('dialog').getByRole('button', { name: 'Remove' }).click()
-  await expect(rows).toHaveCount(4)
-  expect(consoleErrors).toEqual([])
+  await expect(page.getByRole('dialog').getByRole('alert')).toContainText('Writes need the real backend')
 })
 
 test('"Analyze allocation" explains it is not connected yet', async ({ page }) => {

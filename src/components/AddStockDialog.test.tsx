@@ -119,13 +119,24 @@ describe('AddStockDialog: recording the position', () => {
 })
 
 describe('AddStockDialog: the watchlist', () => {
+  it('drops the refusal of one stock when the owner goes back to look up another', async () => {
+    const reset = vi.fn()
+    vi.mocked(useAddToWatchlist).mockReturnValue({ mutateAsync: vi.fn(), isPending: false, error: new Error('ZQQ.TO cannot be watched'), reset } as never)
+    search.mockResolvedValue(usd)
+    render(<AddStockDialog mode="watchlist" open onOpenChange={vi.fn()} />)
+    fireEvent.change(screen.getByLabelText('Ticker'), { target: { value: 'ZQQ.TO' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Look up' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Back' }))
+    expect(reset).toHaveBeenCalled()
+  })
+
   it('adds the stock found', async () => {
     const add = vi.fn().mockResolvedValue(undefined)
     vi.mocked(useAddToWatchlist).mockReturnValue(mutation(add))
     const onOpenChange = vi.fn()
     render(<AddStockDialog mode="watchlist" open onOpenChange={onOpenChange} defaultStock={usd} />)
     fireEvent.click(screen.getByRole('button', { name: 'Add to Watchlist' }))
-    await waitFor(() => expect(add).toHaveBeenCalledWith(usd))
+    await waitFor(() => expect(add).toHaveBeenCalledWith('MSFT'))
     expect(onOpenChange).toHaveBeenCalledWith(false)
   })
 })

@@ -1,0 +1,148 @@
+{
+  "data": [
+    {
+      "watchlist_id": "ee3ea354-8d0b-47c8-b0fc-d7172af0e25e",
+      "user_id": "9e60ccd0-8450-496f-a5ef-7832ecbb48c6",
+      "stock": {
+        "instrument_type": null,
+        "pipeline_supported": true,
+        "unsupported_reason": null,
+        "stock_id": "19e67734-a127-43c2-a2a0-e15dd6caab59",
+        "ticker": "RY.TO",
+        "name": "Royal Bank of Canada",
+        "exchange": "TSX",
+        "currency": "CAD",
+        "sector": "Financials"
+      },
+      "default_timeline": "medium_term",
+      "notes": null,
+      "is_active": true,
+      "added_at": "2026-11-25T21:40:48Z",
+      "snapshot": {
+        "stock_id": "19e67734-a127-43c2-a2a0-e15dd6caab59",
+        "ticker": "RY.TO",
+        "currency": "CAD",
+        "price": 100,
+        "price_day": "2026-11-25",
+        "change_day": null,
+        "change_week": null,
+        "change_month": null,
+        "status": "usable",
+        "exclusions": [],
+        "rerun_reasons": [],
+        "next_earnings_date": null,
+        "analysis": {
+          "run_id": "bd83cef1-4b67-40c5-aa5e-8e2be12a5f7b",
+          "as_of": "2026-11-24",
+          "outlook": "bullish",
+          "confidence": 70,
+          "tier": "outperform",
+          "expected_return": 0.08820526629787227,
+          "target_price": 108.82052662978722,
+          "range_low": 80.04400829208234,
+          "range_high": 137.4504907374515,
+          "income_per_share": 0,
+          "disagreement_class": null,
+          "previous_outlook": null,
+          "outlook_changed": null
+        }
+      }
+    },
+    {
+      "watchlist_id": "67f735b8-392f-42eb-bc4d-cc8f00c3fca6",
+      "user_id": "9e60ccd0-8450-496f-a5ef-7832ecbb48c6",
+      "stock": {
+        "instrument_type": null,
+        "pipeline_supported": true,
+        "unsupported_reason": null,
+        "stock_id": "f462586b-de30-4bc2-a7b4-6118ee30b0fc",
+        "ticker": "MSFT",
+        "name": "Microsoft Corporation",
+        "exchange": "NASDAQ",
+        "currency": "USD",
+        "sector": "Technology"
+      },
+      "default_timeline": null,
+      "notes": null,
+      "is_active": true,
+      "added_at": "2026-11-25T21:41:46Z",
+      "snapshot": {
+        "stock_id": "f462586b-de30-4bc2-a7b4-6118ee30b0fc",
+        "ticker": "MSFT",
+        "currency": "USD",
+        "price": 400,
+        "price_day": "2026-11-25",
+        "change_day": null,
+        "change_week": null,
+        "change_month": null,
+        "status": "excluded",
+        "exclusions": [
+          "no_completed_run"
+        ],
+        "rerun_reasons": [
+          "no_completed_run"
+        ],
+        "next_earnings_date": null,
+        "analysis": null
+      }
+    },
+    {
+      "watchlist_id": "6ab4bc90-d68e-4f13-a5bd-0ff171e7b79a",
+      "user_id": "9e60ccd0-8450-496f-a5ef-7832ecbb48c6",
+      "stock": {
+        "instrument_type": null,
+        "pipeline_supported": true,
+        "unsupported_reason": null,
+        "stock_id": "18a535ef-2941-48e3-973a-6b131ec727df",
+        "ticker": "TD.TO",
+        "name": "Toronto-Dominion Bank",
+        "exchange": "TSX",
+        "currency": "CAD",
+        "sector": "Financials"
+      },
+      "default_timeline": null,
+      "notes": null,
+      "is_active": true,
+      "added_at": "2026-11-25T21:41:46Z",
+      "snapshot": {
+        "stock_id": "18a535ef-2941-48e3-973a-6b131ec727df",
+        "ticker": "TD.TO",
+        "currency": "CAD",
+        "price": 100,
+        "price_day": "2026-11-25",
+        "change_day": null,
+        "change_week": null,
+        "change_month": null,
+        "status": "excluded",
+        "exclusions": [
+          "stale"
+        ],
+        "rerun_reasons": [
+          "stale"
+        ],
+        "next_earnings_date": null,
+        "analysis": {
+          "run_id": "ebbd72a0-6d6f-47b3-b1aa-465e5566fab7",
+          "as_of": "2026-11-13",
+          "outlook": "bullish",
+          "confidence": 70,
+          "tier": "outperform",
+          "expected_return": 0.08820526629787227,
+          "target_price": 108.82052662978722,
+          "range_low": 80.04400829208234,
+          "range_high": 137.4504907374515,
+          "income_per_share": 0,
+          "disagreement_class": null,
+          "previous_outlook": null,
+          "outlook_changed": null
+        }
+      }
+    }
+  ],
+  "meta": {
+    "total": 3,
+    "page": 1,
+    "per_page": 100,
+    "pages": 1
+  }
+}

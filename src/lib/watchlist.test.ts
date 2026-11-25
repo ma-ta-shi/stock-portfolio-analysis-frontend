@@ -1,43 +1,33 @@
 import { describe, expect, it } from 'vitest'
-import type { WatchlistItem } from '@/types'
-import { isAwaitingAnalysis, sortWatchlist } from './watchlist'
+import { isAwaitingAnalysis, mapWatchlistEntry, watchlistCounts, type ApiWatchlistEntry } from './watchlist'
+import recorded from '../../public/mock-data/watchlist/watchlist.json'
 
-const item = (id: string, overrides: Partial<WatchlistItem>): WatchlistItem => ({
-  watchlist_id: id, user_id: 'u',
-  stock: { stock_id: id, ticker: id, name: id, sector: 'X', exchange: 'TSX', currency: 'CAD' },
-  current_price: 10, day_change: 0, day_change_pct: 0, week_change_pct: 0, month_change_pct: 0,
-  stock_outlook: 'neutral', projected_return_pct: 0, portfolio_fit: 'worth_monitoring',
-  confidence_score: 50, disagreement_score: 0.1, disagreement_label: 'low', suggested_account: 'tfsa',
-  last_analyzed_at: '2026-03-01T00:00:00Z', added_at: '2026-01-01T00:00:00Z',
-  ...overrides,
-})
+// The recorded set: RY.TO with a usable call, TD.TO with an out-of-date one, MSFT never analysed.
+const items = (recorded.data as unknown as ApiWatchlistEntry[]).map(mapWatchlistEntry)
+const by = (ticker: string) => items.find((i) => i.stock.ticker === ticker)!
 
-const awaiting = { stock_outlook: null, projected_return_pct: null, confidence_score: null, last_analyzed_at: null, day_change_pct: null }
-const list = [
-  item('low', { projected_return_pct: 0.05, confidence_score: 40, last_analyzed_at: '2026-01-01' }),
-  item('new', awaiting),
-  item('high', { projected_return_pct: 0.2, confidence_score: 90, last_analyzed_at: '2026-03-01' }),
-]
-const ids = (l: WatchlistItem[]) => l.map((i) => i.watchlist_id)
+describe('mapWatchlistEntry', () => {
+  it('gives each entry the stock and call every list of stocks has, with ratios as fractions', () => {
+    const ry = by('RY.TO')
+    expect(ry.call?.status).toBe('usable')
+    expect(ry.call?.analysis?.outlook).toBe('bullish')
+    expect(ry.call?.analysis?.expectedReturn).toBeLessThan(1)
+    expect(ry.watchlist_id).toBeTruthy()
+  })
 
-describe('sortWatchlist', () => {
-  it.each(['projected_return_pct', 'confidence_score', 'last_analyzed_at'] as const)(
-    'sorts by %s and keeps unanalysed stocks last in both directions',
-    (key) => {
-      expect(ids(sortWatchlist(list, key, 'desc'))).toEqual(['high', 'low', 'new'])
-      expect(ids(sortWatchlist(list, key, 'asc'))).toEqual(['low', 'high', 'new'])
-    },
-  )
-  it('does not mutate the input', () => {
-    const before = ids(list)
-    sortWatchlist(list, 'confidence_score', 'asc')
-    expect(ids(list)).toEqual(before)
+  it('tells an out-of-date call from none at all', () => {
+    expect(by('TD.TO').call?.status).toBe('excluded')
+    expect(isAwaitingAnalysis(by('TD.TO'))).toBe(false)
+    expect(isAwaitingAnalysis(by('MSFT'))).toBe(true)
+    expect(isAwaitingAnalysis({ call: null })).toBe(true)
   })
 })
 
-describe('isAwaitingAnalysis', () => {
-  it('is true until the first analysis has a date', () => {
-    expect(isAwaitingAnalysis({ last_analyzed_at: null })).toBe(true)
-    expect(isAwaitingAnalysis({ last_analyzed_at: '2026-03-01' })).toBe(false)
+describe('watchlistCounts', () => {
+  it('counts the stocks, the bullish outlooks, the unanalysed and the changed', () => {
+    expect(watchlistCounts(items)).toEqual({ total: 3, bullish: 2, awaiting: 1, changed: 0 })
+    const ry = by('RY.TO')
+    const changed = { ...ry, call: { ...ry.call!, analysis: { ...ry.call!.analysis!, outlook: 'somewhat_bearish' as const, outlookChanged: true } } }
+    expect(watchlistCounts([changed])).toEqual({ total: 1, bullish: 0, awaiting: 0, changed: 1 })
   })
 })

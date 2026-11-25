@@ -5,7 +5,6 @@ import type { Stock } from '@/types'
 
 /** A stock found by its ticker. `lookup` is the backend's whole answer (live mode only); a stock in the mock list has none. */
 export interface TickerResult extends Stock {
-  current_price?: number
   lookup?: StockLookup
 }
 
@@ -34,7 +33,7 @@ export function findMockTicker(ticker: string, tickers: TickerResult[] = MOCK_TI
 /** The lookup answer as the stock the dialogs work with. A stock the record has not seen has no id yet, so its ticker stands in. */
 export function fromLookup(lookup: StockLookup): TickerResult {
   return {
-    stock_id: lookup.stock_id ?? lookup.ticker, // stopgap: the Watchlist ticket keys by ticker and removes this
+    stock_id: lookup.stock_id ?? lookup.ticker, // writes and the watchlist duplicate check go by ticker, never by this stand-in
     ticker: lookup.ticker,
     name: lookup.name,
     sector: lookup.sector ?? null,

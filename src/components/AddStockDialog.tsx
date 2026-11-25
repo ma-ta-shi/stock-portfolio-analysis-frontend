@@ -116,16 +116,18 @@ export function AddStockDialog({ mode, open, onOpenChange, defaultStock }: AddSt
     setStep('search')
     setFound(null)
     tickerSearch.reset()
+    addToWatchlist.reset() // the refusal belonged to the stock just left
   }
 
   // A stock can be held in several accounts, but appears on the watchlist only once.
-  const alreadyWatched = mode === 'watchlist' && !!found && !!watchlist?.data.some((i) => i.stock.stock_id === found.stock_id)
+  // by ticker: a stock the record has not seen has no id until it is added
+  const alreadyWatched = mode === 'watchlist' && !!found && !!watchlist?.some((i) => i.stock.ticker === found.ticker)
 
   async function handleWatch(e: FormEvent) {
     e.preventDefault()
     if (!found || alreadyWatched) return
     try {
-      await addToWatchlist.mutateAsync(found)
+      await addToWatchlist.mutateAsync(found.ticker)
       handleClose()
     } catch {
       // Shown from addToWatchlist.error below; keep the dialog open.
@@ -206,7 +208,7 @@ export function AddStockDialog({ mode, open, onOpenChange, defaultStock }: AddSt
             )}
             {addToWatchlist.error && (
               <p role="alert" className="text-sm text-destructive">
-                {getErrorMessage(addToWatchlist.error)}
+                {getErrorMessage(addToWatchlist.error, { write: true })}
               </p>
             )}
             <div className="flex justify-between pt-1">

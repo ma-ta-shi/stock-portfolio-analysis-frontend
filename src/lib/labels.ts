@@ -32,19 +32,6 @@ export const FIT_LABELS: Record<PortfolioFit, string> = {
   poor_fit: 'Poor Fit',
 }
 
-/** Short labels for dense tables. */
-export const FIT_SHORT_LABELS: Record<PortfolioFit, string> = {
-  strong_candidate: 'Strong',
-  worth_monitoring: 'Monitor',
-  poor_fit: 'Poor Fit',
-}
-
-export const FIT_TEXT_COLORS: Record<PortfolioFit, string> = {
-  strong_candidate: 'text-emerald-700 dark:text-emerald-400',
-  worth_monitoring: 'text-amber-700 dark:text-amber-400',
-  poor_fit: 'text-red-600 dark:text-red-400',
-}
-
 export const FIT_BOX_COLORS: Record<PortfolioFit, string> = {
   strong_candidate: 'bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800',
   worth_monitoring: 'bg-amber-50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800',
