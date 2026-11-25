@@ -17,6 +17,7 @@ import transactionsFixture from '../../../public/mock-data/portfolio/transaction
 import exposureFixture from '../../../public/mock-data/portfolio/exposure.json'
 import { HOLDING_FIELDS } from './holdings'
 import { PREVIEW_FIELDS, type PreviewRow } from './preview'
+import { LOOKUP_FIELDS, type StockLookup } from './lookup'
 import { TRANSACTION_FIELDS } from './ledger'
 import { ACCOUNT_FIELDS, ROOM_EVENT_FIELDS, ROOM_FIELDS, SUMMARY_FIELDS } from './summary'
 import { EXPOSURE_FIELDS, EXPOSURE_GROUP_FIELDS, EXPOSURE_NAME_FIELDS, EXPOSURE_PAIR_FIELDS, EXPOSURE_RISK_FIELDS, type RiskRow } from './exposure'
@@ -92,3 +93,14 @@ check('entry preview', PREVIEW_FIELDS, [
   ),
   preview({ cash_after: { CAD: 1500, USD: 0 } }),
 ]) // fmt: skip
+
+// Hand-built lookup answers (the recorded set has none): a known stock, one the providers found, and an unsupported fund.
+const lookup = (over: Partial<StockLookup> = {}): StockLookup => ({
+  stock_id: 's1', ticker: 'BNS.TO', name: 'Bank of Nova Scotia', exchange: 'TSX', currency: 'CAD', sector: 'Financials', industry: 'Banks',
+  instrument_type: null, pipeline_supported: true, unsupported_reason: null, source: 'database', ...over,
+}) // fmt: skip
+check('stock lookup', LOOKUP_FIELDS, [
+  lookup(),
+  lookup({ stock_id: null, source: 'provider', sector: null, industry: null }),
+  lookup({ instrument_type: 'etf', pipeline_supported: false, unsupported_reason: 'a fund' }),
+])

@@ -18,6 +18,7 @@ export function ledgerRoute(method: LedgerMethod, path: string): LedgerRoute {
 export const LEDGER = {
   eventsPreview: ledgerRoute('POST', '/events/preview'),
   events: ledgerRoute('POST', '/events'),
+  remove: ledgerRoute('POST', '/holdings/{id}/remove'),
 } as const
 
 /** The route's path with its `{name}` placeholders replaced by `params`; a missing parameter is a bug, not an empty segment. */

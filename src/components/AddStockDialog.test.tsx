@@ -2,86 +2,152 @@ import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { AddStockDialog } from './AddStockDialog'
 import type { TickerResult } from '@/hooks/use-ticker-search'
+import { fromLookup } from '@/hooks/use-ticker-search'
+import { mockLedgerHooks } from '@/test/ledger-mocks'
+import { useAccounts } from '@/hooks/use-portfolio'
+import type { StockLookup } from '@/screens/portfolio/lookup'
 
 vi.mock('@/hooks/use-watchlist')
-vi.mock('@/hooks/use-ticker-search')
+vi.mock('@/hooks/use-ticker-search', async (importOriginal) => ({ ...(await importOriginal<typeof import('@/hooks/use-ticker-search')>()), useTickerSearch: vi.fn() }))
 vi.mock('@/hooks/use-portfolio')
 import { useAddToWatchlist, useWatchlist } from '@/hooks/use-watchlist'
 import { useTickerSearch } from '@/hooks/use-ticker-search'
-import { useAddToPortfolio } from '@/hooks/use-portfolio'
 
 const usd: TickerResult = { stock_id: 'stk_msft', ticker: 'MSFT', name: 'Microsoft', sector: 'Technology', exchange: 'NASDAQ', currency: 'USD' }
-const addPortfolio = vi.fn()
+const bnsLookup: StockLookup = {
+  stock_id: null, ticker: 'BNS.TO', name: 'Bank of Nova Scotia', exchange: 'TSX', currency: 'CAD', sector: 'Financials',
+  industry: 'Banks', instrument_type: null, pipeline_supported: true, unsupported_reason: null, source: 'provider',
+} // fmt: skip
 const search = vi.fn()
 const mutation = (fn: ReturnType<typeof vi.fn>) => ({ mutateAsync: fn, isPending: false, isError: false, error: null, reset: vi.fn() }) as never
+let ledger: ReturnType<typeof mockLedgerHooks>
 
 beforeEach(() => {
+  ledger = mockLedgerHooks()
   vi.mocked(useWatchlist).mockReturnValue({ data: undefined } as unknown as ReturnType<typeof useWatchlist>)
   vi.mocked(useAddToWatchlist).mockReturnValue(mutation(vi.fn()))
   vi.mocked(useTickerSearch).mockReturnValue(mutation(search))
-  vi.mocked(useAddToPortfolio).mockReturnValue(mutation(addPortfolio))
-  addPortfolio.mockReset().mockResolvedValue(undefined)
   search.mockReset()
 })
 
-describe('AddStockDialog — portfolio mode', () => {
-  it('does not fetch the watchlist (only needed for the watchlist duplicate check)', () => {
-    render(<AddStockDialog mode="portfolio" open onOpenChange={vi.fn()} defaultStock={usd} />)
-    expect(vi.mocked(useWatchlist)).toHaveBeenCalledWith({ enabled: false })
+describe('AddStockDialog: finding the stock', () => {
+  it('asks for a ticker only', () => {
+    render(<AddStockDialog mode="portfolio" open onOpenChange={vi.fn()} />)
+    expect(screen.getByLabelText('Ticker')).toBeInTheDocument()
   })
 
-  it('fetches the watchlist only while open in watchlist mode', () => {
-    const { rerender } = render(<AddStockDialog mode="watchlist" open={false} onOpenChange={vi.fn()} />)
+  it('shows what the lookup knows, in the registry fields', async () => {
+    search.mockResolvedValue(fromLookup(bnsLookup))
+    render(<AddStockDialog mode="portfolio" open onOpenChange={vi.fn()} />)
+    fireEvent.change(screen.getByLabelText('Ticker'), { target: { value: 'bns.to' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Look up' }))
+    expect(await screen.findByText('Bank of Nova Scotia')).toBeInTheDocument()
+    expect(screen.getByText('Banks')).toBeInTheDocument()
+    expect(screen.getByText('A data provider')).toBeInTheDocument()
+  })
+
+  it('says when nothing matches', async () => {
+    search.mockResolvedValue(null)
+    render(<AddStockDialog mode="portfolio" open onOpenChange={vi.fn()} />)
+    fireEvent.change(screen.getByLabelText('Ticker'), { target: { value: 'ZZZZ' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Look up' }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('No match found for')
+  })
+
+  it('reports a failed lookup', () => {
+    vi.mocked(useTickerSearch).mockReturnValue({ mutateAsync: search, isPending: false, isError: true, error: new Error('Lookup service down'), reset: vi.fn() } as never)
+    render(<AddStockDialog mode="portfolio" open onOpenChange={vi.fn()} />)
+    expect(screen.getByRole('alert')).toHaveTextContent('Lookup failed: Lookup service down')
+  })
+
+  it('does not fetch the watchlist in portfolio mode, only while open in watchlist mode', () => {
+    const { rerender } = render(<AddStockDialog mode="portfolio" open onOpenChange={vi.fn()} defaultStock={usd} />)
+    expect(vi.mocked(useWatchlist)).toHaveBeenLastCalledWith({ enabled: false })
+    rerender(<AddStockDialog mode="watchlist" open={false} onOpenChange={vi.fn()} />)
     expect(vi.mocked(useWatchlist)).toHaveBeenLastCalledWith({ enabled: false })
     rerender(<AddStockDialog mode="watchlist" open onOpenChange={vi.fn()} />)
     expect(vi.mocked(useWatchlist)).toHaveBeenLastCalledWith({ enabled: true })
   })
 
-  it('labels the cost in the stock’s currency and shows the book cost in it', () => {
-    render(<AddStockDialog mode="portfolio" open onOpenChange={vi.fn()} defaultStock={usd} />)
-    fireEvent.change(screen.getByLabelText('Shares'), { target: { value: '10' } })
-    fireEvent.change(screen.getByLabelText('Avg cost (USD)'), { target: { value: '400' } })
-    expect(screen.getByText('Book cost: US$4,000.00')).toBeInTheDocument()
+  it('says an unsupported security is not analysed but can still be recorded', () => {
+    render(<AddStockDialog mode="portfolio" open onOpenChange={vi.fn()} defaultStock={{ ...usd, pipeline_supported: false, unsupported_reason: 'a fund' }} />)
+    expect(screen.getByRole('status')).toHaveTextContent('does not analyse this security (a fund). You can still record it.')
   })
+})
 
-  it('requires shares and cost before adding', () => {
-    render(<AddStockDialog mode="portfolio" open onOpenChange={vi.fn()} defaultStock={usd} />)
-    const add = screen.getByRole('button', { name: 'Add to Portfolio' })
-    expect(add).toBeDisabled()
-    fireEvent.change(screen.getByLabelText('Shares'), { target: { value: '10' } })
-    expect(add).toBeDisabled()
-    fireEvent.change(screen.getByLabelText('Avg cost (USD)'), { target: { value: '400' } })
-    expect(add).toBeEnabled()
-  })
+describe('AddStockDialog: recording the position', () => {
+  const pick = (name: RegExp) => fireEvent.click(screen.getByRole('radio', { name }))
 
-  it('submits the position to the chosen account and closes', async () => {
-    const onOpenChange = vi.fn()
-    render(<AddStockDialog mode="portfolio" open onOpenChange={onOpenChange} defaultStock={usd} />)
-    fireEvent.change(screen.getByLabelText('Shares'), { target: { value: '10' } })
-    fireEvent.change(screen.getByLabelText('Avg cost (USD)'), { target: { value: '400' } })
+  it('records "I bought it" as a buy in the chosen account, with the account commission as the fee', async () => {
+    render(<AddStockDialog mode="portfolio" open onOpenChange={vi.fn()} defaultStock={fromLookup({ ...bnsLookup, stock_id: 's1' })} />)
     fireEvent.change(screen.getByLabelText('Account'), { target: { value: 'rrsp' } })
-    fireEvent.click(screen.getByRole('button', { name: 'Add to Portfolio' }))
-    await waitFor(() => expect(onOpenChange).toHaveBeenCalledWith(false))
-    expect(addPortfolio).toHaveBeenCalledWith({ stock: usd, shares: 10, average_cost_basis: 400, account_type: 'rrsp' })
+    fireEvent.change(screen.getByLabelText(/Shares to buy/), { target: { value: '10' } })
+    fireEvent.change(screen.getByLabelText(/Price per share/), { target: { value: '80' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Review' }))
+    expect(ledger.calls.preview[0].body).toMatchObject({ events: [{ account_type: 'rrsp', transaction_type: 'buy', ticker: 'BNS.TO', shares: 10, price_per_share: 80, total_amount: 800, fees: 9.99, currency: 'CAD' }] })
+    fireEvent.click(await screen.findByRole('button', { name: 'Buy shares' }))
+    await waitFor(() => expect(ledger.calls.record).toHaveLength(1))
   })
 
-  it('stays open and shows the error if adding fails', async () => {
-    addPortfolio.mockRejectedValueOnce(new Error('nope'))
-    vi.mocked(useAddToPortfolio).mockReturnValue({ mutateAsync: addPortfolio, isPending: false, isError: true, error: new Error('Server said no'), reset: vi.fn() } as never)
+  it('records "I already hold it" as an opening balance with no fee', () => {
+    render(<AddStockDialog mode="portfolio" open onOpenChange={vi.fn()} defaultStock={fromLookup({ ...bnsLookup, stock_id: 's1' })} />)
+    pick(/I already hold it/)
+    expect(screen.queryByLabelText(/Fees/)).not.toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText(/Shares held/), { target: { value: '5' } })
+    fireEvent.change(screen.getByLabelText(/Average cost per share/), { target: { value: '70' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Review' }))
+    const row = (ledger.calls.preview[0].body as { events: Record<string, unknown>[] }).events[0]
+    expect(row).toMatchObject({ transaction_type: 'opening_balance', shares: 5, total_amount: 350 })
+    expect(row).not.toHaveProperty('fees')
+  })
+
+  it('needs the exchange rate for a US stock already held', () => {
+    render(<AddStockDialog mode="portfolio" open onOpenChange={vi.fn()} defaultStock={usd} />)
+    pick(/I already hold it/)
+    fireEvent.change(screen.getByLabelText(/Shares held/), { target: { value: '5' } })
+    fireEvent.change(screen.getByLabelText(/Average cost per share/), { target: { value: '300' } })
+    expect(screen.getByRole('button', { name: 'Review' })).toBeDisabled()
+    fireEvent.change(screen.getByLabelText(/Exchange rate/), { target: { value: '1.3' } })
+    expect(screen.getByRole('button', { name: 'Review' })).toBeEnabled()
+  })
+
+  it('cannot hold a stock quoted in another currency', () => {
+    render(<AddStockDialog mode="portfolio" open onOpenChange={vi.fn()} defaultStock={{ ...usd, currency: 'EUR' as TickerResult['currency'] }} />)
+    expect(screen.getByRole('alert')).toHaveTextContent('Only Canadian and US dollar stocks')
+    fireEvent.change(screen.getByLabelText(/Shares to buy/), { target: { value: '5' } })
+    fireEvent.change(screen.getByLabelText(/Price per share/), { target: { value: '5' } })
+    expect(screen.getByRole('button', { name: 'Review' })).toBeDisabled()
+  })
+
+  it('starts the price blank: a lookup has none', () => {
+    render(<AddStockDialog mode="portfolio" open onOpenChange={vi.fn()} defaultStock={usd} />)
+    expect(screen.getByLabelText(/Price per share/)).toHaveValue(null)
+  })
+})
+
+describe('AddStockDialog: the fee follows the account', () => {
+  it('shows the commission of the account chosen, not the one it opened with, and keeps what was typed', () => {
+    const accounts = ['tfsa', 'rrsp', 'trading'].map((account_type, i) => ({ account_type, commission_per_trade: [0, 4.99, 9.99][i] }))
+    vi.mocked(useAccounts).mockReturnValue({ data: { data: accounts }, isLoading: false } as unknown as ReturnType<typeof useAccounts>)
+    render(<AddStockDialog mode="portfolio" open onOpenChange={vi.fn()} defaultStock={fromLookup({ ...bnsLookup, stock_id: 's1' })} />)
+    const fees = () => screen.getByLabelText(/Fees/)
+    expect(fees()).toHaveValue(null) // the TFSA charges nothing
+    fireEvent.change(screen.getByLabelText('Account', { exact: true }), { target: { value: 'rrsp' } })
+    expect(fees()).toHaveValue(4.99)
+    fireEvent.change(fees(), { target: { value: '7' } })
+    fireEvent.change(screen.getByLabelText('Account', { exact: true }), { target: { value: 'trading' } })
+    expect(fees()).toHaveValue(7) // typed over: the account no longer decides
+  })
+})
+
+describe('AddStockDialog: the watchlist', () => {
+  it('adds the stock found', async () => {
+    const add = vi.fn().mockResolvedValue(undefined)
+    vi.mocked(useAddToWatchlist).mockReturnValue(mutation(add))
     const onOpenChange = vi.fn()
-    render(<AddStockDialog mode="portfolio" open onOpenChange={onOpenChange} defaultStock={usd} />)
-    expect(screen.getByRole('alert')).toHaveTextContent('Server said no')
-    fireEvent.change(screen.getByLabelText('Shares'), { target: { value: '1' } })
-    fireEvent.change(screen.getByLabelText('Avg cost (USD)'), { target: { value: '1' } })
-    fireEvent.click(screen.getByRole('button', { name: 'Add to Portfolio' }))
-    await waitFor(() => expect(addPortfolio).toHaveBeenCalled())
-    expect(onOpenChange).not.toHaveBeenCalledWith(false)
-  })
-
-  it('reports a failed lookup', async () => {
-    search.mockRejectedValueOnce(new Error('down'))
-    vi.mocked(useTickerSearch).mockReturnValue({ mutateAsync: search, isPending: false, isError: true, error: new Error('Lookup service down'), reset: vi.fn() } as never)
-    render(<AddStockDialog mode="portfolio" open onOpenChange={vi.fn()} />)
-    expect(screen.getByRole('alert')).toHaveTextContent('Lookup failed: Lookup service down')
+    render(<AddStockDialog mode="watchlist" open onOpenChange={onOpenChange} defaultStock={usd} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Add to Watchlist' }))
+    await waitFor(() => expect(add).toHaveBeenCalledWith(usd))
+    expect(onOpenChange).toHaveBeenCalledWith(false)
   })
 })

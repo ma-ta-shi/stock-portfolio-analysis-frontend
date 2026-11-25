@@ -6,15 +6,13 @@ import { mockHolding } from '@/test/mock-data'
 import { mockLedgerHooks } from '@/test/ledger-mocks'
 
 vi.mock('@/hooks/use-portfolio')
-import { useLogDividend, useRemoveFromPortfolio, useUpdatePosition } from '@/hooks/use-portfolio'
+import { useUpdatePosition } from '@/hooks/use-portfolio'
 
 beforeEach(() => {
   mockLedgerHooks()
-  // Edit, Log dividend and Remove are connected in the next PRs; until then their dialogs call the not-connected stubs.
+  // Edit is connected in the next PR; until then its dialog calls the not-connected stub.
   const stub = { mutateAsync: vi.fn(), isPending: false, isError: false, error: null }
   vi.mocked(useUpdatePosition).mockReturnValue(stub as unknown as ReturnType<typeof useUpdatePosition>)
-  vi.mocked(useLogDividend).mockReturnValue(stub as unknown as ReturnType<typeof useLogDividend>)
-  vi.mocked(useRemoveFromPortfolio).mockReturnValue(stub as unknown as ReturnType<typeof useRemoveFromPortfolio>)
 })
 
 /** A page that lists one holding with a button for each action, as the Holdings table and the Stock page do. */
@@ -42,7 +40,7 @@ describe('useHoldingActions with HoldingActionDialogs', () => {
     ['buy', /Buy RY\.TO/],
     ['sell', /Sell RY\.TO/],
     ['edit', /RY\.TO/],
-    ['dividend', /RY\.TO|dividend/i],
+    ['dividend', /Log dividend RY/],
     ['remove', /Remove from Portfolio/],
   ] as const)('opens the %s dialog for the holding', (action, title) => {
     render(<Page />)

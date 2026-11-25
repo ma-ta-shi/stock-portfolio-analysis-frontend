@@ -17,7 +17,7 @@ export function BuySharesDialog({ holding, onClose }: BuySharesDialogProps) {
 }
 
 function BuyShares({ holding, onClose }: { holding: Holding; onClose: () => void }) {
-  const form = useTradeForm({ kind: 'buy', holding })
+  const form = useTradeForm({ kind: 'buy', ticker: holding.stock.ticker, currency: holding.stock.currency, account: holding.account_type, price: holding.current_price })
   const currency = holding.stock.currency
   return (
     <LedgerDialog

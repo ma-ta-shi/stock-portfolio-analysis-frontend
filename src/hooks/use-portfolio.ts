@@ -231,19 +231,6 @@ function notConnectedWrite<Input>(gap: GapId) {
   }
 }
 
-export interface AddToPortfolioInput {
-  stock: { stock_id: string; ticker: string }
-  shares: number
-  average_cost_basis: number
-  account_type: string
-}
-export function useAddToPortfolio() {
-  return useMutation({
-    mutationFn: notConnectedWrite<AddToPortfolioInput>('P-W6'),
-  })
-}
-
-/** What a ledger write sends: the path placeholders (`{id}`) and the JSON body, if any. */
 export interface LedgerCall {
   params?: Record<string, string>
   body?: unknown
@@ -279,21 +266,6 @@ export function useLedgerRecord<T = Api['RecordedEventsResponse']>(route: Ledger
   })
 }
 
-export interface LogDividendInput {
-  holdingId: string
-  totalAmount: number
-  amountPerShare: number
-  paymentDate: string
-  isDrip: boolean
-  dripShares?: number
-  dripPricePerShare?: number
-}
-export function useLogDividend() {
-  return useMutation({
-    mutationFn: notConnectedWrite<LogDividendInput>('P-W3'),
-  })
-}
-
 export interface UpdatePositionInput {
   holdingId: string
   shares: number
@@ -302,12 +274,6 @@ export interface UpdatePositionInput {
 export function useUpdatePosition() {
   return useMutation({
     mutationFn: notConnectedWrite<UpdatePositionInput>('P-W4'),
-  })
-}
-
-export function useRemoveFromPortfolio() {
-  return useMutation({
-    mutationFn: notConnectedWrite<string>('P-W5'),
   })
 }
 

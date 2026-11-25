@@ -40,23 +40,13 @@ test('transaction filters live in the URL and survive a reload', async ({ page }
   await expect(page).not.toHaveURL(/ticker=/)
 })
 
-// Mock mode serves one recorded file whatever the query, so a filter cannot change the rows (gap E-1). The end-to-end run against a
-// seeded scratch backend (`npm run test:e2e:live`, writes ticket 86bd5z6mq) turns this on.
-test.fixme('transaction filters narrow the list (E-1: needs a backend that filters)', async ({ page }) => {
-  await page.goto('/portfolio?tab=transactions')
-  const rows = page.locator('tbody tr')
-  const all = await rows.count()
-  await page.getByRole('combobox', { name: 'Ticker' }).selectOption('RY.TO')
-  await expect(rows).not.toHaveCount(all)
-})
-
 test('watchlist: add a stock (awaiting analysis), block duplicates, remove with confirmation', async ({ page, consoleErrors }) => {
   await page.goto('/watchlist')
   const rows = page.locator('tbody tr')
   await expect(rows).toHaveCount(4)
 
   await page.getByRole('button', { name: 'Add Stock' }).click()
-  await page.getByLabel('Ticker or company name').fill('Royal Bank')
+  await page.getByLabel('Ticker').fill('RY.TO')
   await page.getByRole('button', { name: 'Look up' }).click()
   await page.getByRole('button', { name: 'Add to Watchlist' }).click()
   await expect(rows).toHaveCount(5)
@@ -65,7 +55,7 @@ test('watchlist: add a stock (awaiting analysis), block duplicates, remove with 
   await expect(page.getByText('1 awaiting analysis')).toBeVisible()
 
   await page.getByRole('button', { name: 'Add Stock' }).click()
-  await page.getByLabel('Ticker or company name').fill('TD.TO')
+  await page.getByLabel('Ticker').fill('TD.TO')
   await page.getByRole('button', { name: 'Look up' }).click()
   await expect(page.getByText('TD.TO is already on your watchlist.')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Add to Watchlist' })).toBeDisabled()

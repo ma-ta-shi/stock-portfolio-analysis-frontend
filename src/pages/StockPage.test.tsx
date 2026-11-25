@@ -20,16 +20,14 @@ vi.mock('@/context/UserContext', () => ({
 }))
 
 import { useStockDetail, useStockAnalysisHistory } from '@/hooks/use-stock-detail'
-import { usePortfolioHoldings, useAddToPortfolio, useUpdatePosition, useLogDividend } from '@/hooks/use-portfolio'
+import { usePortfolioHoldings, useUpdatePosition } from '@/hooks/use-portfolio'
 import { useTickerSearch } from '@/hooks/use-ticker-search'
 import { useAddToWatchlist, useWatchlist } from '@/hooks/use-watchlist'
 
 const mockUseStockDetail = vi.mocked(useStockDetail)
 const mockUseStockAnalysisHistory = vi.mocked(useStockAnalysisHistory)
 const mockUsePortfolioHoldings = vi.mocked(usePortfolioHoldings)
-vi.mocked(useAddToPortfolio).mockReturnValue({ mutateAsync: vi.fn(), isPending: false, reset: vi.fn() } as unknown as ReturnType<typeof useAddToPortfolio>)
 vi.mocked(useUpdatePosition).mockReturnValue({ mutateAsync: vi.fn(), isPending: false } as unknown as ReturnType<typeof useUpdatePosition>)
-vi.mocked(useLogDividend).mockReturnValue({ mutateAsync: vi.fn(), isPending: false } as unknown as ReturnType<typeof useLogDividend>)
 vi.mocked(useTickerSearch).mockReturnValue({ mutateAsync: vi.fn(), isPending: false, reset: vi.fn() } as unknown as ReturnType<typeof useTickerSearch>)
 vi.mocked(useAddToWatchlist).mockReturnValue({ mutateAsync: vi.fn(), isPending: false, reset: vi.fn() } as unknown as ReturnType<typeof useAddToWatchlist>)
 vi.mocked(useWatchlist).mockReturnValue({ data: undefined } as unknown as ReturnType<typeof useWatchlist>)

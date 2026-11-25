@@ -123,32 +123,12 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-muted-foreground hover:text-blue-600"
-                          title="Log dividend"
-                          aria-label={`Log dividend for ${label}`}
-                          onClick={() => actions.open('dividend', h)}
-                        >
-                          <DollarSign className="w-4 h-4" aria-hidden="true" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
                           className="text-muted-foreground hover:text-foreground"
                           title="Edit position"
                           aria-label={`Edit ${label}`}
                           onClick={() => actions.open('edit', h)}
                         >
                           <Pencil className="w-4 h-4" aria-hidden="true" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-muted-foreground hover:text-destructive"
-                          title="Remove"
-                          aria-label={`Remove ${label}`}
-                          onClick={() => actions.open('remove', h)}
-                        >
-                          <Trash2 className="w-4 h-4" aria-hidden="true" />
                         </Button>
                       </div>
                     </TableCell>
@@ -157,6 +137,16 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
                     <TableRow>
                       <TableCell colSpan={columns.length + 2} className="bg-muted/30 py-3">
                         <FieldList fields={HOLDING_FIELDS} row={h} />
+                        <div role="group" aria-label={`Actions for ${label}`} className="mt-3 flex gap-2">
+                          <Button size="sm" variant="outline" onClick={() => actions.open('dividend', h)}>
+                            <DollarSign className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
+                            Log dividend
+                          </Button>
+                          <Button size="sm" variant="outline" className="text-destructive" onClick={() => actions.open('remove', h)}>
+                            <Trash2 className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
+                            Remove
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   )}

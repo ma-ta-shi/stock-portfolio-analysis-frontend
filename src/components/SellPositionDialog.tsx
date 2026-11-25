@@ -22,7 +22,15 @@ export function SellPositionDialog({ holding, onClose }: SellPositionDialogProps
 }
 
 function SellPosition({ holding, onClose }: { holding: Holding; onClose: () => void }) {
-  const form = useTradeForm({ kind: 'sell', holding })
+  const form = useTradeForm({
+    kind: 'sell',
+    ticker: holding.stock.ticker,
+    currency: holding.stock.currency,
+    account: holding.account_type,
+    maxShares: holding.shares,
+    initialShares: holding.shares,
+    price: holding.current_price,
+  })
   const currency = holding.stock.currency
   return (
     <LedgerDialog

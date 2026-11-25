@@ -18,12 +18,10 @@ vi.mock('react-router-dom', async (importOriginal) => {
   return { ...actual, useNavigate: vi.fn() }
 })
 
-import { usePortfolioHoldings, useRemoveFromPortfolio, useUpdatePosition, useClosedPositions, useLogDividend } from '@/hooks/use-portfolio'
+import { usePortfolioHoldings, useUpdatePosition, useClosedPositions } from '@/hooks/use-portfolio'
 const mockUsePortfolioHoldings = vi.mocked(usePortfolioHoldings)
-vi.mocked(useRemoveFromPortfolio).mockReturnValue({ mutateAsync: vi.fn(), isPending: false } as unknown as ReturnType<typeof useRemoveFromPortfolio>)
 vi.mocked(useUpdatePosition).mockReturnValue({ mutateAsync: vi.fn(), isPending: false } as unknown as ReturnType<typeof useUpdatePosition>)
 vi.mocked(useClosedPositions).mockReturnValue({ data: [] } as unknown as ReturnType<typeof useClosedPositions>)
-vi.mocked(useLogDividend).mockReturnValue({ mutateAsync: vi.fn(), isPending: false } as unknown as ReturnType<typeof useLogDividend>)
 const mockNavigate = vi.fn()
 vi.mocked(useNavigate).mockReturnValue(mockNavigate)
 
@@ -131,10 +129,22 @@ describe('HoldingsTable', () => {
     show(mockHolding)
     expect(screen.getByRole('button', { name: 'Buy more RY.TO (RRSP)' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Edit RY.TO (RRSP)' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Remove RY.TO (RRSP)' })).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Sell RY.TO (RRSP)' }))
     expect(mockNavigate).not.toHaveBeenCalled()
     expect(screen.getByRole('dialog')).toHaveTextContent('Sell RY.TO')
+  })
+
+  it('keeps Log dividend and Remove in the Actions strip of the expanded row, and opens their dialogs', () => {
+    show(mockHolding)
+    expect(screen.queryByRole('button', { name: 'Remove' })).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Show details of RY.TO (RRSP)' }))
+    const strip = screen.getByRole('group', { name: 'Actions for RY.TO (RRSP)' })
+    fireEvent.click(within(strip).getByRole('button', { name: 'Log dividend' }))
+    expect(screen.getByRole('dialog')).toHaveTextContent('Log dividend RY.TO')
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+    fireEvent.click(within(strip).getByRole('button', { name: 'Remove' }))
+    expect(screen.getByRole('dialog')).toHaveTextContent('Remove from Portfolio')
+    expect(mockNavigate).not.toHaveBeenCalled()
   })
 
   it('shows an error with retry when holdings fail to load', () => {
