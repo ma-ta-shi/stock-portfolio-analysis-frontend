@@ -1,32 +1,33 @@
 /**
- * The write forms' request fields: every property of `TransactionCreate` (and `EventsCreate`) is either typed by the owner
- * (`ENTRY_FIELDS`, place `input`) or listed in `ENTRY_NOT_SENT` with a reason, so a form cannot silently drop one and the backend
- * cannot add one unnoticed (`field-coverage.test.ts`). `entry-fields.test.ts` ties this list to what the builders in
- * `lib/ledger-entry.ts` actually emit.
+ * The write forms' request fields: every property of `TransactionCreate` (and `EventsCreate`) is either typed or chosen by the
+ * owner in at least one form (`ENTRY_FIELDS`, place `input`) or listed in `ENTRY_NOT_SENT` with a reason, so a form cannot silently
+ * drop one and the backend cannot add one unnoticed (`field-coverage.test.ts`). `entry-fields.test.ts` ties this list to what the
+ * builders in `lib/ledger-entry.ts` actually emit, across the trade, cash and dividend forms.
  */
 import type { ApiFieldKey, FieldMeta, NotShown } from '@/lib/fields'
 
-/** Typed by the owner in the trade form (buy, sell, opening balance). */
+/** Typed or chosen by the owner in the trade, cash or dividend form. */
 export const ENTRY_FIELDS: readonly FieldMeta[] = [
+  { id: 'account', label: 'Account', source: 'TransactionCreate.account_type', places: ['input'] },
+  { id: 'type', label: 'Type of entry', source: 'TransactionCreate.transaction_type', places: ['input'] },
   { id: 'shares', label: 'Shares', source: 'TransactionCreate.shares', places: ['input'] },
   { id: 'price', label: 'Price per share', source: 'TransactionCreate.price_per_share', places: ['input'] },
+  { id: 'amount', label: 'Amount', source: 'TransactionCreate.total_amount', places: ['input'] },
   { id: 'fees', label: 'Fees', source: 'TransactionCreate.fees', places: ['input'] },
-  { id: 'date', label: 'Transaction date', source: 'TransactionCreate.transaction_date', places: ['input'] },
+  { id: 'currency', label: 'Currency', source: 'TransactionCreate.currency', places: ['input'] },
+  { id: 'date', label: 'Date', source: 'TransactionCreate.transaction_date', places: ['input'] },
   { id: 'rate', label: 'Exchange rate to CAD', source: 'TransactionCreate.fx_rate_to_cad', places: ['input'] },
+  { id: 'withholding', label: 'Tax withheld', source: 'TransactionCreate.withholding_tax', places: ['input'] },
+  { id: 'counter_currency', label: 'Currency received', source: 'TransactionCreate.counter_currency', places: ['input'] },
+  { id: 'counter_amount', label: 'Amount received', source: 'TransactionCreate.counter_amount', places: ['input'] },
   { id: 'reason', label: 'Reason', source: 'TransactionCreate.reason_code', places: ['input'] },
   { id: 'notes', label: 'Notes', source: 'TransactionCreate.notes', places: ['input'] },
 ]
 
-/** Fields the dialog sets itself rather than the owner typing them; the builders emit them. */
+/** Fields no form types: the dialog takes them from the holding or the lookup. */
 export const SET_BY_DIALOG: Readonly<Record<string, string>> = {
-  'TransactionCreate.account_type': "the holding's account",
-  'TransactionCreate.transaction_type': 'buy, sell or opening balance, by which button opened the dialog',
-  'TransactionCreate.ticker': "the holding's stock",
-  'TransactionCreate.currency': "the stock's currency",
-  'TransactionCreate.total_amount': 'shares x price, rounded to cents',
+  'TransactionCreate.ticker': "the holding's stock, or the stock the lookup found",
 }
-
-const NEXT_PR = 'Not entered in the trade form: the cash and dividend forms send it (the next PR)'
 
 export const ENTRY_NOT_SENT: Partial<Record<ApiFieldKey, NotShown>> = {
   ...(Object.fromEntries(
@@ -37,8 +38,5 @@ export const ENTRY_NOT_SENT: Partial<Record<ApiFieldKey, NotShown>> = {
   'TransactionCreate.initiated_by': { reason: 'The API default, the owner, is right for every form' },
   'TransactionCreate.tax_year': { reason: "Defaults to the entry's year", gap: 'P-W11' },
   'TransactionCreate.recommendation_id': { reason: 'Proposals are shown by the Optimizer ticket', gap: 'P-W12' },
-  'TransactionCreate.withholding_tax': { reason: NEXT_PR },
-  'TransactionCreate.counter_currency': { reason: NEXT_PR },
-  'TransactionCreate.counter_amount': { reason: NEXT_PR },
   'EventsCreate.events': { reason: 'Built by eventsBody (lib/ledger-entry.ts) from the entries' },
 }

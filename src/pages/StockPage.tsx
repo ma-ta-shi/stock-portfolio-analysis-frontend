@@ -168,12 +168,10 @@ export function StockPage() {
                     <TrendingDown className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
                     Sell
                   </Button>
-                  {(h.expected_income_per_share ?? 0) > 0 && (
-                    <Button size="sm" variant="outline" onClick={() => actions.open('dividend', h)}>
-                      <DollarSign className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
-                      Log Dividend
-                    </Button>
-                  )}
+                  <Button size="sm" variant="outline" onClick={() => actions.open('dividend', h)}>
+                    <DollarSign className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
+                    Log Dividend
+                  </Button>
                   <Button
                     size="sm"
                     variant="outline"

@@ -8,6 +8,7 @@ import {
 import { getErrorMessage } from '@/lib/api'
 import { safeStorage } from '@/lib/storage'
 import { AddStockDialog } from '@/components/AddStockDialog'
+import { CashEntryDialog } from '@/components/CashEntryDialog'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { HoldingsTable } from './portfolio/HoldingsTable'
@@ -116,6 +117,7 @@ function AvailableToTradeWidget() {
 export function PortfolioPage() {
   const [accountView, setAccountView] = useState<PortfolioAccountView>(getSessionAccount)
   const [addDialogOpen, setAddDialogOpen] = useState(false)
+  const [cashDialogOpen, setCashDialogOpen] = useState(false)
   const [activeTab, setActiveTab] = usePortfolioTab()
   const owner = usePortfolioId()
 
@@ -168,12 +170,19 @@ export function PortfolioPage() {
             <TabsTrigger value="transactions">Transactions</TabsTrigger>
             <TabsTrigger value="allocation">Allocation</TabsTrigger>
           </TabsList>
-          {activeTab === 'holdings' && (
-            <Button size="sm" onClick={() => setAddDialogOpen(true)}>
-              <Plus className="w-4 h-4 mr-1" aria-hidden="true" />
-              Add Stock
-            </Button>
-          )}
+          <div className="flex gap-2">
+            {(activeTab === 'holdings' || activeTab === 'transactions') && (
+              <Button size="sm" variant="outline" onClick={() => setCashDialogOpen(true)}>
+                Record cash
+              </Button>
+            )}
+            {activeTab === 'holdings' && (
+              <Button size="sm" onClick={() => setAddDialogOpen(true)}>
+                <Plus className="w-4 h-4 mr-1" aria-hidden="true" />
+                Add Stock
+              </Button>
+            )}
+          </div>
         </div>
         <TabsContent value="holdings">
           <HoldingsTable accountFilter={accountView} />
@@ -193,6 +202,7 @@ export function PortfolioPage() {
         </TabsContent>
       </Tabs>
 
+      <CashEntryDialog open={cashDialogOpen} onClose={() => setCashDialogOpen(false)} account={accountView === 'combined' ? undefined : accountView} />
       <AddStockDialog
         mode="portfolio"
         open={addDialogOpen}

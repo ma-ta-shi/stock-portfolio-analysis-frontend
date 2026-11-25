@@ -1,15 +1,12 @@
 import { useMutation } from '@tanstack/react-query'
-import { apiFetch, USE_MOCK } from '@/lib/api'
+import { ApiError, apiFetch, USE_MOCK } from '@/lib/api'
+import type { StockLookup } from '@/screens/portfolio/lookup'
 import type { Stock } from '@/types'
 
-/** A resolved stock from ticker / company-name search. */
+/** A stock found by its ticker. `lookup` is the backend's whole answer (live mode only); a stock in the mock list has none. */
 export interface TickerResult extends Stock {
   current_price?: number
-}
-
-interface ResolveResponse {
-  query: string
-  data: TickerResult[]
+  lookup?: StockLookup
 }
 
 const MOCK_DELAY_MS = 600
@@ -27,33 +24,48 @@ const MOCK_TICKERS: TickerResult[] = [
   { stock_id: 'stk_msft', ticker: 'MSFT', name: 'Microsoft Corporation', sector: 'Technology', exchange: 'NASDAQ', currency: 'USD' },
 ]
 
-/** Exact ticker match first (case-insensitive), then partial company-name match. */
-export function findMockTicker(query: string, tickers: TickerResult[] = MOCK_TICKERS): TickerResult | null {
-  const q = query.trim().toLowerCase()
+/** An exact ticker, case-insensitive. (The backend's lookup is by ticker only, so the mock is too: gap P-W9.) */
+export function findMockTicker(ticker: string, tickers: TickerResult[] = MOCK_TICKERS): TickerResult | null {
+  const q = ticker.trim().toLowerCase()
   if (!q) return null
-  return (
-    tickers.find((t) => t.ticker.toLowerCase() === q) ??
-    tickers.find((t) => t.name.toLowerCase().includes(q)) ??
-    null
-  )
+  return tickers.find((t) => t.ticker.toLowerCase() === q) ?? null
+}
+
+/** The lookup answer as the stock the dialogs work with. A stock the record has not seen has no id yet, so its ticker stands in. */
+export function fromLookup(lookup: StockLookup): TickerResult {
+  return {
+    stock_id: lookup.stock_id ?? lookup.ticker, // stopgap: the Watchlist ticket keys by ticker and removes this
+    ticker: lookup.ticker,
+    name: lookup.name,
+    sector: lookup.sector ?? null,
+    exchange: lookup.exchange,
+    currency: lookup.currency as Stock['currency'],
+    pipeline_supported: lookup.pipeline_supported,
+    instrument_type: lookup.instrument_type,
+    unsupported_reason: lookup.unsupported_reason,
+    lookup,
+  }
 }
 
 /**
- * Resolve a ticker or company name to a single stock.
- * Returns `null` when nothing matches.
+ * Find a stock by its ticker. Returns `null` when nothing matches (`STOCK_NOT_FOUND`); any other failure (the data providers are
+ * down, a bad ticker) is thrown for the dialog to show.
  */
 export function useTickerSearch() {
   return useMutation({
-    mutationFn: async (query: string): Promise<TickerResult | null> => {
+    mutationFn: async (ticker: string): Promise<TickerResult | null> => {
+      const q = ticker.trim()
+      if (!q) return null
       if (USE_MOCK) {
         await new Promise((resolve) => setTimeout(resolve, MOCK_DELAY_MS))
-        return findMockTicker(query)
+        return findMockTicker(q)
       }
-      const res = await apiFetch<ResolveResponse>(
-        '/mock-data/stocks/resolve.json',
-        `/api/stocks/resolve?q=${encodeURIComponent(query.trim())}`,
-      )
-      return res.data[0] ?? null
+      try {
+        return fromLookup(await apiFetch<StockLookup>('/mock-data/stocks/lookup.json', `/api/stocks/lookup?ticker=${encodeURIComponent(q)}`))
+      } catch (error) {
+        if (error instanceof ApiError && error.code === 'STOCK_NOT_FOUND') return null
+        throw error
+      }
     },
   })
 }

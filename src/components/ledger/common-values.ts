@@ -11,3 +11,11 @@ export interface CommonValues {
 }
 
 export const initialCommon = (): CommonValues => ({ date: localDateInputValue(), rate: '', reason: '', notes: '' })
+
+/** What every ledger form hook returns: the fields to draw and the `events` request body they make (`null` until valid). */
+export interface LedgerForm {
+  fields: import('react').ReactNode
+  body: { events: unknown[] } | null
+  /** What the preview is drawn in. */
+  currency: import('@/lib/ledger-entry').Currency
+}

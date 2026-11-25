@@ -12,7 +12,7 @@ interface LedgerDialogProps extends Omit<LedgerPanelProps, 'onDone'> {
 export function LedgerDialog({ open, onClose, title, ...panel }: LedgerDialogProps) {
   return (
     <Dialog open={open} onOpenChange={(next) => { if (!next) onClose() }}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>

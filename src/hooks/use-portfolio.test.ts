@@ -4,14 +4,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createElement } from 'react'
 import { installFixtureFetch } from '@/test/fixture-fetch'
 import {
-  useAddToPortfolio,
   useClosedPositions,
   useCorrectTransaction,
   useExposure,
-  useLogDividend,
   usePortfolioHoldings,
   usePortfolioSummary,
-  useRemoveFromPortfolio,
   useReverseTransaction,
   useTransactions,
   useUpdatePosition,
@@ -81,10 +78,7 @@ describe('portfolio reads (recorded API responses)', () => {
 
 describe('writes that are not connected yet', () => {
   const stubs = [
-    ['useAddToPortfolio', useAddToPortfolio, {}, 'P-W6'],
-    ['useLogDividend', useLogDividend, {}, 'P-W3'],
     ['useUpdatePosition', useUpdatePosition, {}, 'P-W4'],
-    ['useRemoveFromPortfolio', useRemoveFromPortfolio, 'h1', 'P-W5'],
     ['useCorrectTransaction', useCorrectTransaction, 't1', 'P-W7'],
     ['useReverseTransaction', useReverseTransaction, 't1', 'P-W8'],
   ] as const

@@ -8,6 +8,5 @@
   "GET /api/feedback/{}",
   "GET /api/watchlist/{}",
   "GET /api/analysis/{}/agents",
-  "GET /api/stocks/{}/history",
-  "GET /api/stocks/resolve"
+  "GET /api/stocks/{}/history"
 ]

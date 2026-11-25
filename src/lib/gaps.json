@@ -104,32 +104,11 @@
     "why": "It is an untyped record in the API.",
     "ticket": "86bd6r34c"
   },
-  "P-W3": {
-    "screen": "portfolio",
-    "kind": "not-connected",
-    "what": "Logging or confirming a dividend",
-    "why": "Confirming the dividends the system found is the writes ticket.",
-    "ticket": "86bd5z6mq"
-  },
   "P-W4": {
     "screen": "portfolio",
     "kind": "not-connected",
     "what": "Editing a position",
     "why": "The ledger never overwrites: this becomes Correct, Remove and Confirm with the broker in the writes ticket.",
-    "ticket": "86bd5z6mq"
-  },
-  "P-W5": {
-    "screen": "portfolio",
-    "kind": "not-connected",
-    "what": "Removing a position entered by mistake",
-    "why": "The remove call is the writes ticket.",
-    "ticket": "86bd5z6mq"
-  },
-  "P-W6": {
-    "screen": "portfolio",
-    "kind": "not-connected",
-    "what": "Adding a stock to the portfolio",
-    "why": "Looking up the ticker and recording the opening or buying entry is the writes ticket.",
     "ticket": "86bd5z6mq"
   },
   "P-W7": {
@@ -185,7 +164,14 @@
     "screen": "end-to-end",
     "kind": "missing",
     "what": "Mock mode cannot reproduce server-side filtering and paging, so the Transactions filter flows are not tested end to end",
-    "why": "A recorded file is the same for every query. The seeded scratch backend and `npm run test:e2e:live` of the writes ticket close this.",
+    "why": "A recorded file is the same for every query. The Transactions filters are covered by the live run (npm run test:e2e:live) against a seeded scratch backend.",
     "ticket": "86bd5z6mq"
+  },
+  "P-W9": {
+    "screen": "portfolio",
+    "kind": "missing",
+    "what": "Adding a stock by company name",
+    "why": "The backend lookup (GET /api/stocks/lookup) takes a ticker only, so Add Stock and the Watchlist search by ticker.",
+    "ticket": "86bd6r34c"
   }
 }

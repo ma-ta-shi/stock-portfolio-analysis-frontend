@@ -9,7 +9,6 @@ vi.mock('@/hooks/use-ticker-search')
 vi.mock('@/hooks/use-portfolio')
 import { useAddToWatchlist, useRemoveFromWatchlist, useWatchlist } from '@/hooks/use-watchlist'
 import { useTickerSearch } from '@/hooks/use-ticker-search'
-import { useAddToPortfolio } from '@/hooks/use-portfolio'
 
 const item = (id: string, ticker: string, stockId: string): WatchlistItem => ({
   watchlist_id: id, user_id: 'user_01',
@@ -35,7 +34,6 @@ beforeEach(() => {
   vi.mocked(useRemoveFromWatchlist).mockReturnValue(mutation(removeMutate))
   vi.mocked(useAddToWatchlist).mockReturnValue(mutation(addMutate))
   vi.mocked(useTickerSearch).mockReturnValue(mutation(searchMutate))
-  vi.mocked(useAddToPortfolio).mockReturnValue(mutation(vi.fn()))
   removeMutate.mockReset().mockResolvedValue(undefined)
   searchMutate.mockReset()
   addMutate.mockReset().mockResolvedValue(undefined)
@@ -67,7 +65,7 @@ describe('WatchlistPage — add', () => {
     searchMutate.mockResolvedValue(result)
     renderPage()
     fireEvent.click(screen.getByRole('button', { name: 'Add Stock' }))
-    fireEvent.change(screen.getByLabelText('Ticker or company name'), { target: { value: 'x' } })
+    fireEvent.change(screen.getByLabelText('Ticker'), { target: { value: 'x' } })
     fireEvent.click(screen.getByRole('button', { name: 'Look up' }))
     await waitFor(() => expect(searchMutate).toHaveBeenCalled())
   }
