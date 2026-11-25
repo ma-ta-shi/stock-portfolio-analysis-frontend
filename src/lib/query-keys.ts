@@ -28,11 +28,20 @@ export const queryKeys = {
   watchlist: (userId: string) => ['watchlist', userId] as const,
   portfolio: {
     all: ['portfolio'] as const,
-    summary: (userId: string) => ['portfolio', 'summary', userId] as const,
-    holdings: (userId: string) => ['portfolio', 'holdings', userId] as const,
+    /** The owner's portfolio id for a user. */
+    id: (userId: string) => ['portfolio', 'id', userId] as const,
+    /** Everything below is keyed by portfolio id, so switching user can never show another portfolio's data. */
+    rawHoldings: (portfolioId: string) => ['portfolio', portfolioId, 'holdings'] as const,
+    positions: (portfolioId: string) => ['portfolio', portfolioId, 'positions'] as const,
+    report: (portfolioId: string) => ['portfolio', portfolioId, 'report'] as const,
+    history: (portfolioId: string, view: string) => ['portfolio', portfolioId, 'history', view] as const,
+    accounts: (portfolioId: string) => ['portfolio', portfolioId, 'accounts'] as const,
+    room: (portfolioId: string) => ['portfolio', portfolioId, 'room'] as const,
+    exposure: (portfolioId: string, view: string) => ['portfolio', portfolioId, 'exposure', view] as const,
+    transactions: (portfolioId: string, query: string) => ['portfolio', portfolioId, 'transactions', query] as const,
+    transactionsCsv: (portfolioId: string, query: string) => ['portfolio', portfolioId, 'transactions-csv', query] as const,
+    /** The Optimizer tab (not changed by the Portfolio read ticket). */
     optimizer: (userId: string) => ['portfolio', 'optimizer', userId] as const,
-    transactions: (userId: string) => ['portfolio', 'transactions', userId] as const,
-    closed: (userId: string) => ['portfolio', 'closed', userId] as const,
   },
   predictions: (userId: string) => ['predictions', userId] as const,
   feedback: (userId: string) => ['feedback', userId] as const,

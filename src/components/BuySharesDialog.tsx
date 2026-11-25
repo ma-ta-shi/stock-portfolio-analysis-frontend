@@ -24,7 +24,7 @@ interface BuySharesDialogProps {
 
 export function BuySharesDialog({ holding, onClose }: BuySharesDialogProps) {
   const [shares, setShares] = useState('')
-  const [price, setPrice] = useState(() => (holding ? holding.current_price.toFixed(2) : ''))
+  const [price, setPrice] = useState(() => (holding?.current_price != null ? holding.current_price.toFixed(2) : ''))
   const [fees, setFees] = useState(DEFAULT_FEE)
   const [date, setDate] = useState(() => localDateInputValue())
 

@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { EMPTY_FILTERS, TX_TYPE_FILTERS, type TransactionFilters, type TxTypeFilter } from '@/lib/transactions'
+import { EMPTY_FILTERS, TRANSACTION_TYPES, type TransactionFilters, type TxTypeFilter } from '@/lib/transactions'
+import type { TransactionType } from '@/types/portfolio'
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/
 const PARAM: Record<keyof TransactionFilters, string> = {
@@ -24,7 +25,7 @@ export function useTransactionFilters() {
     const from = params.get(PARAM.from)
     const to = params.get(PARAM.to)
     return {
-      type: TX_TYPE_FILTERS.includes(type as TxTypeFilter) ? (type as TxTypeFilter) : 'all',
+      type: TRANSACTION_TYPES.includes(type as TransactionType) ? (type as TxTypeFilter) : 'all',
       ticker: params.get(PARAM.ticker) || null,
       from: from && DATE.test(from) ? from : null,
       to: to && DATE.test(to) ? to : null,

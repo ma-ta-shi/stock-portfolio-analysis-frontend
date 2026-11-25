@@ -1,23 +1,27 @@
-import { useId, useState } from 'react'
+/** Closed positions: holdings with no shares left, from the same registry as the active ones (`screens/portfolio/holdings.tsx`). */
+import { Fragment, useId, useState } from 'react'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import { useClosedPositions } from '@/hooks/use-portfolio'
-import { Badge } from '@/components/ui/badge'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import { QueryError } from '@/components/QueryError'
-import { holdingHistoryHref } from '@/hooks/use-transaction-filters'
-import { formatDate, formatMoney, formatPct } from '@/lib/format'
-import { gainLossColor } from '@/lib/labels'
-import { filterByAccount, holdingPeriod } from '@/lib/portfolio'
-import { cn } from '@/lib/utils'
 import { ButtonLink } from '@/components/ButtonLink'
-import type { PortfolioAccountView } from '@/types'
+import { FieldList } from '@/components/FieldList'
+import { QueryError } from '@/components/QueryError'
+import { Button } from '@/components/ui/button'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { holdingHistoryHref } from '@/hooks/use-transaction-filters'
+import { fieldText } from '@/lib/fields'
+import { filterByAccount } from '@/lib/portfolio'
+import { cn } from '@/lib/utils'
+import { HOLDING_FIELDS } from '@/screens/portfolio/holdings'
+import type { PortfolioAccountView } from '@/types/portfolio'
+
+/** The columns of this table, picked from the registry by id: what a closed position is read for. */
+const COLUMN_IDS = ['ticker', 'account', 'total_shares_bought', 'total_shares_sold', 'average_buy_price', 'average_sell_price', 'realised', 'first_buy', 'last_activity']
+const COLUMNS = COLUMN_IDS.map((id) => {
+  const spec = HOLDING_FIELDS.find((s) => s.id === id)
+  if (!spec) throw new Error(`Closed positions: no field "${id}" in the holdings registry`)
+  return spec
+})
+const RIGHT = new Set(['total_shares_bought', 'total_shares_sold', 'average_buy_price', 'average_sell_price', 'realised'])
 
 interface ClosedPositionsProps {
   accountFilter?: PortfolioAccountView
@@ -25,14 +29,21 @@ interface ClosedPositionsProps {
 
 export function ClosedPositions({ accountFilter }: ClosedPositionsProps) {
   const [open, setOpen] = useState(false)
+  const [expanded, setExpanded] = useState<ReadonlySet<string>>(new Set())
   const panelId = useId()
   const { data: allClosed, isError, error, refetch } = useClosedPositions()
   const closed = filterByAccount(allClosed, accountFilter)
 
-  if (isError) {
-    return <QueryError what="closed positions" error={error} onRetry={refetch} compact className="mt-4" />
-  }
+  if (isError) return <QueryError what="closed positions" error={error} onRetry={refetch} compact className="mt-4" />
   if (!closed?.length) return null
+
+  function toggle(id: string) {
+    setExpanded((prev) => {
+      const next = new Set(prev)
+      if (!next.delete(id)) next.add(id)
+      return next
+    })
+  }
 
   return (
     <div className="mt-4">
@@ -53,15 +64,14 @@ export function ClosedPositions({ accountFilter }: ClosedPositionsProps) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Stock</TableHead>
-                <TableHead>Account</TableHead>
-                <TableHead className="text-right">Bought</TableHead>
-                <TableHead className="text-right">Sold</TableHead>
-                <TableHead className="text-right">Avg Buy</TableHead>
-                <TableHead className="text-right">Avg Sell</TableHead>
-                <TableHead className="text-right">Realized P&L</TableHead>
-                <TableHead>Holding Period</TableHead>
-                <TableHead>Dates</TableHead>
+                <TableHead className="w-8">
+                  <span className="sr-only">Details</span>
+                </TableHead>
+                {COLUMNS.map((spec) => (
+                  <TableHead key={spec.id} className={RIGHT.has(spec.id) ? 'text-right' : undefined} title={spec.tooltip}>
+                    {spec.label}
+                  </TableHead>
+                ))}
                 <TableHead>
                   <span className="sr-only">History</span>
                 </TableHead>
@@ -69,54 +79,41 @@ export function ClosedPositions({ accountFilter }: ClosedPositionsProps) {
             </TableHeader>
             <TableBody>
               {closed.map((pos) => {
-                const currency = pos.stock.currency
-                const gainClass = gainLossColor(pos.total_realized_gain_loss)
+                const label = `${pos.stock.ticker} (${pos.account_type.toUpperCase()})`
+                const isOpen = expanded.has(pos.holding_id)
                 return (
-                  <TableRow key={pos.holding_id}>
-                    <TableCell>
-                      <div className="font-medium">{pos.stock.ticker}</div>
-                      <div className="text-xs text-muted-foreground">{pos.stock.name}</div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="text-xs">
-                        {pos.account_type.toUpperCase()}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right text-sm">{pos.total_shares_bought}</TableCell>
-                    <TableCell className="text-right text-sm">{pos.total_shares_sold}</TableCell>
-                    <TableCell className="text-right text-sm">
-                      {formatMoney(pos.avg_buy_price, currency)}
-                    </TableCell>
-                    <TableCell className="text-right text-sm">
-                      {formatMoney(pos.avg_sell_price, currency)}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className={cn('text-sm font-medium', gainClass)}>
-                        {formatMoney(pos.total_realized_gain_loss, currency, { signed: true })}
-                      </div>
-                      <div className={cn('text-xs', gainClass)}>
-                        {formatPct(pos.total_realized_gain_loss_pct)}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-sm">
-                      {holdingPeriod(pos.first_buy_date, pos.last_sell_date)}
-                    </TableCell>
-                    <TableCell className="text-xs text-muted-foreground">
-                      <div>{formatDate(pos.first_buy_date)}</div>
-                      <div>→ {formatDate(pos.last_sell_date)}</div>
-                    </TableCell>
-                    <TableCell>
-                      <ButtonLink
-                        variant="ghost"
-                        size="sm"
-                        className="text-xs"
-                        to={holdingHistoryHref(pos.holding_id)}
-                        aria-label={`View history for ${pos.stock.ticker} (${pos.account_type.toUpperCase()})`}
-                      >
-                        View history
-                      </ButtonLink>
-                    </TableCell>
-                  </TableRow>
+                  <Fragment key={pos.holding_id}>
+                    <TableRow>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          aria-expanded={isOpen}
+                          aria-label={`${isOpen ? 'Hide' : 'Show'} details of ${label}`}
+                          onClick={() => toggle(pos.holding_id)}
+                        >
+                          {isOpen ? <ChevronDown className="w-4 h-4" aria-hidden="true" /> : <ChevronRight className="w-4 h-4" aria-hidden="true" />}
+                        </Button>
+                      </TableCell>
+                      {COLUMNS.map((spec) => (
+                        <TableCell key={spec.id} className={cn('text-sm', RIGHT.has(spec.id) && 'text-right')}>
+                          {spec.render ? spec.render(pos) : fieldText(spec, pos)}
+                        </TableCell>
+                      ))}
+                      <TableCell>
+                        <ButtonLink variant="ghost" size="sm" className="text-xs" to={holdingHistoryHref(pos.holding_id)} aria-label={`View history for ${label}`}>
+                          View history
+                        </ButtonLink>
+                      </TableCell>
+                    </TableRow>
+                    {isOpen && (
+                      <TableRow>
+                        <TableCell colSpan={COLUMNS.length + 2} className="bg-muted/30 py-3">
+                          <FieldList fields={HOLDING_FIELDS} row={pos} />
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </Fragment>
                 )
               })}
             </TableBody>

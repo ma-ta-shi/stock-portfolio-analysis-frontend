@@ -1,0 +1,177 @@
+{
+  "P-R1": {
+    "screen": "portfolio",
+    "kind": "missing",
+    "what": "Creating a portfolio for a user who has none",
+    "why": "Creating a profile and a portfolio is the first-run flow of the Settings ticket.",
+    "ticket": "86bd5z6n3"
+  },
+  "P-O1": {
+    "screen": "portfolio",
+    "kind": "missing",
+    "what": "The Optimizer tab and its Available to trade box still show the retired suggestions model",
+    "why": "The optimizer's stored proposals replace it in the Optimizer ticket; this page does not touch that tab.",
+    "ticket": "86bd5z6n5"
+  },
+  "P-S1": {
+    "screen": "portfolio",
+    "kind": "documented",
+    "what": "The portfolio's optimizer settings (PortfolioResponse.settings) are not shown",
+    "why": "They are owner rules edited in Settings, not a Portfolio page figure.",
+    "ticket": "86bd5z6n3"
+  },
+  "P-D1": {
+    "screen": "portfolio",
+    "kind": "missing",
+    "what": "Return against the benchmark fund is unavailable while the fund has no price history",
+    "why": "The report says so (performance.fund.available is false with a reason); the fund's price history is a backend data job.",
+    "ticket": "86bd6r34c"
+  },
+  "P-D2": {
+    "screen": "portfolio",
+    "kind": "missing",
+    "what": "The change at the last close may include cash the owner added or took out that day",
+    "why": "The value history does not say how much cash moved each day; net_flow_cad is requested from the backend. Until then the figure is flagged when the cost base or cash changed between the two days.",
+    "ticket": "86bd6r34c"
+  },
+  "P-C1": {
+    "screen": "portfolio",
+    "kind": "missing",
+    "what": "The currency of a holding's realised gain is not stated by the API",
+    "why": "HoldingResponse.total_realized_gain_loss has no currency in its description; it is shown in the stock's currency.",
+    "ticket": "86bd6r34c"
+  },
+  "P-C2": {
+    "screen": "portfolio",
+    "kind": "missing",
+    "what": "A closed position's realised percent is unavailable",
+    "why": "Holdings carry the realised amount but no percent and no CAD amount.",
+    "ticket": "86bd6r34c"
+  },
+  "P-A1": {
+    "screen": "portfolio",
+    "kind": "documented",
+    "what": "Allocation by geography is replaced by allocation by currency",
+    "why": "The API has no country for a stock; exposure reports currency.",
+    "ticket": "86bd5z6mj"
+  },
+  "P-A2": {
+    "screen": "portfolio",
+    "kind": "missing",
+    "what": "Allocation for a single account (TFSA, RRSP or Trading)",
+    "why": "The exposure report has no account filter yet; until it has, the sector, industry and currency donuts say they cover the whole portfolio.",
+    "ticket": "86bd6r34c"
+  },
+  "P-H1": {
+    "screen": "portfolio",
+    "kind": "documented",
+    "what": "The numeric Bull and Bear disagreement score is not shown",
+    "why": "The snapshot serves the disagreement class (consensus, mild dissent, split decision, high conflict), not the score.",
+    "ticket": "86bd5z6mj"
+  },
+  "P-H2": {
+    "screen": "portfolio",
+    "kind": "documented",
+    "what": "The change in price over the day is derived, not served",
+    "why": "The snapshot gives the change as a fraction; the amount is the price less price / (1 + change).",
+    "ticket": "86bd5z6mj"
+  },
+  "P-H3": {
+    "screen": "portfolio",
+    "kind": "documented",
+    "what": "Dividend per share is the analysis's expected income over its horizon, not the last year's payments",
+    "why": "The snapshot serves income_per_share from the price band; the old annual_dividend_per_share has no source.",
+    "ticket": "86bd5z6mj"
+  },
+  "P-H5": {
+    "screen": "portfolio",
+    "kind": "missing",
+    "what": "A holding's note can be read but not edited",
+    "why": "No route changes a holding's notes.",
+    "ticket": "86bd5z6mq"
+  },
+  "P-F1": {
+    "screen": "portfolio",
+    "kind": "documented",
+    "what": "The report's per-stock lines, who-and-why, breakdowns and action list are not shown",
+    "why": "Holdings and Transactions already carry the same per-holding and per-action figures; a Reports view is a separate feature.",
+    "ticket": "86bd5z6mj"
+  },
+  "P-F2": {
+    "screen": "portfolio",
+    "kind": "missing",
+    "what": "The tax-year refund block of the report is not shown",
+    "why": "It is an untyped record in the API.",
+    "ticket": "86bd6r34c"
+  },
+  "P-W1": {
+    "screen": "portfolio",
+    "kind": "not-connected",
+    "what": "Recording a purchase",
+    "why": "The preview-then-record form is the writes ticket.",
+    "ticket": "86bd5z6mq"
+  },
+  "P-W2": {
+    "screen": "portfolio",
+    "kind": "not-connected",
+    "what": "Recording a sale",
+    "why": "The preview-then-record form is the writes ticket.",
+    "ticket": "86bd5z6mq"
+  },
+  "P-W3": {
+    "screen": "portfolio",
+    "kind": "not-connected",
+    "what": "Logging or confirming a dividend",
+    "why": "Confirming the dividends the system found is the writes ticket.",
+    "ticket": "86bd5z6mq"
+  },
+  "P-W4": {
+    "screen": "portfolio",
+    "kind": "not-connected",
+    "what": "Editing a position",
+    "why": "The ledger never overwrites: this becomes Correct, Remove and Confirm with the broker in the writes ticket.",
+    "ticket": "86bd5z6mq"
+  },
+  "P-W5": {
+    "screen": "portfolio",
+    "kind": "not-connected",
+    "what": "Removing a position entered by mistake",
+    "why": "The remove call is the writes ticket.",
+    "ticket": "86bd5z6mq"
+  },
+  "P-W6": {
+    "screen": "portfolio",
+    "kind": "not-connected",
+    "what": "Adding a stock to the portfolio",
+    "why": "Looking up the ticker and recording the opening or buying entry is the writes ticket.",
+    "ticket": "86bd5z6mq"
+  },
+  "P-W7": {
+    "screen": "portfolio",
+    "kind": "not-connected",
+    "what": "Correcting a ledger entry",
+    "why": "The correct preview and call are the writes ticket.",
+    "ticket": "86bd5z6mq"
+  },
+  "P-W8": {
+    "screen": "portfolio",
+    "kind": "not-connected",
+    "what": "Reversing a ledger entry",
+    "why": "The reverse call is the writes ticket.",
+    "ticket": "86bd5z6mq"
+  },
+  "P-T1": {
+    "screen": "portfolio",
+    "kind": "missing",
+    "what": "A transaction's \"reversed by\" link",
+    "why": "The API serves reverses_transaction_id on the reversing row only, so the page marks a reversed row only when its reversing row is on the loaded page.",
+    "ticket": "86bd6r34c"
+  },
+  "E-1": {
+    "screen": "end-to-end",
+    "kind": "missing",
+    "what": "Mock mode cannot reproduce server-side filtering and paging, so the Transactions filter flows are not tested end to end",
+    "why": "A recorded file is the same for every query. The seeded scratch backend and `npm run test:e2e:live` of the writes ticket close this.",
+    "ticket": "86bd5z6mq"
+  }
+}

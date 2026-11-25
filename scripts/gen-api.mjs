@@ -2,6 +2,7 @@
 //   src/types/openapi.gen.ts      the API's TypeScript types (openapi-typescript)
 //   src/types/api-routes.gen.json every "METHOD /path" the backend serves ({} for a path parameter)
 //   src/types/units.gen.ts        the unit of every ratio-like field (from the backend's x-unit markers)
+//   src/types/api-fields.gen.json every response schema and the properties of every schema, for the field-coverage test
 // Usage: npm run gen:api                       (backend running on http://localhost:8000)
 //        API_URL=http://localhost:8010 npm run gen:api
 //        npm run gen:api -- --file openapi.json    (a schema saved to a file; no server needed)
@@ -20,7 +21,7 @@ const fileFlag = args.indexOf('--file')
 const file = fileFlag >= 0 ? args[fileFlag + 1] : process.env.OPENAPI_FILE
 const base = (process.env.API_URL ?? 'http://localhost:8000').replace(/\/$/, '')
 const url = `${base}/openapi.json`
-const FILES = ['openapi.gen.ts', 'api-routes.gen.json', 'units.gen.ts']
+const FILES = ['openapi.gen.ts', 'api-routes.gen.json', 'units.gen.ts', 'api-fields.gen.json']
 
 // A line-ending difference is not a difference: a Windows checkout may turn the committed files into CRLF.
 const lf = (text) => text.replace(/\r\n/g, '\n')
@@ -63,6 +64,37 @@ try {
       '',
     ].join('\n'),
   )
+
+  // Which schemas a successful response can carry (followed through $ref, items, anyOf and so on), and the properties of
+  // every schema. The field-coverage test and `npm run coverage:api` read this: a screen must decide every property of
+  // the schemas it reads, and every response schema must be claimed by some screen.
+  const schemas = spec.components.schemas
+  const responses = new Set()
+  const follow = (node) => {
+    if (!node || typeof node !== 'object') return
+    if (typeof node.$ref === 'string') {
+      const name = node.$ref.split('/').pop()
+      if (!responses.has(name)) {
+        responses.add(name)
+        follow(schemas[name])
+      }
+      return
+    }
+    Object.values(node).forEach(follow)
+  }
+  for (const item of Object.values(spec.paths)) {
+    for (const operation of Object.values(item)) {
+      for (const [status, response] of Object.entries(operation?.responses ?? {})) {
+        if (status.startsWith('2')) follow(response.content?.['application/json']?.schema)
+      }
+    }
+  }
+  const fields = Object.fromEntries(
+    Object.keys(schemas)
+      .sort()
+      .map((name) => [name, Object.keys(schemas[name].properties ?? {}).sort()]),
+  )
+  writeFileSync(join(out, 'api-fields.gen.json'), JSON.stringify({ responses: [...responses].sort(), fields }, null, 2) + '\n')
 
   if (check) {
     const stale = FILES.filter((name) => {

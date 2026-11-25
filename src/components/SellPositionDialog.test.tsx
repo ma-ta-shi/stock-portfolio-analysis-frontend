@@ -20,7 +20,7 @@ vi.mocked(useUserProfile).mockReturnValue({
   data: { financial_profile: { marginal_tax_rate: 0.4341 } } as UserProfile,
 } as unknown as ReturnType<typeof useUserProfile>)
 
-const trading = { ...mockHolding, account_type: 'trading', shares: 100, average_cost_basis: 100, current_price: 150 }
+const trading = { ...mockHolding, account_type: 'trading' as const, shares: 100, average_cost_basis: 100, current_price: 150 }
 
 function setValue(label: RegExp, value: string) {
   fireEvent.change(screen.getByLabelText(label), { target: { value } })
@@ -53,7 +53,7 @@ describe('SellPositionDialog', () => {
   })
 
   it('shows USD amounts in USD and converts the tax estimate to CAD', () => {
-    const usdTrading = { ...mockUsdHolding, account_type: 'trading', current_price: 412.4 }
+    const usdTrading = { ...mockUsdHolding, account_type: 'trading' as const, average_cost_basis: 312.4, current_price: 412.4 }
     render(<SellPositionDialog holding={usdTrading} onClose={vi.fn()} />)
     setValue(/Shares to sell/, '1')
     setValue(/Fees/, '0')

@@ -1,43 +1,32 @@
-import { useState, useMemo } from 'react'
+/**
+ * The Holdings tab. Columns and the expanded detail come from the field registry (`screens/portfolio/holdings.tsx`), so every
+ * API field the page can reach is either a column, a detail line, or listed there as not shown. The write buttons open the
+ * existing dialogs, which show the not-connected error until the writes ticket (86bd5z6mq) wires them.
+ */
+import { Fragment, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Pencil, Trash2, TrendingDown, TrendingUp, DollarSign } from 'lucide-react'
+import { ChevronDown, ChevronRight, DollarSign, Pencil, Trash2, TrendingDown, TrendingUp } from 'lucide-react'
 import { usePortfolioHoldings, useRemoveFromPortfolio } from '@/hooks/use-portfolio'
-import { OutlookBadge } from '@/components/OutlookBadge'
-import { ConfidenceMeter } from '@/components/ConfidenceMeter'
 import { EditPositionDialog } from '@/components/EditPositionDialog'
 import { SellPositionDialog } from '@/components/SellPositionDialog'
 import { BuySharesDialog } from '@/components/BuySharesDialog'
 import { LogDividendDialog } from '@/components/LogDividendDialog'
+import { FieldList } from '@/components/FieldList'
 import { ClosedPositions } from './ClosedPositions'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { QueryError } from '@/components/QueryError'
 import { getErrorMessage } from '@/lib/api'
 import { clickableRowProps } from '@/lib/a11y'
-import { formatMoney, formatNumber, formatPct, formatPercent } from '@/lib/format'
-import { gainLossColor, TONE_TEXT } from '@/lib/labels'
+import { fieldText, fieldsFor } from '@/lib/fields'
 import { filterByAccount } from '@/lib/portfolio'
 import { cn } from '@/lib/utils'
-import type { Holding, PortfolioAccountView } from '@/types'
+import { HOLDING_FIELDS } from '@/screens/portfolio/holdings'
+import type { Holding, PortfolioAccountView } from '@/types/portfolio'
 
-/** Yield-style percentage, or "—" when there's no dividend. */
-function yieldDisplay(value: number) {
-  return value > 0 ? formatPercent(value) : '—'
-}
+/** Columns of figures, aligned right. */
+const RIGHT = new Set(['shares', 'average_cost', 'price', 'market_value', 'gain', 'dividend_yield', 'yield_on_cost'])
 
 interface HoldingsTableProps {
   accountFilter?: PortfolioAccountView
@@ -52,8 +41,18 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
   const [sellingHolding, setSellingHolding] = useState<Holding | null>(null)
   const [dividendHolding, setDividendHolding] = useState<Holding | null>(null)
   const [removingHolding, setRemovingHolding] = useState<Holding | null>(null)
+  const [expanded, setExpanded] = useState<ReadonlySet<string>>(new Set())
 
   const holdings = useMemo(() => filterByAccount(allHoldings, accountFilter), [allHoldings, accountFilter])
+  const columns = useMemo(() => fieldsFor(HOLDING_FIELDS, 'column'), [])
+
+  function toggle(id: string) {
+    setExpanded((prev) => {
+      const next = new Set(prev)
+      if (!next.delete(id)) next.add(id)
+      return next
+    })
+  }
 
   async function handleConfirmRemove() {
     if (!removingHolding) return
@@ -65,12 +64,8 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
     }
   }
 
-  if (isLoading) {
-    return <div className="h-48 rounded-lg bg-muted animate-pulse" />
-  }
-  if (isError) {
-    return <QueryError what="holdings" error={error} onRetry={refetch} />
-  }
+  if (isLoading) return <div className="h-48 rounded-lg bg-muted animate-pulse" />
+  if (isError) return <QueryError what="holdings" error={error} onRetry={refetch} />
   if (!holdings?.length) {
     return (
       <>
@@ -86,180 +81,124 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Stock</TableHead>
-              <TableHead>Account</TableHead>
-              <TableHead className="text-right">Shares</TableHead>
-              <TableHead className="text-right">Avg Cost</TableHead>
-              <TableHead className="text-right">Price</TableHead>
-              <TableHead className="text-right">Market Value</TableHead>
-              <TableHead className="text-right">Gain / Loss</TableHead>
-              <TableHead>Outlook</TableHead>
-              <TableHead>Confidence</TableHead>
-              <TableHead className="text-right">Div Yield</TableHead>
-              <TableHead className="text-right">YoC</TableHead>
-              <TableHead>
-                  <span className="sr-only">Actions</span>
+              <TableHead className="w-8">
+                <span className="sr-only">Details</span>
+              </TableHead>
+              {columns.map((spec) => (
+                <TableHead key={spec.id} className={RIGHT.has(spec.id) ? 'text-right' : undefined} title={spec.tooltip}>
+                  {spec.label}
                 </TableHead>
+              ))}
+              <TableHead>
+                <span className="sr-only">Actions</span>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {holdings.map((h) => {
-              const currency = h.stock.currency
-              const gainClass = gainLossColor(h.total_gain_loss)
-              const canRemove = (h.transaction_count ?? 1) === 0
               const label = `${h.stock.ticker} (${h.account_type.toUpperCase()})`
+              const open = expanded.has(h.holding_id)
               return (
-                <TableRow
-                  key={h.holding_id}
-                  {...clickableRowProps(() => navigate(`/stocks/${h.stock.stock_id}`), `View ${h.stock.ticker}`)}
-                >
-                  <TableCell>
-                    <div className="font-medium">{h.stock.ticker}</div>
-                    <div className="text-xs text-muted-foreground">{h.stock.name}</div>
-                    {h.stock.pipeline_supported === false && (
-                      <Badge
-                        variant="outline"
-                        className={cn('mt-1 border-amber-500 text-xs', TONE_TEXT.warning)}
-                        title={h.stock.unsupported_reason ?? undefined}
-                      >
-                        Unsupported
-                      </Badge>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="text-xs">
-                      {h.account_type.toUpperCase()}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right text-sm">{h.shares}</TableCell>
-                  <TableCell className="text-right text-sm">
-                    {formatNumber(h.average_cost_basis)}
-                  </TableCell>
-                  <TableCell className="text-right text-sm">
-                    {formatNumber(h.current_price)}{' '}
-                    <span className="text-xs text-muted-foreground">{currency}</span>
-                  </TableCell>
-                  <TableCell className="text-right text-sm font-medium">
-                    {formatMoney(h.market_value, currency)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className={cn('text-sm font-medium', gainClass)}>
-                      {formatMoney(h.total_gain_loss, currency, { signed: true })}
-                    </div>
-                    <div className={cn('text-xs', gainClass)}>
-                      {formatPct(h.total_gain_loss_pct)}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {h.stock.pipeline_supported === false ? (
-                      <span className="text-muted-foreground">—</span>
-                    ) : (
-                      <OutlookBadge direction={h.stock_outlook} />
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {h.stock.pipeline_supported === false ? (
-                      <span className="text-muted-foreground">—</span>
-                    ) : (
-                      <ConfidenceMeter score={h.confidence_score} />
-                    )}
-                  </TableCell>
-                  <TableCell className="text-right text-sm">
-                    {yieldDisplay(h.annual_dividend_yield)}
-                  </TableCell>
-                  <TableCell className="text-right text-sm">
-                    {yieldDisplay(h.yield_on_cost)}
-                  </TableCell>
-                  <TableCell onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
-                    <div className="flex items-center gap-1">
+                <Fragment key={h.holding_id}>
+                  <TableRow {...clickableRowProps(() => navigate(`/stocks/${h.stock.stock_id}`), `View ${h.stock.ticker}`)}>
+                    <TableCell onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-muted-foreground hover:text-emerald-700 dark:hover:text-emerald-400"
-                        title="Buy more shares"
-                        aria-label={`Buy more ${label}`}
-                        onClick={() => setBuyingHolding(h)}
+                        aria-expanded={open}
+                        aria-label={`${open ? 'Hide' : 'Show'} details of ${label}`}
+                        onClick={() => toggle(h.holding_id)}
                       >
-                        <TrendingUp className="w-4 h-4" aria-hidden="true" />
+                        {open ? <ChevronDown className="w-4 h-4" aria-hidden="true" /> : <ChevronRight className="w-4 h-4" aria-hidden="true" />}
                       </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-muted-foreground hover:text-red-600 dark:hover:text-red-400"
-                        title="Sell shares"
-                        aria-label={`Sell ${label}`}
-                        onClick={() => setSellingHolding(h)}
-                      >
-                        <TrendingDown className="w-4 h-4" aria-hidden="true" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-muted-foreground hover:text-blue-600"
-                        title="Log dividend"
-                        onClick={() => setDividendHolding(h)}
-                      >
-                        <DollarSign className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-muted-foreground hover:text-foreground"
-                        title="Edit position"
-                        aria-label={`Edit ${label}`}
-                        onClick={() => setEditingHolding(h)}
-                      >
-                        <Pencil className="w-4 h-4" aria-hidden="true" />
-                      </Button>
-                      {canRemove && (
+                    </TableCell>
+                    {columns.map((spec) => (
+                      <TableCell key={spec.id} className={cn('text-sm', RIGHT.has(spec.id) && 'text-right')}>
+                        {spec.render ? spec.render(h) : fieldText(spec, h)}
+                      </TableCell>
+                    ))}
+                    <TableCell onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-muted-foreground hover:text-emerald-700 dark:hover:text-emerald-400"
+                          title="Buy more shares"
+                          aria-label={`Buy more ${label}`}
+                          onClick={() => setBuyingHolding(h)}
+                        >
+                          <TrendingUp className="w-4 h-4" aria-hidden="true" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-muted-foreground hover:text-red-600 dark:hover:text-red-400"
+                          title="Sell shares"
+                          aria-label={`Sell ${label}`}
+                          onClick={() => setSellingHolding(h)}
+                        >
+                          <TrendingDown className="w-4 h-4" aria-hidden="true" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-muted-foreground hover:text-blue-600"
+                          title="Log dividend"
+                          aria-label={`Log dividend for ${label}`}
+                          onClick={() => setDividendHolding(h)}
+                        >
+                          <DollarSign className="w-4 h-4" aria-hidden="true" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-muted-foreground hover:text-foreground"
+                          title="Edit position"
+                          aria-label={`Edit ${label}`}
+                          onClick={() => setEditingHolding(h)}
+                        >
+                          <Pencil className="w-4 h-4" aria-hidden="true" />
+                        </Button>
                         <Button
                           variant="ghost"
                           size="sm"
                           className="text-muted-foreground hover:text-destructive"
-                          title="Remove (no transactions)"
-                        aria-label={`Remove ${label}`}
+                          title="Remove"
+                          aria-label={`Remove ${label}`}
                           onClick={() => setRemovingHolding(h)}
                         >
                           <Trash2 className="w-4 h-4" aria-hidden="true" />
                         </Button>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                  {open && (
+                    <TableRow>
+                      <TableCell colSpan={columns.length + 2} className="bg-muted/30 py-3">
+                        <FieldList fields={HOLDING_FIELDS} row={h} />
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </Fragment>
               )
             })}
           </TableBody>
         </Table>
       </div>
 
-      {/* Closed positions collapsible section */}
       <ClosedPositions accountFilter={accountFilter} />
 
-      <EditPositionDialog
-        key={editingHolding?.holding_id ?? 'none'}
-        holding={editingHolding}
-        onClose={() => setEditingHolding(null)}
-      />
+      <EditPositionDialog key={editingHolding?.holding_id ?? 'none'} holding={editingHolding} onClose={() => setEditingHolding(null)} />
+      <BuySharesDialog key={buyingHolding?.holding_id ?? 'none-buy'} holding={buyingHolding} onClose={() => setBuyingHolding(null)} />
+      <LogDividendDialog key={dividendHolding?.holding_id ?? 'none-div'} holding={dividendHolding} onClose={() => setDividendHolding(null)} />
+      <SellPositionDialog key={sellingHolding?.holding_id ?? 'none-sell'} holding={sellingHolding} onClose={() => setSellingHolding(null)} />
 
-      <BuySharesDialog
-        key={buyingHolding?.holding_id ?? 'none-buy'}
-        holding={buyingHolding}
-        onClose={() => setBuyingHolding(null)}
-      />
-
-      <LogDividendDialog
-        key={dividendHolding?.holding_id ?? 'none-div'}
-        holding={dividendHolding}
-        onClose={() => setDividendHolding(null)}
-      />
-
-      <SellPositionDialog
-        key={sellingHolding?.holding_id ?? 'none-sell'}
-        holding={sellingHolding}
-        onClose={() => setSellingHolding(null)}
-      />
-
-      <Dialog open={removingHolding !== null} onOpenChange={(open) => { if (!open) setRemovingHolding(null) }}>
+      <Dialog
+        open={removingHolding !== null}
+        onOpenChange={(open) => {
+          if (!open) setRemovingHolding(null)
+        }}
+      >
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle>Remove from Portfolio</DialogTitle>
@@ -273,12 +212,10 @@ export function HoldingsTable({ accountFilter }: HoldingsTableProps) {
             </p>
           )}
           <div className="flex justify-end gap-2 mt-2">
-            <Button variant="outline" onClick={() => setRemovingHolding(null)}>Cancel</Button>
-            <Button
-              variant="destructive"
-              onClick={handleConfirmRemove}
-              disabled={removeFromPortfolio.isPending}
-            >
+            <Button variant="outline" onClick={() => setRemovingHolding(null)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleConfirmRemove} disabled={removeFromPortfolio.isPending}>
               {removeFromPortfolio.isPending ? 'Removing…' : 'Remove'}
             </Button>
           </div>

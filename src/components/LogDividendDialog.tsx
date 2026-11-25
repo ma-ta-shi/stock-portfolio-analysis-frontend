@@ -19,13 +19,13 @@ interface LogDividendDialogProps {
 
 export function LogDividendDialog({ holding, onClose }: LogDividendDialogProps) {
   const [amountPerShare, setAmountPerShare] = useState(
-    () => holding?.annual_dividend_per_share
-      ? String((holding.annual_dividend_per_share / 4).toFixed(4))
+    () => holding?.expected_income_per_share
+      ? String((holding.expected_income_per_share / 4).toFixed(4))
       : '',
   )
   const [paymentDate, setPaymentDate] = useState(() => new Date().toISOString().slice(0, 10))
   const [isDrip, setIsDrip] = useState(false)
-  const [dripPrice, setDripPrice] = useState(() => holding ? String(holding.current_price.toFixed(2)) : '')
+  const [dripPrice, setDripPrice] = useState(() => holding?.current_price != null ? holding.current_price.toFixed(2) : '')
 
   const logDividend = useLogDividend()
 
@@ -70,10 +70,10 @@ export function LogDividendDialog({ holding, onClose }: LogDividendDialogProps) 
               <div className="font-medium">{holding.shares}</div>
             </div>
             <div>
-              <div className="text-muted-foreground">Annual div/share</div>
+              <div className="text-muted-foreground">Expected income/share (12 months)</div>
               <div className="font-medium">
-                {holding.annual_dividend_per_share > 0
-                  ? `$${holding.annual_dividend_per_share.toFixed(4)}`
+                {(holding.expected_income_per_share ?? 0) > 0
+                  ? `$${(holding.expected_income_per_share ?? 0).toFixed(4)}`
                   : '—'}
               </div>
             </div>

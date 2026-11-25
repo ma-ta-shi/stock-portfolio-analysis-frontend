@@ -36,7 +36,7 @@ describe('BuySharesDialog', () => {
   it('shows a USD holding in USD', () => {
     render(<BuySharesDialog holding={mockUsdHolding} onClose={vi.fn()} />)
     expect(screen.getByLabelText(/Price per share \(USD\)/)).toBeInTheDocument()
-    expect(screen.getByText('Avg cost').nextSibling).toHaveTextContent('US$312.40')
+    expect(screen.getByText('Avg cost').nextSibling).toHaveTextContent('US$98.30')
   })
 
   it('cannot buy without a share count', () => {

@@ -1,0 +1,46 @@
+{
+  "data": [
+    {
+      "account_id": "21e361b6-4fae-40c9-ad88-b87d13cb2687",
+      "portfolio_id": "e3ba3a97-cedc-4d75-9976-0655d9fd9340",
+      "account_type": "tfsa",
+      "cash_cad": 1647.24,
+      "cash_usd": 0,
+      "commission_per_trade": 0,
+      "conversion_cost_pct": 1.5,
+      "uses_norberts_gambit": false,
+      "reinvests_dividends": false,
+      "last_updated": "2026-11-06T22:30:35.681107Z"
+    },
+    {
+      "account_id": "d1afb876-36ef-44ff-a3af-d1701108a57f",
+      "portfolio_id": "e3ba3a97-cedc-4d75-9976-0655d9fd9340",
+      "account_type": "rrsp",
+      "cash_cad": 201.6,
+      "cash_usd": 0,
+      "commission_per_trade": 0,
+      "conversion_cost_pct": 1.5,
+      "uses_norberts_gambit": false,
+      "reinvests_dividends": false,
+      "last_updated": "2026-11-06T22:30:35.606161Z"
+    },
+    {
+      "account_id": "1c8cda0c-c1b8-4ff3-8927-7153cfdffac0",
+      "portfolio_id": "e3ba3a97-cedc-4d75-9976-0655d9fd9340",
+      "account_type": "trading",
+      "cash_cad": 1551,
+      "cash_usd": 800,
+      "commission_per_trade": 0,
+      "conversion_cost_pct": 1.5,
+      "uses_norberts_gambit": false,
+      "reinvests_dividends": false,
+      "last_updated": "2026-11-06T22:30:35.707107Z"
+    }
+  ],
+  "meta": {
+    "total": 3,
+    "page": 1,
+    "per_page": 20,
+    "pages": 1
+  }
+}

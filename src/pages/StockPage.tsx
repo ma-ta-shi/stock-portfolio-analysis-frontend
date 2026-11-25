@@ -127,8 +127,8 @@ export function StockPage() {
         <div className="bg-card border border-border rounded-lg px-4 py-3 space-y-3">
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Your Position</p>
           {holdingsForStock.map((h) => {
-            const annualDivEstimate = h.annual_dividend_per_share > 0
-              ? h.annual_dividend_per_share * h.shares
+            const annualDivEstimate = (h.expected_income_per_share ?? 0) > 0
+              ? (h.expected_income_per_share ?? 0) * h.shares
               : null
             return (
               <div key={h.holding_id} className="space-y-2">
@@ -173,7 +173,7 @@ export function StockPage() {
                     <TrendingDown className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
                     Sell
                   </Button>
-                  {h.annual_dividend_per_share > 0 && (
+                  {(h.expected_income_per_share ?? 0) > 0 && (
                     <Button size="sm" variant="outline" onClick={() => setDividendHolding(h)}>
                       <DollarSign className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
                       Log Dividend

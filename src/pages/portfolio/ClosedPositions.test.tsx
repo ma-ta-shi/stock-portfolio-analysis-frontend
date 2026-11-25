@@ -2,23 +2,16 @@ import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { ClosedPositions } from './ClosedPositions'
-import { mockHolding } from '@/test/mock-data'
-import type { ClosedPosition } from '@/types'
+import { mockHoldings } from '@/test/mock-data'
 
 vi.mock('@/hooks/use-portfolio')
 import { useClosedPositions } from '@/hooks/use-portfolio'
 
-const closed: ClosedPosition[] = [
-  {
-    holding_id: 'hld_007', stock: { ...mockHolding.stock, ticker: 'TD.TO', name: 'Toronto-Dominion Bank' },
-    account_type: 'trading', total_shares_bought: 120, avg_buy_price: 80, total_shares_sold: 120,
-    avg_sell_price: 90, total_realized_gain_loss: 1200, total_realized_gain_loss_pct: 0.125,
-    first_buy_date: '2024-06-15', last_sell_date: '2025-11-20',
-  },
-]
+// The recorded closed positions: XOM (RRSP), KO (TFSA) and PLUG (Trading).
+const closed = mockHoldings.filter((h) => !h.is_active)
 vi.mocked(useClosedPositions).mockReturnValue({ data: closed, isError: false } as unknown as ReturnType<typeof useClosedPositions>)
 
-function renderClosed(accountFilter?: 'combined' | 'tfsa' | 'trading') {
+function renderClosed(accountFilter?: 'combined' | 'tfsa' | 'rrsp' | 'trading') {
   render(
     <MemoryRouter>
       <ClosedPositions accountFilter={accountFilter} />
@@ -28,25 +21,40 @@ function renderClosed(accountFilter?: 'combined' | 'tfsa' | 'trading') {
 }
 
 describe('ClosedPositions', () => {
+  it('lists every closed position with its count', () => {
+    renderClosed()
+    expect(screen.getByRole('button', { name: /Closed Positions/ })).toHaveTextContent('(3)')
+    for (const h of closed) expect(screen.getByText(h.stock.ticker)).toBeInTheDocument()
+  })
+
   it('shows shares bought and sold as separate columns', () => {
     renderClosed()
-    expect(screen.getByRole('columnheader', { name: 'Bought' })).toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: 'Sold' })).toBeInTheDocument()
-    expect(screen.getAllByText('120')).toHaveLength(2)
+    expect(screen.getByRole('columnheader', { name: 'Shares bought' })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Shares sold' })).toBeInTheDocument()
   })
 
   it('links to the position’s full transaction history', () => {
     renderClosed()
-    const link = screen.getByRole('link', { name: 'View history for TD.TO (TRADING)' })
-    expect(link).toHaveAttribute('href', '/portfolio?tab=transactions&holding=hld_007')
+    const xom = closed.find((h) => h.stock.ticker === 'XOM')!
+    const link = screen.getByRole('link', { name: 'View history for XOM (RRSP)' })
+    expect(link).toHaveAttribute('href', `/portfolio?tab=transactions&holding=${xom.holding_id}`)
   })
 
-  it('shows the holding period', () => {
+  it('expands a position to its remaining details', () => {
     renderClosed()
-    expect(screen.getByText('1y 5mo')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Show details of XOM (RRSP)' }))
+    expect(screen.getByText('Dividends received')).toBeInTheDocument()
+    expect(screen.getByText('Fees paid')).toBeInTheDocument()
   })
 
   it('respects the account switcher', () => {
+    renderClosed('tfsa')
+    expect(screen.getByText('KO')).toBeInTheDocument()
+    expect(screen.queryByText('XOM')).not.toBeInTheDocument()
+  })
+
+  it('renders nothing when the account has no closed positions', () => {
+    vi.mocked(useClosedPositions).mockReturnValueOnce({ data: closed.filter((h) => h.account_type === 'rrsp'), isError: false } as unknown as ReturnType<typeof useClosedPositions>)
     render(
       <MemoryRouter>
         <ClosedPositions accountFilter="tfsa" />

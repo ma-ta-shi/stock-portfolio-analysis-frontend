@@ -4,7 +4,7 @@ export interface Stock {
   stock_id: string
   ticker: string
   name: string
-  sector: string
+  sector: string | null
   exchange: string
   currency: CurrencyCode
   // False for an ETF, fund, preferred share or trust, or a NEO or CSE stock: held and tracked, but the pipeline
