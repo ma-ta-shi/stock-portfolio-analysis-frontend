@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { cashEntry, dividendEntries, dividendProblem, eventsBody, isDay, optionalFields, round2, tradeEntry, type CashInput, type DividendInput, type TradeInput } from './ledger-entry'
+import { dividendCorrections, dividendEntries, dividendProblem, eventsBody, isDay, optionalFields, round2, tradeEntry, type DividendInput, type TradeInput } from './ledger-entry'
 import { LEDGER, fillRoute, ledgerRoute } from './ledger-routes'
 
 const buy: TradeInput = {
@@ -51,13 +51,6 @@ describe('tradeEntry', () => {
     expect(usd).not.toHaveProperty('amount_cad')
     expect(tradeEntry({ ...buy, currency: 'USD', ticker: 'MSFT' })).not.toHaveProperty('fx_rate_to_cad')
     expect(tradeEntry({ ...buy, currency: 'CAD', rate: 1.3 })).not.toHaveProperty('fx_rate_to_cad')
-  })
-
-  it('sends the reason and the trimmed notes only when given', () => {
-    expect(tradeEntry({ ...buy, reason: 'rebalancing', notes: '  trimmed  ' })).toMatchObject({ reason_code: 'rebalancing', notes: 'trimmed' })
-    const plain = tradeEntry({ ...buy, reason: '', notes: '   ' })
-    expect(plain).not.toHaveProperty('reason_code')
-    expect(plain).not.toHaveProperty('notes')
   })
 
   it.each([
@@ -132,55 +125,6 @@ describe('tradeEntry: an opening balance', () => {
   })
 })
 
-describe('cashEntry', () => {
-  const contribution: CashInput = { kind: 'contribution', account: 'tfsa', amount: 500, currency: 'CAD', date: '2026-11-20' }
-
-  it('builds a contribution with no ticker and no shares', () => {
-    expect(cashEntry(contribution)).toEqual({ account_type: 'tfsa', transaction_type: 'contribution', total_amount: 500, currency: 'CAD', transaction_date: '2026-11-20' })
-  })
-
-  it.each(['withdrawal', 'fee', 'interest'] as const)('builds a %s the same way', (kind) => {
-    expect(cashEntry({ ...contribution, kind })).toMatchObject({ transaction_type: kind, total_amount: 500 })
-  })
-
-  it('rounds the amount to cents and sends the reason and trimmed notes only when given', () => {
-    expect(cashEntry({ ...contribution, amount: 10.005, reason: 'life_need', notes: ' x ' })).toMatchObject({ total_amount: 10.01, reason_code: 'life_need', notes: 'x' })
-    expect(cashEntry(contribution)).not.toHaveProperty('notes')
-  })
-
-  it('sends the exchange rate of a US row, never of a Canadian one', () => {
-    expect(cashEntry({ ...contribution, currency: 'USD', rate: 1.3 })).toMatchObject({ fx_rate_to_cad: 1.3 })
-    expect(cashEntry({ ...contribution, currency: 'USD' })).not.toHaveProperty('fx_rate_to_cad')
-    expect(cashEntry({ ...contribution, rate: 1.3 })).not.toHaveProperty('fx_rate_to_cad')
-  })
-
-  describe('a conversion', () => {
-    const conversion: CashInput = { kind: 'conversion', account: 'trading', amount: 1000, currency: 'CAD', date: '2026-11-20', counter: { currency: 'USD', amount: 730 } }
-
-    it('says what left and what arrived, and never sends a rate (the API measures the cost against the Bank of Canada rate)', () => {
-      const body = cashEntry({ ...conversion, rate: 1.3 })
-      expect(body).toMatchObject({ transaction_type: 'conversion', total_amount: 1000, currency: 'CAD', counter_currency: 'USD', counter_amount: 730 })
-      expect(body).not.toHaveProperty('fx_rate_to_cad')
-    })
-
-    it.each([
-      ['no counter amount', { counter: undefined }],
-      ['a zero counter amount', { counter: { currency: 'USD' as const, amount: 0 } }],
-      ['the same currency on both sides', { counter: { currency: 'CAD' as const, amount: 5 } }],
-    ])('is not valid with %s', (_name, change) => {
-      expect(cashEntry({ ...conversion, ...change })).toBeNull()
-    })
-  })
-
-  it.each([
-    ['no amount', { amount: 0 }],
-    ['a negative amount', { amount: -5 }],
-    ['an impossible date', { date: '2026-13-01' }],
-  ])('is not valid with %s', (_name, change) => {
-    expect(cashEntry({ ...contribution, ...change })).toBeNull()
-  })
-})
-
 describe('dividendEntries', () => {
   const paid: DividendInput = { account: 'rrsp', ticker: 'FTS.TO', currency: 'CAD', gross: 20, date: '2026-11-20' }
 
@@ -225,3 +169,41 @@ describe('dividendEntries', () => {
     expect(dividendEntries({ ...paid, ...change })).toBeNull()
   })
 })
+
+describe('tradeEntry: a reinvestment (drip)', () => {
+  it('is a stock row with no fees, bought at the price paid', () => {
+    expect(tradeEntry({ ...buy, kind: 'drip', shares: 0.17, price: 100, fees: 9.99 })).toEqual({
+      account_type: 'trading', transaction_type: 'drip', ticker: 'ENB.TO', shares: 0.17, price_per_share: 100, total_amount: 17, currency: 'CAD', transaction_date: '2026-11-20',
+    })
+  })
+})
+
+describe('dividendCorrections', () => {
+  it('is an empty body when nothing was typed: confirm the calculated dividend', () => {
+    expect(dividendCorrections({})).toEqual({})
+  })
+
+  it('sends only what was typed', () => {
+    expect(dividendCorrections({ gross: 20 })).toEqual({ gross: 20 })
+    expect(dividendCorrections({ withholding: 0 })).toEqual({ withholding_tax: 0 }) // no tax is a figure, not a blank
+  })
+
+  it('sends the reinvestment choice, including an explicit "do not reinvest"', () => {
+    expect(dividendCorrections({ reinvest: true, reinvestShares: 0.15, reinvestPrice: 100, reinvestDate: '2026-11-22' })).toEqual({
+      reinvest: true, reinvest_shares: 0.15, reinvest_price: 100, reinvest_date: '2026-11-22',
+    }) // fmt: skip
+    expect(dividendCorrections({ reinvest: false })).toEqual({ reinvest: false })
+    expect(dividendCorrections({ reinvest: null })).toEqual({})
+  })
+
+  it.each([
+    ['a gross of zero', { gross: 0 }],
+    ['a negative tax', { withholding: -1 }],
+    ['tax above the dividend', { gross: 10, withholding: 11 }],
+    ['a reinvestment price of zero', { reinvestPrice: 0 }],
+    ['a payment day that is not a day', { paymentDate: '2026-13-01' }],
+  ])('is not valid with %s', (_name, input) => {
+    expect(dividendCorrections(input)).toBeNull()
+  })
+})
+

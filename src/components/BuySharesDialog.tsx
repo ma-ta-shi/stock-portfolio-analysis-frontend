@@ -1,7 +1,7 @@
+import { AccountTitle } from '@/components/ledger/AccountTitle'
 import { LedgerDialog } from '@/components/ledger/LedgerDialog'
 import { PositionSummary } from '@/components/ledger/PositionSummary'
 import { useTradeForm } from '@/components/ledger/TradeForm'
-import { Badge } from '@/components/ui/badge'
 import { formatMoney } from '@/lib/format'
 import { LEDGER } from '@/lib/ledger-routes'
 import type { Holding } from '@/types/portfolio'
@@ -24,12 +24,9 @@ function BuyShares({ holding, onClose }: { holding: Holding; onClose: () => void
       open
       onClose={onClose}
       title={
-        <>
+        <AccountTitle account={holding.account_type}>
           Buy {holding.stock.ticker}
-          <Badge variant="outline" className="ml-2 text-xs font-normal">
-            {holding.account_type.toUpperCase()}
-          </Badge>
-        </>
+        </AccountTitle>
       }
       summary={<PositionSummary holding={holding} third={{ label: 'Book cost', value: formatMoney(holding.total_book_cost, currency) }} />}
       body={form.body}

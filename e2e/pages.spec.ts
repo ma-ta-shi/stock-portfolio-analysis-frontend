@@ -4,6 +4,7 @@ const ROUTES: [string, string | RegExp][] = [
   ['/', 'Home'],
   ['/watchlist', 'Watchlist'],
   ['/portfolio', 'Portfolio'],
+  ['/portfolio?tab=dividends', 'Portfolio'],
   ['/portfolio?tab=transactions', 'Portfolio'],
   ['/portfolio?tab=optimizer', 'Portfolio'],
   ['/portfolio?tab=allocation', 'Portfolio'],

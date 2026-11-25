@@ -5,7 +5,7 @@
  * A stock with no usable call is a normal state, not an error.
  */
 import { Link } from 'react-router-dom'
-import { ArrowRight } from 'lucide-react'
+import { AlertTriangle, ArrowRight } from 'lucide-react'
 import { ConfidenceMeter } from '@/components/ConfidenceMeter'
 import { OutlookBadge } from '@/components/OutlookBadge'
 import { Badge } from '@/components/ui/badge'
@@ -19,15 +19,48 @@ interface StockCallProps {
   /** False for an instrument the pipeline cannot analyse (a fund, a preferred share): shown as a dash, the stock cell says why. */
   supported?: boolean
   now?: number
+  /** One tidy cell for a table row: the direction and the tier in plain text, the confidence, and the notices as one icon. */
+  compact?: boolean
 }
 
-export function StockCall({ call, supported = true, now }: StockCallProps) {
+export function StockCall({ call, supported = true, now, compact = false }: StockCallProps) {
   if (!supported) return <span className="text-muted-foreground">—</span>
   if (!call) return <span className="text-muted-foreground text-sm">No call</span>
 
   const analysis = call.analysis
   const age = callAgeDays(analysis?.asOf ?? null, now)
   const reasons = call.exclusions.map(exclusionLabel)
+
+  if (compact) {
+    return (
+      <div className="space-y-1">
+        <div className="text-sm">
+          {analysis?.outlook ? <span>{OUTLOOK_LABELS[analysis.outlook]}</span> : <span className="text-muted-foreground">No call</span>}
+          {analysis?.tier && (
+            <span title={TIER_EXPLANATIONS[analysis.tier]}>
+              <span className="text-muted-foreground" aria-hidden="true"> · </span>
+              <span>{TIER_LABELS[analysis.tier]}</span>
+            </span>
+          )}
+        </div>
+        {analysis?.confidence != null && <ConfidenceMeter score={analysis.confidence} />}
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          {age != null && <span>{age === 0 ? 'Today' : `${age}d ago`}</span>}
+          {call.status === 'excluded' && (
+            <span className={TONE_TEXT.warning} title={reasons.join('; ') || 'Not usable'}>
+              <AlertTriangle className="w-3.5 h-3.5" aria-hidden="true" />
+              <span className="sr-only">{reasons[0] ?? 'Not usable'}</span>
+            </span>
+          )}
+          {analysis && (
+            <Link to={`/analysis/${analysis.runId}`} className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>
+              Analysis
+            </Link>
+          )}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-1">

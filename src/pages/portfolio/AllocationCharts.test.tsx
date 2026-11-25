@@ -36,11 +36,28 @@ describe('AllocationCharts', () => {
     expect(screen.getByRole('status')).toHaveTextContent('P-A2')
   })
 
-  it('draws the names, groups and risk tables from the registry', () => {
+  it('draws the three donuts of the original design, each with its own legend under it', () => {
     render(<AllocationCharts />)
-    expect(screen.getByRole('heading', { name: 'Companies, directly and through funds' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Risk' })).toBeInTheDocument()
+    for (const title of ['By Sector', 'By Account', 'By Geography']) {
+      expect(screen.getByText(title)).toBeInTheDocument()
+      expect(screen.getByRole('list', { name: `${title} legend` })).toBeInTheDocument()
+    }
+    expect(screen.queryByText('By Industry')).not.toBeInTheDocument()
     expect(screen.queryByRole('status')).not.toBeInTheDocument()
+  })
+
+  it('draws no table, warning text or risk figures (the original had only the donuts)', () => {
+    render(<AllocationCharts />)
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
+    expect(screen.queryByText(/fund_contents_unknown|short_history/)).not.toBeInTheDocument()
+    expect(screen.queryByText('Risk')).not.toBeInTheDocument()
+  })
+
+  it('writes the share of each slice in the legend, cash included', () => {
+    render(<AllocationCharts />)
+    const legend = screen.getByRole('list', { name: 'By Geography legend' })
+    expect(legend).toHaveTextContent('CAD')
+    expect(legend.textContent).toMatch(/d/)
   })
 
   it('shows what to do when nothing is held', () => {

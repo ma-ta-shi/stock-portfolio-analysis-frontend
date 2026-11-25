@@ -1,7 +1,7 @@
+import { AccountTitle } from '@/components/ledger/AccountTitle'
 import { LedgerDialog } from '@/components/ledger/LedgerDialog'
 import { SummaryCells } from '@/components/ledger/PositionSummary'
 import { useDividendForm } from '@/components/ledger/DividendForm'
-import { Badge } from '@/components/ui/badge'
 import { formatMoney } from '@/lib/format'
 import { LEDGER } from '@/lib/ledger-routes'
 import type { Holding } from '@/types/portfolio'
@@ -17,19 +17,16 @@ export function LogDividendDialog({ holding, onClose }: LogDividendDialogProps) 
 }
 
 function LogDividend({ holding, onClose }: { holding: Holding; onClose: () => void }) {
-  const form = useDividendForm(holding)
+  const form = useDividendForm({ account: holding.account_type, ticker: holding.stock.ticker, currency: holding.stock.currency === 'USD' ? 'USD' : 'CAD', shares: holding.shares, price: holding.current_price })
   const expected = holding.expected_income_per_share ?? 0
   return (
     <LedgerDialog
       open
       onClose={onClose}
       title={
-        <>
+        <AccountTitle account={holding.account_type}>
           Log dividend {holding.stock.ticker}
-          <Badge variant="outline" className="ml-2 text-xs font-normal">
-            {holding.account_type.toUpperCase()}
-          </Badge>
-        </>
+        </AccountTitle>
       }
       summary={
         <SummaryCells

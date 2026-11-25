@@ -15,9 +15,16 @@ export async function portfolioId(request: APIRequestContext): Promise<string> {
   return (await res.json()).data[0].portfolio_id
 }
 
-/** What the API itself says an entry would do: the page's preview must agree with it. */
-export async function apiPreview(request: APIRequestContext, body: unknown) {
-  const res = await request.post(`${API}/api/portfolios/${await portfolioId(request)}/events/preview`, { data: body })
+/** What the API itself says an entry would do: the page's preview must agree with it. `path` is the preview route, `events/preview` by default. */
+export async function apiPreview(request: APIRequestContext, body: unknown, path = 'events/preview') {
+  const res = await request.post(`${API}/api/portfolios/${await portfolioId(request)}/${path}`, { data: body })
+  expect(res.ok(), await res.text()).toBeTruthy()
+  return res.json()
+}
+
+/** Records straight through the API (a spec's own starting entry, so it never depends on another spec's data); answers the body. */
+export async function apiRecord(request: APIRequestContext, path: string, body: unknown) {
+  const res = await request.post(`${API}/api/portfolios/${await portfolioId(request)}/${path}`, { data: body })
   expect(res.ok(), await res.text()).toBeTruthy()
   return res.json()
 }
@@ -41,4 +48,13 @@ export async function openFromRow(page: Page, buttonName: string): Promise<Locat
   const dialog = page.getByRole('dialog')
   await expect(dialog).toBeVisible()
   return dialog
+}
+
+/** Opens a ledger row (found by a figure in it) on the Transactions tab and expands it. */
+export async function openLedgerRow(page: Page, query: string, text: RegExp): Promise<Locator> {
+  await page.goto(`/portfolio?tab=transactions${query}`)
+  const row = page.getByRole('row').filter({ hasText: text }).first()
+  await expect(row).toBeVisible()
+  await row.getByRole('button', { name: 'Show details of this entry' }).click()
+  return row
 }

@@ -12,14 +12,6 @@ type Api = components['schemas']
 export type PortfolioAccountView = 'combined' | AccountType
 export type TransactionType = Api['TransactionResponse']['transaction_type']
 
-export interface Confirmation {
-  /** `null`: never confirmed against the broker. */
-  lastConfirmed: string | null
-  ageDays: number
-  /** Past 45 days. */
-  overdue: boolean
-}
-
 /** One holding in one account, with its position and the stock's call. Closed holdings have `is_active` false and no position. */
 export interface Holding {
   holding_id: string
@@ -75,7 +67,6 @@ export interface Holding {
   /** Fractions: expected income over price, and over average cost. */
   dividend_yield: number | null
   yield_on_cost: number | null
-  confirmation: Confirmation | null
 }
 
 export interface Transaction {
@@ -165,7 +156,6 @@ export interface PortfolioSummary {
   room: Api['RoomResponse'] | null
   /** Why the room could not be read (for example the profile figures it lacks), when that is the reason. */
   room_error: string | null
-  confirmations: Api['ConfirmationResponse'][]
   /** The optional parts that failed to load, so the header says "unavailable" for those only. */
   unavailable: { report: boolean; history: boolean; accounts: boolean; room: boolean }
 }

@@ -12,16 +12,16 @@ import roomFixture from '../../../public/mock-data/portfolio/room.json'
 
 type Api = components['schemas']
 
-vi.mock('@/components/SparklineChart', () => ({ SparklineChart: () => null }))
 vi.mock('@/hooks/use-portfolio')
 import { usePortfolioHoldings, usePortfolioSummary } from '@/hooks/use-portfolio'
 
 // Every figure is the recorded API response (`npm run record:fixtures`) through the real `buildSummary`.
 const positions = positionsFixture as unknown as ApiPositions
+const history = historyFixture as unknown as Api['ValueHistoryResponse']
 const parts = {
   positions,
   report: reportFixture as unknown as Api['ReportResponse'],
-  history: historyFixture as unknown as Api['ValueHistoryResponse'],
+  history,
   accounts: (accountsFixture as unknown as { data: Api['PortfolioAccountResponse'][] }).data,
   room: roomFixture as unknown as Api['RoomResponse'],
 }
@@ -38,14 +38,60 @@ beforeEach(() => {
   vi.mocked(usePortfolioHoldings).mockReturnValue({ data: mockHoldings.filter((h) => h.is_active) } as unknown as ReturnType<typeof usePortfolioHoldings>)
 })
 
-describe('SummaryHeader', () => {
+describe('SummaryHeader: the original tiles', () => {
+  it('shows the tiles of the original design in its order, with Realized right beside Unrealized', () => {
+    show()
+    const labels = screen
+      .getAllByText(/^(Total Value|Cash|Unrealized|Realized|Total Return|Dividends Received|Today|Expected dividend income)/)
+      .map((e) => e.textContent?.replace(/ \(next 12 months\)/, ''))
+    expect(labels).toEqual(['Total Value', 'Cash', 'Unrealized', 'Realized', 'Total Return', 'Dividends Received', 'Today', 'Expected dividend income'])
+  })
+
   it("shows the API's own value and unrealised gain for the whole portfolio", () => {
     show()
     expect(screen.getAllByText(money(positions.total.value_cad)).length).toBeGreaterThan(0)
-    expect(screen.getByText('Value (incl. cash)')).toBeInTheDocument()
-    expect(screen.getByText('Holdings').nextSibling).toHaveTextContent(String(mockHoldings.filter((h) => h.is_active).length))
+    expect(screen.queryByText('Holdings')).not.toBeInTheDocument()
   })
 
+  it('has no tile the original did not have, and no performance dropdown', () => {
+    show()
+    for (const label of ['Estimated tax', 'Fees', 'Profit', 'Return per year', 'Versus benchmark fund', 'Prices as of']) {
+      expect(screen.queryByText(label)).not.toBeInTheDocument()
+    }
+    expect(screen.queryByText('Performance, tax and accounts')).not.toBeInTheDocument()
+    expect(screen.queryByText('Money in and out')).not.toBeInTheDocument()
+  })
+
+  it('says what the expected dividend income is, on hover', () => {
+    show()
+    expect(screen.getByText(/Expected dividend income/)).toHaveAttribute('title', expect.stringContaining('expected dividends per share times your shares'))
+  })
+
+  it('does not mention confirming with the broker, and has no cash button', () => {
+    show()
+    expect(screen.queryByText(/broker/i)).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /cash/i })).not.toBeInTheDocument()
+  })
+})
+
+describe('SummaryHeader: the value graph', () => {
+  it('writes the first and the last value under the line, with their days', () => {
+    show()
+    const first = history.points[0]
+    const last = history.points[history.points.length - 1]
+    const caption = screen.getByRole('figure', { name: 'Portfolio value over time' })
+    expect(caption).toHaveTextContent(money(first.value_cad))
+    expect(caption).toHaveTextContent(money(last.value_cad))
+  })
+
+  it('says there is not enough history instead of drawing a dot', () => {
+    show('combined', { history: { ...history, points: history.points.slice(0, 1) } })
+    expect(screen.getByText(/Not enough history yet/)).toBeInTheDocument()
+    expect(screen.queryByRole('figure', { name: 'Portfolio value over time' })).not.toBeInTheDocument()
+  })
+})
+
+describe('SummaryHeader', () => {
   it('shows one account card per account, each opening that account, with its contribution room', () => {
     const { onAccountChange } = show()
     fireEvent.click(screen.getByRole('button', { name: /^TFSA/ }))
@@ -71,21 +117,8 @@ describe('SummaryHeader', () => {
     expect(screen.getByRole('status')).toHaveTextContent('No price recorded for ZZZ')
   })
 
-  it('warns when a broker confirmation is overdue', () => {
-    const overdue = { ...positions, confirmations: [{ kind: 'position', account_type: 'tfsa', what: 'VFV.TO', last_confirmed: null, age_days: 90, overdue: true }] }
-    show('combined', { positions: overdue as ApiPositions })
-    expect(screen.getByText(/Not confirmed with the broker/)).toHaveTextContent('VFV.TO (90 days)')
-  })
-
   it('explains why the contribution room is missing', () => {
     show('combined', { room: null, roomError: 'Your profile lacks a birth year' })
     expect(screen.getByText(/Contribution room unavailable: Your profile lacks a birth year/)).toBeInTheDocument()
-  })
-
-  it('opens the detail panel with the report, accounts and room lines', () => {
-    show()
-    expect(screen.getByText('Performance, tax and accounts')).toBeInTheDocument()
-    expect(screen.getAllByText('Commission per trade').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('Room today').length).toBeGreaterThan(0)
   })
 })

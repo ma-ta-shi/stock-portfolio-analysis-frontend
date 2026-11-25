@@ -9,7 +9,7 @@
       "commission_per_trade": 0,
       "conversion_cost_pct": 1.5,
       "uses_norberts_gambit": false,
-      "reinvests_dividends": false,
+      "reinvests_dividends": true,
       "last_updated": "2026-11-06T22:30:35.681107Z"
     },
     {
@@ -21,7 +21,7 @@
       "commission_per_trade": 0,
       "conversion_cost_pct": 1.5,
       "uses_norberts_gambit": false,
-      "reinvests_dividends": false,
+      "reinvests_dividends": true,
       "last_updated": "2026-11-06T22:30:35.606161Z"
     },
     {
@@ -33,7 +33,7 @@
       "commission_per_trade": 0,
       "conversion_cost_pct": 1.5,
       "uses_norberts_gambit": false,
-      "reinvests_dividends": false,
+      "reinvests_dividends": true,
       "last_updated": "2026-11-06T22:30:35.707107Z"
     }
   ],

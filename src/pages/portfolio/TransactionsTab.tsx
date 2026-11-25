@@ -1,31 +1,28 @@
 /**
  * The Transactions tab: the ledger, filtered, ordered and paged by the server. Columns, the expanded row and the CSV all come
- * from the field registry (`screens/portfolio/ledger.tsx`). Correct and Reverse show the not-connected error until the writes
- * ticket (86bd5z6mq) wires them.
+ * from the field registry (`screens/portfolio/ledger.tsx`); the rows, with Correct and Reverse, are drawn by `LedgerTable`.
  */
-import { Fragment, useId, useMemo, useState } from 'react'
-import { ChevronDown, ChevronRight, Download, X } from 'lucide-react'
+import { useId, useMemo, useState } from 'react'
+import { Download, X } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import {
   fetchAllTransactions,
   useClosedPositions,
-  useCorrectTransaction,
   usePortfolioHoldings,
-  useReverseTransaction,
   useTransactions,
 } from '@/hooks/use-portfolio'
 import { usePortfolioId } from '@/hooks/use-portfolio-id'
-import { FieldList } from '@/components/FieldList'
+import { LedgerTable } from '@/components/ledger/LedgerTable'
 import { Pager } from '@/components/Pager'
 import { QueryError } from '@/components/QueryError'
 import { Button } from '@/components/ui/button'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useTransactionFilters } from '@/hooks/use-transaction-filters'
 import { getErrorMessage } from '@/lib/api'
 import { downloadFile, toCsv } from '@/lib/csv'
-import { fieldText, fieldsFor, fieldsToCsvRows } from '@/lib/fields'
+import { fieldsToCsvRows } from '@/lib/fields'
 import { localDateInputValue } from '@/lib/format'
 import { TX_TYPE_LABELS } from '@/lib/labels'
+import { positionLabel } from '@/lib/portfolio'
 import { queryKeys } from '@/lib/query-keys'
 import { isDateRangeInvalid, TRANSACTION_TYPES, transactionsQuery } from '@/lib/transactions'
 import { cn } from '@/lib/utils'
@@ -33,7 +30,6 @@ import { TRANSACTION_FIELDS } from '@/screens/portfolio/ledger'
 import type { PortfolioAccountView, TransactionType } from '@/types/portfolio'
 
 const FILTER_CONTROL = 'h-8 rounded-md border border-border bg-background px-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary'
-const RIGHT = new Set(['shares', 'price', 'total', 'amount_cad', 'fees', 'realised'])
 
 interface TransactionsTabProps {
   accountFilter?: PortfolioAccountView
@@ -61,14 +57,10 @@ export function TransactionsTab({ accountFilter = 'combined' }: TransactionsTabP
   }, [positions, filters.ticker])
   const holdingTitle = filters.holdingId ? positions.find((h) => h.holding_id === filters.holdingId) : undefined
 
-  const columns = useMemo(() => fieldsFor(TRANSACTION_FIELDS, 'column'), [])
-  const [expanded, setExpanded] = useState<ReadonlySet<string>>(new Set())
   const dateRangeInvalid = isDateRangeInvalid(filters)
-  const correct = useCorrectTransaction()
-  const reverse = useReverseTransaction()
 
   const csv = useQuery({
-    queryKey: queryKeys.portfolio.transactionsCsv(portfolioId ?? '', scope),
+    queryKey: queryKeys.portfolio.allTransactions(portfolioId ?? '', scope),
     enabled: false,
     queryFn: ({ signal }) => fetchAllTransactions(portfolioId ?? '', filters, accountFilter, signal),
   })
@@ -79,20 +71,11 @@ export function TransactionsTab({ accountFilter = 'combined' }: TransactionsTabP
     downloadFile(toCsv(fieldsToCsvRows(TRANSACTION_FIELDS, rows)), `transactions-${localDateInputValue()}.csv`)
   }
 
-  function toggle(id: string) {
-    setExpanded((prev) => {
-      const next = new Set(prev)
-      if (!next.delete(id)) next.add(id)
-      return next
-    })
-  }
-
   if (isLoading) return <div className="h-48 rounded-lg bg-muted animate-pulse" />
   if (isError) return <QueryError what="transactions" error={error} onRetry={refetch} />
 
   const rows = data?.rows ?? []
   const meta = data?.meta
-  const actionError = correct.error ?? reverse.error
 
   return (
     <div>
@@ -101,7 +84,7 @@ export function TransactionsTab({ accountFilter = 'combined' }: TransactionsTabP
           <span>
             Showing full history for{' '}
             <span className="font-medium">
-              {holdingTitle ? `${holdingTitle.stock.ticker} (${holdingTitle.account_type.toUpperCase()})` : 'one position'}
+              {holdingTitle ? positionLabel(holdingTitle) : 'one position'}
             </span>
           </span>
           <Button size="sm" variant="ghost" onClick={() => setFilters({ holdingId: null })}>
@@ -201,75 +184,12 @@ export function TransactionsTab({ accountFilter = 'combined' }: TransactionsTabP
           Export failed: {getErrorMessage(csv.error)}
         </p>
       )}
-      {actionError && (
-        <p role="alert" className="text-xs text-destructive mb-3">
-          {getErrorMessage(actionError)}
-        </p>
-      )}
-
       {!rows.length ? (
         <p className="text-muted-foreground text-sm py-8 text-center">
           {isFiltered ? 'No transactions match these filters.' : 'No transactions yet.'}
         </p>
       ) : (
-        <div className={cn('border border-border rounded-lg overflow-hidden', isPlaceholderData && 'opacity-60')}>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-8">
-                  <span className="sr-only">Details</span>
-                </TableHead>
-                {columns.map((spec) => (
-                  <TableHead key={spec.id} className={RIGHT.has(spec.id) ? 'text-right' : undefined} title={spec.tooltip}>
-                    {spec.label}
-                  </TableHead>
-                ))}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {rows.map((t) => {
-                const open = expanded.has(t.transaction_id)
-                return (
-                  <Fragment key={t.transaction_id}>
-                    <TableRow>
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          aria-expanded={open}
-                          aria-label={`${open ? 'Hide' : 'Show'} details of this entry`}
-                          onClick={() => toggle(t.transaction_id)}
-                        >
-                          {open ? <ChevronDown className="w-4 h-4" aria-hidden="true" /> : <ChevronRight className="w-4 h-4" aria-hidden="true" />}
-                        </Button>
-                      </TableCell>
-                      {columns.map((spec) => (
-                        <TableCell key={spec.id} className={cn('text-sm', RIGHT.has(spec.id) && 'text-right')}>
-                          {spec.render ? spec.render(t) : fieldText(spec, t)}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                    {open && (
-                      <TableRow>
-                        <TableCell colSpan={columns.length + 1} className="bg-muted/30 py-3 space-y-3">
-                          <FieldList fields={TRANSACTION_FIELDS} row={t} />
-                          <div className="flex gap-2">
-                            <Button size="sm" variant="outline" onClick={() => correct.mutate(t.transaction_id)}>
-                              Correct
-                            </Button>
-                            <Button size="sm" variant="outline" onClick={() => reverse.mutate(t.transaction_id)}>
-                              Reverse
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </Fragment>
-                )
-              })}
-            </TableBody>
-          </Table>
-        </div>
+        <LedgerTable className={cn(isPlaceholderData && 'opacity-60')} rows={rows} />
       )}
 
       {meta && <Pager page={meta.page} pages={meta.pages} total={meta.total} noun="transactions" onPage={(p) => setChosen({ scope, page: p })} />}

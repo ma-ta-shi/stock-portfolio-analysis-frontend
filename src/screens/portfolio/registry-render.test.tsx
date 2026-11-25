@@ -18,9 +18,11 @@ import exposureFixture from '../../../public/mock-data/portfolio/exposure.json'
 import { HOLDING_FIELDS } from './holdings'
 import { PREVIEW_FIELDS, type PreviewRow } from './preview'
 import { LOOKUP_FIELDS, type StockLookup } from './lookup'
+import { DIVIDEND_FIELDS, mapDividendEvent, type ApiDividendEvent } from './dividends'
+import dividendsFixture from '../../../public/mock-data/portfolio/dividends.json'
 import { TRANSACTION_FIELDS } from './ledger'
-import { ACCOUNT_FIELDS, ROOM_EVENT_FIELDS, ROOM_FIELDS, SUMMARY_FIELDS } from './summary'
-import { EXPOSURE_FIELDS, EXPOSURE_GROUP_FIELDS, EXPOSURE_NAME_FIELDS, EXPOSURE_PAIR_FIELDS, EXPOSURE_RISK_FIELDS, type RiskRow } from './exposure'
+import { ROOM_FIELDS, SUMMARY_FIELDS } from './summary'
+import { EXPOSURE_FIELDS } from './exposure'
 
 type Api = components['schemas']
 
@@ -55,21 +57,12 @@ const summaries = (['combined', 'tfsa', 'rrsp', 'trading'] as const).map((view) 
 )
 const room = Object.values((roomFixture as unknown as Api['RoomResponse']).accounts)
 const exposure = exposureFixture as unknown as Api['ExposureResponse']
-const pairs = [...exposure.near_misses, ...exposure.correlations]
-const events = room.flatMap((r) => r.events)
 
 check('holdings', HOLDING_FIELDS, holdings)
 check('transactions', TRANSACTION_FIELDS, mapTransactions(transactionsFixture.data as unknown as ApiTransaction[]))
 check('summary', SUMMARY_FIELDS, summaries)
-check('account', ACCOUNT_FIELDS, (accountsFixture as unknown as { data: Api['PortfolioAccountResponse'][] }).data)
 check('contribution room', ROOM_FIELDS, room)
 check('exposure', EXPOSURE_FIELDS, [exposure])
-check('exposure names', EXPOSURE_NAME_FIELDS, exposure.names)
-// The recorded portfolio may have no correlated group, pair or room event; those rows are built by hand and marked so.
-check('exposure groups', EXPOSURE_GROUP_FIELDS, exposure.groups.length ? exposure.groups : [{ members: ['A', 'B'], weight: 0.1 }])
-check('exposure pairs', EXPOSURE_PAIR_FIELDS, pairs.length ? pairs : [{ a: 'A', b: 'B', rho: 0.5 }])
-check('exposure risk', EXPOSURE_RISK_FIELDS, Object.entries(exposure.risk).map(([ticker, r]) => ({ ticker, ...r }) as RiskRow))
-check('room events', ROOM_EVENT_FIELDS, events.length ? events : [{ when: '2026-01-01', kind: 'contribution', change: 100, room_after: 900, detail: 'by hand' }])
 
 // The recorded set has no preview, so these are built by hand to match the API's shape (see the seed probe): a CAD purchase, a US sale
 // at a gain with a tax estimate, room, a superficial-loss note and a warning, and a cash entry with no position.
@@ -103,4 +96,12 @@ check('stock lookup', LOOKUP_FIELDS, [
   lookup(),
   lookup({ stock_id: null, source: 'provider', sector: null, industry: null }),
   lookup({ instrument_type: 'etf', pipeline_supported: false, unsupported_reason: 'a fund' }),
+])
+
+// The recorded dividends (waiting ones), and one decided in each way by hand: the fixture was recorded before any was decided.
+const dividends = (dividendsFixture.data as unknown as ApiDividendEvent[]).map(mapDividendEvent)
+check('dividend events', DIVIDEND_FIELDS, [
+  ...dividends,
+  { ...dividends[0], status: 'confirmed' as const, decided_by: 'owner' as const, decided_at: '2026-11-22T12:00:00Z', note: 'per statement', planned_reinvest_shares: 0.4, planned_reinvest_price: 100, planned_reinvest_date: '2026-11-23' },
+  { ...dividends[0], status: 'dismissed' as const, decided_by: 'owner' as const, decided_at: '2026-11-22T12:00:00Z', flags: ['probable_duplicate'] },
 ])

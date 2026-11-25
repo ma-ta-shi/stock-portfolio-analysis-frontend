@@ -1,0 +1,2449 @@
+{
+  "period": {
+    "start": "2026-10-26",
+    "end": "2026-11-25",
+    "tax_year": null,
+    "label": "the period given"
+  },
+  "tax_year_refund": null,
+  "total": {
+    "name": "Total",
+    "level": "total",
+    "start": {
+      "day": "2026-10-25",
+      "positions": [
+        {
+          "ticker": "FTS.TO",
+          "account": "rrsp",
+          "currency": "CAD",
+          "shares": 60,
+          "price": null,
+          "price_day": null,
+          "price_source": "cost",
+          "value_cad": 6000,
+          "cost_cad": 6000,
+          "unrealised_cad": 0,
+          "unrealised_fx_cad": 0,
+          "unrealised_pct": 0,
+          "weight_pct": 6.44
+        },
+        {
+          "ticker": "RY.TO",
+          "account": "tfsa",
+          "currency": "CAD",
+          "shares": 40.4,
+          "price": null,
+          "price_day": null,
+          "price_source": "cost",
+          "value_cad": 4040,
+          "cost_cad": 4040,
+          "unrealised_cad": 0,
+          "unrealised_fx_cad": 0,
+          "unrealised_pct": 0,
+          "weight_pct": 4.34
+        },
+        {
+          "ticker": "BCE.TO",
+          "account": "trading",
+          "currency": "CAD",
+          "shares": 100,
+          "price": null,
+          "price_day": null,
+          "price_source": "cost",
+          "value_cad": 13000,
+          "cost_cad": 13000,
+          "unrealised_cad": 0,
+          "unrealised_fx_cad": 0,
+          "unrealised_pct": 0,
+          "weight_pct": 13.96
+        },
+        {
+          "ticker": "CNQ.TO",
+          "account": "trading",
+          "currency": "CAD",
+          "shares": 50,
+          "price": null,
+          "price_day": null,
+          "price_source": "cost",
+          "value_cad": 3500,
+          "cost_cad": 3500,
+          "unrealised_cad": 0,
+          "unrealised_fx_cad": 0,
+          "unrealised_pct": 0,
+          "weight_pct": 3.76
+        },
+        {
+          "ticker": "ENB.TO",
+          "account": "trading",
+          "currency": "CAD",
+          "shares": 100,
+          "price": null,
+          "price_day": null,
+          "price_source": "cost",
+          "value_cad": 10000,
+          "cost_cad": 10000,
+          "unrealised_cad": 0,
+          "unrealised_fx_cad": 0,
+          "unrealised_pct": 0,
+          "weight_pct": 10.74
+        },
+        {
+          "ticker": "MSFT",
+          "account": "trading",
+          "currency": "USD",
+          "shares": 15,
+          "price": null,
+          "price_day": null,
+          "price_source": "cost",
+          "value_cad": 7020,
+          "cost_cad": 7020,
+          "unrealised_cad": 0,
+          "unrealised_fx_cad": 0,
+          "unrealised_pct": 0,
+          "weight_pct": 7.54
+        },
+        {
+          "ticker": "SU.TO",
+          "account": "trading",
+          "currency": "CAD",
+          "shares": 40,
+          "price": null,
+          "price_day": null,
+          "price_source": "cost",
+          "value_cad": 4000,
+          "cost_cad": 4000,
+          "unrealised_cad": 0,
+          "unrealised_fx_cad": 0,
+          "unrealised_pct": 0,
+          "weight_pct": 4.3
+        },
+        {
+          "ticker": "TD.TO",
+          "account": "trading",
+          "currency": "CAD",
+          "shares": 40,
+          "price": null,
+          "price_day": null,
+          "price_source": "cost",
+          "value_cad": 4000,
+          "cost_cad": 4000,
+          "unrealised_cad": 0,
+          "unrealised_fx_cad": 0,
+          "unrealised_pct": 0,
+          "weight_pct": 4.3
+        },
+        {
+          "ticker": "ZQQ.TO",
+          "account": "trading",
+          "currency": "CAD",
+          "shares": 30,
+          "price": null,
+          "price_day": null,
+          "price_source": "cost",
+          "value_cad": 1800,
+          "cost_cad": 1800,
+          "unrealised_cad": 0,
+          "unrealised_fx_cad": 0,
+          "unrealised_pct": 0,
+          "weight_pct": 1.93
+        }
+      ],
+      "cash_cad": 39747.22,
+      "value_cad": 93107.22,
+      "unrealised_cad": 0,
+      "unpriced": [
+        "FTS.TO (rrsp)",
+        "RY.TO (tfsa)",
+        "BCE.TO (trading)",
+        "CNQ.TO (trading)",
+        "ENB.TO (trading)",
+        "MSFT (trading)",
+        "SU.TO (trading)",
+        "TD.TO (trading)",
+        "ZQQ.TO (trading)"
+      ]
+    },
+    "end": {
+      "day": "2026-11-25",
+      "positions": [
+        {
+          "ticker": "FTS.TO",
+          "account": "rrsp",
+          "currency": "CAD",
+          "shares": 60,
+          "price": 100,
+          "price_day": "2026-11-25",
+          "price_source": "daily_prices",
+          "value_cad": 6000,
+          "cost_cad": 6000,
+          "unrealised_cad": 0,
+          "unrealised_fx_cad": null,
+          "unrealised_pct": 0,
+          "weight_pct": 6.26
+        },
+        {
+          "ticker": "RY.TO",
+          "account": "tfsa",
+          "currency": "CAD",
+          "shares": 245.4,
+          "price": 100,
+          "price_day": "2026-11-25",
+          "price_source": "daily_prices",
+          "value_cad": 24540,
+          "cost_cad": 21940,
+          "unrealised_cad": 2600,
+          "unrealised_fx_cad": null,
+          "unrealised_pct": 11.85,
+          "weight_pct": 25.62
+        },
+        {
+          "ticker": "TD.TO",
+          "account": "tfsa",
+          "currency": "CAD",
+          "shares": 10,
+          "price": 100,
+          "price_day": "2026-11-25",
+          "price_source": "daily_prices",
+          "value_cad": 1000,
+          "cost_cad": 1000,
+          "unrealised_cad": 0,
+          "unrealised_fx_cad": null,
+          "unrealised_pct": 0,
+          "weight_pct": 1.04
+        },
+        {
+          "ticker": "BCE.TO",
+          "account": "trading",
+          "currency": "CAD",
+          "shares": 110,
+          "price": 100,
+          "price_day": "2026-11-25",
+          "price_source": "daily_prices",
+          "value_cad": 11000,
+          "cost_cad": 14000,
+          "unrealised_cad": -3000,
+          "unrealised_fx_cad": null,
+          "unrealised_pct": -21.43,
+          "weight_pct": 11.49
+        },
+        {
+          "ticker": "CNQ.TO",
+          "account": "trading",
+          "currency": "CAD",
+          "shares": 50,
+          "price": 100,
+          "price_day": "2026-11-25",
+          "price_source": "daily_prices",
+          "value_cad": 5000,
+          "cost_cad": 3500,
+          "unrealised_cad": 1500,
+          "unrealised_fx_cad": null,
+          "unrealised_pct": 42.86,
+          "weight_pct": 5.22
+        },
+        {
+          "ticker": "ENB.TO",
+          "account": "trading",
+          "currency": "CAD",
+          "shares": 100,
+          "price": 100,
+          "price_day": "2026-11-25",
+          "price_source": "daily_prices",
+          "value_cad": 10000,
+          "cost_cad": 10000,
+          "unrealised_cad": 0,
+          "unrealised_fx_cad": null,
+          "unrealised_pct": 0,
+          "weight_pct": 10.44
+        },
+        {
+          "ticker": "MFC.TO",
+          "account": "trading",
+          "currency": "CAD",
+          "shares": 3,
+          "price": 100,
+          "price_day": "2026-11-25",
+          "price_source": "daily_prices",
+          "value_cad": 300,
+          "cost_cad": 300,
+          "unrealised_cad": 0,
+          "unrealised_fx_cad": null,
+          "unrealised_pct": 0,
+          "weight_pct": 0.31
+        },
+        {
+          "ticker": "MSFT",
+          "account": "trading",
+          "currency": "USD",
+          "shares": 15,
+          "price": 400,
+          "price_day": "2026-11-25",
+          "price_source": "daily_prices",
+          "value_cad": 8577.6,
+          "cost_cad": 7020,
+          "unrealised_cad": 1557.6,
+          "unrealised_fx_cad": 777.6,
+          "unrealised_pct": 22.19,
+          "weight_pct": 8.96
+        },
+        {
+          "ticker": "SU.TO",
+          "account": "trading",
+          "currency": "CAD",
+          "shares": 40,
+          "price": 100,
+          "price_day": "2026-11-25",
+          "price_source": "daily_prices",
+          "value_cad": 4000,
+          "cost_cad": 4000,
+          "unrealised_cad": 0,
+          "unrealised_fx_cad": null,
+          "unrealised_pct": 0,
+          "weight_pct": 4.18
+        },
+        {
+          "ticker": "TD.TO",
+          "account": "trading",
+          "currency": "CAD",
+          "shares": 30,
+          "price": 100,
+          "price_day": "2026-11-25",
+          "price_source": "daily_prices",
+          "value_cad": 3000,
+          "cost_cad": 3000,
+          "unrealised_cad": 0,
+          "unrealised_fx_cad": null,
+          "unrealised_pct": 0,
+          "weight_pct": 3.13
+        },
+        {
+          "ticker": "ZQQ.TO",
+          "account": "trading",
+          "currency": "CAD",
+          "shares": 30,
+          "price": 60,
+          "price_day": "2026-11-25",
+          "price_source": "daily_prices",
+          "value_cad": 1800,
+          "cost_cad": 1800,
+          "unrealised_cad": 0,
+          "unrealised_fx_cad": null,
+          "unrealised_pct": 0,
+          "weight_pct": 1.88
+        }
+      ],
+      "cash_cad": 20559.34,
+      "value_cad": 95776.94,
+      "unrealised_cad": 2657.6,
+      "unpriced": []
+    },
+    "profit": {
+      "realised_cad": 0,
+      "realised_gains_cad": 0,
+      "realised_losses_cad": 0,
+      "denied_loss_cad": 0,
+      "denied_loss_lost_cad": 0,
+      "realised_fx_part_cad": 0,
+      "unrealised_change_cad": 2657.6,
+      "before_record_gain_cad": 0,
+      "dividends_gross_cad": 0,
+      "dividends_withheld_cad": 0,
+      "dividends_net_cad": 0,
+      "interest_cad": 0,
+      "fees_cad": 0,
+      "conversion_spread_cad": 0,
+      "commissions_cad": 0,
+      "contributions_cad": 1000,
+      "withdrawals_cad": 0,
+      "adjustments_cad": 0,
+      "explained_cad": 2657.6,
+      "profit_cad": 2669.72,
+      "unexplained_cad": 12.12
+    },
+    "tax": {
+      "capital_gains_tax_cad": 0,
+      "taxable_capital_gain_cad": 0,
+      "dividend_tax_cad": 0,
+      "interest_tax_cad": 0,
+      "total_cad": 0,
+      "not_estimated": [],
+      "note": "an estimate at today's marginal rate: a gain that crosses a bracket and a loss carried back or forward are not counted"
+    },
+    "performance": {
+      "start": "2026-10-26",
+      "end": "2026-11-25",
+      "days": 30,
+      "start_value": 93107.22,
+      "end_value": 95776.94,
+      "deposited": 0,
+      "withdrawn": 0,
+      "profit_cad": 2669.72,
+      "return_period": 0.02867360877061953,
+      "return_annualised": null,
+      "reason": null,
+      "fund": {
+        "available": false,
+        "reason": "no fund price history",
+        "end_value": null,
+        "units": null,
+        "return_period": null,
+        "dollars_added": null,
+        "return_difference": null,
+        "note": null
+      },
+      "flows": [
+        {
+          "day": "2026-10-26",
+          "amount": 93107.22,
+          "label": "opening stake"
+        }
+      ]
+    },
+    "warnings": [
+      "not priced at the start, so carried at cost: FTS.TO (rrsp), RY.TO (tfsa), BCE.TO (trading), CNQ.TO (trading), ENB.TO (trading), MSFT (trading), SU.TO (trading), TD.TO (trading), ZQQ.TO (trading)"
+    ]
+  },
+  "accounts": {
+    "tfsa": {
+      "name": "tfsa",
+      "level": "account",
+      "start": {
+        "day": "2026-10-25",
+        "positions": [
+          {
+            "ticker": "RY.TO",
+            "account": "tfsa",
+            "currency": "CAD",
+            "shares": 40.4,
+            "price": null,
+            "price_day": null,
+            "price_source": "cost",
+            "value_cad": 4040,
+            "cost_cad": 4040,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": 0,
+            "unrealised_pct": 0,
+            "weight_pct": 4.34
+          }
+        ],
+        "cash_cad": 7975,
+        "value_cad": 12015,
+        "unrealised_cad": 0,
+        "unpriced": [
+          "RY.TO (tfsa)"
+        ]
+      },
+      "end": {
+        "day": "2026-11-25",
+        "positions": [
+          {
+            "ticker": "RY.TO",
+            "account": "tfsa",
+            "currency": "CAD",
+            "shares": 245.4,
+            "price": 100,
+            "price_day": "2026-11-25",
+            "price_source": "daily_prices",
+            "value_cad": 24540,
+            "cost_cad": 21940,
+            "unrealised_cad": 2600,
+            "unrealised_fx_cad": null,
+            "unrealised_pct": 11.85,
+            "weight_pct": 25.62
+          },
+          {
+            "ticker": "TD.TO",
+            "account": "tfsa",
+            "currency": "CAD",
+            "shares": 10,
+            "price": 100,
+            "price_day": "2026-11-25",
+            "price_source": "daily_prices",
+            "value_cad": 1000,
+            "cost_cad": 1000,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": null,
+            "unrealised_pct": 0,
+            "weight_pct": 1.04
+          }
+        ],
+        "cash_cad": -9925,
+        "value_cad": 15615,
+        "unrealised_cad": 2600,
+        "unpriced": []
+      },
+      "profit": {
+        "realised_cad": 0,
+        "realised_gains_cad": 0,
+        "realised_losses_cad": 0,
+        "denied_loss_cad": 0,
+        "denied_loss_lost_cad": 0,
+        "realised_fx_part_cad": 0,
+        "unrealised_change_cad": 2600,
+        "before_record_gain_cad": 0,
+        "dividends_gross_cad": 0,
+        "dividends_withheld_cad": 0,
+        "dividends_net_cad": 0,
+        "interest_cad": 0,
+        "fees_cad": 0,
+        "conversion_spread_cad": 0,
+        "commissions_cad": 0,
+        "contributions_cad": 1000,
+        "withdrawals_cad": 0,
+        "adjustments_cad": 0,
+        "explained_cad": 2600,
+        "profit_cad": 2600,
+        "unexplained_cad": 0
+      },
+      "tax": null,
+      "performance": {
+        "start": "2026-10-26",
+        "end": "2026-11-25",
+        "days": 30,
+        "start_value": 12015,
+        "end_value": 15615,
+        "deposited": 1000,
+        "withdrawn": 0,
+        "profit_cad": 2600,
+        "return_period": 0.19976949673453703,
+        "return_annualised": null,
+        "reason": null,
+        "fund": {
+          "available": false,
+          "reason": "no fund price history",
+          "end_value": null,
+          "units": null,
+          "return_period": null,
+          "dollars_added": null,
+          "return_difference": null,
+          "note": null
+        },
+        "flows": [
+          {
+            "day": "2026-10-26",
+            "amount": 12015,
+            "label": "opening stake"
+          },
+          {
+            "day": "2026-10-26",
+            "amount": 1000,
+            "label": "moved in"
+          }
+        ]
+      },
+      "warnings": [
+        "not priced at the start, so carried at cost: RY.TO (tfsa)"
+      ]
+    },
+    "rrsp": {
+      "name": "rrsp",
+      "level": "account",
+      "start": {
+        "day": "2026-10-25",
+        "positions": [
+          {
+            "ticker": "FTS.TO",
+            "account": "rrsp",
+            "currency": "CAD",
+            "shares": 60,
+            "price": null,
+            "price_day": null,
+            "price_source": "cost",
+            "value_cad": 6000,
+            "cost_cad": 6000,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": 0,
+            "unrealised_pct": 0,
+            "weight_pct": 6.44
+          }
+        ],
+        "cash_cad": 9000,
+        "value_cad": 15000,
+        "unrealised_cad": 0,
+        "unpriced": [
+          "FTS.TO (rrsp)"
+        ]
+      },
+      "end": {
+        "day": "2026-11-25",
+        "positions": [
+          {
+            "ticker": "FTS.TO",
+            "account": "rrsp",
+            "currency": "CAD",
+            "shares": 60,
+            "price": 100,
+            "price_day": "2026-11-25",
+            "price_source": "daily_prices",
+            "value_cad": 6000,
+            "cost_cad": 6000,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": null,
+            "unrealised_pct": 0,
+            "weight_pct": 6.26
+          }
+        ],
+        "cash_cad": 9000,
+        "value_cad": 15000,
+        "unrealised_cad": 0,
+        "unpriced": []
+      },
+      "profit": {
+        "realised_cad": 0,
+        "realised_gains_cad": 0,
+        "realised_losses_cad": 0,
+        "denied_loss_cad": 0,
+        "denied_loss_lost_cad": 0,
+        "realised_fx_part_cad": 0,
+        "unrealised_change_cad": 0,
+        "before_record_gain_cad": 0,
+        "dividends_gross_cad": 0,
+        "dividends_withheld_cad": 0,
+        "dividends_net_cad": 0,
+        "interest_cad": 0,
+        "fees_cad": 0,
+        "conversion_spread_cad": 0,
+        "commissions_cad": 0,
+        "contributions_cad": 0,
+        "withdrawals_cad": 0,
+        "adjustments_cad": 0,
+        "explained_cad": 0,
+        "profit_cad": 0,
+        "unexplained_cad": 0
+      },
+      "tax": null,
+      "performance": {
+        "start": "2026-10-26",
+        "end": "2026-11-25",
+        "days": 30,
+        "start_value": 15000,
+        "end_value": 15000,
+        "deposited": 0,
+        "withdrawn": 0,
+        "profit_cad": 0,
+        "return_period": -5.551115123125783e-17,
+        "return_annualised": null,
+        "reason": null,
+        "fund": {
+          "available": false,
+          "reason": "no fund price history",
+          "end_value": null,
+          "units": null,
+          "return_period": null,
+          "dollars_added": null,
+          "return_difference": null,
+          "note": null
+        },
+        "flows": [
+          {
+            "day": "2026-10-26",
+            "amount": 15000,
+            "label": "opening stake"
+          }
+        ]
+      },
+      "warnings": [
+        "not priced at the start, so carried at cost: FTS.TO (rrsp)"
+      ]
+    },
+    "trading": {
+      "name": "trading",
+      "level": "account",
+      "start": {
+        "day": "2026-10-25",
+        "positions": [
+          {
+            "ticker": "BCE.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 100,
+            "price": null,
+            "price_day": null,
+            "price_source": "cost",
+            "value_cad": 13000,
+            "cost_cad": 13000,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": 0,
+            "unrealised_pct": 0,
+            "weight_pct": 13.96
+          },
+          {
+            "ticker": "CNQ.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 50,
+            "price": null,
+            "price_day": null,
+            "price_source": "cost",
+            "value_cad": 3500,
+            "cost_cad": 3500,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": 0,
+            "unrealised_pct": 0,
+            "weight_pct": 3.76
+          },
+          {
+            "ticker": "ENB.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 100,
+            "price": null,
+            "price_day": null,
+            "price_source": "cost",
+            "value_cad": 10000,
+            "cost_cad": 10000,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": 0,
+            "unrealised_pct": 0,
+            "weight_pct": 10.74
+          },
+          {
+            "ticker": "MSFT",
+            "account": "trading",
+            "currency": "USD",
+            "shares": 15,
+            "price": null,
+            "price_day": null,
+            "price_source": "cost",
+            "value_cad": 7020,
+            "cost_cad": 7020,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": 0,
+            "unrealised_pct": 0,
+            "weight_pct": 7.54
+          },
+          {
+            "ticker": "SU.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 40,
+            "price": null,
+            "price_day": null,
+            "price_source": "cost",
+            "value_cad": 4000,
+            "cost_cad": 4000,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": 0,
+            "unrealised_pct": 0,
+            "weight_pct": 4.3
+          },
+          {
+            "ticker": "TD.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 40,
+            "price": null,
+            "price_day": null,
+            "price_source": "cost",
+            "value_cad": 4000,
+            "cost_cad": 4000,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": 0,
+            "unrealised_pct": 0,
+            "weight_pct": 4.3
+          },
+          {
+            "ticker": "ZQQ.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 30,
+            "price": null,
+            "price_day": null,
+            "price_source": "cost",
+            "value_cad": 1800,
+            "cost_cad": 1800,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": 0,
+            "unrealised_pct": 0,
+            "weight_pct": 1.93
+          }
+        ],
+        "cash_cad": 22772.22,
+        "value_cad": 66092.22,
+        "unrealised_cad": 0,
+        "unpriced": [
+          "BCE.TO (trading)",
+          "CNQ.TO (trading)",
+          "ENB.TO (trading)",
+          "MSFT (trading)",
+          "SU.TO (trading)",
+          "TD.TO (trading)",
+          "ZQQ.TO (trading)"
+        ]
+      },
+      "end": {
+        "day": "2026-11-25",
+        "positions": [
+          {
+            "ticker": "BCE.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 110,
+            "price": 100,
+            "price_day": "2026-11-25",
+            "price_source": "daily_prices",
+            "value_cad": 11000,
+            "cost_cad": 14000,
+            "unrealised_cad": -3000,
+            "unrealised_fx_cad": null,
+            "unrealised_pct": -21.43,
+            "weight_pct": 11.49
+          },
+          {
+            "ticker": "CNQ.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 50,
+            "price": 100,
+            "price_day": "2026-11-25",
+            "price_source": "daily_prices",
+            "value_cad": 5000,
+            "cost_cad": 3500,
+            "unrealised_cad": 1500,
+            "unrealised_fx_cad": null,
+            "unrealised_pct": 42.86,
+            "weight_pct": 5.22
+          },
+          {
+            "ticker": "ENB.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 100,
+            "price": 100,
+            "price_day": "2026-11-25",
+            "price_source": "daily_prices",
+            "value_cad": 10000,
+            "cost_cad": 10000,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": null,
+            "unrealised_pct": 0,
+            "weight_pct": 10.44
+          },
+          {
+            "ticker": "MFC.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 3,
+            "price": 100,
+            "price_day": "2026-11-25",
+            "price_source": "daily_prices",
+            "value_cad": 300,
+            "cost_cad": 300,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": null,
+            "unrealised_pct": 0,
+            "weight_pct": 0.31
+          },
+          {
+            "ticker": "MSFT",
+            "account": "trading",
+            "currency": "USD",
+            "shares": 15,
+            "price": 400,
+            "price_day": "2026-11-25",
+            "price_source": "daily_prices",
+            "value_cad": 8577.6,
+            "cost_cad": 7020,
+            "unrealised_cad": 1557.6,
+            "unrealised_fx_cad": 777.6,
+            "unrealised_pct": 22.19,
+            "weight_pct": 8.96
+          },
+          {
+            "ticker": "SU.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 40,
+            "price": 100,
+            "price_day": "2026-11-25",
+            "price_source": "daily_prices",
+            "value_cad": 4000,
+            "cost_cad": 4000,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": null,
+            "unrealised_pct": 0,
+            "weight_pct": 4.18
+          },
+          {
+            "ticker": "TD.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 30,
+            "price": 100,
+            "price_day": "2026-11-25",
+            "price_source": "daily_prices",
+            "value_cad": 3000,
+            "cost_cad": 3000,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": null,
+            "unrealised_pct": 0,
+            "weight_pct": 3.13
+          },
+          {
+            "ticker": "ZQQ.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 30,
+            "price": 60,
+            "price_day": "2026-11-25",
+            "price_source": "daily_prices",
+            "value_cad": 1800,
+            "cost_cad": 1800,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": null,
+            "unrealised_pct": 0,
+            "weight_pct": 1.88
+          }
+        ],
+        "cash_cad": 21484.34,
+        "value_cad": 65161.94,
+        "unrealised_cad": 57.6,
+        "unpriced": []
+      },
+      "profit": {
+        "realised_cad": 0,
+        "realised_gains_cad": 0,
+        "realised_losses_cad": 0,
+        "denied_loss_cad": 0,
+        "denied_loss_lost_cad": 0,
+        "realised_fx_part_cad": 0,
+        "unrealised_change_cad": 57.6,
+        "before_record_gain_cad": 0,
+        "dividends_gross_cad": 0,
+        "dividends_withheld_cad": 0,
+        "dividends_net_cad": 0,
+        "interest_cad": 0,
+        "fees_cad": 0,
+        "conversion_spread_cad": 0,
+        "commissions_cad": 0,
+        "contributions_cad": 0,
+        "withdrawals_cad": 0,
+        "adjustments_cad": 0,
+        "explained_cad": 57.6,
+        "profit_cad": 69.72,
+        "unexplained_cad": 12.12
+      },
+      "tax": {
+        "capital_gains_tax_cad": 0,
+        "taxable_capital_gain_cad": 0,
+        "dividend_tax_cad": 0,
+        "interest_tax_cad": 0,
+        "total_cad": 0,
+        "not_estimated": [],
+        "note": "an estimate at today's marginal rate: a gain that crosses a bracket and a loss carried back or forward are not counted"
+      },
+      "performance": {
+        "start": "2026-10-26",
+        "end": "2026-11-25",
+        "days": 30,
+        "start_value": 66092.22,
+        "end_value": 65161.94,
+        "deposited": 0,
+        "withdrawn": 1000,
+        "profit_cad": 69.72,
+        "return_period": 0.0010710957469263205,
+        "return_annualised": null,
+        "reason": null,
+        "fund": {
+          "available": false,
+          "reason": "no fund price history",
+          "end_value": null,
+          "units": null,
+          "return_period": null,
+          "dollars_added": null,
+          "return_difference": null,
+          "note": null
+        },
+        "flows": [
+          {
+            "day": "2026-10-26",
+            "amount": 66092.22,
+            "label": "opening stake"
+          },
+          {
+            "day": "2026-10-26",
+            "amount": -1000,
+            "label": "moved out"
+          }
+        ]
+      },
+      "warnings": [
+        "not priced at the start, so carried at cost: BCE.TO (trading), CNQ.TO (trading), ENB.TO (trading), MSFT (trading), SU.TO (trading), TD.TO (trading), ZQQ.TO (trading)"
+      ]
+    }
+  },
+  "stocks": [
+    {
+      "name": "RY.TO",
+      "level": "stock",
+      "start": {
+        "day": "2026-10-25",
+        "positions": [
+          {
+            "ticker": "RY.TO",
+            "account": "tfsa",
+            "currency": "CAD",
+            "shares": 40.4,
+            "price": null,
+            "price_day": null,
+            "price_source": "cost",
+            "value_cad": 4040,
+            "cost_cad": 4040,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": 0,
+            "unrealised_pct": 0,
+            "weight_pct": 4.34
+          }
+        ],
+        "cash_cad": null,
+        "value_cad": 4040,
+        "unrealised_cad": 0,
+        "unpriced": [
+          "RY.TO (tfsa)"
+        ]
+      },
+      "end": {
+        "day": "2026-11-25",
+        "positions": [
+          {
+            "ticker": "RY.TO",
+            "account": "tfsa",
+            "currency": "CAD",
+            "shares": 245.4,
+            "price": 100,
+            "price_day": "2026-11-25",
+            "price_source": "daily_prices",
+            "value_cad": 24540,
+            "cost_cad": 21940,
+            "unrealised_cad": 2600,
+            "unrealised_fx_cad": null,
+            "unrealised_pct": 11.85,
+            "weight_pct": 25.62
+          }
+        ],
+        "cash_cad": null,
+        "value_cad": 24540,
+        "unrealised_cad": 2600,
+        "unpriced": []
+      },
+      "profit": {
+        "realised_cad": 0,
+        "realised_gains_cad": 0,
+        "realised_losses_cad": 0,
+        "denied_loss_cad": 0,
+        "denied_loss_lost_cad": 0,
+        "realised_fx_part_cad": 0,
+        "unrealised_change_cad": 2600,
+        "before_record_gain_cad": 0,
+        "dividends_gross_cad": 0,
+        "dividends_withheld_cad": 0,
+        "dividends_net_cad": 0,
+        "interest_cad": 0,
+        "fees_cad": 0,
+        "conversion_spread_cad": 0,
+        "commissions_cad": 0,
+        "contributions_cad": 0,
+        "withdrawals_cad": 0,
+        "adjustments_cad": 0,
+        "explained_cad": 2600,
+        "profit_cad": 2600,
+        "unexplained_cad": 0
+      },
+      "tax": {
+        "capital_gains_tax_cad": 0,
+        "taxable_capital_gain_cad": 0,
+        "dividend_tax_cad": 0,
+        "interest_tax_cad": 0,
+        "total_cad": 0,
+        "not_estimated": [],
+        "note": "no Trading activity in the period"
+      },
+      "performance": {
+        "start": "2026-10-26",
+        "end": "2026-11-25",
+        "days": 30,
+        "start_value": 4040,
+        "end_value": 24540,
+        "deposited": 17900,
+        "withdrawn": 0,
+        "profit_cad": 2600,
+        "return_period": 0.6102764025691616,
+        "return_annualised": null,
+        "reason": null,
+        "fund": {
+          "available": false,
+          "reason": "no fund price history",
+          "end_value": null,
+          "units": null,
+          "return_period": null,
+          "dollars_added": null,
+          "return_difference": null,
+          "note": null
+        },
+        "flows": [
+          {
+            "day": "2026-10-26",
+            "amount": 4040,
+            "label": "opening stake"
+          },
+          {
+            "day": "2026-11-10",
+            "amount": 500,
+            "label": "buy"
+          },
+          {
+            "day": "2026-11-25",
+            "amount": 17400,
+            "label": "buy"
+          }
+        ]
+      },
+      "warnings": [
+        "not priced at the start, so carried at cost: RY.TO (tfsa)"
+      ]
+    },
+    {
+      "name": "MSFT",
+      "level": "stock",
+      "start": {
+        "day": "2026-10-25",
+        "positions": [
+          {
+            "ticker": "MSFT",
+            "account": "trading",
+            "currency": "USD",
+            "shares": 15,
+            "price": null,
+            "price_day": null,
+            "price_source": "cost",
+            "value_cad": 7020,
+            "cost_cad": 7020,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": 0,
+            "unrealised_pct": 0,
+            "weight_pct": 7.54
+          }
+        ],
+        "cash_cad": null,
+        "value_cad": 7020,
+        "unrealised_cad": 0,
+        "unpriced": [
+          "MSFT (trading)"
+        ]
+      },
+      "end": {
+        "day": "2026-11-25",
+        "positions": [
+          {
+            "ticker": "MSFT",
+            "account": "trading",
+            "currency": "USD",
+            "shares": 15,
+            "price": 400,
+            "price_day": "2026-11-25",
+            "price_source": "daily_prices",
+            "value_cad": 8577.6,
+            "cost_cad": 7020,
+            "unrealised_cad": 1557.6,
+            "unrealised_fx_cad": 777.6,
+            "unrealised_pct": 22.19,
+            "weight_pct": 8.96
+          }
+        ],
+        "cash_cad": null,
+        "value_cad": 8577.6,
+        "unrealised_cad": 1557.6,
+        "unpriced": []
+      },
+      "profit": {
+        "realised_cad": 0,
+        "realised_gains_cad": 0,
+        "realised_losses_cad": 0,
+        "denied_loss_cad": 0,
+        "denied_loss_lost_cad": 0,
+        "realised_fx_part_cad": 0,
+        "unrealised_change_cad": 1557.6,
+        "before_record_gain_cad": 0,
+        "dividends_gross_cad": 0,
+        "dividends_withheld_cad": 0,
+        "dividends_net_cad": 0,
+        "interest_cad": 0,
+        "fees_cad": 0,
+        "conversion_spread_cad": 0,
+        "commissions_cad": 0,
+        "contributions_cad": 0,
+        "withdrawals_cad": 0,
+        "adjustments_cad": 0,
+        "explained_cad": 1557.6,
+        "profit_cad": 1557.6,
+        "unexplained_cad": 0
+      },
+      "tax": {
+        "capital_gains_tax_cad": 0,
+        "taxable_capital_gain_cad": 0,
+        "dividend_tax_cad": 0,
+        "interest_tax_cad": 0,
+        "total_cad": 0,
+        "not_estimated": [],
+        "note": "no Trading activity in the period"
+      },
+      "performance": {
+        "start": "2026-10-26",
+        "end": "2026-11-25",
+        "days": 30,
+        "start_value": 7020,
+        "end_value": 8577.6,
+        "deposited": 0,
+        "withdrawn": 0,
+        "profit_cad": 1557.6,
+        "return_period": 0.22188034188034178,
+        "return_annualised": null,
+        "reason": null,
+        "fund": {
+          "available": false,
+          "reason": "no fund price history",
+          "end_value": null,
+          "units": null,
+          "return_period": null,
+          "dollars_added": null,
+          "return_difference": null,
+          "note": null
+        },
+        "flows": [
+          {
+            "day": "2026-10-26",
+            "amount": 7020,
+            "label": "opening stake"
+          }
+        ]
+      },
+      "warnings": [
+        "not priced at the start, so carried at cost: MSFT (trading)"
+      ]
+    },
+    {
+      "name": "CNQ.TO",
+      "level": "stock",
+      "start": {
+        "day": "2026-10-25",
+        "positions": [
+          {
+            "ticker": "CNQ.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 50,
+            "price": null,
+            "price_day": null,
+            "price_source": "cost",
+            "value_cad": 3500,
+            "cost_cad": 3500,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": 0,
+            "unrealised_pct": 0,
+            "weight_pct": 3.76
+          }
+        ],
+        "cash_cad": null,
+        "value_cad": 3500,
+        "unrealised_cad": 0,
+        "unpriced": [
+          "CNQ.TO (trading)"
+        ]
+      },
+      "end": {
+        "day": "2026-11-25",
+        "positions": [
+          {
+            "ticker": "CNQ.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 50,
+            "price": 100,
+            "price_day": "2026-11-25",
+            "price_source": "daily_prices",
+            "value_cad": 5000,
+            "cost_cad": 3500,
+            "unrealised_cad": 1500,
+            "unrealised_fx_cad": null,
+            "unrealised_pct": 42.86,
+            "weight_pct": 5.22
+          }
+        ],
+        "cash_cad": null,
+        "value_cad": 5000,
+        "unrealised_cad": 1500,
+        "unpriced": []
+      },
+      "profit": {
+        "realised_cad": 0,
+        "realised_gains_cad": 0,
+        "realised_losses_cad": 0,
+        "denied_loss_cad": 0,
+        "denied_loss_lost_cad": 0,
+        "realised_fx_part_cad": 0,
+        "unrealised_change_cad": 1500,
+        "before_record_gain_cad": 0,
+        "dividends_gross_cad": 0,
+        "dividends_withheld_cad": 0,
+        "dividends_net_cad": 0,
+        "interest_cad": 0,
+        "fees_cad": 0,
+        "conversion_spread_cad": 0,
+        "commissions_cad": 0,
+        "contributions_cad": 0,
+        "withdrawals_cad": 0,
+        "adjustments_cad": 0,
+        "explained_cad": 1500,
+        "profit_cad": 1500,
+        "unexplained_cad": 0
+      },
+      "tax": {
+        "capital_gains_tax_cad": 0,
+        "taxable_capital_gain_cad": 0,
+        "dividend_tax_cad": 0,
+        "interest_tax_cad": 0,
+        "total_cad": 0,
+        "not_estimated": [],
+        "note": "no Trading activity in the period"
+      },
+      "performance": {
+        "start": "2026-10-26",
+        "end": "2026-11-25",
+        "days": 30,
+        "start_value": 3500,
+        "end_value": 5000,
+        "deposited": 0,
+        "withdrawn": 0,
+        "profit_cad": 1500,
+        "return_period": 0.4285714285714285,
+        "return_annualised": null,
+        "reason": null,
+        "fund": {
+          "available": false,
+          "reason": "no fund price history",
+          "end_value": null,
+          "units": null,
+          "return_period": null,
+          "dollars_added": null,
+          "return_difference": null,
+          "note": null
+        },
+        "flows": [
+          {
+            "day": "2026-10-26",
+            "amount": 3500,
+            "label": "opening stake"
+          }
+        ]
+      },
+      "warnings": [
+        "not priced at the start, so carried at cost: CNQ.TO (trading)"
+      ]
+    },
+    {
+      "name": "ENB.TO",
+      "level": "stock",
+      "start": {
+        "day": "2026-10-25",
+        "positions": [
+          {
+            "ticker": "ENB.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 100,
+            "price": null,
+            "price_day": null,
+            "price_source": "cost",
+            "value_cad": 10000,
+            "cost_cad": 10000,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": 0,
+            "unrealised_pct": 0,
+            "weight_pct": 10.74
+          }
+        ],
+        "cash_cad": null,
+        "value_cad": 10000,
+        "unrealised_cad": 0,
+        "unpriced": [
+          "ENB.TO (trading)"
+        ]
+      },
+      "end": {
+        "day": "2026-11-25",
+        "positions": [
+          {
+            "ticker": "ENB.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 100,
+            "price": 100,
+            "price_day": "2026-11-25",
+            "price_source": "daily_prices",
+            "value_cad": 10000,
+            "cost_cad": 10000,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": null,
+            "unrealised_pct": 0,
+            "weight_pct": 10.44
+          }
+        ],
+        "cash_cad": null,
+        "value_cad": 10000,
+        "unrealised_cad": 0,
+        "unpriced": []
+      },
+      "profit": {
+        "realised_cad": 0,
+        "realised_gains_cad": 0,
+        "realised_losses_cad": 0,
+        "denied_loss_cad": 0,
+        "denied_loss_lost_cad": 0,
+        "realised_fx_part_cad": 0,
+        "unrealised_change_cad": 0,
+        "before_record_gain_cad": 0,
+        "dividends_gross_cad": 0,
+        "dividends_withheld_cad": 0,
+        "dividends_net_cad": 0,
+        "interest_cad": 0,
+        "fees_cad": 0,
+        "conversion_spread_cad": 0,
+        "commissions_cad": 0,
+        "contributions_cad": 0,
+        "withdrawals_cad": 0,
+        "adjustments_cad": 0,
+        "explained_cad": 0,
+        "profit_cad": 0,
+        "unexplained_cad": 0
+      },
+      "tax": {
+        "capital_gains_tax_cad": 0,
+        "taxable_capital_gain_cad": 0,
+        "dividend_tax_cad": 0,
+        "interest_tax_cad": 0,
+        "total_cad": 0,
+        "not_estimated": [],
+        "note": "no Trading activity in the period"
+      },
+      "performance": {
+        "start": "2026-10-26",
+        "end": "2026-11-25",
+        "days": 30,
+        "start_value": 10000,
+        "end_value": 10000,
+        "deposited": 0,
+        "withdrawn": 0,
+        "profit_cad": 0,
+        "return_period": -5.551115123125783e-17,
+        "return_annualised": null,
+        "reason": null,
+        "fund": {
+          "available": false,
+          "reason": "no fund price history",
+          "end_value": null,
+          "units": null,
+          "return_period": null,
+          "dollars_added": null,
+          "return_difference": null,
+          "note": null
+        },
+        "flows": [
+          {
+            "day": "2026-10-26",
+            "amount": 10000,
+            "label": "opening stake"
+          }
+        ]
+      },
+      "warnings": [
+        "not priced at the start, so carried at cost: ENB.TO (trading)"
+      ]
+    },
+    {
+      "name": "FTS.TO",
+      "level": "stock",
+      "start": {
+        "day": "2026-10-25",
+        "positions": [
+          {
+            "ticker": "FTS.TO",
+            "account": "rrsp",
+            "currency": "CAD",
+            "shares": 60,
+            "price": null,
+            "price_day": null,
+            "price_source": "cost",
+            "value_cad": 6000,
+            "cost_cad": 6000,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": 0,
+            "unrealised_pct": 0,
+            "weight_pct": 6.44
+          }
+        ],
+        "cash_cad": null,
+        "value_cad": 6000,
+        "unrealised_cad": 0,
+        "unpriced": [
+          "FTS.TO (rrsp)"
+        ]
+      },
+      "end": {
+        "day": "2026-11-25",
+        "positions": [
+          {
+            "ticker": "FTS.TO",
+            "account": "rrsp",
+            "currency": "CAD",
+            "shares": 60,
+            "price": 100,
+            "price_day": "2026-11-25",
+            "price_source": "daily_prices",
+            "value_cad": 6000,
+            "cost_cad": 6000,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": null,
+            "unrealised_pct": 0,
+            "weight_pct": 6.26
+          }
+        ],
+        "cash_cad": null,
+        "value_cad": 6000,
+        "unrealised_cad": 0,
+        "unpriced": []
+      },
+      "profit": {
+        "realised_cad": 0,
+        "realised_gains_cad": 0,
+        "realised_losses_cad": 0,
+        "denied_loss_cad": 0,
+        "denied_loss_lost_cad": 0,
+        "realised_fx_part_cad": 0,
+        "unrealised_change_cad": 0,
+        "before_record_gain_cad": 0,
+        "dividends_gross_cad": 0,
+        "dividends_withheld_cad": 0,
+        "dividends_net_cad": 0,
+        "interest_cad": 0,
+        "fees_cad": 0,
+        "conversion_spread_cad": 0,
+        "commissions_cad": 0,
+        "contributions_cad": 0,
+        "withdrawals_cad": 0,
+        "adjustments_cad": 0,
+        "explained_cad": 0,
+        "profit_cad": 0,
+        "unexplained_cad": 0
+      },
+      "tax": {
+        "capital_gains_tax_cad": 0,
+        "taxable_capital_gain_cad": 0,
+        "dividend_tax_cad": 0,
+        "interest_tax_cad": 0,
+        "total_cad": 0,
+        "not_estimated": [],
+        "note": "no Trading activity in the period"
+      },
+      "performance": {
+        "start": "2026-10-26",
+        "end": "2026-11-25",
+        "days": 30,
+        "start_value": 6000,
+        "end_value": 6000,
+        "deposited": 0,
+        "withdrawn": 0,
+        "profit_cad": 0,
+        "return_period": -5.551115123125783e-17,
+        "return_annualised": null,
+        "reason": null,
+        "fund": {
+          "available": false,
+          "reason": "no fund price history",
+          "end_value": null,
+          "units": null,
+          "return_period": null,
+          "dollars_added": null,
+          "return_difference": null,
+          "note": null
+        },
+        "flows": [
+          {
+            "day": "2026-10-26",
+            "amount": 6000,
+            "label": "opening stake"
+          }
+        ]
+      },
+      "warnings": [
+        "not priced at the start, so carried at cost: FTS.TO (rrsp)"
+      ]
+    },
+    {
+      "name": "MFC.TO",
+      "level": "stock",
+      "start": {
+        "day": "2026-10-25",
+        "positions": [],
+        "cash_cad": null,
+        "value_cad": 0,
+        "unrealised_cad": 0,
+        "unpriced": []
+      },
+      "end": {
+        "day": "2026-11-25",
+        "positions": [
+          {
+            "ticker": "MFC.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 3,
+            "price": 100,
+            "price_day": "2026-11-25",
+            "price_source": "daily_prices",
+            "value_cad": 300,
+            "cost_cad": 300,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": null,
+            "unrealised_pct": 0,
+            "weight_pct": 0.31
+          }
+        ],
+        "cash_cad": null,
+        "value_cad": 300,
+        "unrealised_cad": 0,
+        "unpriced": []
+      },
+      "profit": {
+        "realised_cad": 0,
+        "realised_gains_cad": 0,
+        "realised_losses_cad": 0,
+        "denied_loss_cad": 0,
+        "denied_loss_lost_cad": 0,
+        "realised_fx_part_cad": 0,
+        "unrealised_change_cad": 0,
+        "before_record_gain_cad": 0,
+        "dividends_gross_cad": 0,
+        "dividends_withheld_cad": 0,
+        "dividends_net_cad": 0,
+        "interest_cad": 0,
+        "fees_cad": 0,
+        "conversion_spread_cad": 0,
+        "commissions_cad": 0,
+        "contributions_cad": 0,
+        "withdrawals_cad": 0,
+        "adjustments_cad": 0,
+        "explained_cad": 0,
+        "profit_cad": 0,
+        "unexplained_cad": 0
+      },
+      "tax": {
+        "capital_gains_tax_cad": 0,
+        "taxable_capital_gain_cad": 0,
+        "dividend_tax_cad": 0,
+        "interest_tax_cad": 0,
+        "total_cad": 0,
+        "not_estimated": [],
+        "note": "an estimate at today's marginal rate: a gain that crosses a bracket and a loss carried back or forward are not counted"
+      },
+      "performance": {
+        "start": "2026-10-26",
+        "end": "2026-11-25",
+        "days": 30,
+        "start_value": 0,
+        "end_value": 300,
+        "deposited": 300,
+        "withdrawn": 0,
+        "profit_cad": 0,
+        "return_period": -3.885780586188048e-16,
+        "return_annualised": null,
+        "reason": null,
+        "fund": {
+          "available": false,
+          "reason": "no fund price history",
+          "end_value": null,
+          "units": null,
+          "return_period": null,
+          "dollars_added": null,
+          "return_difference": null,
+          "note": null
+        },
+        "flows": [
+          {
+            "day": "2026-11-20",
+            "amount": 300,
+            "label": "buy"
+          }
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "name": "SU.TO",
+      "level": "stock",
+      "start": {
+        "day": "2026-10-25",
+        "positions": [
+          {
+            "ticker": "SU.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 40,
+            "price": null,
+            "price_day": null,
+            "price_source": "cost",
+            "value_cad": 4000,
+            "cost_cad": 4000,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": 0,
+            "unrealised_pct": 0,
+            "weight_pct": 4.3
+          }
+        ],
+        "cash_cad": null,
+        "value_cad": 4000,
+        "unrealised_cad": 0,
+        "unpriced": [
+          "SU.TO (trading)"
+        ]
+      },
+      "end": {
+        "day": "2026-11-25",
+        "positions": [
+          {
+            "ticker": "SU.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 40,
+            "price": 100,
+            "price_day": "2026-11-25",
+            "price_source": "daily_prices",
+            "value_cad": 4000,
+            "cost_cad": 4000,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": null,
+            "unrealised_pct": 0,
+            "weight_pct": 4.18
+          }
+        ],
+        "cash_cad": null,
+        "value_cad": 4000,
+        "unrealised_cad": 0,
+        "unpriced": []
+      },
+      "profit": {
+        "realised_cad": 0,
+        "realised_gains_cad": 0,
+        "realised_losses_cad": 0,
+        "denied_loss_cad": 0,
+        "denied_loss_lost_cad": 0,
+        "realised_fx_part_cad": 0,
+        "unrealised_change_cad": 0,
+        "before_record_gain_cad": 0,
+        "dividends_gross_cad": 0,
+        "dividends_withheld_cad": 0,
+        "dividends_net_cad": 0,
+        "interest_cad": 0,
+        "fees_cad": 0,
+        "conversion_spread_cad": 0,
+        "commissions_cad": 0,
+        "contributions_cad": 0,
+        "withdrawals_cad": 0,
+        "adjustments_cad": 0,
+        "explained_cad": 0,
+        "profit_cad": 0,
+        "unexplained_cad": 0
+      },
+      "tax": {
+        "capital_gains_tax_cad": 0,
+        "taxable_capital_gain_cad": 0,
+        "dividend_tax_cad": 0,
+        "interest_tax_cad": 0,
+        "total_cad": 0,
+        "not_estimated": [],
+        "note": "no Trading activity in the period"
+      },
+      "performance": {
+        "start": "2026-10-26",
+        "end": "2026-11-25",
+        "days": 30,
+        "start_value": 4000,
+        "end_value": 4000,
+        "deposited": 0,
+        "withdrawn": 0,
+        "profit_cad": 0,
+        "return_period": -5.551115123125783e-17,
+        "return_annualised": null,
+        "reason": null,
+        "fund": {
+          "available": false,
+          "reason": "no fund price history",
+          "end_value": null,
+          "units": null,
+          "return_period": null,
+          "dollars_added": null,
+          "return_difference": null,
+          "note": null
+        },
+        "flows": [
+          {
+            "day": "2026-10-26",
+            "amount": 4000,
+            "label": "opening stake"
+          }
+        ]
+      },
+      "warnings": [
+        "not priced at the start, so carried at cost: SU.TO (trading)"
+      ]
+    },
+    {
+      "name": "TD.TO",
+      "level": "stock",
+      "start": {
+        "day": "2026-10-25",
+        "positions": [
+          {
+            "ticker": "TD.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 40,
+            "price": null,
+            "price_day": null,
+            "price_source": "cost",
+            "value_cad": 4000,
+            "cost_cad": 4000,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": 0,
+            "unrealised_pct": 0,
+            "weight_pct": 4.3
+          }
+        ],
+        "cash_cad": null,
+        "value_cad": 4000,
+        "unrealised_cad": 0,
+        "unpriced": [
+          "TD.TO (trading)"
+        ]
+      },
+      "end": {
+        "day": "2026-11-25",
+        "positions": [
+          {
+            "ticker": "TD.TO",
+            "account": "tfsa",
+            "currency": "CAD",
+            "shares": 10,
+            "price": 100,
+            "price_day": "2026-11-25",
+            "price_source": "daily_prices",
+            "value_cad": 1000,
+            "cost_cad": 1000,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": null,
+            "unrealised_pct": 0,
+            "weight_pct": 1.04
+          },
+          {
+            "ticker": "TD.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 30,
+            "price": 100,
+            "price_day": "2026-11-25",
+            "price_source": "daily_prices",
+            "value_cad": 3000,
+            "cost_cad": 3000,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": null,
+            "unrealised_pct": 0,
+            "weight_pct": 3.13
+          }
+        ],
+        "cash_cad": null,
+        "value_cad": 4000,
+        "unrealised_cad": 0,
+        "unpriced": []
+      },
+      "profit": {
+        "realised_cad": 0,
+        "realised_gains_cad": 0,
+        "realised_losses_cad": 0,
+        "denied_loss_cad": 0,
+        "denied_loss_lost_cad": 0,
+        "realised_fx_part_cad": 0,
+        "unrealised_change_cad": 0,
+        "before_record_gain_cad": 0,
+        "dividends_gross_cad": 0,
+        "dividends_withheld_cad": 0,
+        "dividends_net_cad": 0,
+        "interest_cad": 0,
+        "fees_cad": 0,
+        "conversion_spread_cad": 0,
+        "commissions_cad": 0,
+        "contributions_cad": 1000,
+        "withdrawals_cad": 0,
+        "adjustments_cad": 0,
+        "explained_cad": 0,
+        "profit_cad": 0,
+        "unexplained_cad": 0
+      },
+      "tax": {
+        "capital_gains_tax_cad": 0,
+        "taxable_capital_gain_cad": 0,
+        "dividend_tax_cad": 0,
+        "interest_tax_cad": 0,
+        "total_cad": 0,
+        "not_estimated": [],
+        "note": "an estimate at today's marginal rate: a gain that crosses a bracket and a loss carried back or forward are not counted"
+      },
+      "performance": {
+        "start": "2026-10-26",
+        "end": "2026-11-25",
+        "days": 30,
+        "start_value": 4000,
+        "end_value": 4000,
+        "deposited": 0,
+        "withdrawn": 0,
+        "profit_cad": 0,
+        "return_period": -5.551115123125783e-17,
+        "return_annualised": null,
+        "reason": null,
+        "fund": {
+          "available": false,
+          "reason": "no fund price history",
+          "end_value": null,
+          "units": null,
+          "return_period": null,
+          "dollars_added": null,
+          "return_difference": null,
+          "note": null
+        },
+        "flows": [
+          {
+            "day": "2026-10-26",
+            "amount": 4000,
+            "label": "opening stake"
+          }
+        ]
+      },
+      "warnings": [
+        "not priced at the start, so carried at cost: TD.TO (trading)"
+      ]
+    },
+    {
+      "name": "ZQQ.TO",
+      "level": "stock",
+      "start": {
+        "day": "2026-10-25",
+        "positions": [
+          {
+            "ticker": "ZQQ.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 30,
+            "price": null,
+            "price_day": null,
+            "price_source": "cost",
+            "value_cad": 1800,
+            "cost_cad": 1800,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": 0,
+            "unrealised_pct": 0,
+            "weight_pct": 1.93
+          }
+        ],
+        "cash_cad": null,
+        "value_cad": 1800,
+        "unrealised_cad": 0,
+        "unpriced": [
+          "ZQQ.TO (trading)"
+        ]
+      },
+      "end": {
+        "day": "2026-11-25",
+        "positions": [
+          {
+            "ticker": "ZQQ.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 30,
+            "price": 60,
+            "price_day": "2026-11-25",
+            "price_source": "daily_prices",
+            "value_cad": 1800,
+            "cost_cad": 1800,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": null,
+            "unrealised_pct": 0,
+            "weight_pct": 1.88
+          }
+        ],
+        "cash_cad": null,
+        "value_cad": 1800,
+        "unrealised_cad": 0,
+        "unpriced": []
+      },
+      "profit": {
+        "realised_cad": 0,
+        "realised_gains_cad": 0,
+        "realised_losses_cad": 0,
+        "denied_loss_cad": 0,
+        "denied_loss_lost_cad": 0,
+        "realised_fx_part_cad": 0,
+        "unrealised_change_cad": 0,
+        "before_record_gain_cad": 0,
+        "dividends_gross_cad": 0,
+        "dividends_withheld_cad": 0,
+        "dividends_net_cad": 0,
+        "interest_cad": 0,
+        "fees_cad": 0,
+        "conversion_spread_cad": 0,
+        "commissions_cad": 0,
+        "contributions_cad": 0,
+        "withdrawals_cad": 0,
+        "adjustments_cad": 0,
+        "explained_cad": 0,
+        "profit_cad": 0,
+        "unexplained_cad": 0
+      },
+      "tax": {
+        "capital_gains_tax_cad": 0,
+        "taxable_capital_gain_cad": 0,
+        "dividend_tax_cad": 0,
+        "interest_tax_cad": 0,
+        "total_cad": 0,
+        "not_estimated": [],
+        "note": "no Trading activity in the period"
+      },
+      "performance": {
+        "start": "2026-10-26",
+        "end": "2026-11-25",
+        "days": 30,
+        "start_value": 1800,
+        "end_value": 1800,
+        "deposited": 0,
+        "withdrawn": 0,
+        "profit_cad": 0,
+        "return_period": -5.551115123125783e-17,
+        "return_annualised": null,
+        "reason": null,
+        "fund": {
+          "available": false,
+          "reason": "no fund price history",
+          "end_value": null,
+          "units": null,
+          "return_period": null,
+          "dollars_added": null,
+          "return_difference": null,
+          "note": null
+        },
+        "flows": [
+          {
+            "day": "2026-10-26",
+            "amount": 1800,
+            "label": "opening stake"
+          }
+        ]
+      },
+      "warnings": [
+        "not priced at the start, so carried at cost: ZQQ.TO (trading)"
+      ]
+    },
+    {
+      "name": "BCE.TO",
+      "level": "stock",
+      "start": {
+        "day": "2026-10-25",
+        "positions": [
+          {
+            "ticker": "BCE.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 100,
+            "price": null,
+            "price_day": null,
+            "price_source": "cost",
+            "value_cad": 13000,
+            "cost_cad": 13000,
+            "unrealised_cad": 0,
+            "unrealised_fx_cad": 0,
+            "unrealised_pct": 0,
+            "weight_pct": 13.96
+          }
+        ],
+        "cash_cad": null,
+        "value_cad": 13000,
+        "unrealised_cad": 0,
+        "unpriced": [
+          "BCE.TO (trading)"
+        ]
+      },
+      "end": {
+        "day": "2026-11-25",
+        "positions": [
+          {
+            "ticker": "BCE.TO",
+            "account": "trading",
+            "currency": "CAD",
+            "shares": 110,
+            "price": 100,
+            "price_day": "2026-11-25",
+            "price_source": "daily_prices",
+            "value_cad": 11000,
+            "cost_cad": 14000,
+            "unrealised_cad": -3000,
+            "unrealised_fx_cad": null,
+            "unrealised_pct": -21.43,
+            "weight_pct": 11.49
+          }
+        ],
+        "cash_cad": null,
+        "value_cad": 11000,
+        "unrealised_cad": -3000,
+        "unpriced": []
+      },
+      "profit": {
+        "realised_cad": 0,
+        "realised_gains_cad": 0,
+        "realised_losses_cad": 0,
+        "denied_loss_cad": 0,
+        "denied_loss_lost_cad": 0,
+        "realised_fx_part_cad": 0,
+        "unrealised_change_cad": -3000,
+        "before_record_gain_cad": 0,
+        "dividends_gross_cad": 0,
+        "dividends_withheld_cad": 0,
+        "dividends_net_cad": 0,
+        "interest_cad": 0,
+        "fees_cad": 0,
+        "conversion_spread_cad": 0,
+        "commissions_cad": 0,
+        "contributions_cad": 0,
+        "withdrawals_cad": 0,
+        "adjustments_cad": 0,
+        "explained_cad": -3000,
+        "profit_cad": -3000,
+        "unexplained_cad": 0
+      },
+      "tax": {
+        "capital_gains_tax_cad": 0,
+        "taxable_capital_gain_cad": 0,
+        "dividend_tax_cad": 0,
+        "interest_tax_cad": 0,
+        "total_cad": 0,
+        "not_estimated": [],
+        "note": "an estimate at today's marginal rate: a gain that crosses a bracket and a loss carried back or forward are not counted"
+      },
+      "performance": {
+        "start": "2026-10-26",
+        "end": "2026-11-25",
+        "days": 30,
+        "start_value": 13000,
+        "end_value": 11000,
+        "deposited": 1000,
+        "withdrawn": 0,
+        "profit_cad": -3000,
+        "return_period": -0.22451812399063625,
+        "return_annualised": null,
+        "reason": null,
+        "fund": {
+          "available": false,
+          "reason": "no fund price history",
+          "end_value": null,
+          "units": null,
+          "return_period": null,
+          "dollars_added": null,
+          "return_difference": null,
+          "note": null
+        },
+        "flows": [
+          {
+            "day": "2026-10-26",
+            "amount": 13000,
+            "label": "opening stake"
+          },
+          {
+            "day": "2026-11-15",
+            "amount": 1000,
+            "label": "buy"
+          }
+        ]
+      },
+      "warnings": [
+        "not priced at the start, so carried at cost: BCE.TO (trading)"
+      ]
+    }
+  ],
+  "who_and_why": [
+    {
+      "initiated_by": "owner",
+      "reason_code": null,
+      "kind": "buy",
+      "count": 4,
+      "amount_cad": 19200,
+      "gain_cad": 0
+    }
+  ],
+  "breakdowns": [],
+  "actions": [
+    {
+      "transaction_id": "64376811-f287-46b2-ab5a-f2cdc12a6cf1",
+      "day": "2026-11-25",
+      "account": "tfsa",
+      "kind": "buy",
+      "ticker": "RY.TO",
+      "shares": 200,
+      "price": 87,
+      "currency": "CAD",
+      "amount_cad": 17400,
+      "fees_cad": 0,
+      "gain_cad": null,
+      "fx_gain_cad": null,
+      "denied_loss_cad": null,
+      "denied_loss_lost_cad": null,
+      "withholding_cad": null,
+      "initiated_by": "owner",
+      "reason_code": null,
+      "recommendation_id": null,
+      "system_outlook": null,
+      "aligned_with_system": null,
+      "notes": "Test",
+      "reversed": false,
+      "is_reversal": false
+    },
+    {
+      "transaction_id": "7aabb303-4350-48df-805e-2ac7dd6d5aa7",
+      "day": "2026-11-20",
+      "account": "trading",
+      "kind": "buy",
+      "ticker": "MFC.TO",
+      "shares": 3,
+      "price": 100,
+      "currency": "CAD",
+      "amount_cad": 300,
+      "fees_cad": 0,
+      "gain_cad": null,
+      "fx_gain_cad": null,
+      "denied_loss_cad": null,
+      "denied_loss_lost_cad": null,
+      "withholding_cad": null,
+      "initiated_by": "owner",
+      "reason_code": null,
+      "recommendation_id": null,
+      "system_outlook": null,
+      "aligned_with_system": null,
+      "notes": null,
+      "reversed": false,
+      "is_reversal": false
+    },
+    {
+      "transaction_id": "8677ed54-ec79-49fb-8a92-c8f3a6116b10",
+      "day": "2026-11-15",
+      "account": "trading",
+      "kind": "buy",
+      "ticker": "BCE.TO",
+      "shares": 10,
+      "price": 100,
+      "currency": "CAD",
+      "amount_cad": 1000,
+      "fees_cad": 0,
+      "gain_cad": null,
+      "fx_gain_cad": null,
+      "denied_loss_cad": null,
+      "denied_loss_lost_cad": null,
+      "withholding_cad": null,
+      "initiated_by": "owner",
+      "reason_code": null,
+      "recommendation_id": null,
+      "system_outlook": null,
+      "aligned_with_system": null,
+      "notes": null,
+      "reversed": false,
+      "is_reversal": false
+    },
+    {
+      "transaction_id": "5f470dfa-6ec8-4f1f-aa06-7988cd3d46d3",
+      "day": "2026-11-10",
+      "account": "tfsa",
+      "kind": "buy",
+      "ticker": "RY.TO",
+      "shares": 5,
+      "price": 150,
+      "currency": "CAD",
+      "amount_cad": 750,
+      "fees_cad": 0,
+      "gain_cad": null,
+      "fx_gain_cad": null,
+      "denied_loss_cad": null,
+      "denied_loss_lost_cad": null,
+      "withholding_cad": null,
+      "initiated_by": "owner",
+      "reason_code": null,
+      "recommendation_id": null,
+      "system_outlook": null,
+      "aligned_with_system": null,
+      "notes": null,
+      "reversed": true,
+      "is_reversal": false
+    },
+    {
+      "transaction_id": "b2e376bc-1e99-4f43-9359-e040bdae3339",
+      "day": "2026-11-10",
+      "account": "tfsa",
+      "kind": "buy",
+      "ticker": "RY.TO",
+      "shares": 5,
+      "price": 150,
+      "currency": "CAD",
+      "amount_cad": 750,
+      "fees_cad": 0,
+      "gain_cad": null,
+      "fx_gain_cad": null,
+      "denied_loss_cad": null,
+      "denied_loss_lost_cad": null,
+      "withholding_cad": null,
+      "initiated_by": "owner",
+      "reason_code": null,
+      "recommendation_id": null,
+      "system_outlook": null,
+      "aligned_with_system": null,
+      "notes": "Correction of the buy of 2026-11-10",
+      "reversed": false,
+      "is_reversal": true
+    },
+    {
+      "transaction_id": "2dc15eae-ccf1-4d35-bfca-dde50dc4ec3e",
+      "day": "2026-11-10",
+      "account": "tfsa",
+      "kind": "buy",
+      "ticker": "RY.TO",
+      "shares": 5,
+      "price": 100,
+      "currency": "CAD",
+      "amount_cad": 500,
+      "fees_cad": 0,
+      "gain_cad": null,
+      "fx_gain_cad": null,
+      "denied_loss_cad": null,
+      "denied_loss_lost_cad": null,
+      "withholding_cad": null,
+      "initiated_by": "owner",
+      "reason_code": null,
+      "recommendation_id": null,
+      "system_outlook": null,
+      "aligned_with_system": null,
+      "notes": null,
+      "reversed": false,
+      "is_reversal": false
+    },
+    {
+      "transaction_id": "16b12109-8de6-489e-9d25-55e89ceb133e",
+      "day": "2026-11-05",
+      "account": "trading",
+      "kind": "buy",
+      "ticker": "ENB.TO",
+      "shares": 5,
+      "price": 100,
+      "currency": "CAD",
+      "amount_cad": 500,
+      "fees_cad": 0,
+      "gain_cad": null,
+      "fx_gain_cad": null,
+      "denied_loss_cad": null,
+      "denied_loss_lost_cad": null,
+      "withholding_cad": null,
+      "initiated_by": "owner",
+      "reason_code": null,
+      "recommendation_id": null,
+      "system_outlook": null,
+      "aligned_with_system": null,
+      "notes": null,
+      "reversed": true,
+      "is_reversal": false
+    },
+    {
+      "transaction_id": "307395d2-6f0d-46e0-afb0-e49de53441e9",
+      "day": "2026-11-05",
+      "account": "trading",
+      "kind": "buy",
+      "ticker": "ENB.TO",
+      "shares": 5,
+      "price": 100,
+      "currency": "CAD",
+      "amount_cad": 500,
+      "fees_cad": 0,
+      "gain_cad": null,
+      "fx_gain_cad": null,
+      "denied_loss_cad": null,
+      "denied_loss_lost_cad": null,
+      "withholding_cad": null,
+      "initiated_by": "owner",
+      "reason_code": null,
+      "recommendation_id": null,
+      "system_outlook": null,
+      "aligned_with_system": null,
+      "notes": "entered by mistake",
+      "reversed": false,
+      "is_reversal": true
+    },
+    {
+      "transaction_id": "72a49775-56d8-42bb-a03a-b7bf2fb33f88",
+      "day": "2026-10-26",
+      "account": "trading",
+      "kind": "transfer_out",
+      "ticker": "TD.TO",
+      "shares": -10,
+      "price": 100,
+      "currency": "CAD",
+      "amount_cad": 1000,
+      "fees_cad": 0,
+      "gain_cad": 0,
+      "fx_gain_cad": 0,
+      "denied_loss_cad": null,
+      "denied_loss_lost_cad": null,
+      "withholding_cad": null,
+      "initiated_by": "owner",
+      "reason_code": null,
+      "recommendation_id": null,
+      "system_outlook": null,
+      "aligned_with_system": null,
+      "notes": null,
+      "reversed": false,
+      "is_reversal": false
+    },
+    {
+      "transaction_id": "0e485921-38fb-4d5f-86f8-d5b28a6766a1",
+      "day": "2026-10-26",
+      "account": "tfsa",
+      "kind": "transfer_in",
+      "ticker": "TD.TO",
+      "shares": 10,
+      "price": 100,
+      "currency": "CAD",
+      "amount_cad": 1000,
+      "fees_cad": 0,
+      "gain_cad": null,
+      "fx_gain_cad": null,
+      "denied_loss_cad": null,
+      "denied_loss_lost_cad": null,
+      "withholding_cad": null,
+      "initiated_by": "owner",
+      "reason_code": null,
+      "recommendation_id": null,
+      "system_outlook": null,
+      "aligned_with_system": null,
+      "notes": null,
+      "reversed": false,
+      "is_reversal": false
+    }
+  ],
+  "actions_total": 10,
+  "narrowed": [],
+  "warnings": [
+    "the fund comparison is unavailable: VFV.TO is not a stock yet: run scripts/core_funds.py seed",
+    "not priced at the start, so carried at cost: FTS.TO (rrsp), RY.TO (tfsa), BCE.TO (trading), CNQ.TO (trading), ENB.TO (trading), MSFT (trading), SU.TO (trading), TD.TO (trading), ZQQ.TO (trading)"
+  ],
+  "notes": [
+    "Information only: nothing here scores an action of the owner's."
+  ]
+}

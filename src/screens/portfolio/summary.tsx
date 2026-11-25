@@ -1,161 +1,61 @@
 /**
- * The header and its detail panels: the scope's value, the since-inception report (profit lines, tax, performance, benchmark
- * fund, money in and out), the value history, the accounts and the contribution room. `column` = a headline figure,
- * `detail` = a line in the performance panel, `csv` = not used here.
+ * The Portfolio header: the tiles of the original design and the contribution room of each account card. Every other field of the
+ * schemas it reads is listed as not shown, with a reason, in `SUMMARY_NOT_SHOWN`.
  */
 import { defineFields, type ApiFieldKey, type NotShown } from '@/lib/fields'
-import { formatCAD, formatDate, formatNumber, formatPercent } from '@/lib/format'
 import { asFraction } from '@/lib/units'
 import type { components } from '@/types/openapi.gen'
 import type { PortfolioSummary } from '@/types/portfolio'
-import { cad, day, signedPct, text, yesNo } from '../formatters'
+import { cad, day, signedPct, yesNo } from '../formatters'
 
 type Api = components['schemas']
 
 
-type Profit = Api['ProfitLinesResponse']
 const profit = (s: PortfolioSummary) => s.report?.profit
 const performance = (s: PortfolioSummary) => s.report?.performance
-const fund = (s: PortfolioSummary) => s.report?.performance.fund
-const tax = (s: PortfolioSummary) => s.report?.tax
 
-/** One line of the profit report in Canadian dollars, read from `report.profit`. */
-function profitLine(key: keyof Profit, label: string, tooltip?: string, headline = false) {
-  return {
-    id: `profit_${key}`,
-    label,
-    source: `ProfitLinesResponse.${key}` as ApiFieldKey,
-    get: (s: PortfolioSummary) => profit(s)?.[key],
-    format: (v: unknown) => cad(v, key === 'profit_cad' || key.startsWith('realised') || key === 'unrealised_change_cad'),
-    tooltip,
-    places: headline ? (['column', 'detail'] as const) : (['detail'] as const),
-  }
-}
-
+/**
+ * The header tiles of the original design, in its order: Total Value, Unrealized, Realized, Total Return, Dividends Received, Today
+ * (Annual Div Est. and Holdings come from the holdings, in `SummaryHeader`), plus the read-only Cash tile the owner chose. Every
+ * other figure of these schemas is listed in `SUMMARY_NOT_SHOWN` below.
+ */
 export const SUMMARY_FIELDS = defineFields<PortfolioSummary>([
-  // Where the prices are from
-  { id: 'as_of', label: 'Prices as of', source: 'ScopeValueResponse.day', get: (s) => s.as_of, format: day, places: ['column', 'detail'] },
-  { id: 'value', label: 'Value (incl. cash)', source: 'ScopeValueResponse.value_cad', get: (s) => s.total_value_cad, format: (v) => cad(v), places: ['column', 'detail'] },
-  { id: 'cash', label: 'Cash', source: 'ScopeValueResponse.cash_cad', get: (s) => s.cash_cad, format: (v) => cad(v), places: ['column', 'detail'] },
-  { id: 'unrealised', label: 'Unrealised', source: 'ScopeValueResponse.unrealised_cad', get: (s) => s.total_gain_loss_cad, format: (v) => cad(v, true), places: ['column', 'detail'] },
-  { id: 'unrealised_pct', label: 'Unrealised %', source: ['ScopeValueResponse.unrealised_cad', 'PositionLineResponse.cost_cad'], get: (s) => s.total_gain_loss_pct, format: signedPct, tooltip: 'Unrealised over the cost base of the positions', places: ['column', 'detail'] },
-  { id: 'unpriced', label: 'Held with no price', source: 'ScopeValueResponse.unpriced', get: (s) => s.unpriced, format: (v) => ((v as string[]).length ? (v as string[]).join(', ') : 'None'), tooltip: 'Carried at cost, not at zero', places: ['detail'] },
-
-  // Performance since the first entry (the report)
-  { id: 'period', label: 'Period', source: ['PeriodResponse.label', 'PeriodResponse.start', 'PeriodResponse.end', 'PeriodResponse.tax_year'], get: (s) => s.report_meta?.period.label, format: text, places: ['detail'] },
-  { id: 'period_days', label: 'Days', source: 'PerformanceResponse.days', get: (s) => performance(s)?.days, places: ['detail'] },
-  { id: 'start_value', label: 'Value at start', source: 'PerformanceResponse.start_value', get: (s) => performance(s)?.start_value, format: (v) => cad(v), places: ['detail'] },
-  { id: 'end_value', label: 'Value at end', source: 'PerformanceResponse.end_value', get: (s) => performance(s)?.end_value, format: (v) => cad(v), places: ['detail'] },
-  { id: 'deposited', label: 'Deposited', source: 'PerformanceResponse.deposited', get: (s) => performance(s)?.deposited, format: (v) => cad(v), places: ['detail'] },
-  { id: 'withdrawn', label: 'Withdrawn', source: 'PerformanceResponse.withdrawn', get: (s) => performance(s)?.withdrawn, format: (v) => cad(v), places: ['detail'] },
-  { id: 'profit', label: 'Profit', source: 'PerformanceResponse.profit_cad', get: (s) => performance(s)?.profit_cad, format: (v) => cad(v, true), places: ['column', 'detail'] },
-  { id: 'return_period', label: 'Return', source: 'PerformanceResponse.return_period', get: (s) => asFraction('PerformanceResponse.return_period', performance(s)?.return_period), format: signedPct, tooltip: 'Money-weighted: it accounts for when cash went in and out', places: ['column', 'detail'] },
-  { id: 'return_annualised', label: 'Return per year', source: 'PerformanceResponse.return_annualised', get: (s) => asFraction('PerformanceResponse.return_annualised', performance(s)?.return_annualised), format: signedPct, places: ['column', 'detail'] },
-  { id: 'return_reason', label: 'Why no return', source: 'PerformanceResponse.reason', get: (s) => performance(s)?.reason, format: text, places: ['detail'] },
+  { id: 'value', label: 'Total Value', source: 'ScopeValueResponse.value_cad', get: (s) => s.total_value_cad, format: (v) => cad(v), tooltip: 'The holdings at the latest recorded prices, plus cash', places: ['column'] },
+  { id: 'cash', label: 'Cash', source: 'ScopeValueResponse.cash_cad', get: (s) => s.cash_cad, format: (v) => cad(v), tooltip: 'The cash the record holds. You do not enter cash, so a recorded buy takes from it', places: ['column'] },
+  { id: 'unrealised', label: 'Unrealized', source: ['ScopeValueResponse.unrealised_cad', 'PositionLineResponse.cost_cad'], get: (s) => s.total_gain_loss_cad, format: (v, s) => `${cad(v, true)} (${signedPct(s.total_gain_loss_pct)})`, tooltip: 'Gain or loss on what you still hold, over its cost', places: ['column'] },
+  { id: 'realised', label: 'Realized', source: 'ProfitLinesResponse.realised_cad', get: (s) => profit(s)?.realised_cad, format: (v) => cad(v, true), tooltip: 'Gains less losses made by selling', places: ['column'] },
   {
-    id: 'flows',
-    label: 'Money in and out',
-    source: ['PerformanceResponse.flows', 'FlowResponse.day', 'FlowResponse.amount', 'FlowResponse.label'],
-    get: (s) => performance(s)?.flows ?? [],
-    format: (v) => ((v as Api['FlowResponse'][]).length ? (v as Api['FlowResponse'][]).map((f) => `${formatDate(f.day)} ${f.label} ${formatCAD(f.amount, { signed: true })}`).join('; ') : 'None'),
-    places: ['detail'],
+    id: 'total_return',
+    label: 'Total Return',
+    source: ['PerformanceResponse.profit_cad', 'PerformanceResponse.return_period'],
+    get: (s) => performance(s)?.profit_cad,
+    format: (v, s) => `${cad(v, true)} (${signedPct(asFraction('PerformanceResponse.return_period', performance(s)?.return_period))})`,
+    tooltip: 'Profit since the first entry, and the return that accounts for when money went in',
+    places: ['column'],
   },
-
-  // Benchmark fund
-  { id: 'fund_available', label: 'Benchmark fund', source: 'FundResultResponse.available', get: (s) => fund(s)?.available, format: (v, s) => (v ? 'Available' : `Unavailable: ${fund(s)?.reason ?? 'no reason given'} (P-D1)`), places: ['detail'] },
-  { id: 'fund_reason', label: 'Why unavailable', source: 'FundResultResponse.reason', get: (s) => fund(s)?.reason, format: text, places: ['detail'] },
-  { id: 'fund_end_value', label: 'Fund value', source: 'FundResultResponse.end_value', get: (s) => fund(s)?.end_value, format: (v) => cad(v), places: ['detail'] },
-  { id: 'fund_units', label: 'Fund units', source: 'FundResultResponse.units', get: (s) => fund(s)?.units, format: (v) => (v == null ? '—' : formatNumber(v as number, 4)), places: ['detail'] },
-  { id: 'fund_return', label: 'Fund return', source: 'FundResultResponse.return_period', get: (s) => asFraction('FundResultResponse.return_period', fund(s)?.return_period), format: signedPct, places: ['detail'] },
-  { id: 'fund_dollars_added', label: 'Dollars added to the fund', source: 'FundResultResponse.dollars_added', get: (s) => fund(s)?.dollars_added, format: (v) => cad(v), places: ['detail'] },
-  { id: 'fund_difference', label: 'Versus benchmark fund', source: 'FundResultResponse.return_difference', get: (s) => asFraction('FundResultResponse.return_difference', fund(s)?.return_difference), format: signedPct, tooltip: "Your period return less the fund's", places: ['column', 'detail'] },
-  { id: 'fund_note', label: 'Fund note', source: 'FundResultResponse.note', get: (s) => fund(s)?.note, format: text, places: ['detail'] },
-
-  // Profit lines
-  profitLine('realised_cad', 'Realised', 'Gains less losses made by selling', true),
-  profitLine('realised_gains_cad', 'Realised gains'),
-  profitLine('realised_losses_cad', 'Realised losses'),
-  profitLine('denied_loss_cad', 'Denied losses', 'Losses the superficial-loss rule does not allow now'),
-  profitLine('denied_loss_lost_cad', 'Denied losses lost'),
-  profitLine('realised_fx_part_cad', 'Of which currency'),
-  profitLine('unrealised_change_cad', 'Change in unrealised'),
-  profitLine('before_record_gain_cad', 'Gain before the record began'),
-  profitLine('dividends_gross_cad', 'Dividends, gross'),
-  profitLine('dividends_withheld_cad', 'Tax withheld on dividends'),
-  profitLine('dividends_net_cad', 'Dividends received', 'After tax withheld', true),
-  profitLine('interest_cad', 'Interest'),
-  profitLine('fees_cad', 'Fees', undefined, true),
-  profitLine('conversion_spread_cad', 'Currency conversion spread'),
-  profitLine('commissions_cad', 'Commissions'),
-  profitLine('contributions_cad', 'Contributions'),
-  profitLine('withdrawals_cad', 'Withdrawals'),
-  profitLine('adjustments_cad', 'Adjustments'),
-  profitLine('explained_cad', 'Explained by the entries'),
-  profitLine('profit_cad', 'Profit'),
-  profitLine('unexplained_cad', 'Unexplained', 'What the entries do not account for; it should be zero'),
-
-  // Estimated tax
-  { id: 'tax_capital_gains', label: 'Capital gains tax (estimate)', source: 'TaxEstimateResponse.capital_gains_tax_cad', get: (s) => tax(s)?.capital_gains_tax_cad, format: (v) => cad(v), places: ['detail'] },
-  { id: 'tax_taxable_gain', label: 'Taxable capital gain', source: 'TaxEstimateResponse.taxable_capital_gain_cad', get: (s) => tax(s)?.taxable_capital_gain_cad, format: (v) => cad(v), places: ['detail'] },
-  { id: 'tax_dividend', label: 'Dividend tax (estimate)', source: 'TaxEstimateResponse.dividend_tax_cad', get: (s) => tax(s)?.dividend_tax_cad, format: (v) => cad(v), places: ['detail'] },
-  { id: 'tax_interest', label: 'Interest tax (estimate)', source: 'TaxEstimateResponse.interest_tax_cad', get: (s) => tax(s)?.interest_tax_cad, format: (v) => cad(v), places: ['detail'] },
-  { id: 'tax_total', label: 'Estimated tax', source: 'TaxEstimateResponse.total_cad', get: (s) => tax(s)?.total_cad, format: (v) => cad(v), places: ['column', 'detail'] },
-  { id: 'tax_not_estimated', label: 'Not estimated', source: 'TaxEstimateResponse.not_estimated', get: (s) => tax(s)?.not_estimated ?? [], format: (v) => ((v as string[]).length ? (v as string[]).join('; ') : 'None'), places: ['detail'] },
-  { id: 'tax_note', label: 'Tax note', source: 'TaxEstimateResponse.note', get: (s) => tax(s)?.note, format: text, places: ['detail'] },
-
-  // The report's own warnings
-  { id: 'report_warnings', label: 'Report warnings', source: ['ScopeReportResponse.warnings', 'PerformanceResponse.reason'], get: (s) => s.report?.warnings ?? [], format: (v) => ((v as string[]).length ? (v as string[]).join('; ') : 'None'), places: ['detail'] },
-  { id: 'report_notes', label: 'Report notes', source: ['ReportResponse.notes', 'ReportResponse.warnings', 'ReportResponse.narrowed'], get: (s) => [...(s.report_meta?.notes ?? []), ...(s.report_meta?.warnings ?? []), ...(s.report_meta?.narrowed ?? [])], format: (v) => ((v as string[]).length ? (v as string[]).join('; ') : 'None'), places: ['detail'] },
-
-  // Change at the last close (from the value history)
+  { id: 'dividends', label: 'Dividends Received', source: 'ProfitLinesResponse.dividends_net_cad', get: (s) => profit(s)?.dividends_net_cad, format: (v) => cad(v), tooltip: 'After tax withheld', places: ['column'] },
   {
     id: 'day_change',
-    label: 'Change at last close',
+    label: 'Today',
     source: ['ValueHistoryResponse.points', 'ValuePointResponse.value_cad', 'ValuePointResponse.cost_cad', 'ValuePointResponse.cash_cad', 'ValuePointResponse.day'],
     get: (s) => s.day_change_cad,
     format: (v, s) => (v == null ? 'unavailable (P-D2)' : `${cad(v, true)} (${signedPct(s.day_change_pct)}) since ${day(s.day_change_from)}${s.day_change_includes_flows ? ', includes cash or trades' : ''}`),
     tooltip: 'The last two recorded days of the value history',
-    places: ['column', 'detail'],
+    places: ['column'],
   },
-  { id: 'history_warnings', label: 'Value history warnings', source: 'ValueHistoryResponse.warnings', get: (s) => s.history?.warnings ?? [], format: (v) => ((v as string[]).length ? (v as string[]).join('; ') : 'None'), places: ['detail'] },
 ])
 
-/** One account's cash and broker settings (the account card). */
-export const ACCOUNT_FIELDS = defineFields<Api['PortfolioAccountResponse']>([
-  { id: 'type', label: 'Account', source: 'PortfolioAccountResponse.account_type', get: (a) => a.account_type.toUpperCase(), places: ['detail'] },
-  { id: 'cash_cad', label: 'Cash (CAD)', source: 'PortfolioAccountResponse.cash_cad', get: (a) => a.cash_cad, format: (v) => cad(v), places: ['column', 'detail'] },
-  { id: 'cash_usd', label: 'Cash (USD)', source: 'PortfolioAccountResponse.cash_usd', get: (a) => a.cash_usd, format: (v) => formatNumber(v as number | null), places: ['column', 'detail'] },
-  { id: 'commission', label: 'Commission per trade', source: 'PortfolioAccountResponse.commission_per_trade', get: (a) => a.commission_per_trade, format: (v) => cad(v), places: ['detail'] },
-  { id: 'conversion_cost', label: 'Currency conversion cost', source: 'PortfolioAccountResponse.conversion_cost_pct', get: (a) => asFraction('PortfolioAccountResponse.conversion_cost_pct', a.conversion_cost_pct), format: (v) => formatPercent(v as number | null), places: ['detail'] },
-  { id: 'norberts', label: "Uses Norbert's gambit", source: 'PortfolioAccountResponse.uses_norberts_gambit', get: (a) => a.uses_norberts_gambit, format: yesNo, places: ['detail'] },
-  { id: 'reinvests', label: 'Reinvests dividends', source: 'PortfolioAccountResponse.reinvests_dividends', get: (a) => a.reinvests_dividends, format: yesNo, places: ['detail'] },
-  { id: 'updated', label: 'Settings changed', source: 'PortfolioAccountResponse.last_updated', get: (a) => a.last_updated, format: day, places: ['detail'] },
-])
-
-/** One account's contribution room (the room strip). TFSA and RRSP only; the Trading account has none. */
+/** One account's contribution room, drawn in its account card (TFSA and RRSP only; the Trading account has none). */
 export const ROOM_FIELDS = defineFields<Api['AccountRoomResponse']>([
-  { id: 'account', label: 'Account', source: 'AccountRoomResponse.account', get: (r) => r.account.toUpperCase(), places: ['detail'] },
-  { id: 'room_today', label: 'Room today', source: 'AccountRoomResponse.room_today', get: (r) => r.room_today, format: (v) => cad(v), places: ['column', 'detail'] },
-  { id: 'base_room', label: 'Room when entered', source: 'AccountRoomResponse.base_room', get: (r) => r.base_room, format: (v) => cad(v), places: ['detail'] },
-  { id: 'base_as_of', label: 'Entered on', source: 'AccountRoomResponse.base_as_of', get: (r) => r.base_as_of, format: day, tooltip: 'A day as you wrote it', places: ['detail'] },
-  { id: 'estimated', label: 'Estimated', source: 'AccountRoomResponse.estimated', get: (r) => r.estimated, format: yesNo, places: ['column', 'detail'] },
-  { id: 'events', label: 'Changes since', source: 'AccountRoomResponse.events', get: (r) => r.events, format: (v) => `${(v as unknown[]).length}`, places: ['detail'] },
-  { id: 'shortfalls', label: 'Shortfalls', source: 'AccountRoomResponse.shortfalls', get: (r) => r.shortfalls, format: (v) => `${(v as unknown[]).length}`, places: ['detail'] },
-])
-
-export const ROOM_EVENT_FIELDS = defineFields<Api['RoomEventResponse']>([
-  { id: 'when', label: 'When', source: 'RoomEventResponse.when', get: (e) => e.when, format: day, places: ['column'] },
-  { id: 'kind', label: 'What', source: 'RoomEventResponse.kind', get: (e) => e.kind, format: (v) => String(v).replaceAll('_', ' '), places: ['column'] },
-  { id: 'change', label: 'Change', source: 'RoomEventResponse.change', get: (e) => e.change, format: (v) => cad(v, true), places: ['column'] },
-  { id: 'room_after', label: 'Room after', source: 'RoomEventResponse.room_after', get: (e) => e.room_after, format: (v) => cad(v), places: ['column'] },
-  { id: 'detail', label: 'Detail', source: 'RoomEventResponse.detail', get: (e) => e.detail, places: ['column'] },
+  { id: 'room_today', label: 'Room today', source: 'AccountRoomResponse.room_today', get: (r) => r.room_today, format: (v) => cad(v), places: ['column'] },
+  { id: 'estimated', label: 'Estimated', source: 'AccountRoomResponse.estimated', get: (r) => r.estimated, format: yesNo, places: ['column'] },
 ])
 
 export const SUMMARY_NOT_SHOWN: Partial<Record<ApiFieldKey, NotShown>> = {
   'PositionsResponse.portfolio_id': { reason: 'An id of the portfolio the page is already in' },
   'PositionsResponse.total': { reason: "Shown through the scope's own fields (ScopeValueResponse)" },
   'PositionsResponse.accounts': { reason: "Shown through the scope's own fields (ScopeValueResponse)" },
-  'PositionsResponse.confirmations': { reason: "Shown on each holding and account through ConfirmationResponse's fields" },
+  'PositionsResponse.confirmations': { reason: 'Not shown: confirming positions with the broker has no screen in the original design' },
   'ScopeValueResponse.positions': { reason: "Each position is a row of the Holdings table, shown through PositionLineResponse's fields" },
   'ScopeReportResponse.name': { reason: 'The scope key (total, an account): the page already knows it' },
   'ScopeReportResponse.level': { reason: 'The scope level (total, account, stock): the page already knows it' },
@@ -194,4 +94,79 @@ export const SUMMARY_NOT_SHOWN: Partial<Record<ApiFieldKey, NotShown>> = {
   'RoomResponse.portfolio_id': { reason: 'An id of the portfolio the page is already in' },
   'RoomResponse.as_of': { reason: 'The day the room was worked out: today' },
   'RoomResponse.accounts': { reason: "Shown through AccountRoomResponse's fields, one per account" },
+  // Everything the header and the "Performance, tax and accounts" panel showed that the original design does not have
+  'AccountRoomResponse.account': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'AccountRoomResponse.base_as_of': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'AccountRoomResponse.base_room': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'AccountRoomResponse.events': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'AccountRoomResponse.shortfalls': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'FlowResponse.amount': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'FlowResponse.day': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'FlowResponse.label': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'FundResultResponse.available': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'FundResultResponse.dollars_added': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'FundResultResponse.end_value': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'FundResultResponse.note': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'FundResultResponse.reason': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'FundResultResponse.return_difference': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'FundResultResponse.return_period': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'FundResultResponse.units': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'PerformanceResponse.days': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'PerformanceResponse.deposited': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'PerformanceResponse.end_value': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'PerformanceResponse.flows': { reason: "Not shown: every contribution and withdrawal is a row in Transactions, which covers it" },
+  'PerformanceResponse.reason': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'PerformanceResponse.return_annualised': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'PerformanceResponse.start_value': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'PerformanceResponse.withdrawn': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'PeriodResponse.end': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'PeriodResponse.label': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'PeriodResponse.start': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'PeriodResponse.tax_year': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'PortfolioAccountResponse.account_type': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'PortfolioAccountResponse.cash_cad': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'PortfolioAccountResponse.cash_usd': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'PortfolioAccountResponse.commission_per_trade': { reason: "Used as the default fee of a Buy or Sell (the trade form); not drawn on the page" },
+  'PortfolioAccountResponse.conversion_cost_pct': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'PortfolioAccountResponse.last_updated': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'PortfolioAccountResponse.reinvests_dividends': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'PortfolioAccountResponse.uses_norberts_gambit': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ProfitLinesResponse.adjustments_cad': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ProfitLinesResponse.before_record_gain_cad': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ProfitLinesResponse.commissions_cad': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ProfitLinesResponse.contributions_cad': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ProfitLinesResponse.conversion_spread_cad': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ProfitLinesResponse.denied_loss_cad': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ProfitLinesResponse.denied_loss_lost_cad': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ProfitLinesResponse.dividends_gross_cad': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ProfitLinesResponse.dividends_withheld_cad': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ProfitLinesResponse.explained_cad': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ProfitLinesResponse.fees_cad': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ProfitLinesResponse.interest_cad': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ProfitLinesResponse.profit_cad': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ProfitLinesResponse.realised_fx_part_cad': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ProfitLinesResponse.realised_gains_cad': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ProfitLinesResponse.realised_losses_cad': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ProfitLinesResponse.unexplained_cad': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ProfitLinesResponse.unrealised_change_cad': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ProfitLinesResponse.withdrawals_cad': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ReportResponse.narrowed': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ReportResponse.notes': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ReportResponse.warnings': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'RoomEventResponse.change': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'RoomEventResponse.detail': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'RoomEventResponse.kind': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'RoomEventResponse.room_after': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'RoomEventResponse.when': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ScopeReportResponse.warnings': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ScopeValueResponse.day': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'ScopeValueResponse.unpriced': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'TaxEstimateResponse.capital_gains_tax_cad': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'TaxEstimateResponse.dividend_tax_cad': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'TaxEstimateResponse.interest_tax_cad': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'TaxEstimateResponse.not_estimated': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'TaxEstimateResponse.note': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'TaxEstimateResponse.taxable_capital_gain_cad': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
+  'TaxEstimateResponse.total_cad': { reason: "Not shown. What it is: the tax the backend estimates you owe on the Trading account for the period, from capital gains (half the gain at your marginal rate), dividends after tax withheld, and interest; TFSA and RRSP are left out. The original header had no tax figure" },
+  'ValueHistoryResponse.warnings': { reason: "Not shown: the original design has no such figure (owner decision 2026-11-25); the gap register lists it as a backend capability with no screen" },
 }

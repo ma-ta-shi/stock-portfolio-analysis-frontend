@@ -19,6 +19,13 @@ export const LEDGER = {
   eventsPreview: ledgerRoute('POST', '/events/preview'),
   events: ledgerRoute('POST', '/events'),
   remove: ledgerRoute('POST', '/holdings/{id}/remove'),
+  correctPreview: ledgerRoute('POST', '/events/{id}/correct/preview'),
+  correct: ledgerRoute('POST', '/events/{id}/correct'),
+  reverse: ledgerRoute('POST', '/events/{id}/reverse'),
+  dividendPreview: ledgerRoute('POST', '/dividends/{id}/preview'),
+  dividendConfirm: ledgerRoute('POST', '/dividends/{id}/confirm'),
+  dividendDismiss: ledgerRoute('POST', '/dividends/{id}/dismiss'),
+  dividendReopen: ledgerRoute('POST', '/dividends/{id}/reopen'),
 } as const
 
 /** The route's path with its `{name}` placeholders replaced by `params`; a missing parameter is a bug, not an empty segment. */

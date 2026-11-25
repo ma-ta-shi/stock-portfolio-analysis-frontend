@@ -9,7 +9,6 @@ import { asFraction } from './units'
 import type { components } from '@/types/openapi.gen'
 import type {
   AccountBreakdown,
-  Confirmation,
   Holding,
   PortfolioAccountView,
   PortfolioSummary,
@@ -21,22 +20,10 @@ type Api = components['schemas']
 export type ApiHolding = Api['HoldingResponse']
 export type ApiTransaction = Api['TransactionResponse']
 export type ApiPositions = Api['PositionsResponse']
-export type ApiConfirmation = Api['ConfirmationResponse']
 type ApiScope = Api['ScopeValueResponse']
 
 
-function mapConfirmation(c: ApiConfirmation | undefined): Confirmation | null {
-  return c ? { lastConfirmed: c.last_confirmed ?? null, ageDays: c.age_days, overdue: c.overdue } : null
-}
-
-/** The confirmation of one position (matched by ticker and account), or null when the backend has none for it. */
-function confirmationOf(h: ApiHolding, confirmations: readonly ApiConfirmation[]): Confirmation | null {
-  return mapConfirmation(
-    confirmations.find((c) => c.kind === 'position' && c.what === h.stock.ticker && c.account_type === h.account_type),
-  )
-}
-
-export function mapHolding(h: ApiHolding, confirmations: readonly ApiConfirmation[] = []): Holding {
+export function mapHolding(h: ApiHolding): Holding {
   const call = h.snapshot ? mapStockSnapshot(h.snapshot) : null
   const position = h.position ?? null
   const price = position?.price ?? call?.price ?? null
@@ -84,12 +71,11 @@ export function mapHolding(h: ApiHolding, confirmations: readonly ApiConfirmatio
     expected_income_per_share: income,
     dividend_yield: income != null && price != null && price > 0 ? income / price : null,
     yield_on_cost: income != null && h.average_cost_basis > 0 ? income / h.average_cost_basis : null,
-    confirmation: confirmationOf(h, confirmations),
   }
 }
 
-export function mapHoldings(rows: readonly ApiHolding[], confirmations: readonly ApiConfirmation[] = []): Holding[] {
-  return rows.map((row) => mapHolding(row, confirmations))
+export function mapHoldings(rows: readonly ApiHolding[]): Holding[] {
+  return rows.map((row) => mapHolding(row))
 }
 
 export function mapTransaction(t: ApiTransaction): Transaction {
@@ -204,7 +190,6 @@ export function buildSummary({ view, positions, report, history, accounts, room,
     accounts: accounts ?? [],
     room,
     room_error: roomError,
-    confirmations: positions.confirmations,
     unavailable: { report: report == null, history: history == null, accounts: accounts == null, room: room == null },
   }
 }

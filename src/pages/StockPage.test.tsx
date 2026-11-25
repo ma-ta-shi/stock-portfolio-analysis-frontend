@@ -1,8 +1,12 @@
 import React from 'react'
-import { describe, it, expect, vi } from 'vitest'
+import { beforeEach, describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import { mockHolding } from '@/test/mock-data'
+import { mockLedgerHooks } from '@/test/ledger-mocks'
 import { StockPage } from './StockPage'
+import { mapTransactions } from '@/lib/portfolio-mappers'
+import transactionsFixture from '../../public/mock-data/portfolio/transactions.json'
 
 vi.mock('@/hooks/use-stock-detail')
 vi.mock('@/hooks/use-portfolio')
@@ -20,14 +24,14 @@ vi.mock('@/context/UserContext', () => ({
 }))
 
 import { useStockDetail, useStockAnalysisHistory } from '@/hooks/use-stock-detail'
-import { usePortfolioHoldings, useUpdatePosition } from '@/hooks/use-portfolio'
+import { usePortfolioHoldings, useTransactionHistory } from '@/hooks/use-portfolio'
 import { useTickerSearch } from '@/hooks/use-ticker-search'
 import { useAddToWatchlist, useWatchlist } from '@/hooks/use-watchlist'
 
+vi.mocked(useTransactionHistory).mockReturnValue({ data: [], isError: false } as unknown as ReturnType<typeof useTransactionHistory>)
 const mockUseStockDetail = vi.mocked(useStockDetail)
 const mockUseStockAnalysisHistory = vi.mocked(useStockAnalysisHistory)
 const mockUsePortfolioHoldings = vi.mocked(usePortfolioHoldings)
-vi.mocked(useUpdatePosition).mockReturnValue({ mutateAsync: vi.fn(), isPending: false } as unknown as ReturnType<typeof useUpdatePosition>)
 vi.mocked(useTickerSearch).mockReturnValue({ mutateAsync: vi.fn(), isPending: false, reset: vi.fn() } as unknown as ReturnType<typeof useTickerSearch>)
 vi.mocked(useAddToWatchlist).mockReturnValue({ mutateAsync: vi.fn(), isPending: false, reset: vi.fn() } as unknown as ReturnType<typeof useAddToWatchlist>)
 vi.mocked(useWatchlist).mockReturnValue({ data: undefined } as unknown as ReturnType<typeof useWatchlist>)
@@ -86,6 +90,22 @@ describe('StockPage — Run New Analysis button', () => {
     expect(btn).toBeDisabled()
     // Ensure it is not wrapped in a link
     expect(btn.closest('a')).toBeNull()
+  })
+})
+
+describe('StockPage — your position', () => {
+  it('offers Buy, Sell, Log Dividend (for every position) and Edit', () => {
+    mockLedgerHooks()
+    mockUseStockDetail.mockReturnValue({ data: mockStock, isLoading: false, isError: false, refetch: vi.fn() } as unknown as ReturnType<typeof useStockDetail>)
+    mockUseStockAnalysisHistory.mockReturnValue({ data: { data: [] }, isLoading: false } as unknown as ReturnType<typeof useStockAnalysisHistory>)
+    mockUsePortfolioHoldings.mockReturnValue({ data: [mockHolding], isLoading: false } as unknown as ReturnType<typeof usePortfolioHoldings>)
+    renderStockPage(mockHolding.stock.stock_id) // the page finds a position by the stock id in the route
+
+    expect(screen.getByRole('button', { name: 'Buy' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Sell' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Edit' })).toBeInTheDocument()
+    expect(screen.queryByRole('group', { name: /Actions for/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Move to another account|Confirm with broker|Remove/ })).not.toBeInTheDocument()
   })
 })
 
@@ -187,5 +207,32 @@ describe('StockPage — awaiting-analysis note', () => {
   it('is not shown while the history is still loading', () => {
     setup({ data: undefined, isLoading: true, isError: false })
     expect(screen.queryByText(/Awaiting analysis\./)).not.toBeInTheDocument()
+  })
+})
+
+describe('StockPage: the stock history', () => {
+  const rows = mapTransactions(transactionsFixture.data as unknown as Parameters<typeof mapTransactions>[0])
+  const history = (data: typeof rows) =>
+    vi.mocked(useTransactionHistory).mockReturnValue({ data, isError: false } as unknown as ReturnType<typeof useTransactionHistory>)
+
+  beforeEach(() => {
+    mockLedgerHooks()
+    mockUseStockDetail.mockReturnValue({ data: mockStock, isLoading: false, isError: false } as unknown as ReturnType<typeof useStockDetail>)
+    mockUseStockAnalysisHistory.mockReturnValue({ data: { data: [] }, isLoading: false, isError: false } as unknown as ReturnType<typeof useStockAnalysisHistory>)
+    mockUsePortfolioHoldings.mockReturnValue({ data: [] } as unknown as ReturnType<typeof usePortfolioHoldings>)
+  })
+
+  it("lists that stock's transactions and dividends together, and no other stock's", () => {
+    const mine = { ...rows[0], transaction_id: 'mine', stock: { ...rows[0].stock!, ticker: 'RY.TO' } }
+    const other = { ...rows[0], transaction_id: 'other', stock: { ...rows[0].stock!, ticker: 'ENB.TO' } }
+    history([mine, { ...mine, transaction_id: 'div', transaction_type: 'dividend' }, other])
+    renderStockPage()
+    expect(screen.getByRole('region', { name: 'Transactions and dividends' }).querySelectorAll('tbody tr')).toHaveLength(2)
+  })
+
+  it('draws no history for a stock with none', () => {
+    history([])
+    renderStockPage()
+    expect(screen.queryByRole('region', { name: 'Transactions and dividends' })).not.toBeInTheDocument()
   })
 })

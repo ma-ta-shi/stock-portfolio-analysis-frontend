@@ -1,7 +1,7 @@
+import { AccountTitle } from '@/components/ledger/AccountTitle'
 import { LedgerDialog } from '@/components/ledger/LedgerDialog'
 import { PositionSummary } from '@/components/ledger/PositionSummary'
 import { useTradeForm } from '@/components/ledger/TradeForm'
-import { Badge } from '@/components/ui/badge'
 import { formatMoney } from '@/lib/format'
 import { LEDGER } from '@/lib/ledger-routes'
 import { gainLossColor } from '@/lib/labels'
@@ -37,12 +37,9 @@ function SellPosition({ holding, onClose }: { holding: Holding; onClose: () => v
       open
       onClose={onClose}
       title={
-        <>
+        <AccountTitle account={holding.account_type}>
           Sell {holding.stock.ticker}
-          <Badge variant="outline" className="ml-2 text-xs font-normal">
-            {holding.account_type.toUpperCase()}
-          </Badge>
-        </>
+        </AccountTitle>
       }
       summary={
         <PositionSummary

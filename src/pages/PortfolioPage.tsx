@@ -8,9 +8,9 @@ import {
 import { getErrorMessage } from '@/lib/api'
 import { safeStorage } from '@/lib/storage'
 import { AddStockDialog } from '@/components/AddStockDialog'
-import { CashEntryDialog } from '@/components/CashEntryDialog'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
+import { DividendsTab } from './portfolio/DividendsTab'
 import { HoldingsTable } from './portfolio/HoldingsTable'
 import { AllocationCharts } from './portfolio/AllocationCharts'
 import { PortfolioOptimizerSection } from './portfolio/PortfolioOptimizerSection'
@@ -22,7 +22,7 @@ import type { PortfolioAccountView } from '@/types'
 
 const ACCOUNT_VIEW_STORAGE_KEY = 'portfolio_account_view'
 
-const PORTFOLIO_TABS = ['holdings', 'optimizer', 'transactions', 'allocation'] as const
+const PORTFOLIO_TABS = ['holdings', 'dividends', 'optimizer', 'transactions', 'allocation'] as const
 type PortfolioTab = (typeof PORTFOLIO_TABS)[number]
 
 /** The active subtab lives in `?tab=` so links (e.g. "View history") can open a specific tab. */
@@ -117,7 +117,6 @@ function AvailableToTradeWidget() {
 export function PortfolioPage() {
   const [accountView, setAccountView] = useState<PortfolioAccountView>(getSessionAccount)
   const [addDialogOpen, setAddDialogOpen] = useState(false)
-  const [cashDialogOpen, setCashDialogOpen] = useState(false)
   const [activeTab, setActiveTab] = usePortfolioTab()
   const owner = usePortfolioId()
 
@@ -166,26 +165,23 @@ export function PortfolioPage() {
         <div className="flex items-center justify-between mb-4">
           <TabsList>
             <TabsTrigger value="holdings">Holdings</TabsTrigger>
+            <TabsTrigger value="dividends">Dividends</TabsTrigger>
             <TabsTrigger value="optimizer">Optimizer</TabsTrigger>
             <TabsTrigger value="transactions">Transactions</TabsTrigger>
             <TabsTrigger value="allocation">Allocation</TabsTrigger>
           </TabsList>
-          <div className="flex gap-2">
-            {(activeTab === 'holdings' || activeTab === 'transactions') && (
-              <Button size="sm" variant="outline" onClick={() => setCashDialogOpen(true)}>
-                Record cash
-              </Button>
-            )}
-            {activeTab === 'holdings' && (
-              <Button size="sm" onClick={() => setAddDialogOpen(true)}>
-                <Plus className="w-4 h-4 mr-1" aria-hidden="true" />
-                Add Stock
-              </Button>
-            )}
-          </div>
+          {activeTab === 'holdings' && (
+            <Button size="sm" onClick={() => setAddDialogOpen(true)}>
+              <Plus className="w-4 h-4 mr-1" aria-hidden="true" />
+              Add Stock
+            </Button>
+          )}
         </div>
         <TabsContent value="holdings">
           <HoldingsTable accountFilter={accountView} />
+        </TabsContent>
+        <TabsContent value="dividends">
+          <DividendsTab accountFilter={accountView} />
         </TabsContent>
         <TabsContent value="transactions">
           <TransactionsTab accountFilter={accountView} />
@@ -202,7 +198,6 @@ export function PortfolioPage() {
         </TabsContent>
       </Tabs>
 
-      <CashEntryDialog open={cashDialogOpen} onClose={() => setCashDialogOpen(false)} account={accountView === 'combined' ? undefined : accountView} />
       <AddStockDialog
         mode="portfolio"
         open={addDialogOpen}
