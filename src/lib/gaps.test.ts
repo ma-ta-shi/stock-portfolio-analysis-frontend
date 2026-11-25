@@ -16,13 +16,13 @@ describe('gap registry', () => {
   })
 
   it('builds the not-connected error and the unavailable label from the registry', () => {
-    const error = notConnected('P-W2')
+    const error = notConnected('P-W4')
     expect(error).toBeInstanceOf(ApiError)
     expect(error.code).toBe('not_connected')
-    expect(error.message).toBe('Recording a sale is not connected yet (P-W2, ticket 86bd5z6mq).')
-    expect(notConnectedMessage('P-W2')).toBe(error.message)
+    expect(error.message).toBe('Editing a position is not connected yet (P-W4, ticket 86bd5z6mq).')
+    expect(notConnectedMessage('P-W4')).toBe(error.message)
     expect(unavailableLabel('P-C2')).toBe('unavailable (P-C2)')
-    expect(isGapId('P-W2')).toBe(true)
+    expect(isGapId('P-W4')).toBe(true)
     expect(isGapId('nope')).toBe(false)
   })
 

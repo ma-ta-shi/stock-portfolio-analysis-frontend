@@ -1,93 +1,91 @@
-import { describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { describe, expect, it, vi, beforeEach } from 'vitest'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { SellPositionDialog } from './SellPositionDialog'
 import { mockHolding, mockUsdHolding } from '@/test/mock-data'
-import type { UserProfile } from '@/types'
+import { mockLedgerHooks, PREVIEW_OF_A_BUY } from '@/test/ledger-mocks'
 
 vi.mock('@/hooks/use-portfolio')
-vi.mock('@/hooks/use-user-profile')
-vi.mock('@/hooks/use-fx-rates', () => ({
-  useFxRates: () => ({ rates: { CAD: 1, USD: 1.4 }, isLoading: false }),
-}))
 
-import { usePortfolioHoldings, useSellPosition } from '@/hooks/use-portfolio'
-import { useUserProfile } from '@/hooks/use-user-profile'
-
-const mutateAsync = vi.fn()
-vi.mocked(useSellPosition).mockReturnValue({ mutateAsync, isPending: false, isError: false } as unknown as ReturnType<typeof useSellPosition>)
-vi.mocked(usePortfolioHoldings).mockReturnValue({ data: [] } as unknown as ReturnType<typeof usePortfolioHoldings>)
-vi.mocked(useUserProfile).mockReturnValue({
-  data: { financial_profile: { marginal_tax_rate: 0.4341 } } as UserProfile,
-} as unknown as ReturnType<typeof useUserProfile>)
+let ledger: ReturnType<typeof mockLedgerHooks>
+beforeEach(() => {
+  ledger = mockLedgerHooks()
+})
 
 const trading = { ...mockHolding, account_type: 'trading' as const, shares: 100, average_cost_basis: 100, current_price: 150 }
-
-function setValue(label: RegExp, value: string) {
-  fireEvent.change(screen.getByLabelText(label), { target: { value } })
-}
+const set = (label: RegExp, value: string) => fireEvent.change(screen.getByLabelText(label), { target: { value } })
+const review = () => fireEvent.click(screen.getByRole('button', { name: 'Review' }))
 
 describe('SellPositionDialog', () => {
-  it('links every field to its label', () => {
+  it('renders nothing without a holding', () => {
+    const { container } = render(<SellPositionDialog holding={null} onClose={vi.fn()} />)
+    expect(container).toBeEmptyDOMElement()
+  })
+
+  it('links every field to its label, with all shares and the current price filled in', () => {
     render(<SellPositionDialog holding={trading} onClose={vi.fn()} />)
     expect(screen.getByLabelText(/Shares to sell/)).toHaveValue(100)
     expect(screen.getByLabelText(/Price per share \(CAD\)/)).toHaveValue(150)
-    expect(screen.getByLabelText(/Fees \(CAD\)/)).toHaveValue(4.99)
+    expect(screen.getByLabelText(/Fees \(CAD\)/)).toHaveValue(9.99)
     expect(screen.getByLabelText(/Transaction date/)).toBeInTheDocument()
   })
 
-  it('shows the realized gain with a single + sign (no "++")', () => {
+  it('sends a sale with negative shares and the positive proceeds', () => {
     render(<SellPositionDialog holding={trading} onClose={vi.fn()} />)
-    setValue(/Shares to sell/, '10')
-    setValue(/Fees/, '10')
-    const preview = screen.getByText(/Realized gain/)
-    expect(preview).toHaveTextContent('+$490.00 (+49.00%)')
-    expect(preview.textContent).not.toContain('++')
+    set(/Shares to sell/, '10')
+    review()
+    expect(ledger.calls.preview[0].body).toMatchObject({
+      events: [{ transaction_type: 'sell', account_type: 'trading', ticker: 'RY.TO', shares: -10, price_per_share: 150, total_amount: 1500 }],
+    })
   })
 
-  it("uses the profile's marginal tax rate for the Trading tax estimate", () => {
+  it('shows the realised gain, the tax estimate and the superficial-loss note the server worked out', () => {
+    ledger.outcomes.preview = {
+      data: {
+        ...PREVIEW_OF_A_BUY,
+        row: { realized_gain_loss: 490, realized_gain_loss_cad: 490, denied_loss_cad: null, denied_loss_lost_cad: null },
+        estimated_tax: { capital_gain: 490, taxable_capital_gain: 245, estimated_tax: 77.1, marginal_rate: 31.48 },
+        notes: ['CAD 272.73 of the loss is denied (superficial loss)'],
+      },
+    }
     render(<SellPositionDialog holding={trading} onClose={vi.fn()} />)
-    setValue(/Shares to sell/, '10')
-    setValue(/Fees/, '0')
-    expect(screen.getByText(/43% marginal rate/)).toBeInTheDocument()
-    expect(screen.getByText(/^~\$108\.5[23]$/)).toBeInTheDocument() // 500 × 50% × 43.41% = 108.525
+    set(/Shares to sell/, '10')
+    review()
+    expect(screen.getByText('Realised gain or loss').nextSibling).toHaveTextContent('+$490.00')
+    expect(screen.getByText('Estimated tax effect (CAD)').nextSibling).toHaveTextContent('$77.10')
+    expect(screen.getByText('Marginal rate').nextSibling).toHaveTextContent('31.48%')
+    expect(screen.getByRole('list', { name: 'Notes' })).toHaveTextContent('superficial loss')
   })
 
-  it('shows USD amounts in USD and converts the tax estimate to CAD', () => {
-    const usdTrading = { ...mockUsdHolding, account_type: 'trading' as const, average_cost_basis: 312.4, current_price: 412.4 }
-    render(<SellPositionDialog holding={usdTrading} onClose={vi.fn()} />)
-    setValue(/Shares to sell/, '1')
-    setValue(/Fees/, '0')
-    expect(screen.getByText(/Realized gain/)).toHaveTextContent('+US$100.00')
-    expect(screen.getByText(/converted to CAD/)).toBeInTheDocument()
-    expect(screen.getByText('$140.00')).toBeInTheDocument() // capital gain in CAD
+  it('says when the sale closes the position', () => {
+    ledger.outcomes.preview = { data: { ...PREVIEW_OF_A_BUY, position: { ...PREVIEW_OF_A_BUY.position!, shares: 0, is_active: false } } }
+    render(<SellPositionDialog holding={trading} onClose={vi.fn()} />)
+    review()
+    expect(screen.getByText('Closes this position').nextSibling).toHaveTextContent('Yes')
   })
 
   it('rejects selling more shares than held', () => {
     render(<SellPositionDialog holding={trading} onClose={vi.fn()} />)
-    setValue(/Shares to sell/, '101')
+    set(/Shares to sell/, '101')
     expect(screen.getByText('Cannot exceed 100 shares')).toBeInTheDocument()
     expect(screen.getByLabelText(/Shares to sell/)).toHaveAttribute('aria-invalid', 'true')
-    expect(screen.getByRole('button', { name: /Sell/ })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Review' })).toBeDisabled()
   })
 
-  it('submits and closes on success', async () => {
-    mutateAsync.mockResolvedValueOnce(undefined)
-    const onClose = vi.fn()
-    render(<SellPositionDialog holding={trading} onClose={onClose} />)
-    setValue(/Shares to sell/, '10')
-    fireEvent.click(screen.getByRole('button', { name: 'Sell 10 shares' }))
-    await waitFor(() => expect(onClose).toHaveBeenCalled())
-    expect(mutateAsync).toHaveBeenCalledWith(expect.objectContaining({ holdingId: trading.holding_id, shares: 10, pricePerShare: 150 }))
-    // A calendar date, not a UTC timestamp (which would display as the previous day in Canada)
-    expect(mutateAsync.mock.calls[0][0].transactionDate).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+  it('records the reviewed sale', () => {
+    render(<SellPositionDialog holding={trading} onClose={vi.fn()} />)
+    set(/Shares to sell/, '10')
+    review()
+    fireEvent.click(screen.getByRole('button', { name: 'Sell shares' }))
+    expect(ledger.calls.record).toEqual(ledger.calls.preview)
+    expect(screen.getByRole('status')).toHaveTextContent('Recorded')
   })
 
-  it('stays open when the mutation fails', async () => {
-    mutateAsync.mockRejectedValueOnce(new Error('nope'))
-    const onClose = vi.fn()
-    render(<SellPositionDialog holding={trading} onClose={onClose} />)
-    fireEvent.click(screen.getByRole('button', { name: 'Sell 100 shares' }))
-    await waitFor(() => expect(mutateAsync).toHaveBeenCalled())
-    expect(onClose).not.toHaveBeenCalled()
+  it('shows a US holding in USD and sends its exchange rate when typed', () => {
+    render(<SellPositionDialog holding={{ ...mockUsdHolding, account_type: 'trading' as const }} onClose={vi.fn()} />)
+    expect(screen.getByLabelText(/Price per share \(USD\)/)).toBeInTheDocument()
+    set(/Shares to sell/, '1')
+    set(/Exchange rate/, '1.4')
+    review()
+    expect(ledger.calls.preview[0].body).toMatchObject({ events: [{ currency: 'USD', fx_rate_to_cad: 1.4 }] })
   })
 })

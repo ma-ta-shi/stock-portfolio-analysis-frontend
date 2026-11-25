@@ -3,6 +3,7 @@
  * through `asFraction` and the stock's call through `stock-snapshot.ts`; components never read a raw response. What each
  * API field becomes on screen is declared in `src/screens/portfolio/`.
  */
+import { ACCOUNT_TYPES } from './accounts'
 import { mapStock, mapStockSnapshot } from './stock-snapshot'
 import { asFraction } from './units'
 import type { components } from '@/types/openapi.gen'
@@ -23,7 +24,6 @@ export type ApiPositions = Api['PositionsResponse']
 export type ApiConfirmation = Api['ConfirmationResponse']
 type ApiScope = Api['ScopeValueResponse']
 
-const ACCOUNTS: readonly AccountType[] = ['tfsa', 'rrsp', 'trading']
 
 function mapConfirmation(c: ApiConfirmation | undefined): Confirmation | null {
   return c ? { lastConfirmed: c.last_confirmed ?? null, ageDays: c.age_days, overdue: c.overdue } : null
@@ -181,7 +181,7 @@ export function buildSummary({ view, positions, report, history, accounts, room,
   const flow = last ? (last as { net_flow_cad?: number }).net_flow_cad : undefined
   const change = prev && last ? last.value_cad - prev.value_cad - (flow ?? 0) : null
   const byAccount: Partial<Record<AccountType, AccountBreakdown>> = {}
-  for (const account of ACCOUNTS) byAccount[account] = breakdown(positions.accounts[account])
+  for (const account of ACCOUNT_TYPES) byAccount[account] = breakdown(positions.accounts[account])
   return {
     view,
     as_of: scope.day,

@@ -139,3 +139,43 @@ describe('getErrorMessage', () => {
     expect(getErrorMessage('boom')).toBe('Something went wrong.')
   })
 })
+
+describe('getErrorMessage for a write', () => {
+  const write = { write: true }
+
+  it('keeps the read-side wording by default: every 404 is "Not found."', () => {
+    expect(getErrorMessage(new ApiError('No holding with that id', 404, 'HOLDING_NOT_FOUND', '/u'))).toBe('Not found.')
+  })
+
+  it("shows the backend's own explanation for a write, 404s included", () => {
+    expect(getErrorMessage(new ApiError('No holding with that id in the portfolio.', 404, 'HOLDING_NOT_FOUND', '/u'), write)).toBe(
+      'No holding with that id in the portfolio.',
+    )
+    expect(getErrorMessage(new ApiError('Sells 50 of 40 shares', 422, 'INSUFFICIENT_SHARES', '/u'), write)).toBe('Sells 50 of 40 shares')
+  })
+
+  it('says writes need the real backend in mock mode', () => {
+    expect(getErrorMessage(new ApiError('x', null, 'mock_mode_unsupported', '/u'), write)).toMatch(/real backend.*dev:live/)
+  })
+
+  it('lists the fields a validation error names, by field', () => {
+    const details = { errors: [{ loc: ['body', 'events', 0, 'shares'], msg: 'Input should be greater than 0', type: 'x' }, { loc: ['body', 'events', 0, 'price_per_share'], msg: 'Field required', type: 'y' }] }
+    expect(getErrorMessage(new ApiError('Invalid', 422, 'VALIDATION_ERROR', '/u', details), write)).toBe(
+      'shares: Input should be greater than 0; price_per_share: Field required',
+    )
+  })
+
+  it('falls back to the message when a validation error names nothing', () => {
+    expect(getErrorMessage(new ApiError('The request is not valid', 422, 'VALIDATION_ERROR', '/u', {}), write)).toBe('The request is not valid')
+  })
+
+  it.each(['DUPLICATE_ENTRY', 'MISSING_FX_RATE', 'STOCK_LOOKUP_UNAVAILABLE', 'NOT_REMOVABLE'])('rewrites %s in the page\'s own words', (code) => {
+    const text = getErrorMessage(new ApiError('backend text', 409, code, '/u'), write)
+    expect(text).not.toBe('backend text')
+    expect(text.length).toBeGreaterThan(30)
+  })
+
+  it('keeps the transport wording for a write too', () => {
+    expect(getErrorMessage(new ApiError('x', null, 'network_error', '/u'), write)).toMatch(/reach the server/)
+  })
+})

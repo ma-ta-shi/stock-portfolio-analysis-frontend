@@ -7,8 +7,6 @@ expects, with why and the ClickUp ticket that closes it. The code cites these id
 
 | Id | Screen | What | Why | Ticket |
 |---|---|---|---|---|
-| P-W1 | portfolio | Recording a purchase | The preview-then-record form is the writes ticket. | [86bd5z6mq](https://app.clickup.com/t/86bd5z6mq) |
-| P-W2 | portfolio | Recording a sale | The preview-then-record form is the writes ticket. | [86bd5z6mq](https://app.clickup.com/t/86bd5z6mq) |
 | P-W3 | portfolio | Logging or confirming a dividend | Confirming the dividends the system found is the writes ticket. | [86bd5z6mq](https://app.clickup.com/t/86bd5z6mq) |
 | P-W4 | portfolio | Editing a position | The ledger never overwrites: this becomes Correct, Remove and Confirm with the broker in the writes ticket. | [86bd5z6mq](https://app.clickup.com/t/86bd5z6mq) |
 | P-W5 | portfolio | Removing a position entered by mistake | The remove call is the writes ticket. | [86bd5z6mq](https://app.clickup.com/t/86bd5z6mq) |
@@ -30,7 +28,11 @@ expects, with why and the ClickUp ticket that closes it. The code cites these id
 | P-H5 | portfolio | A holding's note can be read but not edited | No route changes a holding's notes. | [86bd5z6mq](https://app.clickup.com/t/86bd5z6mq) |
 | P-O1 | portfolio | The Optimizer tab and its Available to trade box still show the retired suggestions model | The optimizer's stored proposals replace it in the Optimizer ticket; this page does not touch that tab. | [86bd5z6n5](https://app.clickup.com/t/86bd5z6n5) |
 | P-R1 | portfolio | Creating a portfolio for a user who has none | Creating a profile and a portfolio is the first-run flow of the Settings ticket. | [86bd5z6n3](https://app.clickup.com/t/86bd5z6n3) |
+| P-S2 | portfolio | Editing an account's settings (commission per trade, conversion cost, reinvest dividends, Norbert's gambit) | The PATCH route exists; the form belongs with the account settings in the Settings ticket. | [86bd5z6n3](https://app.clickup.com/t/86bd5z6n3) |
 | P-T1 | portfolio | A transaction's "reversed by" link | The API serves reverses_transaction_id on the reversing row only, so the page marks a reversed row only when its reversing row is on the loaded page. | [86bd6r34c](https://app.clickup.com/t/86bd6r34c) |
+| P-W10 | portfolio | The entry preview's tax, room and gain figures are untyped | The preview serves row, estimated_tax and room as untyped objects, so the page reads them by their documented keys: marginal_rate is a whole percent (31.48, no unit marker protects it) and a sale at a loss returns a negative estimated_tax, shown as a saving. Typed models with unit markers are a backend follow-up. | [86bd6r34c](https://app.clickup.com/t/86bd6r34c) |
+| P-W11 | portfolio | Recording an RRSP contribution for the previous tax year (January and February) | The form does not send tax_year, so a contribution counts for the year of its date; the API allows the prior year during the first 60 days. | [86bd5z6mq](https://app.clickup.com/t/86bd5z6mq) |
+| P-W12 | portfolio | Marking a trade as following an optimizer proposal | recommendation_id is not sent: proposals are shown by the Optimizer ticket, which links a trade to the proposal it follows. | [86bd5z6n5](https://app.clickup.com/t/86bd5z6n5) |
 
 ## Documented difference (a deliberate choice)
 

@@ -4,6 +4,7 @@ import { MemoryRouter, useNavigate } from 'react-router-dom'
 import { HoldingsTable } from './HoldingsTable'
 import { fixtureHolding, mockHolding, mockUsdHolding } from '@/test/mock-data'
 import { ApiError } from '@/lib/api'
+import { mockLedgerHooks } from '@/test/ledger-mocks'
 
 vi.mock('@/hooks/use-portfolio')
 vi.mock('@/hooks/use-user-profile', () => ({
@@ -17,13 +18,11 @@ vi.mock('react-router-dom', async (importOriginal) => {
   return { ...actual, useNavigate: vi.fn() }
 })
 
-import { usePortfolioHoldings, useRemoveFromPortfolio, useUpdatePosition, useClosedPositions, useSellPosition, useBuyShares, useLogDividend } from '@/hooks/use-portfolio'
+import { usePortfolioHoldings, useRemoveFromPortfolio, useUpdatePosition, useClosedPositions, useLogDividend } from '@/hooks/use-portfolio'
 const mockUsePortfolioHoldings = vi.mocked(usePortfolioHoldings)
 vi.mocked(useRemoveFromPortfolio).mockReturnValue({ mutateAsync: vi.fn(), isPending: false } as unknown as ReturnType<typeof useRemoveFromPortfolio>)
 vi.mocked(useUpdatePosition).mockReturnValue({ mutateAsync: vi.fn(), isPending: false } as unknown as ReturnType<typeof useUpdatePosition>)
 vi.mocked(useClosedPositions).mockReturnValue({ data: [] } as unknown as ReturnType<typeof useClosedPositions>)
-vi.mocked(useSellPosition).mockReturnValue({ mutateAsync: vi.fn(), isPending: false } as unknown as ReturnType<typeof useSellPosition>)
-vi.mocked(useBuyShares).mockReturnValue({ mutateAsync: vi.fn(), isPending: false } as unknown as ReturnType<typeof useBuyShares>)
 vi.mocked(useLogDividend).mockReturnValue({ mutateAsync: vi.fn(), isPending: false } as unknown as ReturnType<typeof useLogDividend>)
 const mockNavigate = vi.fn()
 vi.mocked(useNavigate).mockReturnValue(mockNavigate)
@@ -39,7 +38,10 @@ function show(...data: ReturnType<typeof fixtureHolding>[]) {
 
 // The rows are the recorded API responses (public/mock-data/portfolio/holdings.json) through the real mapper.
 import { beforeEach } from 'vitest'
-beforeEach(() => mockNavigate.mockClear())
+beforeEach(() => {
+  mockNavigate.mockClear()
+  mockLedgerHooks()
+})
 
 describe('HoldingsTable', () => {
   it('shows loading skeleton while loading', () => {

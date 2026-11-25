@@ -4,18 +4,14 @@
  * `detail` = a line in the performance panel, `csv` = not used here.
  */
 import { defineFields, type ApiFieldKey, type NotShown } from '@/lib/fields'
-import { formatCAD, formatDate, formatNumber, formatPct, formatPercent } from '@/lib/format'
+import { formatCAD, formatDate, formatNumber, formatPercent } from '@/lib/format'
 import { asFraction } from '@/lib/units'
 import type { components } from '@/types/openapi.gen'
 import type { PortfolioSummary } from '@/types/portfolio'
+import { cad, day, signedPct, text, yesNo } from '../formatters'
 
 type Api = components['schemas']
 
-const cad = (v: unknown, signed = false) => formatCAD(v as number | null, { signed })
-const day = (v: unknown) => (v ? formatDate(v as string) : '—')
-const text = (v: unknown) => (v == null || v === '' ? '—' : String(v))
-const yesNo = (v: unknown) => (v == null ? '—' : v ? 'Yes' : 'No')
-const pct = (v: unknown) => formatPct(v as number | null)
 
 type Profit = Api['ProfitLinesResponse']
 const profit = (s: PortfolioSummary) => s.report?.profit
@@ -42,7 +38,7 @@ export const SUMMARY_FIELDS = defineFields<PortfolioSummary>([
   { id: 'value', label: 'Value (incl. cash)', source: 'ScopeValueResponse.value_cad', get: (s) => s.total_value_cad, format: (v) => cad(v), places: ['column', 'detail'] },
   { id: 'cash', label: 'Cash', source: 'ScopeValueResponse.cash_cad', get: (s) => s.cash_cad, format: (v) => cad(v), places: ['column', 'detail'] },
   { id: 'unrealised', label: 'Unrealised', source: 'ScopeValueResponse.unrealised_cad', get: (s) => s.total_gain_loss_cad, format: (v) => cad(v, true), places: ['column', 'detail'] },
-  { id: 'unrealised_pct', label: 'Unrealised %', source: ['ScopeValueResponse.unrealised_cad', 'PositionLineResponse.cost_cad'], get: (s) => s.total_gain_loss_pct, format: pct, tooltip: 'Unrealised over the cost base of the positions', places: ['column', 'detail'] },
+  { id: 'unrealised_pct', label: 'Unrealised %', source: ['ScopeValueResponse.unrealised_cad', 'PositionLineResponse.cost_cad'], get: (s) => s.total_gain_loss_pct, format: signedPct, tooltip: 'Unrealised over the cost base of the positions', places: ['column', 'detail'] },
   { id: 'unpriced', label: 'Held with no price', source: 'ScopeValueResponse.unpriced', get: (s) => s.unpriced, format: (v) => ((v as string[]).length ? (v as string[]).join(', ') : 'None'), tooltip: 'Carried at cost, not at zero', places: ['detail'] },
 
   // Performance since the first entry (the report)
@@ -53,8 +49,8 @@ export const SUMMARY_FIELDS = defineFields<PortfolioSummary>([
   { id: 'deposited', label: 'Deposited', source: 'PerformanceResponse.deposited', get: (s) => performance(s)?.deposited, format: (v) => cad(v), places: ['detail'] },
   { id: 'withdrawn', label: 'Withdrawn', source: 'PerformanceResponse.withdrawn', get: (s) => performance(s)?.withdrawn, format: (v) => cad(v), places: ['detail'] },
   { id: 'profit', label: 'Profit', source: 'PerformanceResponse.profit_cad', get: (s) => performance(s)?.profit_cad, format: (v) => cad(v, true), places: ['column', 'detail'] },
-  { id: 'return_period', label: 'Return', source: 'PerformanceResponse.return_period', get: (s) => asFraction('PerformanceResponse.return_period', performance(s)?.return_period), format: pct, tooltip: 'Money-weighted: it accounts for when cash went in and out', places: ['column', 'detail'] },
-  { id: 'return_annualised', label: 'Return per year', source: 'PerformanceResponse.return_annualised', get: (s) => asFraction('PerformanceResponse.return_annualised', performance(s)?.return_annualised), format: pct, places: ['column', 'detail'] },
+  { id: 'return_period', label: 'Return', source: 'PerformanceResponse.return_period', get: (s) => asFraction('PerformanceResponse.return_period', performance(s)?.return_period), format: signedPct, tooltip: 'Money-weighted: it accounts for when cash went in and out', places: ['column', 'detail'] },
+  { id: 'return_annualised', label: 'Return per year', source: 'PerformanceResponse.return_annualised', get: (s) => asFraction('PerformanceResponse.return_annualised', performance(s)?.return_annualised), format: signedPct, places: ['column', 'detail'] },
   { id: 'return_reason', label: 'Why no return', source: 'PerformanceResponse.reason', get: (s) => performance(s)?.reason, format: text, places: ['detail'] },
   {
     id: 'flows',
@@ -70,9 +66,9 @@ export const SUMMARY_FIELDS = defineFields<PortfolioSummary>([
   { id: 'fund_reason', label: 'Why unavailable', source: 'FundResultResponse.reason', get: (s) => fund(s)?.reason, format: text, places: ['detail'] },
   { id: 'fund_end_value', label: 'Fund value', source: 'FundResultResponse.end_value', get: (s) => fund(s)?.end_value, format: (v) => cad(v), places: ['detail'] },
   { id: 'fund_units', label: 'Fund units', source: 'FundResultResponse.units', get: (s) => fund(s)?.units, format: (v) => (v == null ? '—' : formatNumber(v as number, 4)), places: ['detail'] },
-  { id: 'fund_return', label: 'Fund return', source: 'FundResultResponse.return_period', get: (s) => asFraction('FundResultResponse.return_period', fund(s)?.return_period), format: pct, places: ['detail'] },
+  { id: 'fund_return', label: 'Fund return', source: 'FundResultResponse.return_period', get: (s) => asFraction('FundResultResponse.return_period', fund(s)?.return_period), format: signedPct, places: ['detail'] },
   { id: 'fund_dollars_added', label: 'Dollars added to the fund', source: 'FundResultResponse.dollars_added', get: (s) => fund(s)?.dollars_added, format: (v) => cad(v), places: ['detail'] },
-  { id: 'fund_difference', label: 'Versus benchmark fund', source: 'FundResultResponse.return_difference', get: (s) => asFraction('FundResultResponse.return_difference', fund(s)?.return_difference), format: pct, tooltip: "Your period return less the fund's", places: ['column', 'detail'] },
+  { id: 'fund_difference', label: 'Versus benchmark fund', source: 'FundResultResponse.return_difference', get: (s) => asFraction('FundResultResponse.return_difference', fund(s)?.return_difference), format: signedPct, tooltip: "Your period return less the fund's", places: ['column', 'detail'] },
   { id: 'fund_note', label: 'Fund note', source: 'FundResultResponse.note', get: (s) => fund(s)?.note, format: text, places: ['detail'] },
 
   // Profit lines
@@ -117,7 +113,7 @@ export const SUMMARY_FIELDS = defineFields<PortfolioSummary>([
     label: 'Change at last close',
     source: ['ValueHistoryResponse.points', 'ValuePointResponse.value_cad', 'ValuePointResponse.cost_cad', 'ValuePointResponse.cash_cad', 'ValuePointResponse.day'],
     get: (s) => s.day_change_cad,
-    format: (v, s) => (v == null ? 'unavailable (P-D2)' : `${cad(v, true)} (${pct(s.day_change_pct)}) since ${day(s.day_change_from)}${s.day_change_includes_flows ? ', includes cash or trades' : ''}`),
+    format: (v, s) => (v == null ? 'unavailable (P-D2)' : `${cad(v, true)} (${signedPct(s.day_change_pct)}) since ${day(s.day_change_from)}${s.day_change_includes_flows ? ', includes cash or trades' : ''}`),
     tooltip: 'The last two recorded days of the value history',
     places: ['column', 'detail'],
   },

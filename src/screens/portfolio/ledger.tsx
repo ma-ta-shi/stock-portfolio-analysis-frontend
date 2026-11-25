@@ -1,14 +1,13 @@
 /** The ledger (Transactions tab): every field of a transaction, declared once. Columns, the expanded row and the CSV all read this. */
 import { Badge } from '@/components/ui/badge'
 import { defineFields, type ApiFieldKey, type NotShown } from '@/lib/fields'
-import { formatCAD, formatDate, formatMoney, formatNumber, formatPct } from '@/lib/format'
+import { formatMoney, formatNumber, formatPct } from '@/lib/format'
 import { TONE_TEXT, TX_TYPE_BADGE, TX_TYPE_LABELS, gainLossColor } from '@/lib/labels'
 import { cn } from '@/lib/utils'
 import type { Transaction } from '@/types/portfolio'
+import { cad, day } from '../formatters'
 
 const money = (t: Transaction, v: unknown, signed = false) => formatMoney(v as number | null, t.currency, { signed })
-const cad = (v: unknown, signed = false) => formatCAD(v as number | null, { signed })
-const day = (v: unknown) => (v ? formatDate(v as string) : '—')
 
 export const TRANSACTION_FIELDS = defineFields<Transaction>([
   { id: 'date', label: 'Date', source: 'TransactionResponse.transaction_date', get: (t) => t.transaction_date, format: day, tooltip: 'The day as you entered it', places: ['column', 'csv'] },

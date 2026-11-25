@@ -1,74 +1,117 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { BuySharesDialog } from './BuySharesDialog'
 import { mockHolding, mockUsdHolding } from '@/test/mock-data'
+import { mockLedgerHooks } from '@/test/ledger-mocks'
+import { ApiError } from '@/lib/api'
 
 vi.mock('@/hooks/use-portfolio')
-import { useBuyShares } from '@/hooks/use-portfolio'
 
-const mutateAsync = vi.fn()
+let ledger: ReturnType<typeof mockLedgerHooks>
 beforeEach(() => {
-  mutateAsync.mockReset().mockResolvedValue(undefined)
-  vi.mocked(useBuyShares).mockReturnValue({ mutateAsync, isPending: false, isError: false, error: null } as unknown as ReturnType<typeof useBuyShares>)
+  ledger = mockLedgerHooks()
 })
 
-const holding = { ...mockHolding, shares: 50, average_cost_basis: 130, current_price: 145 }
+// RY.TO in the RRSP, from the recorded holdings, with round numbers for the arithmetic.
+const holding = { ...mockHolding, shares: 50, average_cost_basis: 130, total_book_cost: 6500, current_price: 145 }
 const set = (label: RegExp, value: string) => fireEvent.change(screen.getByLabelText(label), { target: { value } })
+const review = () => fireEvent.click(screen.getByRole('button', { name: 'Review' }))
 
 describe('BuySharesDialog', () => {
-  it('prefills price with the current price and fees with the default', () => {
+  it('renders nothing without a holding', () => {
+    const { container } = render(<BuySharesDialog holding={null} onClose={vi.fn()} />)
+    expect(container).toBeEmptyDOMElement()
+  })
+
+  it("prefills the price with the current price and the fees with the account's commission", () => {
     render(<BuySharesDialog holding={holding} onClose={vi.fn()} />)
     expect(screen.getByLabelText(/Price per share \(CAD\)/)).toHaveValue(145)
-    expect(screen.getByLabelText(/Fees \(CAD\)/)).toHaveValue(4.99)
+    expect(screen.getByLabelText(/Fees \(CAD\)/)).toHaveValue(9.99) // the recorded RRSP account's commission_per_trade
   })
 
-  it('previews the new weighted-average cost (fees excluded from book cost, per backend spec)', () => {
+  it('shows the position it buys into', () => {
     render(<BuySharesDialog holding={holding} onClose={vi.fn()} />)
-    set(/Shares to buy/, '50')
-    set(/Price per share/, '150')
-    // (50 × 130 + 50 × 150) / 100 = 140
-    expect(screen.getByText('New total shares').nextSibling).toHaveTextContent('100')
-    expect(screen.getByText('New avg cost').nextSibling).toHaveTextContent('$140.00')
-    expect(screen.getByText('New book cost').nextSibling).toHaveTextContent('$14,000.00')
-    expect(screen.getByText('This purchase').nextSibling).toHaveTextContent('$7,500.00')
+    expect(screen.getByText('Shares held').nextSibling).toHaveTextContent('50')
+    expect(screen.getByText('Avg cost').nextSibling).toHaveTextContent('$130.00')
+    expect(screen.getByText('Book cost').nextSibling).toHaveTextContent('$6,500.00')
   })
 
-  it('shows a USD holding in USD', () => {
+  it('shows a US holding in USD, with the exchange rate field and no default fee', () => {
     render(<BuySharesDialog holding={mockUsdHolding} onClose={vi.fn()} />)
     expect(screen.getByLabelText(/Price per share \(USD\)/)).toBeInTheDocument()
-    expect(screen.getByText('Avg cost').nextSibling).toHaveTextContent('US$98.30')
+    expect(screen.getByLabelText(/Fees \(USD\)/)).toHaveValue(null) // the commission is in CAD
+    expect(screen.getByLabelText(/Exchange rate/)).toBeInTheDocument()
   })
 
-  it('cannot buy without a share count', () => {
+  it('has no exchange rate field for a Canadian stock', () => {
     render(<BuySharesDialog holding={holding} onClose={vi.fn()} />)
-    expect(screen.getByRole('button', { name: 'Buy shares' })).toBeDisabled()
-    set(/Shares to buy/, '0')
-    expect(screen.getByRole('button', { name: 'Buy shares' })).toBeDisabled()
+    expect(screen.queryByLabelText(/Exchange rate/)).not.toBeInTheDocument()
   })
 
-  it('submits the calendar date (not a UTC timestamp) and closes', async () => {
-    const onClose = vi.fn()
-    render(<BuySharesDialog holding={holding} onClose={onClose} />)
+  it('cannot be reviewed without a share count', () => {
+    render(<BuySharesDialog holding={holding} onClose={vi.fn()} />)
+    expect(screen.getByRole('button', { name: 'Review' })).toBeDisabled()
+    set(/Shares to buy/, '0')
+    expect(screen.getByRole('button', { name: 'Review' })).toBeDisabled()
+  })
+
+  it('reviews the entry with the server and sends the day as a plain string, not a UTC timestamp', () => {
+    render(<BuySharesDialog holding={holding} onClose={vi.fn()} />)
     set(/Shares to buy/, '10')
     set(/Transaction date/, '2026-03-15')
-    fireEvent.click(screen.getByRole('button', { name: 'Buy shares' }))
-    await waitFor(() => expect(onClose).toHaveBeenCalled())
-    expect(mutateAsync).toHaveBeenCalledWith({
-      holdingId: holding.holding_id,
-      shares: 10,
-      pricePerShare: 145,
-      fees: 4.99,
-      transactionDate: '2026-03-15',
-    })
+    review()
+    expect(ledger.calls.preview).toEqual([
+      {
+        params: undefined,
+        body: {
+          events: [
+            {
+              account_type: 'rrsp', transaction_type: 'buy', ticker: 'RY.TO', shares: 10, price_per_share: 145, total_amount: 1450,
+              currency: 'CAD', transaction_date: '2026-03-15', fees: 9.99,
+            },
+          ],
+        },
+      },
+    ]) // fmt: skip
+    expect(screen.getByText('Shares after')).toBeInTheDocument() // the server's preview is on screen
   })
 
-  it('stays open when the purchase fails', async () => {
-    mutateAsync.mockRejectedValueOnce(new Error('nope'))
+  it('records exactly what was reviewed, shows what was recorded, and closes on request', () => {
     const onClose = vi.fn()
     render(<BuySharesDialog holding={holding} onClose={onClose} />)
     set(/Shares to buy/, '10')
+    review()
     fireEvent.click(screen.getByRole('button', { name: 'Buy shares' }))
-    await waitFor(() => expect(mutateAsync).toHaveBeenCalled())
-    expect(onClose).not.toHaveBeenCalled()
+    expect(ledger.calls.record).toEqual(ledger.calls.preview)
+    expect(screen.getByRole('status')).toHaveTextContent('Recorded 1 entry')
+    fireEvent.click(screen.getByRole('button', { name: 'Done' }))
+    expect(onClose).toHaveBeenCalled()
+  })
+
+  it('asks for a new review after any edit', () => {
+    render(<BuySharesDialog holding={holding} onClose={vi.fn()} />)
+    set(/Shares to buy/, '10')
+    review()
+    set(/Shares to buy/, '11')
+    expect(screen.queryByRole('button', { name: 'Buy shares' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Review' })).toBeEnabled()
+  })
+
+  it('sends the exchange rate of a US purchase when typed', () => {
+    render(<BuySharesDialog holding={mockUsdHolding} onClose={vi.fn()} />)
+    set(/Shares to buy/, '2')
+    set(/Exchange rate/, '1.37')
+    review()
+    expect(ledger.calls.preview[0].body).toMatchObject({ events: [{ currency: 'USD', fx_rate_to_cad: 1.37, ticker: 'RDDT' }] })
+  })
+
+  it("shows the backend's explanation when the record fails, and keeps the form", () => {
+    ledger.outcomes.record = { error: new ApiError('dup', 409, 'DUPLICATE_ENTRY', '/u') }
+    render(<BuySharesDialog holding={holding} onClose={vi.fn()} />)
+    set(/Shares to buy/, '10')
+    review()
+    fireEvent.click(screen.getByRole('button', { name: 'Buy shares' }))
+    expect(screen.getByRole('alert')).toHaveTextContent(/last 30 seconds/)
+    expect(screen.getByLabelText(/Shares to buy/)).toHaveValue(10)
   })
 })

@@ -1,13 +1,13 @@
 import { axeViolations, expect, test } from './fixtures'
 
-test('USD holdings are shown in USD; a write that is not connected says which gap it waits on', async ({ page, consoleErrors }) => {
+test('USD holdings are shown in USD; in mock mode a write says it needs the real backend', async ({ page, consoleErrors }) => {
   await page.goto('/portfolio')
   await expect(page.getByText('US$3,413.20')).toBeVisible() // RDDT: 40 shares at US$85.33, from the recorded API response
   await page.getByRole('button', { name: /^Sell RDDT/ }).click()
   await page.getByLabel(/Shares to sell/).fill('5')
   expect(await axeViolations(page)).toEqual([])
-  await page.getByRole('dialog').getByRole('button', { name: /^Sell/ }).click()
-  await expect(page.getByRole('dialog').getByRole('alert')).toContainText('P-W2')
+  await page.getByRole('dialog').getByRole('button', { name: 'Review' }).click()
+  await expect(page.getByRole('dialog').getByRole('alert')).toContainText('real backend')
   expect(consoleErrors).toEqual([])
 })
 

@@ -5,15 +5,14 @@
 import { Badge } from '@/components/ui/badge'
 import { StockCall } from '@/components/StockCall'
 import { defineFields, type NotShown } from '@/lib/fields'
-import { formatCAD, formatDate, formatMoney, formatNumber, formatPct, formatPercent } from '@/lib/format'
+import { formatCAD, formatMoney, formatNumber, formatPct, formatPercent } from '@/lib/format'
 import { OUTLOOK_LABELS, TIER_LABELS, DISAGREEMENT_CLASS_LABELS, TONE_TEXT, exclusionLabel, gainLossColor } from '@/lib/labels'
 import { cn } from '@/lib/utils'
 import type { ApiFieldKey } from '@/lib/fields'
 import type { Holding } from '@/types/portfolio'
+import { day, signedPct } from '../formatters'
 
 const money = (h: Holding, value: unknown) => formatMoney(value as number | null, h.stock.currency)
-const pct = (value: unknown, decimals = 2) => formatPct(value as number | null, decimals)
-const day = (value: unknown) => (value ? formatDate(value as string) : '—')
 const list = (value: unknown) => ((value as string[]).length ? (value as string[]).map(exclusionLabel).join('; ') : '—')
 
 export const HOLDING_FIELDS = defineFields<Holding>([
@@ -84,9 +83,9 @@ export const HOLDING_FIELDS = defineFields<Holding>([
   },
   { id: 'price_day', label: 'Price day', source: ['PositionLineResponse.price_day', 'StockSnapshotResponse.price_day'], get: (h) => h.price_day, format: day, places: ['detail', 'csv'] },
   { id: 'price_source', label: 'Price source', source: 'PositionLineResponse.price_source', get: (h) => h.price_source, places: ['detail', 'csv'] },
-  { id: 'change_day', label: 'Change (day)', source: 'StockSnapshotResponse.change_day', get: (h) => h.change_day, format: (v) => pct(v), places: ['detail', 'csv'] },
-  { id: 'change_week', label: 'Change (week)', source: 'StockSnapshotResponse.change_week', get: (h) => h.change_week, format: (v) => pct(v), places: ['detail', 'csv'] },
-  { id: 'change_month', label: 'Change (month)', source: 'StockSnapshotResponse.change_month', get: (h) => h.change_month, format: (v) => pct(v), places: ['detail', 'csv'] },
+  { id: 'change_day', label: 'Change (day)', source: 'StockSnapshotResponse.change_day', get: (h) => h.change_day, format: (v) => signedPct(v), places: ['detail', 'csv'] },
+  { id: 'change_week', label: 'Change (week)', source: 'StockSnapshotResponse.change_week', get: (h) => h.change_week, format: (v) => signedPct(v), places: ['detail', 'csv'] },
+  { id: 'change_month', label: 'Change (month)', source: 'StockSnapshotResponse.change_month', get: (h) => h.change_month, format: (v) => signedPct(v), places: ['detail', 'csv'] },
   {
     id: 'market_value',
     label: 'Market value',
@@ -119,7 +118,7 @@ export const HOLDING_FIELDS = defineFields<Holding>([
       </>
     ),
   },
-  { id: 'unrealised_pct', label: 'Gain / loss %', source: 'PositionLineResponse.unrealised_pct', get: (h) => h.unrealised_pct, format: (v) => pct(v), places: ['csv'] },
+  { id: 'unrealised_pct', label: 'Gain / loss %', source: 'PositionLineResponse.unrealised_pct', get: (h) => h.unrealised_pct, format: (v) => signedPct(v), places: ['csv'] },
   { id: 'unrealised_fx', label: 'Of which currency', source: 'PositionLineResponse.unrealised_fx_cad', get: (h) => h.unrealised_fx_cad, format: (v) => formatCAD(v as number | null, { signed: true }), tooltip: 'The part of the gain that is the exchange rate moving', places: ['detail', 'csv'] },
   { id: 'weight', label: 'Weight', source: 'PositionLineResponse.weight_pct', get: (h) => h.weight, format: (v) => formatPercent(v as number | null, 1), tooltip: 'Share of the portfolio', places: ['detail', 'csv'] },
 
@@ -144,10 +143,10 @@ export const HOLDING_FIELDS = defineFields<Holding>([
   { id: 'outlook_changed', label: 'Outlook changed', source: 'AnalysisCallResponse.outlook_changed', get: (h) => h.call?.analysis?.outlookChanged, places: ['detail', 'csv'] },
   { id: 'confidence', label: 'Confidence', source: 'AnalysisCallResponse.confidence', get: (h) => h.call?.analysis?.confidence, format: (v) => (v == null ? '—' : `${v as number}%`), places: ['detail', 'csv'] },
   { id: 'tier', label: 'Tier', source: 'AnalysisCallResponse.tier', get: (h) => h.call?.analysis?.tier, format: (v) => (v ? TIER_LABELS[v as keyof typeof TIER_LABELS] : '—'), tooltip: "Against the stock's own valuation baseline, not the market", places: ['detail', 'csv'] },
-  { id: 'expected_return', label: 'Expected return', source: 'AnalysisCallResponse.expected_return', get: (h) => h.call?.analysis?.expectedReturn, format: (v) => pct(v), tooltip: "Over the band's horizon, in the stock's currency", places: ['detail', 'csv'] },
+  { id: 'expected_return', label: 'Expected return', source: 'AnalysisCallResponse.expected_return', get: (h) => h.call?.analysis?.expectedReturn, format: (v) => signedPct(v), tooltip: "Over the band's horizon, in the stock's currency", places: ['detail', 'csv'] },
   { id: 'target_price', label: 'Target price', source: 'AnalysisCallResponse.target_price', get: (h) => h.call?.analysis?.targetPrice, format: (v, h) => money(h, v), places: ['detail', 'csv'] },
-  { id: 'range_low', label: 'Range low (10th pct)', source: 'AnalysisCallResponse.range_low', get: (h) => h.call?.analysis?.rangeLow, format: (v, h) => money(h, v), places: ['detail', 'csv'] },
-  { id: 'range_high', label: 'Range high (90th pct)', source: 'AnalysisCallResponse.range_high', get: (h) => h.call?.analysis?.rangeHigh, format: (v, h) => money(h, v), places: ['detail', 'csv'] },
+  { id: 'range_low', label: 'Range low (10th signedPct)', source: 'AnalysisCallResponse.range_low', get: (h) => h.call?.analysis?.rangeLow, format: (v, h) => money(h, v), places: ['detail', 'csv'] },
+  { id: 'range_high', label: 'Range high (90th signedPct)', source: 'AnalysisCallResponse.range_high', get: (h) => h.call?.analysis?.rangeHigh, format: (v, h) => money(h, v), places: ['detail', 'csv'] },
   { id: 'disagreement', label: 'Disagreement', source: 'AnalysisCallResponse.disagreement_class', get: (h) => h.call?.analysis?.disagreementClass, format: (v) => (v ? DISAGREEMENT_CLASS_LABELS[v as keyof typeof DISAGREEMENT_CLASS_LABELS].label : '—'), places: ['detail', 'csv'] },
   { id: 'income_per_share', label: 'Expected income / share', source: 'AnalysisCallResponse.income_per_share', get: (h) => h.expected_income_per_share, format: (v, h) => money(h, v), tooltip: "Dividends the analysis expects over its horizon, in the stock's currency", places: ['detail', 'csv'] },
   { id: 'dividend_yield', label: 'Div yield', source: ['AnalysisCallResponse.income_per_share', 'PositionLineResponse.price'], get: (h) => h.dividend_yield, format: (v) => formatPercent(v as number | null), tooltip: 'Expected income over price', places: ['column', 'csv'] },

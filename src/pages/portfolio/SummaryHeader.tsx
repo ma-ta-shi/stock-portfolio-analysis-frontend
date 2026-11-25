@@ -11,13 +11,12 @@ import { fieldText, fieldsFor, type FieldSpec } from '@/lib/fields'
 import { formatCAD, formatDate } from '@/lib/format'
 import { gainLossColor, TONE_TEXT } from '@/lib/labels'
 import { unavailableLabel } from '@/lib/gaps'
+import { ACCOUNT_TYPES } from '@/lib/accounts'
 import { annualIncomeEstimateCad } from '@/lib/portfolio-mappers'
 import { cn } from '@/lib/utils'
 import { ACCOUNT_FIELDS, ROOM_EVENT_FIELDS, ROOM_FIELDS, SUMMARY_FIELDS } from '@/screens/portfolio/summary'
 import type { PortfolioAccountView, PortfolioSummary } from '@/types/portfolio'
-import type { AccountType } from '@/types/user'
 
-const ACCOUNTS: AccountType[] = ['tfsa', 'rrsp', 'trading']
 /** Headline tiles that are gains or losses, so they are coloured by sign. */
 const SIGNED = new Set(['unrealised', 'unrealised_pct', 'profit', 'return_period', 'return_annualised', 'fund_difference', 'profit_realised_cad', 'day_change'])
 /** The parts of the header that come from optional requests, and what is missing when each fails. */
@@ -130,7 +129,7 @@ export function SummaryHeader({
 
       {accountView === 'combined' && (
         <div className="grid grid-cols-3 gap-3">
-          {ACCOUNTS.map((acc) => {
+          {ACCOUNT_TYPES.map((acc) => {
             const a = data.by_account[acc]
             if (!a) return null
             const room = data.room?.accounts[acc]

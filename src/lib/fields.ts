@@ -20,7 +20,8 @@ export type ApiFieldKey = {
   [S in keyof Schemas & string]: `${S}.${keyof Schemas[S] & string}`
 }[keyof Schemas & string]
 
-export type FieldPlace = 'column' | 'detail' | 'csv'
+/** Where a field appears; `input` is a request field the owner types (see `screens/portfolio/entry-fields.ts`). */
+export type FieldPlace = 'column' | 'detail' | 'csv' | 'input'
 
 export interface FieldSpec<Row> {
   /** Unique within a screen. */

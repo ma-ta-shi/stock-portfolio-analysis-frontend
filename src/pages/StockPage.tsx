@@ -2,16 +2,14 @@ import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { TrendingUp, TrendingDown, Pencil, Plus, DollarSign } from 'lucide-react'
 import { useStockDetail, useStockAnalysisHistory } from '@/hooks/use-stock-detail'
+import { useHoldingActions } from '@/hooks/use-holding-actions'
 import { usePortfolioHoldings } from '@/hooks/use-portfolio'
 import { StockInfoSection } from '@/components/StockInfoSection'
 import { OutlookBadge } from '@/components/OutlookBadge'
 import { ConfidenceMeter } from '@/components/ConfidenceMeter'
 import { DisagreementIndicator } from '@/components/DisagreementIndicator'
 import { SparklineChart } from '@/components/SparklineChart'
-import { BuySharesDialog } from '@/components/BuySharesDialog'
-import { SellPositionDialog } from '@/components/SellPositionDialog'
-import { EditPositionDialog } from '@/components/EditPositionDialog'
-import { LogDividendDialog } from '@/components/LogDividendDialog'
+import { HoldingActionDialogs } from '@/components/ledger/HoldingActionDialogs'
 import { AddStockDialog } from '@/components/AddStockDialog'
 import { Button } from '@/components/ui/button'
 import { ButtonLink } from '@/components/ButtonLink'
@@ -32,7 +30,7 @@ import { formatDate, formatEnumLabel, formatMoney, formatPct } from '@/lib/forma
 import { gainLossColor, TONE_TEXT } from '@/lib/labels'
 import { applyTemplate, buildHoldingSnapshot, disagreementLabel } from '@/lib/portfolio'
 import { cn } from '@/lib/utils'
-import type { Holding, StockAnalysisHistoryEntry } from '@/types'
+import type { StockAnalysisHistoryEntry } from '@/types'
 
 function predictionStatusColor(status: StockAnalysisHistoryEntry['prediction_status']) {
   if (status === 'scored') return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
@@ -74,10 +72,7 @@ export function StockPage() {
     return acc
   }, {})
 
-  const [buyingHolding, setBuyingHolding] = useState<Holding | null>(null)
-  const [sellingHolding, setSellingHolding] = useState<Holding | null>(null)
-  const [editingHolding, setEditingHolding] = useState<Holding | null>(null)
-  const [dividendHolding, setDividendHolding] = useState<Holding | null>(null)
+  const actions = useHoldingActions()
   const [addDialogOpen, setAddDialogOpen] = useState(false)
 
   if (stockLoading) {
@@ -159,7 +154,7 @@ export function StockPage() {
                     size="sm"
                     variant="outline"
                     className={cn(TONE_TEXT.positive, 'border-emerald-200 hover:bg-emerald-50 dark:border-emerald-800 dark:hover:bg-emerald-950/30')}
-                    onClick={() => setBuyingHolding(h)}
+                    onClick={() => actions.open('buy', h)}
                   >
                     <TrendingUp className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
                     Buy
@@ -168,13 +163,13 @@ export function StockPage() {
                     size="sm"
                     variant="outline"
                     className={cn(TONE_TEXT.negative, 'border-red-200 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950/30')}
-                    onClick={() => setSellingHolding(h)}
+                    onClick={() => actions.open('sell', h)}
                   >
                     <TrendingDown className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
                     Sell
                   </Button>
                   {(h.expected_income_per_share ?? 0) > 0 && (
-                    <Button size="sm" variant="outline" onClick={() => setDividendHolding(h)}>
+                    <Button size="sm" variant="outline" onClick={() => actions.open('dividend', h)}>
                       <DollarSign className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
                       Log Dividend
                     </Button>
@@ -182,7 +177,7 @@ export function StockPage() {
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => setEditingHolding(h)}
+                    onClick={() => actions.open('edit', h)}
                   >
                     <Pencil className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
                     Edit
@@ -410,26 +405,7 @@ export function StockPage() {
         </div>
       )}
 
-      <BuySharesDialog
-        key={buyingHolding?.holding_id ?? 'none-buy'}
-        holding={buyingHolding}
-        onClose={() => setBuyingHolding(null)}
-      />
-      <SellPositionDialog
-        key={sellingHolding?.holding_id ?? 'none-sell'}
-        holding={sellingHolding}
-        onClose={() => setSellingHolding(null)}
-      />
-      <EditPositionDialog
-        key={editingHolding?.holding_id ?? 'none-edit'}
-        holding={editingHolding}
-        onClose={() => setEditingHolding(null)}
-      />
-      <LogDividendDialog
-        key={dividendHolding?.holding_id ?? 'none-div'}
-        holding={dividendHolding}
-        onClose={() => setDividendHolding(null)}
-      />
+      <HoldingActionDialogs actions={actions} />
       {stock && (
         <AddStockDialog
           mode="portfolio"

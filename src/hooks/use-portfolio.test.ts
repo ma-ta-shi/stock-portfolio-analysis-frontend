@@ -5,7 +5,6 @@ import { createElement } from 'react'
 import { installFixtureFetch } from '@/test/fixture-fetch'
 import {
   useAddToPortfolio,
-  useBuyShares,
   useClosedPositions,
   useCorrectTransaction,
   useExposure,
@@ -14,7 +13,6 @@ import {
   usePortfolioSummary,
   useRemoveFromPortfolio,
   useReverseTransaction,
-  useSellPosition,
   useTransactions,
   useUpdatePosition,
 } from '@/hooks/use-portfolio'
@@ -84,8 +82,6 @@ describe('portfolio reads (recorded API responses)', () => {
 describe('writes that are not connected yet', () => {
   const stubs = [
     ['useAddToPortfolio', useAddToPortfolio, {}, 'P-W6'],
-    ['useBuyShares', useBuyShares, {}, 'P-W1'],
-    ['useSellPosition', useSellPosition, {}, 'P-W2'],
     ['useLogDividend', useLogDividend, {}, 'P-W3'],
     ['useUpdatePosition', useUpdatePosition, {}, 'P-W4'],
     ['useRemoveFromPortfolio', useRemoveFromPortfolio, 'h1', 'P-W5'],

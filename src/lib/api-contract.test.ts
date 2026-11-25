@@ -10,27 +10,17 @@
  * their shapes differ from the hook types until their page tickets).
  */
 import { describe, expect, it } from 'vitest'
+import knownDead from './known-dead-routes.json'
 import servedRoutes from '@/types/api-routes.gen.json'
 
 const served = new Set<string>(servedRoutes)
 
 /**
- * Mock-era paths with no backend route, each owned by the page ticket that replaces it (epic 86bd5z6kr).
- * Ticket 8 deletes this list. A path that starts to exist must be removed from it (the third test enforces that).
+ * Mock-era paths with no backend route, each owned by the page ticket that replaces it (epic 86bd5z6kr), in `known-dead-routes.json`
+ * (the live end-to-end run reads the same list to ignore their 404s). The last ticket empties it. A path that starts to exist must be
+ * removed from it (the third test enforces that).
  */
-const KNOWN_DEAD: readonly string[] = [
-  'GET /api/alerts/{}',
-  'GET /api/alerts/{}/unread-count',
-  'GET /api/market/overview',
-  'GET /api/market/news',
-  'GET /api/portfolio/{}/optimizer',
-  'GET /api/predictions/{}',
-  'GET /api/feedback/{}',
-  'GET /api/watchlist/{}',
-  'GET /api/analysis/{}/agents',
-  'GET /api/stocks/{}/history',
-  'GET /api/stocks/resolve',
-]
+const KNOWN_DEAD: readonly string[] = knownDead
 
 const sources = import.meta.glob('/src/**/*.{ts,tsx}', { query: '?raw', import: 'default', eager: true }) as Record<
   string,
@@ -64,6 +54,13 @@ function usedRoutes(): string[] {
       // A `${query}` glued to the end of a segment is a query string, not a path part.
       const clean = path.split('?')[0].replace(/([a-z_-])\$\{[^}]*\}/gi, '$1').replace(/\$\{[^}]*\}/g, '{}')
       found.add(`${method.toUpperCase()} ${clean}`)
+    }
+  }
+  // Write routes are declared once, with a literal marker (lib/ledger-routes.ts): `ledgerRoute('POST', '/events/{id}/correct')`.
+  for (const [file, text] of Object.entries(sources)) {
+    if (/\.test\.tsx?$/.test(file) || file.includes('/test/')) continue
+    for (const m of text.matchAll(/\bledgerRoute\(\s*'(GET|POST|PATCH|PUT|DELETE)'\s*,\s*'([^']+)'/g)) {
+      found.add(`${m[1]} /api/portfolios/{}${m[2].replace(/\{id\}/g, '{}')}`)
     }
   }
   return [...found].sort()
