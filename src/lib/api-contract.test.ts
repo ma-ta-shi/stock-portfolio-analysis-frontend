@@ -4,7 +4,7 @@
  * path parameter, so `/api/stocks/{}` and `/api/stocks/lookup` are different routes).
  *
  * Limits, so nobody reads more into a pass than it says: this reads source text. It sees a path written as a string
- * or template literal inside an `apiFetch(...)` call and the method from `jsonBody('POST', ...)`; a path built in a
+ * or template literal inside an `apiFetch(...)` or `apiQuery(...)` call (a POST read) and the method from `jsonBody('POST', ...)`; a path built in a
  * variable (like the switched-off allocation endpoint) is not seen. It checks that the route exists, not that the
  * response shape matches what the hook expects (`/api/users/{}`, `/api/analysis/{}` and `/api/stocks/{}` exist but
  * their shapes differ from the hook types until their page tickets).
@@ -23,11 +23,7 @@ const KNOWN_DEAD: readonly string[] = [
   'GET /api/alerts/{}/unread-count',
   'GET /api/market/overview',
   'GET /api/market/news',
-  'GET /api/portfolio/{}',
-  'GET /api/portfolio/{}/summary',
   'GET /api/portfolio/{}/optimizer',
-  'GET /api/portfolio/{}/transactions',
-  'GET /api/portfolio/{}/closed',
   'GET /api/predictions/{}',
   'GET /api/feedback/{}',
   'GET /api/watchlist/{}',
@@ -52,17 +48,22 @@ function callText(text: string, start: number): string {
   return text.slice(open)
 }
 
-/** `METHOD /normalised/path` for every `apiFetch` call under src that names a real `/api/...` path. */
+/** `METHOD /normalised/path` for every `apiFetch`, `apiQuery` or `fetchAllPages` call under src that names a real `/api/...` path. */
 function usedRoutes(): string[] {
   const found = new Set<string>()
   for (const [file, text] of Object.entries(sources)) {
     if (/\.test\.tsx?$/.test(file) || file.includes('/test/') || file === '/src/lib/api.ts') continue
-    for (const m of text.matchAll(/apiFetch\b/g)) {
+    for (const m of text.matchAll(/\b(?:apiFetch|apiQuery|fetchAllPages)\b/g)) {
       const call = callText(text, m.index!)
-      const path = /[`'"](\/api\/[^`'"]*)[`'"]/.exec(call)?.[1]
+      // A portfolio hook builds its path with `path('/positions')` (use-portfolio.ts adds `/api/portfolios/<id>`); read that as the full path.
+      const viaHelper = /\bpath\(\s*[`'"](\/[^`'"]*)[`'"]/.exec(call)?.[1]
+      const path = /[`'"](\/api\/[^`'"]*)[`'"]/.exec(call)?.[1] ?? (viaHelper ? `/api/portfolios/\${id}${viaHelper}` : undefined)
       if (!path) continue
-      const method = /jsonBody\(\s*'(\w+)'/.exec(call)?.[1] ?? 'GET'
-      found.add(`${method.toUpperCase()} ${path.split('?')[0].replace(/\$\{[^}]*\}/g, '{}')}`)
+      // `apiQuery` is a read made through a POST (lib/api.ts).
+      const method = m[0] === 'apiQuery' ? 'POST' : (/jsonBody\(\s*'(\w+)'/.exec(call)?.[1] ?? 'GET')
+      // A `${query}` glued to the end of a segment is a query string, not a path part.
+      const clean = path.split('?')[0].replace(/([a-z_-])\$\{[^}]*\}/gi, '$1').replace(/\$\{[^}]*\}/g, '{}')
+      found.add(`${method.toUpperCase()} ${clean}`)
     }
   }
   return [...found].sort()
@@ -74,6 +75,8 @@ describe('API contract', () => {
   it('finds the hooks API calls (so the scan itself cannot silently break)', () => {
     expect(routes.length).toBeGreaterThan(10)
     expect(routes).toContain('GET /api/users')
+    // Portfolio hooks build their path through `path(...)`; the scan must still see them.
+    expect(routes).toEqual(expect.arrayContaining(['GET /api/portfolios/{}/positions', 'GET /api/portfolios/{}/holdings', 'POST /api/portfolios/{}/reports', 'GET /api/portfolios/{}/transactions', 'GET /api/portfolios/{}/exposure']))
   })
 
   it('every path the app calls is served by the backend, except the known mock-era ones', () => {

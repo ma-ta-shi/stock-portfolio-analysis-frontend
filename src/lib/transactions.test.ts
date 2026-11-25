@@ -1,82 +1,46 @@
 import { describe, expect, it } from 'vitest'
-import { mockHolding, mockUsdHolding } from '@/test/mock-data'
-import type { Transaction } from '@/types'
-import {
-  EMPTY_FILTERS,
-  filterTransactions,
-  isDateRangeInvalid,
-  tickersIn,
-  transactionDay,
-} from './transactions'
+import { EMPTY_FILTERS, isDateRangeInvalid, TRANSACTION_TYPES, transactionsQuery } from './transactions'
 
-function tx(overrides: Partial<Transaction>): Transaction {
-  return {
-    transaction_id: 't',
-    holding_id: 'h_001',
-    user_id: 'user_01',
-    stock: mockHolding.stock,
-    account_type: 'tfsa',
-    transaction_type: 'buy',
-    shares: 10,
-    price_per_share: 100,
-    total_amount: 1000,
-    fees: 0,
-    currency: 'CAD',
-    transaction_date: '2026-03-01',
-    created_at: '2026-03-01T00:00:00Z',
-    ...overrides,
-  }
-}
+describe('transactionsQuery', () => {
+  it('is empty for no filters on the whole portfolio', () => {
+    expect(transactionsQuery(EMPTY_FILTERS, 'combined')).toBe('')
+  })
 
-const all = [
-  tx({ transaction_id: 'a', transaction_date: '2026-01-10', transaction_type: 'buy' }),
-  tx({ transaction_id: 'b', transaction_date: '2026-02-15', transaction_type: 'dividend' }),
-  tx({ transaction_id: 'c', transaction_date: '2026-03-20', transaction_type: 'sell', holding_id: 'h_002', stock: mockUsdHolding.stock }),
-]
-const ids = (list: Transaction[]) => list.map((t) => t.transaction_id)
+  it('sends the account switcher as account_type', () => {
+    expect(transactionsQuery(EMPTY_FILTERS, 'tfsa')).toBe('?account_type=tfsa')
+  })
 
-describe('filterTransactions', () => {
-  it('returns everything newest first with no filters', () => {
-    expect(ids(filterTransactions(all, EMPTY_FILTERS))).toEqual(['c', 'b', 'a'])
+  it('sends every filter the server understands', () => {
+    const query = transactionsQuery({ type: 'sell', ticker: 'RY.TO', from: '2026-01-01', to: '2026-02-01', holdingId: null }, 'trading')
+    const params = new URLSearchParams(query)
+    expect(Object.fromEntries(params)).toEqual({ account_type: 'trading', type: 'sell', ticker: 'RY.TO', from: '2026-01-01', to: '2026-02-01' })
   })
-  it('filters by type', () => {
-    expect(ids(filterTransactions(all, { ...EMPTY_FILTERS, type: 'dividend' }))).toEqual(['b'])
+
+  it("ignores the account switcher for one position's history (a position belongs to one account)", () => {
+    const params = new URLSearchParams(transactionsQuery({ ...EMPTY_FILTERS, holdingId: 'h1' }, 'rrsp'))
+    expect(params.get('holding_id')).toBe('h1')
+    expect(params.has('account_type')).toBe(false)
   })
-  it('filters by ticker', () => {
-    expect(ids(filterTransactions(all, { ...EMPTY_FILTERS, ticker: 'MSFT' }))).toEqual(['c'])
-  })
-  it('filters by holding (one position’s history)', () => {
-    expect(ids(filterTransactions(all, { ...EMPTY_FILTERS, holdingId: 'h_001' }))).toEqual(['b', 'a'])
-  })
-  it('includes both ends of the date range', () => {
-    expect(ids(filterTransactions(all, { ...EMPTY_FILTERS, from: '2026-01-10', to: '2026-02-15' }))).toEqual(['b', 'a'])
-  })
-  it('supports open-ended ranges', () => {
-    expect(ids(filterTransactions(all, { ...EMPTY_FILTERS, from: '2026-02-01' }))).toEqual(['c', 'b'])
-    expect(ids(filterTransactions(all, { ...EMPTY_FILTERS, to: '2026-02-01' }))).toEqual(['a'])
-  })
-  it('compares local calendar days, not UTC (9pm Toronto on Nov 2 is Nov 3 in UTC)', () => {
-    const evening = tx({ transaction_id: 'e', transaction_date: '2026-11-03T02:00:00Z' })
-    expect(transactionDay(evening)).toBe('2026-11-02')
-    expect(ids(filterTransactions([evening], { ...EMPTY_FILTERS, to: '2026-11-02' }))).toEqual(['e'])
-  })
-  it('combines filters', () => {
-    expect(ids(filterTransactions(all, { ...EMPTY_FILTERS, ticker: 'RY.TO', type: 'buy', from: '2026-01-01' }))).toEqual(['a'])
-  })
-  it('returns nothing for an inverted date range', () => {
-    const filters = { ...EMPTY_FILTERS, from: '2026-03-01', to: '2026-01-01' }
-    expect(isDateRangeInvalid(filters)).toBe(true)
-    expect(filterTransactions(all, filters)).toEqual([])
-  })
-  it('does not mutate the input', () => {
-    const copy = [...all]
-    filterTransactions(all, EMPTY_FILTERS)
-    expect(all).toEqual(copy)
+
+  it('adds paging when asked', () => {
+    const params = new URLSearchParams(transactionsQuery(EMPTY_FILTERS, 'combined', { page: 3, perPage: 20 }))
+    expect(params.get('page')).toBe('3')
+    expect(params.get('per_page')).toBe('20')
   })
 })
 
-describe('tickersIn', () => {
-  it('returns sorted unique tickers', () => {
-    expect(tickersIn([...all, ...all])).toEqual(['MSFT', 'RY.TO'])
+describe('isDateRangeInvalid', () => {
+  it('flags a from date after the to date', () => {
+    expect(isDateRangeInvalid({ from: '2026-03-01', to: '2026-01-01' })).toBe(true)
+  })
+  it('accepts open-ended and equal ranges', () => {
+    expect(isDateRangeInvalid({ from: '2026-03-01', to: null })).toBe(false)
+    expect(isDateRangeInvalid({ from: '2026-03-01', to: '2026-03-01' })).toBe(false)
+  })
+})
+
+describe('TRANSACTION_TYPES', () => {
+  it('lists the 14 ledger types', () => {
+    expect(TRANSACTION_TYPES).toHaveLength(14)
   })
 })

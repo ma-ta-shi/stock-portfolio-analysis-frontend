@@ -1,0 +1,333 @@
+{
+  "portfolio_id": "e3ba3a97-cedc-4d75-9976-0655d9fd9340",
+  "total": {
+    "day": "2026-11-24",
+    "positions": [
+      {
+        "ticker": "RY.TO",
+        "account": "rrsp",
+        "currency": "CAD",
+        "shares": 40,
+        "price": 263.05,
+        "price_day": "2026-11-20",
+        "price_source": "daily_prices",
+        "value_cad": 10522,
+        "cost_cad": 9643.2,
+        "unrealised_cad": 878.8,
+        "unrealised_fx_cad": null,
+        "unrealised_pct": 9.11,
+        "weight_pct": 13.62
+      },
+      {
+        "ticker": "SHOP.TO",
+        "account": "tfsa",
+        "currency": "CAD",
+        "shares": 40,
+        "price": 177.09,
+        "price_day": "2026-11-20",
+        "price_source": "daily_prices",
+        "value_cad": 7083.6,
+        "cost_cad": 7670.8,
+        "unrealised_cad": -587.2,
+        "unrealised_fx_cad": null,
+        "unrealised_pct": -7.66,
+        "weight_pct": 9.17
+      },
+      {
+        "ticker": "VFV.TO",
+        "account": "tfsa",
+        "currency": "CAD",
+        "shares": 120,
+        "price": 176.29,
+        "price_day": "2026-11-20",
+        "price_source": "daily_prices",
+        "value_cad": 21154.8,
+        "cost_cad": 16200,
+        "unrealised_cad": 4954.8,
+        "unrealised_fx_cad": null,
+        "unrealised_pct": 30.59,
+        "weight_pct": 27.38
+      },
+      {
+        "ticker": "BCE.TO",
+        "account": "trading",
+        "currency": "CAD",
+        "shares": 200,
+        "price": 31.36,
+        "price_day": "2026-11-20",
+        "price_source": "daily_prices",
+        "value_cad": 6272,
+        "cost_cad": 6896,
+        "unrealised_cad": -624,
+        "unrealised_fx_cad": null,
+        "unrealised_pct": -9.05,
+        "weight_pct": 8.12
+      },
+      {
+        "ticker": "ENB.TO",
+        "account": "trading",
+        "currency": "CAD",
+        "shares": 150,
+        "price": 65.54,
+        "price_day": "2026-11-20",
+        "price_source": "daily_prices",
+        "value_cad": 9831,
+        "cost_cad": 8989.5,
+        "unrealised_cad": 841.5,
+        "unrealised_fx_cad": null,
+        "unrealised_pct": 9.36,
+        "weight_pct": 12.73
+      },
+      {
+        "ticker": "RDDT",
+        "account": "trading",
+        "currency": "USD",
+        "shares": 40,
+        "price": 85.33000183105469,
+        "price_day": "2026-11-20",
+        "price_source": "daily_prices",
+        "value_cad": 4879.51,
+        "cost_cad": 5111.6,
+        "unrealised_cad": -232.09,
+        "unrealised_fx_cad": 442.35,
+        "unrealised_pct": -4.54,
+        "weight_pct": 6.32
+      },
+      {
+        "ticker": "TD.TO",
+        "account": "trading",
+        "currency": "CAD",
+        "shares": 80,
+        "price": 162.05,
+        "price_day": "2026-11-20",
+        "price_source": "daily_prices",
+        "value_cad": 12964,
+        "cost_cad": 12708,
+        "unrealised_cad": 256,
+        "unrealised_fx_cad": null,
+        "unrealised_pct": 2.01,
+        "weight_pct": 16.78
+      }
+    ],
+    "cash_cad": 4543.52,
+    "value_cad": 77250.43,
+    "unrealised_cad": 5487.81,
+    "unpriced": []
+  },
+  "accounts": {
+    "tfsa": {
+      "day": "2026-11-24",
+      "positions": [
+        {
+          "ticker": "SHOP.TO",
+          "account": "tfsa",
+          "currency": "CAD",
+          "shares": 40,
+          "price": 177.09,
+          "price_day": "2026-11-20",
+          "price_source": "daily_prices",
+          "value_cad": 7083.6,
+          "cost_cad": 7670.8,
+          "unrealised_cad": -587.2,
+          "unrealised_fx_cad": null,
+          "unrealised_pct": -7.66,
+          "weight_pct": 9.17
+        },
+        {
+          "ticker": "VFV.TO",
+          "account": "tfsa",
+          "currency": "CAD",
+          "shares": 120,
+          "price": 176.29,
+          "price_day": "2026-11-20",
+          "price_source": "daily_prices",
+          "value_cad": 21154.8,
+          "cost_cad": 16200,
+          "unrealised_cad": 4954.8,
+          "unrealised_fx_cad": null,
+          "unrealised_pct": 30.59,
+          "weight_pct": 27.38
+        }
+      ],
+      "cash_cad": 1647.24,
+      "value_cad": 29885.64,
+      "unrealised_cad": 4367.6,
+      "unpriced": []
+    },
+    "rrsp": {
+      "day": "2026-11-24",
+      "positions": [
+        {
+          "ticker": "RY.TO",
+          "account": "rrsp",
+          "currency": "CAD",
+          "shares": 40,
+          "price": 263.05,
+          "price_day": "2026-11-20",
+          "price_source": "daily_prices",
+          "value_cad": 10522,
+          "cost_cad": 9643.2,
+          "unrealised_cad": 878.8,
+          "unrealised_fx_cad": null,
+          "unrealised_pct": 9.11,
+          "weight_pct": 13.62
+        }
+      ],
+      "cash_cad": 201.6,
+      "value_cad": 10723.6,
+      "unrealised_cad": 878.8,
+      "unpriced": []
+    },
+    "trading": {
+      "day": "2026-11-24",
+      "positions": [
+        {
+          "ticker": "BCE.TO",
+          "account": "trading",
+          "currency": "CAD",
+          "shares": 200,
+          "price": 31.36,
+          "price_day": "2026-11-20",
+          "price_source": "daily_prices",
+          "value_cad": 6272,
+          "cost_cad": 6896,
+          "unrealised_cad": -624,
+          "unrealised_fx_cad": null,
+          "unrealised_pct": -9.05,
+          "weight_pct": 8.12
+        },
+        {
+          "ticker": "ENB.TO",
+          "account": "trading",
+          "currency": "CAD",
+          "shares": 150,
+          "price": 65.54,
+          "price_day": "2026-11-20",
+          "price_source": "daily_prices",
+          "value_cad": 9831,
+          "cost_cad": 8989.5,
+          "unrealised_cad": 841.5,
+          "unrealised_fx_cad": null,
+          "unrealised_pct": 9.36,
+          "weight_pct": 12.73
+        },
+        {
+          "ticker": "RDDT",
+          "account": "trading",
+          "currency": "USD",
+          "shares": 40,
+          "price": 85.33000183105469,
+          "price_day": "2026-11-20",
+          "price_source": "daily_prices",
+          "value_cad": 4879.51,
+          "cost_cad": 5111.6,
+          "unrealised_cad": -232.09,
+          "unrealised_fx_cad": 442.35,
+          "unrealised_pct": -4.54,
+          "weight_pct": 6.32
+        },
+        {
+          "ticker": "TD.TO",
+          "account": "trading",
+          "currency": "CAD",
+          "shares": 80,
+          "price": 162.05,
+          "price_day": "2026-11-20",
+          "price_source": "daily_prices",
+          "value_cad": 12964,
+          "cost_cad": 12708,
+          "unrealised_cad": 256,
+          "unrealised_fx_cad": null,
+          "unrealised_pct": 2.01,
+          "weight_pct": 16.78
+        }
+      ],
+      "cash_cad": 2694.68,
+      "value_cad": 36641.19,
+      "unrealised_cad": 241.41,
+      "unpriced": []
+    }
+  },
+  "confirmations": [
+    {
+      "kind": "cash",
+      "account_type": "rrsp",
+      "what": "cash",
+      "last_confirmed": null,
+      "age_days": 32,
+      "overdue": false
+    },
+    {
+      "kind": "position",
+      "account_type": "rrsp",
+      "what": "RY.TO",
+      "last_confirmed": null,
+      "age_days": 32,
+      "overdue": false
+    },
+    {
+      "kind": "cash",
+      "account_type": "tfsa",
+      "what": "cash",
+      "last_confirmed": null,
+      "age_days": 32,
+      "overdue": false
+    },
+    {
+      "kind": "position",
+      "account_type": "tfsa",
+      "what": "SHOP.TO",
+      "last_confirmed": null,
+      "age_days": 32,
+      "overdue": false
+    },
+    {
+      "kind": "position",
+      "account_type": "tfsa",
+      "what": "VFV.TO",
+      "last_confirmed": null,
+      "age_days": 32,
+      "overdue": false
+    },
+    {
+      "kind": "cash",
+      "account_type": "trading",
+      "what": "cash",
+      "last_confirmed": null,
+      "age_days": 32,
+      "overdue": false
+    },
+    {
+      "kind": "position",
+      "account_type": "trading",
+      "what": "BCE.TO",
+      "last_confirmed": null,
+      "age_days": 32,
+      "overdue": false
+    },
+    {
+      "kind": "position",
+      "account_type": "trading",
+      "what": "ENB.TO",
+      "last_confirmed": null,
+      "age_days": 32,
+      "overdue": false
+    },
+    {
+      "kind": "position",
+      "account_type": "trading",
+      "what": "RDDT",
+      "last_confirmed": null,
+      "age_days": 32,
+      "overdue": false
+    },
+    {
+      "kind": "position",
+      "account_type": "trading",
+      "what": "TD.TO",
+      "last_confirmed": null,
+      "age_days": 32,
+      "overdue": false
+    }
+  ]
+}

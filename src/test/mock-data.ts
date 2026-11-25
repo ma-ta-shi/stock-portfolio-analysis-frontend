@@ -1,4 +1,6 @@
-import type { FeedbackData, Holding } from '@/types'
+import type { FeedbackData } from '@/types'
+import { mapHolding, type ApiHolding } from '@/lib/portfolio-mappers'
+import holdingsFixture from '../../public/mock-data/portfolio/holdings.json'
 
 export const mockAccuracySummary: FeedbackData['accuracy_summary'] = {
   total_scored_predictions: 24,
@@ -44,56 +46,24 @@ export const mockFeedbackData: FeedbackData = {
   ],
 }
 
-export const mockHolding: Holding = {
-  holding_id: 'h_001',
-  user_id: 'user_01',
-  stock: {
-    stock_id: 'stk_ry_to',
-    ticker: 'RY.TO',
-    name: 'Royal Bank of Canada',
-    exchange: 'TSX',
-    currency: 'CAD',
-    sector: 'Financials',
-  },
-  account_type: 'tfsa',
-  shares: 50,
-  average_cost_basis: 130.0,
-  current_price: 145.0,
-  market_value: 7250.0,
-  total_gain_loss: 750.0,
-  total_gain_loss_pct: 0.1154,
-  day_change: 50.0,
-  day_change_pct: 0.0069,
-  stock_outlook: 'somewhat_bullish',
-  confidence_score: 78,
-  disagreement_score: 0.2,
-  disagreement_label: 'low',
-  last_analyzed_at: '2026-03-25T10:00:00Z',
-  annual_dividend_per_share: 5.72,
-  annual_dividend_yield: 0.0394,
-  yield_on_cost: 0.044,
-  added_at: '2025-09-01T00:00:00Z',
-  last_updated: '2026-03-26T09:00:00Z',
+// Portfolio rows come from the recorded API responses (`npm run record:fixtures`), mapped by the real mapper.
+const rows = holdingsFixture.data as unknown as ApiHolding[]
+const byTicker = (ticker: string) => {
+  const row = rows.find((h) => h.stock.ticker === ticker && h.is_active)
+  if (!row) throw new Error(`Fixture has no active holding ${ticker}`)
+  return mapHolding(row)
 }
 
-/** A USD holding (US-listed stock) for cross-currency tests. */
-export const mockUsdHolding: Holding = {
-  ...mockHolding,
-  holding_id: 'h_002',
-  stock: {
-    stock_id: 'stk_msft',
-    ticker: 'MSFT',
-    name: 'Microsoft Corporation',
-    exchange: 'NASDAQ',
-    currency: 'USD',
-    sector: 'Technology',
-  },
-  account_type: 'rrsp',
-  shares: 25,
-  average_cost_basis: 312.4,
-  current_price: 398.75,
-  market_value: 9968.75,
-  total_gain_loss: 2158.75,
-  total_gain_loss_pct: 0.2765,
-  day_change: 2.14,
+/** RY.TO in the RRSP: a Canadian stock with a usable call. */
+export const mockHolding = byTicker('RY.TO')
+/** RDDT in Trading: a USD holding whose call is excluded. */
+export const mockUsdHolding = byTicker('RDDT')
+
+/** Every recorded holding, mapped: active and closed, usable, stale and unsupported calls. */
+export const mockHoldings = rows.map((row) => mapHolding(row))
+/** One recorded holding by ticker (the first match, active or closed). */
+export function fixtureHolding(ticker: string) {
+  const found = mockHoldings.find((h) => h.stock.ticker === ticker)
+  if (!found) throw new Error(`Fixture has no holding ${ticker}`)
+  return found
 }

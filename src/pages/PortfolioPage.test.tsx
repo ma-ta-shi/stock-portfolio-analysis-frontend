@@ -3,7 +3,6 @@ import { fireEvent, render, screen, waitFor, within } from '@testing-library/rea
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MemoryRouter, useLocation } from 'react-router-dom'
 import { PortfolioPage } from './PortfolioPage'
-import type { PortfolioSummary } from '@/types'
 
 // The subtab sections have their own tests; stub them to see which one is shown and with what filter.
 vi.mock('./portfolio/HoldingsTable', () => ({ HoldingsTable: ({ accountFilter }: { accountFilter: string }) => <div>holdings:{accountFilter}</div> }))
@@ -11,25 +10,11 @@ vi.mock('./portfolio/TransactionsTab', () => ({ TransactionsTab: ({ accountFilte
 vi.mock('./portfolio/PortfolioOptimizerSection', () => ({ PortfolioOptimizerSection: () => <div>optimizer-section</div> }))
 vi.mock('./portfolio/AllocationCharts', () => ({ AllocationCharts: () => <div>allocation-charts</div> }))
 vi.mock('@/components/AddStockDialog', () => ({ AddStockDialog: ({ open }: { open: boolean }) => (open ? <div>add-stock-dialog</div> : null) }))
-vi.mock('@/components/SparklineChart', () => ({ SparklineChart: () => null }))
+vi.mock('./portfolio/SummaryHeader', () => ({ SummaryHeader: ({ accountView }: { accountView: string }) => <div>header:{accountView}</div> }))
+vi.mock('@/hooks/use-portfolio-id')
 vi.mock('@/context/UserContext', () => ({ useUser: () => ({ userId: 'user_01', setUserId: vi.fn() }) }))
 vi.mock('@/hooks/use-portfolio')
-import { usePortfolioSummary } from '@/hooks/use-portfolio'
-
-const summary: PortfolioSummary = {
-  user_id: 'user_01',
-  total_value_cad: 85443.7,
-  total_cost_cad: 68742.1,
-  total_gain_loss_cad: 16701.6,
-  total_gain_loss_pct: 0.2429,
-  day_change_cad: -472.3,
-  day_change_pct: -0.0055,
-  by_account: {
-    tfsa: { value: 12512.75, cost: 9458.4, gain_loss: 3054.35, gain_loss_pct: 0.3229 },
-    rrsp: { value: 72930.95, cost: 59283.7, gain_loss: 13647.25, gain_loss_pct: 0.2302 },
-  },
-  sparkline_30d: [],
-}
+import { usePortfolioId } from '@/hooks/use-portfolio-id'
 
 function Probe() {
   return <output data-testid="search">{useLocation().search}</output>
@@ -48,23 +33,15 @@ function renderPage(url = '/portfolio') {
 
 beforeEach(() => {
   sessionStorage.clear()
-  vi.mocked(usePortfolioSummary).mockReturnValue({ data: summary, isLoading: false, isError: false } as unknown as ReturnType<typeof usePortfolioSummary>)
+  vi.mocked(usePortfolioId).mockReturnValue({ portfolioId: 'p1', isEmpty: false, isError: false } as unknown as ReturnType<typeof usePortfolioId>)
 })
 
-describe('PortfolioPage summary', () => {
-  it('shows combined totals with signed gains and losses', () => {
+describe('PortfolioPage account switcher', () => {
+  it('passes the selected account to the header and the tabs', () => {
     renderPage()
-    expect(screen.getByText('$85,443.70')).toBeInTheDocument()
-    expect(screen.getByText('+$16,701.60 (+24.29%)')).toBeInTheDocument()
-    expect(screen.getByText('-$472.30 (-0.55%)')).toBeInTheDocument()
-  })
-
-  it('shows one account’s figures when that account is selected', () => {
-    renderPage()
+    expect(screen.getByText('header:combined')).toBeInTheDocument()
     fireEvent.click(within(screen.getByRole('group', { name: 'Account' })).getByRole('button', { name: 'TFSA' }))
-    expect(screen.getByText('TFSA Value')).toBeInTheDocument()
-    expect(screen.getByText('$12,512.75')).toBeInTheDocument()
-    expect(screen.getByText('+$3,054.35 (+32.29%)')).toBeInTheDocument()
+    expect(screen.getByText('header:tfsa')).toBeInTheDocument()
     expect(screen.getByText('holdings:tfsa')).toBeInTheDocument()
   })
 
@@ -75,10 +52,18 @@ describe('PortfolioPage summary', () => {
     renderPage()
     expect(within(screen.getByRole('group', { name: 'Account' })).getByRole('button', { name: 'RRSP' })).toHaveAttribute('aria-pressed', 'true')
   })
+})
 
-  it('shows an error with retry when the summary fails', () => {
+describe('PortfolioPage without a portfolio', () => {
+  it('says what is missing when the user has no portfolio yet (P-R1)', () => {
+    vi.mocked(usePortfolioId).mockReturnValue({ portfolioId: null, isEmpty: true, isError: false } as unknown as ReturnType<typeof usePortfolioId>)
+    renderPage()
+    expect(screen.getByText(/P-R1/)).toBeInTheDocument()
+  })
+
+  it('shows an error with retry when the portfolio cannot be looked up', () => {
     const refetch = vi.fn()
-    vi.mocked(usePortfolioSummary).mockReturnValue({ data: undefined, isLoading: false, isError: true, error: new Error('x'), refetch } as unknown as ReturnType<typeof usePortfolioSummary>)
+    vi.mocked(usePortfolioId).mockReturnValue({ portfolioId: null, isEmpty: false, isError: true, error: new Error('x'), refetch } as unknown as ReturnType<typeof usePortfolioId>)
     renderPage()
     fireEvent.click(screen.getByRole('button', { name: 'Retry' }))
     expect(refetch).toHaveBeenCalled()

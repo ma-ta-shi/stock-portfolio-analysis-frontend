@@ -38,7 +38,7 @@ interface SellPositionDialogProps {
 
 export function SellPositionDialog({ holding, onClose }: SellPositionDialogProps) {
   const [shares, setShares] = useState(() => (holding ? String(holding.shares) : ''))
-  const [price, setPrice] = useState(() => (holding ? holding.current_price.toFixed(2) : ''))
+  const [price, setPrice] = useState(() => (holding?.current_price != null ? holding.current_price.toFixed(2) : ''))
   const [fees, setFees] = useState(DEFAULT_FEE)
   const [date, setDate] = useState(() => localDateInputValue())
 
@@ -63,7 +63,7 @@ export function SellPositionDialog({ holding, onClose }: SellPositionDialogProps
           price: priceNum,
           fees: feesNum,
           otherHoldings: allHoldings ?? [],
-          marginalTaxRate: profile?.financial_profile.marginal_tax_rate,
+          marginalTaxRate: profile?.financial_profile?.marginal_tax_rate, // the live profile has no financial_profile yet: the Settings ticket (86bd5z6n3) maps it
           toCad: (amount) => toCad(amount, currency, rates),
         })
       : null
@@ -113,7 +113,7 @@ export function SellPositionDialog({ holding, onClose }: SellPositionDialogProps
             </div>
             <div>
               <dt className="text-muted-foreground">Unrealized</dt>
-              <dd className={cn('font-medium', gainLossColor(holding.total_gain_loss))}>
+              <dd className={cn('font-medium', gainLossColor(holding.total_gain_loss ?? 0))}>
                 {formatMoney(holding.total_gain_loss, currency, { signed: true })}
               </dd>
             </div>

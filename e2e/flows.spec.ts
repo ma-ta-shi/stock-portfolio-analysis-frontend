@@ -1,12 +1,13 @@
 import { axeViolations, expect, test } from './fixtures'
 
-test('USD holdings are shown in USD and sold in USD', async ({ page, consoleErrors }) => {
+test('USD holdings are shown in USD; a write that is not connected says which gap it waits on', async ({ page, consoleErrors }) => {
   await page.goto('/portfolio')
-  await expect(page.getByText('US$9,968.75')).toBeVisible()
-  await page.getByRole('button', { name: /^Sell MSFT/ }).click()
+  await expect(page.getByText('US$3,413.20')).toBeVisible() // RDDT: 40 shares at US$85.33, from the recorded API response
+  await page.getByRole('button', { name: /^Sell RDDT/ }).click()
   await page.getByLabel(/Shares to sell/).fill('5')
-  await expect(page.getByText(/Realized gain: \+US\$/)).toBeVisible()
   expect(await axeViolations(page)).toEqual([])
+  await page.getByRole('dialog').getByRole('button', { name: /^Sell/ }).click()
+  await expect(page.getByRole('dialog').getByRole('alert')).toContainText('P-W2')
   expect(consoleErrors).toEqual([])
 })
 
@@ -20,28 +21,33 @@ test('holding rows open the stock page from the keyboard', async ({ page }) => {
 test('closed position "View history" opens its filtered transactions; Back returns', async ({ page }) => {
   await page.goto('/portfolio')
   await page.getByRole('button', { name: /Closed Positions/ }).click()
-  await page.getByRole('link', { name: /View history for TD\.TO/ }).click()
+  await page.getByRole('link', { name: /View history for XOM/ }).click()
   await expect(page).toHaveURL(/tab=transactions&holding=/)
-  await expect(page.getByText(/Showing full history for TD\.TO/)).toBeVisible()
-  await expect(page.locator('tbody tr')).toHaveCount(2)
+  await expect(page.getByText(/Showing full history for XOM/)).toBeVisible()
   await page.goBack()
   await expect(page.getByRole('tab', { name: 'Holdings', selected: true })).toBeVisible()
 })
 
-test('transaction filters narrow the list and live in the URL', async ({ page }) => {
+test('transaction filters live in the URL and survive a reload', async ({ page }) => {
   await page.goto('/portfolio?tab=transactions')
-  const rows = page.locator('tbody tr')
-  await expect(rows).toHaveCount(14)
   await page.getByRole('combobox', { name: 'Ticker' }).selectOption('RY.TO')
-  await expect(rows).toHaveCount(5)
   await page.getByLabel('From', { exact: true }).fill('2026-01-01')
-  await expect(rows).toHaveCount(2)
-  await expect(page).toHaveURL(/ticker=RY\.TO.*from=2026-01-01|from=2026-01-01.*ticker=RY\.TO/)
+  await expect(page).toHaveURL(/ticker=RY.TO.*from=2026-01-01|from=2026-01-01.*ticker=RY.TO/)
   await page.reload()
-  await expect(rows).toHaveCount(2)
+  await expect(page.getByRole('combobox', { name: 'Ticker' })).toHaveValue('RY.TO')
   expect(await axeViolations(page)).toEqual([])
   await page.getByRole('button', { name: 'Clear filters' }).click()
-  await expect(rows).toHaveCount(14)
+  await expect(page).not.toHaveURL(/ticker=/)
+})
+
+// Mock mode serves one recorded file whatever the query, so a filter cannot change the rows (gap E-1). The end-to-end run against a
+// seeded scratch backend (`npm run test:e2e:live`, writes ticket 86bd5z6mq) turns this on.
+test.fixme('transaction filters narrow the list (E-1: needs a backend that filters)', async ({ page }) => {
+  await page.goto('/portfolio?tab=transactions')
+  const rows = page.locator('tbody tr')
+  const all = await rows.count()
+  await page.getByRole('combobox', { name: 'Ticker' }).selectOption('RY.TO')
+  await expect(rows).not.toHaveCount(all)
 })
 
 test('watchlist: add a stock (awaiting analysis), block duplicates, remove with confirmation', async ({ page, consoleErrors }) => {

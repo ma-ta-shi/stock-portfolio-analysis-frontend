@@ -8,6 +8,8 @@
  *   re-thrown untouched so TanStack Query can recognise them.
  */
 
+import { notConnectedMessage, type GapId } from './gaps'
+
 export const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
 const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '')
 export const API_TIMEOUT_MS = 15_000
@@ -137,6 +139,22 @@ export function jsonBody(method: 'POST' | 'PUT' | 'PATCH' | 'DELETE', body?: unk
     headers: { 'Content-Type': 'application/json' },
     body: body === undefined ? undefined : JSON.stringify(body),
   }
+}
+
+/**
+ * Read through a POST: a report names its period and scope in a body but changes nothing. Real mode sends the POST;
+ * mock mode (which refuses writes) serves the recorded file. The contract test scans `apiQuery` calls as POSTs.
+ */
+export function apiQuery<T>(mockPath: string, apiPath: string, body: unknown, options: RequestInit = {}): Promise<T> {
+  return apiFetch<T>(mockPath, apiPath, USE_MOCK ? options : { ...options, ...jsonBody('POST', body) })
+}
+
+/**
+ * The error a control raises when what it does is not wired yet. The message comes from the gap registry (`lib/gaps.json`),
+ * so it names the missing piece, the gap id and the ticket that closes it; never silently do nothing.
+ */
+export function notConnected(gap: GapId): ApiError {
+  return new ApiError(notConnectedMessage(gap), null, 'not_connected', '', { gap })
 }
 
 /** User-facing message for any error thrown by a query or mutation. */

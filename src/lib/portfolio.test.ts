@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 import { mockHolding, mockUsdHolding } from '@/test/mock-data'
 import {
   applyTemplate,
-  buildAllocations,
   buildHoldingSnapshot,
   disagreementLabel,
   filterByAccount,
@@ -23,7 +22,7 @@ describe('buildHoldingSnapshot', () => {
 
   it('aggregates the same stock across accounts with a weighted average cost', () => {
     const tfsa = { ...mockHolding, shares: 10, average_cost_basis: 100, market_value: 1500, total_gain_loss: 500 }
-    const rrsp = { ...mockHolding, holding_id: 'h_x', account_type: 'rrsp', shares: 30, average_cost_basis: 140, market_value: 4500, total_gain_loss: 300 }
+    const rrsp = { ...mockHolding, holding_id: 'h_x', account_type: 'rrsp' as const, shares: 30, average_cost_basis: 140, market_value: 4500, total_gain_loss: 300 }
     const snap = buildHoldingSnapshot([tfsa, rrsp], rates)!
     expect(snap.shares).toBe(40)
     expect(snap.book_cost).toBe(10 * 100 + 30 * 140)
@@ -36,39 +35,16 @@ describe('buildHoldingSnapshot', () => {
 
   it('converts the _cad fields of a USD holding to CAD', () => {
     const snap = buildHoldingSnapshot([mockUsdHolding], rates)!
-    expect(snap.total_return_cad).toBeCloseTo(2158.75 * 1.4)
-    expect(snap.day_change_cad).toBeCloseTo(2.14 * 25 * 1.4)
+    const h = mockUsdHolding
+    expect(snap.total_return_cad).toBeCloseTo(h.total_gain_loss! * 1.4)
+    expect(snap.day_change_cad).toBeCloseTo(h.shares * (h.current_price! - h.current_price! / (1 + h.change_day!)) * 1.4)
     // Share-based amounts stay in USD
-    expect(snap.current_value).toBe(9968.75)
+    expect(snap.current_value).toBe(h.market_value)
   })
 
   it('leaves _cad fields as NaN (rendered as —) when the USD rate is unknown', () => {
     const snap = buildHoldingSnapshot([mockUsdHolding], CAD_ONLY)!
     expect(snap.total_return_cad).toBeNaN()
-  })
-})
-
-describe('buildAllocations', () => {
-  it('weights holdings by their CAD value, not the raw mixed-currency sum', () => {
-    const cad = { ...mockHolding, market_value: 1000 }
-    const usd = { ...mockUsdHolding, market_value: 1000 }
-    const { byGeography, totalCad } = buildAllocations([cad, usd], rates)
-    expect(totalCad).toBeCloseTo(2400)
-    const us = byGeography.find((s) => s.name === 'US')!
-    expect(us.share).toBeCloseTo(1400 / 2400)
-  })
-
-  it('excludes and reports holdings whose currency has no rate', () => {
-    const result = buildAllocations([mockHolding, mockUsdHolding], CAD_ONLY)
-    expect(result.missingCurrencies).toEqual(['USD'])
-    expect(result.totalCad).toBe(mockHolding.market_value)
-    expect(result.bySector.map((s) => s.name)).toEqual(['Financials'])
-  })
-
-  it('sorts slices by value descending and shares sum to 1', () => {
-    const { bySector } = buildAllocations([mockHolding, mockUsdHolding], rates)
-    expect(bySector[0].value).toBeGreaterThanOrEqual(bySector[1].value)
-    expect(bySector.reduce((s, x) => s + x.share, 0)).toBeCloseTo(1)
   })
 })
 

@@ -18,10 +18,15 @@ export function buildHoldingSnapshot(
   if (totalShares <= 0) return undefined
 
   const bookCost = holdings.reduce((s, h) => s + h.shares * h.average_cost_basis, 0)
-  const currentValue = holdings.reduce((s, h) => s + h.market_value, 0)
-  const totalReturn = holdings.reduce((s, h) => s + h.total_gain_loss, 0)
-  const dayChange = holdings.reduce((s, h) => s + h.day_change * h.shares, 0)
-  const yieldOnCost = holdings.reduce((s, h) => s + h.yield_on_cost * h.shares, 0) / totalShares
+  // A holding with no price or call makes the sum unknown (NaN, which the formatters show as a dash), never zero.
+  const sum = (value: (h: Holding) => number | null) =>
+    holdings.reduce((s, h) => s + (value(h) ?? Number.NaN), 0)
+  const currentValue = sum((h) => h.market_value)
+  const totalReturn = sum((h) => h.total_gain_loss)
+  const dayChange = sum((h) =>
+    h.current_price != null && h.change_day != null ? h.shares * (h.current_price - h.current_price / (1 + h.change_day)) : null,
+  )
+  const yieldOnCost = holdings.reduce((s, h) => s + (h.yield_on_cost ?? 0) * h.shares, 0) / totalShares
 
   const currency = holdings[0].stock.currency
   const cad = (amount: number) => toCad(amount, currency, rates) ?? Number.NaN
@@ -40,7 +45,7 @@ export function buildHoldingSnapshot(
         ? holdings.map((h) => ({
             account_type: h.account_type,
             shares: h.shares,
-            value: h.market_value,
+            value: h.market_value ?? Number.NaN,
             avg_cost: h.average_cost_basis,
           }))
         : undefined,
@@ -69,58 +74,6 @@ export function filterByAccount<T extends { account_type: string }>(
   if (!items) return undefined
   if (!account || account === 'combined') return [...items]
   return items.filter((i) => i.account_type === account)
-}
-
-export interface AllocationSlice {
-  name: string
-  /** Value in CAD */
-  value: number
-  /** Fraction of the total (0–1) */
-  share: number
-}
-
-export interface Allocations {
-  bySector: AllocationSlice[]
-  byAccount: AllocationSlice[]
-  byGeography: AllocationSlice[]
-  totalCad: number
-  /** Currencies whose holdings were left out because no FX rate was available. */
-  missingCurrencies: Holding['stock']['currency'][]
-}
-
-/**
- * Allocation weights across holdings in mixed currencies. Every market value is
- * converted to CAD first — adding USD and CAD amounts directly would overweight
- * USD holdings by the exchange rate.
- */
-export function buildAllocations(holdings: readonly Holding[], rates: FxRatesToCad): Allocations {
-  const missing = new Set<Holding['stock']['currency']>()
-  const converted: { holding: Holding; cad: number }[] = []
-  for (const h of holdings) {
-    const cad = toCad(h.market_value, h.stock.currency, rates)
-    if (cad == null) missing.add(h.stock.currency)
-    else converted.push({ holding: h, cad })
-  }
-  const totalCad = converted.reduce((s, c) => s + c.cad, 0)
-
-  function group(keyOf: (h: Holding) => string): AllocationSlice[] {
-    const map = new Map<string, number>()
-    for (const { holding, cad } of converted) {
-      const key = keyOf(holding)
-      map.set(key, (map.get(key) ?? 0) + cad)
-    }
-    return [...map.entries()]
-      .map(([name, value]) => ({ name, value, share: totalCad > 0 ? value / totalCad : 0 }))
-      .sort((a, b) => b.value - a.value)
-  }
-
-  return {
-    bySector: group((h) => h.stock.sector),
-    byAccount: group((h) => h.account_type.toUpperCase()),
-    byGeography: group((h) => (h.stock.currency === 'CAD' ? 'Canadian' : 'US')),
-    totalCad,
-    missingCurrencies: [...missing],
-  }
 }
 
 /**

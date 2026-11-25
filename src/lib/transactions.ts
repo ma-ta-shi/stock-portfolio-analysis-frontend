@@ -1,14 +1,16 @@
-import type { Transaction, TransactionType } from '@/types'
-import { localDateInputValue, parseDate } from './format'
+import { TX_TYPE_LABELS } from './labels'
+import { accountParam } from './portfolio-mappers'
+import type { PortfolioAccountView, TransactionType } from '@/types/portfolio'
 
-export const TX_TYPE_FILTERS = ['all', 'buy', 'sell', 'dividend', 'drip'] as const
-export type TxTypeFilter = (typeof TX_TYPE_FILTERS)[number]
+/** Every ledger type, from the label map (which the compiler keeps in step with the API). */
+export const TRANSACTION_TYPES = Object.keys(TX_TYPE_LABELS) as TransactionType[]
+export type TxTypeFilter = 'all' | TransactionType
 
 export interface TransactionFilters {
   type: TxTypeFilter
   /** Exact ticker, e.g. "RY.TO"; null = all */
   ticker: string | null
-  /** Inclusive local calendar dates, "YYYY-MM-DD"; null = open-ended */
+  /** Inclusive days as the owner wrote them, "YYYY-MM-DD"; null = open-ended */
   from: string | null
   to: string | null
   /** One position's full history (from Closed Positions "View history"); null = all */
@@ -23,41 +25,32 @@ export const EMPTY_FILTERS: TransactionFilters = {
   holdingId: null,
 }
 
-/** The local calendar day a transaction happened on, as "YYYY-MM-DD". */
-export function transactionDay(t: Pick<Transaction, 'transaction_date'>): string {
-  return localDateInputValue(parseDate(t.transaction_date))
-}
-
 export function isDateRangeInvalid(filters: Pick<TransactionFilters, 'from' | 'to'>): boolean {
   return filters.from != null && filters.to != null && filters.from > filters.to
 }
 
 /**
- * Apply the Transactions tab filters and sort newest first.
- * Dates compare as local calendar days ("YYYY-MM-DD" strings sort lexicographically),
- * so a 9pm trade on Nov 2 is included in a range ending Nov 2.
+ * The transactions request for the current filters: the server filters and orders (newest first) and pages. A single
+ * position's history ignores the account switcher: the position belongs to exactly one account, and hiding it because
+ * another account is selected would be confusing.
  */
-export function filterTransactions(
-  transactions: readonly Transaction[],
+export function transactionsQuery(
   filters: TransactionFilters,
-): Transaction[] {
-  if (isDateRangeInvalid(filters)) return []
-  return transactions
-    .filter((t) => {
-      if (filters.holdingId && t.holding_id !== filters.holdingId) return false
-      if (filters.type !== 'all' && t.transaction_type !== (filters.type as TransactionType)) return false
-      if (filters.ticker && t.stock.ticker !== filters.ticker) return false
-      if (filters.from || filters.to) {
-        const day = transactionDay(t)
-        if (filters.from && day < filters.from) return false
-        if (filters.to && day > filters.to) return false
-      }
-      return true
-    })
-    .sort((a, b) => parseDate(b.transaction_date).getTime() - parseDate(a.transaction_date).getTime())
-}
-
-/** Sorted unique tickers, for the ticker filter dropdown. */
-export function tickersIn(transactions: readonly Transaction[]): string[] {
-  return [...new Set(transactions.map((t) => t.stock.ticker))].sort()
+  view: PortfolioAccountView,
+  paging?: { page: number; perPage: number },
+): string {
+  const params = new URLSearchParams()
+  const account = filters.holdingId ? undefined : accountParam(view)
+  if (account) params.set('account_type', account)
+  if (filters.holdingId) params.set('holding_id', filters.holdingId)
+  if (filters.type !== 'all') params.set('type', filters.type)
+  if (filters.ticker) params.set('ticker', filters.ticker)
+  if (filters.from) params.set('from', filters.from)
+  if (filters.to) params.set('to', filters.to)
+  if (paging) {
+    params.set('page', String(paging.page))
+    params.set('per_page', String(paging.perPage))
+  }
+  const text = params.toString()
+  return text ? `?${text}` : ''
 }

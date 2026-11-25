@@ -17,8 +17,8 @@ const set = (label: RegExp, value: string) => fireEvent.change(screen.getByLabel
 describe('EditPositionDialog', () => {
   it('prefills the current shares and average cost', () => {
     render(<EditPositionDialog holding={mockHolding} onClose={vi.fn()} />)
-    expect(screen.getByLabelText(/^Shares/)).toHaveValue(50)
-    expect(screen.getByLabelText(/Avg cost \(CAD\)/)).toHaveValue(130)
+    expect(screen.getByLabelText(/^Shares/)).toHaveValue(mockHolding.shares)
+    expect(screen.getByLabelText(/Avg cost \(CAD\)/)).toHaveValue(mockHolding.average_cost_basis)
   })
 
   it('previews book cost in the holding currency', () => {
@@ -43,7 +43,7 @@ describe('EditPositionDialog', () => {
     set(/^Shares/, '60')
     fireEvent.click(screen.getByRole('button', { name: 'Save' }))
     await waitFor(() => expect(onClose).toHaveBeenCalled())
-    expect(mutateAsync).toHaveBeenCalledWith({ holdingId: mockHolding.holding_id, shares: 60, average_cost_basis: 130 })
+    expect(mutateAsync).toHaveBeenCalledWith({ holdingId: mockHolding.holding_id, shares: 60, average_cost_basis: mockHolding.average_cost_basis })
   })
 
   it('stays open when saving fails', async () => {

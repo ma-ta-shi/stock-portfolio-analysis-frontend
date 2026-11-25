@@ -26,8 +26,11 @@ Open http://localhost:5173.
 |---|---|
 | `npm run dev` | Dev server with hot reload (uses `.env`; mock data if it sets `VITE_USE_MOCK=true`) |
 | `npm run dev:live` | Dev server against the real backend (`.env.live` sets `VITE_USE_MOCK=false`); point it elsewhere with `VITE_API_PROXY_TARGET=http://localhost:8010` |
-| `npm run gen:api` | Refreshes `src/types/openapi.gen.ts` (the API types) and `src/types/api-routes.gen.json` (every route the backend serves) from a running backend (`API_URL=http://localhost:8010` for another port). Commit both after a backend change. The API itself is documented in the backend repo, `backend/docs/api-reference.md`, generated from the same schema; there is no frontend copy |
+| `npm run gen:api` | Refreshes `src/types/openapi.gen.ts` (the API types), `api-routes.gen.json` (every route the backend serves), `units.gen.ts` and `api-fields.gen.json` (every property of every response schema) from a running backend (`API_URL=http://localhost:8010` for another port). Commit all four after a backend change; `-- --check` fails when they are stale. The API itself is documented in the backend repo, `backend/docs/api-reference.md`, generated from the same schema; there is no frontend copy |
 | `npm test` | Run the Vitest suite once |
+| `npm run gen:gaps` | Writes `docs/gap-register.md` from `src/lib/gaps.json` (every missing or not-yet-connected piece, with its ticket); `-- --check` runs in `npm test` |
+| `npm run coverage:api` | Lists the API response schemas no screen has claimed yet (the epic is done when it is empty or every entry has a reason) |
+| `npm run record:fixtures` | Records the Portfolio screen's API responses from a backend on a scratch database into `public/mock-data/portfolio/` (`API_URL=...`) |
 | `npm run test:watch` | Vitest in watch mode |
 | `npm run test:e2e` | Playwright: every page and key flow in a real browser (mock mode), light + dark, with axe-core accessibility checks |
 | `npm run lint` | ESLint |

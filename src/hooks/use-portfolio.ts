@@ -1,314 +1,272 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { apiFetch } from '@/lib/api'
+/**
+ * The Portfolio screen's server state. Everything is keyed by the owner's portfolio id (`usePortfolioId`), read through the
+ * mappers in `lib/portfolio-mappers.ts`, and nothing here edits a cache by hand: a write that is not wired yet throws
+ * `notConnected(gap)` so the dialog shows what is missing (the writes ticket, 86bd5z6mq, replaces each stub).
+ */
+import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query'
+import { useMemo } from 'react'
+import { apiFetch, apiQuery, getErrorMessage, notConnected } from '@/lib/api'
+import type { GapId } from '@/lib/gaps'
+import { fetchAllPages } from '@/lib/fetch-all-pages'
+import { localDateInputValue } from '@/lib/format'
 import { queryKeys } from '@/lib/query-keys'
+import {
+  accountParam,
+  buildSummary,
+  mapHoldings,
+  mapTransactions,
+  type ApiHolding,
+  type ApiPositions,
+  type ApiTransaction,
+} from '@/lib/portfolio-mappers'
+import { transactionsQuery, type TransactionFilters } from '@/lib/transactions'
 import { useUser } from '@/context/UserContext'
-import type { PortfolioSummary, PortfolioHoldingsResponse, PortfolioOptimizerResult, Holding, TransactionsResponse, Transaction, ClosedPosition } from '@/types'
-import type { TickerResult } from './use-ticker-search'
+import { usePortfolioId } from '@/hooks/use-portfolio-id'
+import type { ListResponse, PortfolioOptimizerResult } from '@/types'
+import type { components } from '@/types/openapi.gen'
+import type { PortfolioAccountView, Transaction } from '@/types/portfolio'
 
-export function usePortfolioSummary() {
-  const { userId } = useUser()
+type Api = components['schemas']
+const DIR = '/mock-data/portfolio'
+const ONE_PAGE = 20
+
+function usePortfolioPath(): { id: string | null; path: (rest: string) => string } {
+  const { portfolioId } = usePortfolioId()
+  return { id: portfolioId, path: (rest) => `/api/portfolios/${portfolioId}${rest}` }
+}
+
+/** What the portfolio holds, valued at the latest recorded prices; the whole and each account, with the broker confirmations. */
+export function usePositions() {
+  const { id, path } = usePortfolioPath()
   return useQuery({
-    queryKey: queryKeys.portfolio.summary(userId),
-    queryFn: ({ signal }) =>
-      apiFetch<PortfolioSummary>(
-        `/mock-data/portfolio/${userId}/summary.json`,
-        `/api/portfolio/${userId}/summary`,
-        { signal },
-      ),
+    queryKey: queryKeys.portfolio.positions(id ?? ''),
+    enabled: !!id,
+    queryFn: ({ signal }) => apiFetch<ApiPositions>(`${DIR}/positions.json`, path('/positions'), { signal }),
   })
 }
 
-export function usePortfolioHoldings() {
-  const { userId } = useUser()
+function useRawHoldings() {
+  const { id, path } = usePortfolioPath()
   return useQuery({
-    queryKey: queryKeys.portfolio.holdings(userId),
-    queryFn: async ({ signal }) => {
-      const res = await apiFetch<PortfolioHoldingsResponse>(
-        `/mock-data/portfolio/${userId}.json`,
-        `/api/portfolio/${userId}`,
+    queryKey: queryKeys.portfolio.rawHoldings(id ?? ''),
+    enabled: !!id,
+    queryFn: ({ signal }) =>
+      fetchAllPages<ApiHolding>(`${DIR}/holdings.json`, path('/holdings?include=snapshot&include=position&include_closed=true'), { signal }),
+  })
+}
+
+/** Every holding, active and closed, with its position, price, changes and call: one request, mapped once. */
+function useHoldingRows() {
+  const raw = useRawHoldings()
+  const positions = usePositions()
+  // The confirmations come with the positions; a holding is still shown if they could not be read.
+  const confirmations = positions.data?.confirmations
+  const data = useMemo(() => (raw.data ? mapHoldings(raw.data, confirmations ?? []) : undefined), [raw.data, confirmations])
+  return { data, isLoading: raw.isLoading, isError: raw.isError, error: raw.error, refetch: raw.refetch }
+}
+
+/** Active holdings. */
+export function usePortfolioHoldings() {
+  const rows = useHoldingRows()
+  const data = useMemo(() => rows.data?.filter((h) => h.is_active), [rows.data])
+  return { ...rows, data }
+}
+
+/** Closed positions: holdings with no shares left, kept for their history. */
+export function useClosedPositions() {
+  const rows = useHoldingRows()
+  const data = useMemo(() => rows.data?.filter((h) => !h.is_active), [rows.data])
+  return { ...rows, data }
+}
+
+function useReport() {
+  const { id, path } = usePortfolioPath()
+  return useQuery({
+    queryKey: queryKeys.portfolio.report(id ?? ''),
+    enabled: !!id,
+    queryFn: ({ signal }) =>
+      apiQuery<Api['ReportResponse']>(`${DIR}/report.json`, path('/reports'), { preset: 'since_inception' }, { signal }),
+  })
+}
+
+function useValueHistory(view: PortfolioAccountView) {
+  const { id, path } = usePortfolioPath()
+  const account = accountParam(view)
+  return useQuery({
+    queryKey: queryKeys.portfolio.history(id ?? '', view),
+    enabled: !!id,
+    queryFn: ({ signal }) => {
+      const from = localDateInputValue(new Date(Date.now() - 30 * 86_400_000))
+      return apiFetch<Api['ValueHistoryResponse']>(
+        `${DIR}/value-history.json`,
+        path(`/value-history?from=${from}${account ? `&account_type=${account}` : ''}`),
         { signal },
       )
-      return res.data
     },
   })
 }
 
+function useAccounts() {
+  const { id, path } = usePortfolioPath()
+  return useQuery({
+    queryKey: queryKeys.portfolio.accounts(id ?? ''),
+    enabled: !!id,
+    queryFn: ({ signal }) => apiFetch<Api['AccountListResponse']>(`${DIR}/accounts.json`, path('/accounts'), { signal }),
+  })
+}
+
+export function useRoom() {
+  const { id, path } = usePortfolioPath()
+  return useQuery({
+    queryKey: queryKeys.portfolio.room(id ?? ''),
+    enabled: !!id,
+    retry: false, // 422 PROFILE_INCOMPLETE is an answer, not a glitch
+    queryFn: ({ signal }) => apiFetch<Api['RoomResponse']>(`${DIR}/room.json`, path('/room'), { signal }),
+  })
+}
+
+/**
+ * What the portfolio holds by sector, industry and currency, each company directly and through funds, and its risk. The API has no
+ * account filter yet (gap P-A2), so this is always the whole portfolio and the key says so.
+ */
+export function useExposure() {
+  const { id, path } = usePortfolioPath()
+  return useQuery({
+    queryKey: queryKeys.portfolio.exposure(id ?? '', 'combined'),
+    enabled: !!id,
+    queryFn: ({ signal }) => apiFetch<Api['ExposureResponse']>(`${DIR}/exposure.json`, path('/exposure'), { signal }),
+  })
+}
+
+/**
+ * The header's figures for one scope (the whole portfolio or one account). Positions are required; the report, value history,
+ * accounts and room are optional parts, and a part that fails is flagged `unavailable` instead of failing the header.
+ */
+export function usePortfolioSummary(view: PortfolioAccountView = 'combined') {
+  const positions = usePositions()
+  const report = useReport()
+  const history = useValueHistory(view)
+  const accounts = useAccounts()
+  const room = useRoom()
+  const settled = [report, history, accounts, room].every((q) => !q.isPending)
+  const data = useMemo(
+    () =>
+      positions.data && settled
+        ? buildSummary({
+            view,
+            positions: positions.data,
+            report: report.data ?? null,
+            history: history.data ?? null,
+            accounts: accounts.data?.data ?? null,
+            room: room.data ?? null,
+            roomError: room.error ? getErrorMessage(room.error) : null,
+          })
+        : undefined,
+    [positions.data, settled, view, report.data, history.data, accounts.data, room.data, room.error],
+  )
+  return {
+    data,
+    isLoading: positions.isLoading || (!!positions.data && !settled),
+    isError: positions.isError,
+    error: positions.error,
+    refetch: () => {
+      void positions.refetch()
+      void report.refetch()
+      void history.refetch()
+      void accounts.refetch()
+      void room.refetch()
+    },
+  }
+}
+
+/** One page of the ledger, filtered and ordered by the server; the previous page stays on screen while the next loads. */
+export function useTransactions(filters: TransactionFilters, view: PortfolioAccountView, page: number) {
+  const { id, path } = usePortfolioPath()
+  const query = transactionsQuery(filters, view, { page, perPage: ONE_PAGE })
+  const result = useQuery({
+    queryKey: queryKeys.portfolio.transactions(id ?? '', query),
+    enabled: !!id,
+    placeholderData: keepPreviousData,
+    queryFn: ({ signal }) => apiFetch<ListResponse<ApiTransaction>>(`${DIR}/transactions.json`, path(`/transactions${query}`), { signal }),
+  })
+  const data = useMemo(() => (result.data ? { rows: mapTransactions(result.data.data), meta: result.data.meta } : undefined), [result.data])
+  return { ...result, data }
+}
+
+/** Every row of the current filter, for the CSV export. */
+export async function fetchAllTransactions(
+  portfolioId: string,
+  filters: TransactionFilters,
+  view: PortfolioAccountView,
+  signal?: AbortSignal,
+): Promise<Transaction[]> {
+  const query = transactionsQuery(filters, view)
+  const rows = await fetchAllPages<ApiTransaction>(`${DIR}/transactions.json`, `/api/portfolios/${portfolioId}/transactions${query}`, { signal })
+  return mapTransactions(rows)
+}
+
+/** The Optimizer tab's suggestions (still the retired model; the Optimizer ticket, 86bd5z6n5, replaces it). */
 export function usePortfolioOptimizer() {
   const { userId } = useUser()
   return useQuery({
     queryKey: queryKeys.portfolio.optimizer(userId),
     queryFn: ({ signal }) =>
-      apiFetch<PortfolioOptimizerResult>(
-        `/mock-data/portfolio/${userId}/optimizer.json`,
-        `/api/portfolio/${userId}/optimizer`,
-        { signal },
-      ),
+      apiFetch<PortfolioOptimizerResult>(`/mock-data/portfolio/${userId}/optimizer.json`, `/api/portfolio/${userId}/optimizer`, { signal }),
   })
 }
 
-interface AddToPortfolioInput {
-  stock: TickerResult
+// --- Writes: not wired yet. Each raises the error the gap registry words (`lib/gaps.json`); the writes ticket replaces them.
+
+/**
+ * A write that is not wired yet: it takes the input the real call will take and raises the registered gap, so the dialog says what is
+ * missing (the writes ticket, 86bd5z6mq, replaces each use with the real call).
+ */
+function notConnectedWrite<Input>(gap: GapId) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  return async (_input: Input): Promise<never> => {
+    throw notConnected(gap)
+  }
+}
+
+export interface AddToPortfolioInput {
+  stock: { stock_id: string; ticker: string }
   shares: number
   average_cost_basis: number
   account_type: string
 }
-
 export function useAddToPortfolio() {
-  const { userId } = useUser()
-  const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async ({ stock, shares, average_cost_basis, account_type }: AddToPortfolioInput): Promise<Holding> => {
-      const now = new Date().toISOString()
-      return {
-        holding_id: `h_${Date.now()}`,
-        user_id: userId,
-        stock: {
-          stock_id: stock.stock_id,
-          ticker: stock.ticker,
-          name: stock.name,
-          sector: stock.sector,
-          exchange: stock.exchange,
-          currency: stock.currency,
-        },
-        account_type,
-        shares,
-        average_cost_basis,
-        current_price: average_cost_basis,
-        market_value: shares * average_cost_basis,
-        total_gain_loss: 0,
-        total_gain_loss_pct: 0,
-        day_change: 0,
-        day_change_pct: 0,
-        stock_outlook: 'neutral',
-        confidence_score: 0,
-        disagreement_score: 0,
-        disagreement_label: 'low',
-        last_analyzed_at: now,
-        annual_dividend_per_share: 0,
-        annual_dividend_yield: 0,
-        yield_on_cost: 0,
-        added_at: now,
-        last_updated: now,
-      }
-    },
-    onSuccess: (newHolding) => {
-      queryClient.setQueryData<Holding[]>(queryKeys.portfolio.holdings(userId), (old) => {
-        return old ? [...old, newHolding] : old
-      })
-    },
+    mutationFn: notConnectedWrite<AddToPortfolioInput>('P-W6'),
   })
 }
 
-export function useRemoveFromPortfolio() {
-  const { userId } = useUser()
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async (holdingId: string) => holdingId,
-    onSuccess: (holdingId) => {
-      queryClient.setQueryData<Holding[]>(queryKeys.portfolio.holdings(userId), (old) => {
-        if (!old) return old
-        return old.filter((h) => h.holding_id !== holdingId)
-      })
-    },
-  })
-}
-
-export function useTransactions() {
-  const { userId } = useUser()
-  return useQuery({
-    queryKey: queryKeys.portfolio.transactions(userId),
-    queryFn: async ({ signal }) => {
-      const res = await apiFetch<TransactionsResponse>(
-        `/mock-data/portfolio/${userId}/transactions.json`,
-        `/api/portfolio/${userId}/transactions`,
-        { signal },
-      )
-      return res.data
-    },
-  })
-}
-
-export function useClosedPositions() {
-  const { userId } = useUser()
-  return useQuery({
-    queryKey: queryKeys.portfolio.closed(userId),
-    queryFn: ({ signal }) =>
-      apiFetch<ClosedPosition[]>(
-        `/mock-data/portfolio/${userId}/closed.json`,
-        `/api/portfolio/${userId}/closed`,
-        { signal },
-      ),
-  })
-}
-
-interface BuySharesInput {
+export interface BuySharesInput {
   holdingId: string
   shares: number
   pricePerShare: number
   fees: number
   transactionDate: string
 }
-
 export function useBuyShares() {
-  const { userId } = useUser()
-  const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (input: BuySharesInput) => input,
-    onSuccess: ({ holdingId, shares, pricePerShare, fees, transactionDate }) => {
-      const holdings = queryClient.getQueryData<Holding[]>(queryKeys.portfolio.holdings(userId))
-      const holding = holdings?.find((h) => h.holding_id === holdingId)
-      if (!holding) return
-
-      const newTotalShares = holding.shares + shares
-      // Book cost does not include fees (fees are expensed, not capitalized)
-      const newBookCost = holding.shares * holding.average_cost_basis + shares * pricePerShare
-      const newAvgCost = newBookCost / newTotalShares
-      const market_value = newTotalShares * holding.current_price
-      const total_gain_loss = market_value - newBookCost
-
-      queryClient.setQueryData<Holding[]>(queryKeys.portfolio.holdings(userId), (old) => {
-        if (!old) return old
-        return old.map((h) => {
-          if (h.holding_id !== holdingId) return h
-          return {
-            ...h,
-            shares: newTotalShares,
-            average_cost_basis: newAvgCost,
-            market_value,
-            total_gain_loss,
-            total_gain_loss_pct: newBookCost > 0 ? total_gain_loss / newBookCost : 0,
-            yield_on_cost: h.annual_dividend_per_share > 0 ? h.annual_dividend_per_share / newAvgCost : 0,
-            transaction_count: (h.transaction_count ?? 0) + 1,
-            last_updated: new Date().toISOString(),
-          }
-        })
-      })
-
-      const newTx: Transaction = {
-        transaction_id: `txn_${Date.now()}`,
-        holding_id: holdingId,
-        user_id: userId,
-        stock: holding.stock,
-        account_type: holding.account_type,
-        transaction_type: 'buy',
-        shares,
-        price_per_share: pricePerShare,
-        total_amount: pricePerShare * shares,
-        fees,
-        currency: holding.stock.currency,
-        transaction_date: transactionDate,
-        created_at: new Date().toISOString(),
-      }
-      queryClient.setQueryData<Transaction[]>(queryKeys.portfolio.transactions(userId), (old) => {
-        // Never seed an unloaded list: a one-item cache would be treated as fresh and hide
-        // the real list until staleTime expires. The next fetch will include this row.
-        return old ? [newTx, ...old] : old
-      })
-    },
+    mutationFn: notConnectedWrite<BuySharesInput>('P-W1'),
   })
 }
 
-interface SellPositionInput {
+export interface SellPositionInput {
   holdingId: string
   shares: number
   pricePerShare: number
   fees: number
   transactionDate: string
 }
-
 export function useSellPosition() {
-  const { userId } = useUser()
-  const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (input: SellPositionInput) => input,
-    onSuccess: ({ holdingId, shares, pricePerShare, fees, transactionDate }) => {
-      const holdings = queryClient.getQueryData<Holding[]>(queryKeys.portfolio.holdings(userId))
-      const holding = holdings?.find((h) => h.holding_id === holdingId)
-      if (!holding) return
-
-      const realizedGainLoss = (pricePerShare - holding.average_cost_basis) * shares - fees
-      const newShares = holding.shares - shares
-      const isClosed = newShares <= 0
-
-      // Update holdings cache
-      queryClient.setQueryData<Holding[]>(queryKeys.portfolio.holdings(userId), (old) => {
-        if (!old) return old
-        if (isClosed) {
-          return old.filter((h) => h.holding_id !== holdingId)
-        }
-        return old.map((h) => {
-          if (h.holding_id !== holdingId) return h
-          const market_value = newShares * h.current_price
-          const book_cost = newShares * h.average_cost_basis
-          const total_gain_loss = market_value - book_cost
-          return {
-            ...h,
-            shares: newShares,
-            market_value,
-            total_gain_loss,
-            total_gain_loss_pct: book_cost > 0 ? total_gain_loss / book_cost : 0,
-            total_realized_gain_loss: (h.total_realized_gain_loss ?? 0) + realizedGainLoss,
-            transaction_count: (h.transaction_count ?? 0) + 1,
-            last_updated: new Date().toISOString(),
-          }
-        })
-      })
-
-      // Add to closed positions cache if fully sold
-      if (isClosed) {
-        const newClosed: ClosedPosition = {
-          holding_id: holdingId,
-          stock: holding.stock,
-          account_type: holding.account_type,
-          total_shares_bought: holding.shares,
-          avg_buy_price: holding.average_cost_basis,
-          total_shares_sold: holding.shares,
-          avg_sell_price: pricePerShare,
-          total_realized_gain_loss: realizedGainLoss,
-          total_realized_gain_loss_pct: realizedGainLoss / (holding.average_cost_basis * holding.shares),
-          first_buy_date: holding.added_at,
-          last_sell_date: transactionDate,
-        }
-        queryClient.setQueryData<ClosedPosition[]>(queryKeys.portfolio.closed(userId), (old) => {
-          return old ? [newClosed, ...old] : old
-        })
-      }
-
-      // Add to transactions cache
-      const newTx: Transaction = {
-        transaction_id: `txn_${Date.now()}`,
-        holding_id: holdingId,
-        user_id: userId,
-        stock: holding.stock,
-        account_type: holding.account_type,
-        transaction_type: 'sell',
-        shares: -shares,
-        price_per_share: pricePerShare,
-        total_amount: pricePerShare * shares,
-        fees,
-        currency: holding.stock.currency,
-        transaction_date: transactionDate,
-        cost_basis_at_sell: holding.average_cost_basis,
-        realized_gain_loss: realizedGainLoss,
-        realized_gain_loss_pct: realizedGainLoss / (holding.average_cost_basis * shares),
-        created_at: new Date().toISOString(),
-      }
-      queryClient.setQueryData<Transaction[]>(queryKeys.portfolio.transactions(userId), (old) => {
-        // Never seed an unloaded list: a one-item cache would be treated as fresh and hide
-        // the real list until staleTime expires. The next fetch will include this row.
-        return old ? [newTx, ...old] : old
-      })
-    },
+    mutationFn: notConnectedWrite<SellPositionInput>('P-W2'),
   })
 }
 
-interface UpdatePositionInput {
-  holdingId: string
-  shares: number
-  average_cost_basis: number
-}
-
-interface LogDividendInput {
+export interface LogDividendInput {
   holdingId: string
   totalAmount: number
   amountPerShare: number
@@ -317,111 +275,37 @@ interface LogDividendInput {
   dripShares?: number
   dripPricePerShare?: number
 }
-
 export function useLogDividend() {
-  const { userId } = useUser()
-  const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (input: LogDividendInput) => input,
-    onSuccess: ({ holdingId, totalAmount, isDrip, dripShares, dripPricePerShare, paymentDate, amountPerShare }) => {
-      const holdings = queryClient.getQueryData<Holding[]>(queryKeys.portfolio.holdings(userId))
-      const holding = holdings?.find((h) => h.holding_id === holdingId)
-      if (!holding) return
-
-      // Update holding: accumulate dividends, optionally add DRIP shares
-      queryClient.setQueryData<Holding[]>(queryKeys.portfolio.holdings(userId), (old) => {
-        if (!old) return old
-        return old.map((h) => {
-          if (h.holding_id !== holdingId) return h
-          const newShares = isDrip && dripShares ? h.shares + dripShares : h.shares
-          const newBookCost = isDrip && dripShares && dripPricePerShare
-            ? h.shares * h.average_cost_basis + dripShares * dripPricePerShare
-            : h.shares * h.average_cost_basis
-          const newAvgCost = newShares > 0 ? newBookCost / newShares : h.average_cost_basis
-          const market_value = newShares * h.current_price
-          const total_gain_loss = market_value - newBookCost
-          return {
-            ...h,
-            shares: newShares,
-            average_cost_basis: newAvgCost,
-            market_value,
-            total_gain_loss,
-            total_gain_loss_pct: newBookCost > 0 ? total_gain_loss / newBookCost : 0,
-            yield_on_cost: h.annual_dividend_per_share > 0 ? h.annual_dividend_per_share / newAvgCost : 0,
-            total_dividends_received: (h.total_dividends_received ?? 0) + totalAmount,
-            transaction_count: (h.transaction_count ?? 0) + (isDrip ? 2 : 1),
-            last_updated: new Date().toISOString(),
-          }
-        })
-      })
-
-      // Add dividend transaction to cache
-      const divTx: Transaction = {
-        transaction_id: `txn_${Date.now()}`,
-        holding_id: holdingId,
-        user_id: userId,
-        stock: holding.stock,
-        account_type: holding.account_type,
-        transaction_type: 'dividend',
-        shares: null,
-        price_per_share: amountPerShare,
-        total_amount: totalAmount,
-        fees: 0,
-        currency: holding.stock.currency,
-        transaction_date: paymentDate,
-        created_at: new Date().toISOString(),
-      }
-      queryClient.setQueryData<Transaction[]>(['portfolio', 'transactions', userId], (old) => {
-        const updated = old ? [divTx, ...old] : [divTx]
-        if (isDrip && dripShares && dripPricePerShare) {
-          const dripTx: Transaction = {
-            transaction_id: `txn_${Date.now() + 1}`,
-            holding_id: holdingId,
-            user_id: userId,
-            stock: holding.stock,
-            account_type: holding.account_type,
-            transaction_type: 'drip',
-            shares: dripShares,
-            price_per_share: dripPricePerShare,
-            total_amount: dripShares * dripPricePerShare,
-            fees: 0,
-            currency: holding.stock.currency,
-            transaction_date: paymentDate,
-            created_at: new Date().toISOString(),
-          }
-          return [dripTx, ...updated]
-        }
-        return updated
-      })
-    },
+    mutationFn: notConnectedWrite<LogDividendInput>('P-W3'),
   })
 }
 
+export interface UpdatePositionInput {
+  holdingId: string
+  shares: number
+  average_cost_basis: number
+}
 export function useUpdatePosition() {
-  const { userId } = useUser()
-  const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (input: UpdatePositionInput) => input,
-    onSuccess: ({ holdingId, shares, average_cost_basis }) => {
-      queryClient.setQueryData<Holding[]>(queryKeys.portfolio.holdings(userId), (old) => {
-        if (!old) return old
-        return old.map((h) => {
-          if (h.holding_id !== holdingId) return h
-          const market_value = shares * h.current_price
-          const book_cost = shares * average_cost_basis
-          const total_gain_loss = market_value - book_cost
-          return {
-            ...h,
-            shares,
-            average_cost_basis,
-            market_value,
-            total_gain_loss,
-            total_gain_loss_pct: book_cost > 0 ? total_gain_loss / book_cost : 0,
-            yield_on_cost: h.annual_dividend_per_share > 0 ? h.annual_dividend_per_share / average_cost_basis : 0,
-            last_updated: new Date().toISOString(),
-          }
-        })
-      })
-    },
+    mutationFn: notConnectedWrite<UpdatePositionInput>('P-W4'),
+  })
+}
+
+export function useRemoveFromPortfolio() {
+  return useMutation({
+    mutationFn: notConnectedWrite<string>('P-W5'),
+  })
+}
+
+export function useCorrectTransaction() {
+  return useMutation({
+    mutationFn: notConnectedWrite<string>('P-W7'),
+  })
+}
+
+export function useReverseTransaction() {
+  return useMutation({
+    mutationFn: notConnectedWrite<string>('P-W8'),
   })
 }
