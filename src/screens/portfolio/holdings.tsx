@@ -1,46 +1,26 @@
 /**
- * Holdings (and closed positions): every field of the holding, its position, its stock and the stock's call, declared once.
+ * Holdings (and closed positions): every field of the holding and its position, declared once; the stock and its call are taken
+ * from the shared fields (`../stock`).
  * `places` says where it shows: `column` in the Holdings table, `detail` in the expanded row, `csv` in the export.
  */
-import { Badge } from '@/components/ui/badge'
-import { StockCall } from '@/components/StockCall'
 import { defineFields, type NotShown } from '@/lib/fields'
 import { formatCAD, formatMoney, formatNumber, formatPct, formatPercent } from '@/lib/format'
-import { OUTLOOK_LABELS, TIER_LABELS, DISAGREEMENT_CLASS_LABELS, TONE_TEXT, exclusionLabel, gainLossColor } from '@/lib/labels'
+import { gainLossColor } from '@/lib/labels'
 import { cn } from '@/lib/utils'
+import { money, stockField } from '../stock'
 import type { ApiFieldKey } from '@/lib/fields'
 import type { Holding } from '@/types/portfolio'
 import { day, signedPct } from '../formatters'
 
-const money = (h: Holding, value: unknown) => formatMoney(value as number | null, h.stock.currency)
-const list = (value: unknown) => ((value as string[]).length ? (value as string[]).map(exclusionLabel).join('; ') : '—')
-
 export const HOLDING_FIELDS = defineFields<Holding>([
   // The stock
-  {
-    id: 'ticker',
-    label: 'Stock',
-    source: ['StockSummary.ticker', 'StockSummary.name', 'StockSummary.pipeline_supported', 'StockSummary.unsupported_reason'],
-    get: (h) => h.stock.ticker,
-    places: ['column', 'csv'],
-    render: (h) => (
-      <>
-        <div className="font-medium">{h.stock.ticker}</div>
-        <div className="max-w-36 whitespace-normal text-xs leading-tight text-muted-foreground">{h.stock.name}</div>
-        {h.stock.pipeline_supported === false && (
-          <Badge variant="outline" className={cn('mt-1 border-amber-500 text-xs', TONE_TEXT.warning)} title={h.stock.unsupported_reason ?? undefined}>
-            Unsupported
-          </Badge>
-        )}
-      </>
-    ),
-  },
-  { id: 'name', label: 'Company', source: 'StockSummary.name', get: (h) => h.stock.name, places: ['detail', 'csv'] },
-  { id: 'instrument_type', label: 'Instrument', source: 'StockSummary.instrument_type', get: (h) => h.stock.instrument_type, places: ['detail', 'csv'] },
-  { id: 'exchange', label: 'Exchange', source: 'StockSummary.exchange', get: (h) => h.stock.exchange, places: ['detail', 'csv'] },
-  { id: 'sector', label: 'Sector', source: 'StockSummary.sector', get: (h) => h.stock.sector, places: ['detail', 'csv'] },
-  { id: 'currency', label: 'Currency', source: 'StockSummary.currency', get: (h) => h.stock.currency, places: ['detail', 'csv'] },
-  { id: 'unsupported_reason', label: 'Why not analysed', source: 'StockSummary.unsupported_reason', get: (h) => h.stock.unsupported_reason, places: ['detail', 'csv'] },
+  stockField('ticker'),
+  stockField('name'),
+  stockField('instrument_type'),
+  stockField('exchange'),
+  stockField('sector'),
+  stockField('currency'),
+  stockField('unsupported_reason'),
 
   // The holding
   { id: 'account', label: 'Account', source: 'HoldingResponse.account_type', get: (h) => h.account_type.toUpperCase(), places: ['column', 'csv'] },
@@ -82,9 +62,9 @@ export const HOLDING_FIELDS = defineFields<Holding>([
   },
   { id: 'price_day', label: 'Price day', source: ['PositionLineResponse.price_day', 'StockSnapshotResponse.price_day'], get: (h) => h.price_day, format: day, places: ['detail', 'csv'] },
   { id: 'price_source', label: 'Price source', source: 'PositionLineResponse.price_source', get: (h) => h.price_source, places: ['detail', 'csv'] },
-  { id: 'change_day', label: 'Change (day)', source: 'StockSnapshotResponse.change_day', get: (h) => h.change_day, format: (v) => signedPct(v), places: ['detail', 'csv'] },
-  { id: 'change_week', label: 'Change (week)', source: 'StockSnapshotResponse.change_week', get: (h) => h.change_week, format: (v) => signedPct(v), places: ['detail', 'csv'] },
-  { id: 'change_month', label: 'Change (month)', source: 'StockSnapshotResponse.change_month', get: (h) => h.change_month, format: (v) => signedPct(v), places: ['detail', 'csv'] },
+  stockField('change_day'),
+  stockField('change_week'),
+  stockField('change_month'),
   { id: 'book_cost', label: 'Book cost', source: 'HoldingResponse.total_book_cost', get: (h) => h.total_book_cost, format: (v, h) => money(h, v), tooltip: "In the stock's currency, for the shares held now", places: ['column', 'detail', 'csv'] },
   {
     id: 'market_value',
@@ -122,50 +102,25 @@ export const HOLDING_FIELDS = defineFields<Holding>([
   { id: 'unrealised_fx', label: 'Of which currency', source: 'PositionLineResponse.unrealised_fx_cad', get: (h) => h.unrealised_fx_cad, format: (v) => formatCAD(v as number | null, { signed: true }), tooltip: 'The part of the gain that is the exchange rate moving', places: ['detail', 'csv'] },
   { id: 'weight', label: 'Weight', source: 'PositionLineResponse.weight_pct', get: (h) => h.weight, format: (v) => formatPercent(v as number | null, 1), tooltip: 'Share of the portfolio', places: ['detail', 'csv'] },
 
-  // The stock's call (shared with Watchlist and the Stock page through <StockCall>)
-  {
-    id: 'call',
-    label: 'Call',
-    source: ['StockSnapshotResponse.analysis', 'StockSnapshotResponse.status', 'StockSnapshotResponse.exclusions', 'StockSnapshotResponse.rerun_reasons'],
-    get: (h) => h.call?.analysis?.outlook ?? null,
-    format: (v) => (v ? OUTLOOK_LABELS[v as keyof typeof OUTLOOK_LABELS] : 'No call'),
-    places: ['column', 'csv'],
-    render: (h) => <StockCall call={h.call} supported={h.stock.pipeline_supported !== false} compact />,
-  },
-  {
-    id: 'target_price',
-    label: 'Target price (12 months)',
-    source: ['AnalysisCallResponse.target_price', 'AnalysisCallResponse.expected_return'],
-    get: (h) => h.call?.analysis?.targetPrice,
-    format: (v, h) => (v == null ? '—' : `${money(h, v)} (${signedPct(h.call?.analysis?.expectedReturn)})`),
-    tooltip: "The analysis's 12-month target price, and its expected total return (price change plus dividends)",
-    places: ['column', 'detail', 'csv'],
-    render: (h) =>
-      h.call?.analysis?.targetPrice == null ? (
-        <span className="text-muted-foreground">—</span>
-      ) : (
-        <>
-          <div>{money(h, h.call.analysis.targetPrice)}</div>
-          <div className="text-xs text-muted-foreground">{signedPct(h.call.analysis.expectedReturn)}</div>
-        </>
-      ),
-  },
-  { id: 'status', label: 'Call usable', source: 'StockSnapshotResponse.status', get: (h) => h.call?.status, format: (v) => (v === 'usable' ? 'Usable' : v === 'excluded' ? 'Excluded' : '—'), places: ['detail', 'csv'] },
-  { id: 'exclusions', label: 'Why not usable', source: 'StockSnapshotResponse.exclusions', get: (h) => h.call?.exclusions ?? [], format: list, places: ['detail', 'csv'] },
-  { id: 'rerun_reasons', label: 'A new analysis would fix', source: 'StockSnapshotResponse.rerun_reasons', get: (h) => h.call?.rerunReasons ?? [], format: list, places: ['detail', 'csv'] },
-  { id: 'next_earnings', label: 'Next earnings', source: 'StockSnapshotResponse.next_earnings_date', get: (h) => h.call?.nextEarningsDate, format: day, places: ['detail', 'csv'] },
-  { id: 'run_id', label: 'Analysis', source: 'AnalysisCallResponse.run_id', get: (h) => h.call?.analysis?.runId, tooltip: 'The analysis this call comes from (opens on the analysis page)', places: ['csv'] },
-  { id: 'call_as_of', label: 'Analysed', source: 'AnalysisCallResponse.as_of', get: (h) => h.call?.analysis?.asOf, format: day, places: ['detail', 'csv'] },
-  { id: 'outlook', label: 'Outlook', source: 'AnalysisCallResponse.outlook', get: (h) => h.call?.analysis?.outlook, format: (v) => (v ? OUTLOOK_LABELS[v as keyof typeof OUTLOOK_LABELS] : '—'), places: ['detail', 'csv'] },
-  { id: 'previous_outlook', label: 'Previous outlook', source: 'AnalysisCallResponse.previous_outlook', get: (h) => h.call?.analysis?.previousOutlook, format: (v) => (v ? OUTLOOK_LABELS[v as keyof typeof OUTLOOK_LABELS] : '—'), places: ['detail', 'csv'] },
-  { id: 'outlook_changed', label: 'Outlook changed', source: 'AnalysisCallResponse.outlook_changed', get: (h) => h.call?.analysis?.outlookChanged, places: ['detail', 'csv'] },
-  { id: 'confidence', label: 'Confidence', source: 'AnalysisCallResponse.confidence', get: (h) => h.call?.analysis?.confidence, format: (v) => (v == null ? '—' : `${v as number}%`), places: ['detail', 'csv'] },
-  { id: 'tier', label: 'Tier', source: 'AnalysisCallResponse.tier', get: (h) => h.call?.analysis?.tier, format: (v) => (v ? TIER_LABELS[v as keyof typeof TIER_LABELS] : '—'), tooltip: "Against the stock's own valuation baseline, not the market", places: ['detail', 'csv'] },
-  { id: 'expected_return', label: 'Expected return', source: 'AnalysisCallResponse.expected_return', get: (h) => h.call?.analysis?.expectedReturn, format: (v) => signedPct(v), tooltip: "Over the band's horizon, in the stock's currency", places: ['detail', 'csv'] },
-  { id: 'range_low', label: 'Range low (10th signedPct)', source: 'AnalysisCallResponse.range_low', get: (h) => h.call?.analysis?.rangeLow, format: (v, h) => money(h, v), places: ['detail', 'csv'] },
-  { id: 'range_high', label: 'Range high (90th signedPct)', source: 'AnalysisCallResponse.range_high', get: (h) => h.call?.analysis?.rangeHigh, format: (v, h) => money(h, v), places: ['detail', 'csv'] },
-  { id: 'disagreement', label: 'Disagreement', source: 'AnalysisCallResponse.disagreement_class', get: (h) => h.call?.analysis?.disagreementClass, format: (v) => (v ? DISAGREEMENT_CLASS_LABELS[v as keyof typeof DISAGREEMENT_CLASS_LABELS].label : '—'), places: ['detail', 'csv'] },
-  { id: 'income_per_share', label: 'Expected dividends / share', source: 'AnalysisCallResponse.income_per_share', get: (h) => h.expected_income_per_share, format: (v, h) => money(h, v), tooltip: "The dividends the analysis expects per share over the next 12 months, in the stock's currency. Your expected dividend income is this times your shares", places: ['detail', 'csv'] },
+  // The stock's call
+  stockField('call'),
+  stockField('target_price'),
+  stockField('status'),
+  stockField('exclusions'),
+  stockField('rerun_reasons'),
+  stockField('next_earnings'),
+  stockField('run_id'),
+  stockField('call_as_of'),
+  stockField('outlook'),
+  stockField('previous_outlook'),
+  stockField('outlook_changed'),
+  stockField('confidence'),
+  stockField('tier'),
+  stockField('expected_return'),
+  stockField('range_low'),
+  stockField('range_high'),
+  stockField('disagreement'),
+  stockField('income_per_share', { tooltip: "The dividends the analysis expects per share over the next 12 months, in the stock's currency. Your expected dividend income is this times your shares" }),
   { id: 'dividend_yield', label: 'Div yield', source: ['AnalysisCallResponse.income_per_share', 'PositionLineResponse.price'], get: (h) => h.dividend_yield, format: (v) => formatPercent(v as number | null), tooltip: 'Expected income over price', places: ['column', 'csv'] },
   { id: 'yield_on_cost', label: 'YoC', source: ['AnalysisCallResponse.income_per_share', 'HoldingResponse.average_cost_basis'], get: (h) => h.yield_on_cost, format: (v) => formatPercent(v as number | null), tooltip: 'Expected income over your average cost', places: ['column', 'csv'] },
 ])
@@ -181,10 +136,6 @@ export const HOLDING_NOT_SHOWN: Partial<Record<ApiFieldKey, NotShown>> = {
   'HoldingResponse.position': { reason: "Shown through the position's own fields (PositionLineResponse)" },
   'HoldingResponse.added_at': { reason: 'Record bookkeeping: when the row was created' },
   'HoldingResponse.last_updated': { reason: 'Record bookkeeping: when the row last changed' },
-  'StockSummary.stock_id': { reason: 'An id: the link to the stock page' },
-  'StockSnapshotResponse.stock_id': { reason: repeats },
-  'StockSnapshotResponse.ticker': { reason: repeats },
-  'StockSnapshotResponse.currency': { reason: repeats },
   'PositionLineResponse.ticker': { reason: repeats },
   'PositionLineResponse.account': { reason: repeats },
   'PositionLineResponse.currency': { reason: repeats },

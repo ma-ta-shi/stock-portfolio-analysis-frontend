@@ -15,9 +15,9 @@ const show = (props: React.ComponentProps<typeof StockCall>) =>
 const usable = fixtureHolding('RY.TO').call!
 const analysis = usable.analysis!
 
-describe('StockCall compact (the Holdings Call cell)', () => {
+describe('StockCall (the Holdings Call cell)', () => {
   it('shows the direction and the tier side by side as the same plain text', () => {
-    show({ call: usable, compact: true })
+    show({ call: usable })
     const direction = screen.getByText(OUTLOOK_LABELS[analysis.outlook!])
     const tier = screen.getByText(TIER_LABELS[analysis.tier!])
     expect(direction.tagName).toBe('SPAN')
@@ -26,33 +26,29 @@ describe('StockCall compact (the Holdings Call cell)', () => {
   })
 
   it('leaves the target price and expected return to their own column', () => {
-    show({ call: usable, compact: true })
+    show({ call: usable })
     expect(screen.queryByText('Target')).not.toBeInTheDocument()
     expect(screen.queryByText(/%$/)).toHaveTextContent(String(analysis.confidence)) // the only percent is the confidence
   })
 
   it('links to the analysis', () => {
-    show({ call: usable, compact: true })
+    show({ call: usable })
     expect(screen.getByRole('link', { name: 'Analysis' })).toHaveAttribute('href', `/analysis/${analysis.runId}`)
   })
 
   it('shows a call that cannot be used as one warning icon, with the reason in words for screen readers and on hover', () => {
-    show({ call: fixtureHolding('TD.TO').call!, compact: true })
+    show({ call: fixtureHolding('TD.TO').call! })
     const reason = screen.getByText('Analysis is out of date')
     expect(reason).toHaveClass('sr-only')
     expect(reason.parentElement).toHaveAttribute('title', expect.stringContaining('Analysis is out of date'))
   })
 
   it('says no call for a stock with none, and a dash for an instrument that is not analysed', () => {
-    const { unmount } = show({ call: null, compact: true })
+    const { unmount } = show({ call: null })
     expect(screen.getByText('No call')).toBeInTheDocument()
     unmount()
-    show({ call: usable, compact: true, supported: false })
+    show({ call: usable, supported: false })
     expect(screen.getByText('—')).toBeInTheDocument()
   })
 
-  it('leaves the full layout (used by the Watchlist) as it was', () => {
-    show({ call: usable })
-    expect(screen.queryByText('Target')).not.toBeInTheDocument()
-  })
 })

@@ -4,12 +4,12 @@
  * figures, the expand toggle, an optional actions cell, and (when `onOpen` is given) a row that acts as a link for mouse and keyboard.
  */
 import { Fragment, useState, type ReactNode } from 'react'
-import { ChevronDown, ChevronRight } from 'lucide-react'
+import { ArrowUpDown, ChevronDown, ChevronRight } from 'lucide-react'
 import { FieldList } from '@/components/FieldList'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { clickableRowProps } from '@/lib/a11y'
-import { fieldText, type FieldSpec } from '@/lib/fields'
+import { fieldText, type FieldSpec, type SortDir } from '@/lib/fields'
 import { cn } from '@/lib/utils'
 
 interface RegistryTableProps<Row> {
@@ -31,6 +31,8 @@ interface RegistryTableProps<Row> {
   /** A last cell for a row (buttons, a link); `actionsHeader` names its column for screen readers. */
   actions?: (row: Row) => ReactNode
   actionsHeader?: string
+  /** Headers that sort: which columns, the current one, and what a click does. The caller sorts the rows (`sortRows`). */
+  sort?: { ids: ReadonlySet<string>; id: string; dir: SortDir; onSort: (id: string) => void }
   /** Tighter cell padding, for a table with many columns (Holdings). */
   dense?: boolean
   id?: string
@@ -51,6 +53,7 @@ export function RegistryTable<Row>({
   openLabel,
   actions,
   actionsHeader,
+  sort,
   dense = false,
   id,
   className,
@@ -80,11 +83,27 @@ export function RegistryTable<Row>({
                 <span className="sr-only">Details</span>
               </TableHead>
             )}
-            {columns.map((spec) => (
-              <TableHead key={spec.id} className={rightAligned.has(spec.id) ? 'text-right' : undefined} title={spec.tooltip}>
-                {spec.label}
-              </TableHead>
-            ))}
+            {columns.map((spec) => {
+              const sortable = sort?.ids.has(spec.id)
+              const active = sortable && sort?.id === spec.id
+              return (
+                <TableHead
+                  key={spec.id}
+                  className={rightAligned.has(spec.id) ? 'text-right' : undefined}
+                  title={spec.tooltip}
+                  aria-sort={sortable ? (active ? (sort?.dir === 'asc' ? 'ascending' : 'descending') : 'none') : undefined}
+                >
+                  {sortable ? (
+                    <button type="button" className={cn('flex items-center gap-1 whitespace-nowrap text-xs font-medium', active ? 'text-foreground' : 'text-muted-foreground')} onClick={() => sort?.onSort(spec.id)}>
+                      {spec.label}
+                      <ArrowUpDown className="w-3 h-3" aria-hidden="true" />
+                    </button>
+                  ) : (
+                    spec.label
+                  )}
+                </TableHead>
+              )
+            })}
             {actions && (
               <TableHead>
                 <span className="sr-only">{actionsHeader ?? 'Actions'}</span>

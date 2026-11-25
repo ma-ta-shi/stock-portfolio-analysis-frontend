@@ -1,7 +1,7 @@
 /**
  * The stock snapshot (`StockSnapshotResponse` + `AnalysisCallResponse`): a stock's latest price and changes and the call its
  * newest analysis made, in the form every screen that lists stocks shows it (Portfolio holdings, Watchlist, Stock page).
- * One mapper here, one `<StockCall>` component, so a screen never reads the raw response itself.
+ * One mapper here, one set of fields (`screens/stock`), so a screen never reads the raw response itself.
  *
  * Ratios (changes, expected return) become fractions through `asFraction`; a stock with no usable call is a normal state
  * (`status: 'excluded'` with reasons, or `analysis: null`), never an error.
