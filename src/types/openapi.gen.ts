@@ -424,7 +424,7 @@ export interface paths {
         put?: never;
         /**
          * Add a stock to the watchlist
-         * @description The stock is looked up at the providers if unseen. Adding a removed stock reactivates it, and the timeline and notes it held are kept in the history. 409 `ALREADY_WATCHING`; 404 `STOCK_NOT_FOUND` or `USER_NOT_FOUND`; 422 `UNSUPPORTED_INSTRUMENT` for a stock the pipeline cannot analyse (it can still be held), `UNSUPPORTED_CURRENCY`; 503 `STOCK_LOOKUP_UNAVAILABLE`.
+         * @description The stock is looked up at the providers if unseen. Adding a removed stock reactivates it, and the timeline and notes it held are kept in the history. 409 `ALREADY_WATCHING`; 404 `STOCK_NOT_FOUND` or `USER_NOT_FOUND`; 422 `UNSUPPORTED_INSTRUMENT` for a stock the pipeline cannot analyse (it can still be held), `UNSUPPORTED_CURRENCY`; 503 `STOCK_LOOKUP_UNAVAILABLE`. A stock with no recent recorded price has its prices fetched before the answer; if that fails the add still stands and the daily `prices` job fills it.
          */
         post: operations["watchlist_add_to_watchlist"];
         delete?: never;
@@ -489,7 +489,7 @@ export interface paths {
         put?: never;
         /**
          * Record events
-         * @description Records the rows that `events/preview` shows, in one commit and answers 201. A row carrying `recommendation_id` marks that proposal followed; a stale id never fails the entry. 409 `DUPLICATE_ENTRY` for the same event within 30 seconds; 422 `INSUFFICIENT_SHARES`, `CURRENCY_MISMATCH`, `MISSING_FX_RATE`, `MISSING_CAD_AMOUNT`, `MIXED_SECURITIES` or `CONTRIBUTION_EXCEEDS_ROOM` (only for an event the system starts: a contribution the owner made over room is recorded, and the preview warns). Refused with 403 `AGENT_PORTFOLIO_READ_ONLY` for the agent portfolio.
+         * @description Records the rows that `events/preview` shows, in one commit and answers 201. A row carrying `recommendation_id` marks that proposal followed; a stale id never fails the entry. 409 `DUPLICATE_ENTRY` for the same event within 30 seconds; 422 `INSUFFICIENT_SHARES`, `CURRENCY_MISMATCH`, `MISSING_FX_RATE`, `MISSING_CAD_AMOUNT`, `MIXED_SECURITIES` or `CONTRIBUTION_EXCEEDS_ROOM` (only for an event the system starts: a contribution the owner made over room is recorded, and the preview warns). Refused with 403 `AGENT_PORTFOLIO_READ_ONLY` for the agent portfolio. A stock with no recent recorded price has its prices fetched before the answer; a failure there never fails the entry.
          */
         post: operations["ledger_record_events"];
         delete?: never;
@@ -1343,8 +1343,8 @@ export interface paths {
         /**
          * List a stock's stored daily prices
          * @description The stored daily prices (open, high, low, close, volume) in the stock's own currency, newest day first. Only stocks the system follows
-         *     (held, watched and the benchmark fund's listings) have rows, and they are refreshed only inside the Friday optimizer job, so the newest
-         *     day can be several days old. 404 `STOCK_NOT_FOUND`.
+         *     (held, watched and the benchmark fund's listings) have rows, and they are refreshed by the daily `prices` job (16:30) and, for a stock
+         *     with no recent price, when it is added. 404 `STOCK_NOT_FOUND`.
          */
         get: operations["stocks_list_stock_prices"];
         put?: never;

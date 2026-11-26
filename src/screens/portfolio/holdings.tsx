@@ -3,6 +3,7 @@
  * from the shared fields (`../stock`).
  * `places` says where it shows: `column` in the Holdings table, `detail` in the expanded row, `csv` in the export.
  */
+import { PriceDate } from '@/components/PriceDate'
 import { defineFields, type NotShown } from '@/lib/fields'
 import { formatCAD, formatMoney, formatNumber, formatPct, formatPercent } from '@/lib/format'
 import { gainLossColor } from '@/lib/labels'
@@ -57,6 +58,7 @@ export const HOLDING_FIELDS = defineFields<Holding>([
           </>
         )}
         {h.change_day != null && <div className={cn('text-xs', gainLossColor(h.change_day))}>{formatPct(h.change_day)}</div>}
+        {h.current_price != null && <PriceDate day={h.price_day} source={h.price_source} />}
       </>
     ),
   },

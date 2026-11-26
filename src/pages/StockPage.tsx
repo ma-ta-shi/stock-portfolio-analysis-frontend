@@ -1,3 +1,4 @@
+import { priceDate } from '@/lib/price-date'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { TrendingUp, TrendingDown, Plus, DollarSign, Pencil } from 'lucide-react'
@@ -110,7 +111,7 @@ export function StockPage() {
       <StockInfoSection
         stock={stock}
         price={call?.price ?? null}
-        priceNote={call?.priceDay ? `Close of ${formatDate(call.priceDay)}` : undefined}
+        priceNote={call ? priceDate(call.priceDay).text : undefined}
         fundamentals={fundamentals.data}
         holdingSnapshot={holdingSnapshot}
       />
