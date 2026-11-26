@@ -1283,7 +1283,6 @@
     ],
     "OrderSettingsSchemaResponse": [
       "other_keys",
-      "sell",
       "settings"
     ],
     "OrderValueResponse": [

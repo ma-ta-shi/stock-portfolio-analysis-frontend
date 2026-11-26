@@ -71,7 +71,6 @@ export const SETTINGS_NOT_SHOWN: Partial<Record<ApiFieldKey, NotShown>> = {
   'UserProfileResponse.rrsp_claimed_as_of': { reason: 'The day the claim was saved; the page sets it' },
   'UserProfileResponse.time_sensitive_cash_needs': { reason: 'Stored, but nothing in the system reads them', gap: 'T-5' },
   'OrderSettingsSchemaResponse.settings': { reason: 'The rules, one input each (OrderSettingResponse)' },
-  'OrderSettingsSchemaResponse.sell': { reason: 'The list of stocks to sell is a trading decision for the Optimizer screen', gap: 'T-8' },
   'OrderSettingsSchemaResponse.other_keys': { reason: 'The page keeps the other keys of the settings object as they are' },
   ...SETTINGS_ENTRY_NOT_SENT,
 }

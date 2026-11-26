@@ -177,13 +177,13 @@ describe('SettingsPage: saving', () => {
     send.mockResolvedValue({})
     show()
     type(await field('Optimizer Rules', /Orders: minimum order/), '750')
-    // meanwhile the sell list changes outside the page
+    // meanwhile a key this page does not edit changes outside it
     const portfolios = await (await fetch(PORTFOLIOS)).json()
-    portfolios.data[0].settings = { ...portfolios.data[0].settings, sell: ['PLUG'] }
+    portfolios.data[0].settings = { ...portfolios.data[0].settings, synthetic: true }
     installFixtureFetch({ [PORTFOLIOS]: portfolios })
     fireEvent.click(saveButton())
     await screen.findByText('Saved.')
-    expect(send.mock.calls[0][1].settings).toMatchObject({ sell: ['PLUG'], orders: { minimum_order: 750 } })
+    expect(send.mock.calls[0][1].settings).toMatchObject({ synthetic: true, orders: { minimum_order: 750 } })
   })
 
   it('discards back to the stored values', async () => {

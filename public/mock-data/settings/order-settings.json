@@ -181,6 +181,5 @@
       "meaning": "Tier steps a name's weekly view must move for a trade that clears the bar to skip the wait."
     }
   ],
-  "sell": "A list of tickers the owner has told the book to sell, kept in upper case without repeats.",
   "other_keys": "Left alone: the settings object may carry other keys (`synthetic`, notes)."
 }

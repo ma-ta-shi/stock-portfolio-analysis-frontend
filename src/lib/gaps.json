@@ -335,13 +335,6 @@
     "why": "Nothing stores or reads them; removed from the page with its tabs (owner, 2026-11-26). Annual income replaces the bracket.",
     "ticket": "86bd5z6n3"
   },
-  "T-8": {
-    "screen": "settings",
-    "kind": "documented",
-    "what": "The optimizer's list of stocks to sell",
-    "why": "A trading decision for the Optimizer screen, not a setting (owner, 2026-11-26). Settings keeps the stored list as it is.",
-    "ticket": "86bd5z6n3"
-  },
   "T-9": {
     "screen": "settings",
     "kind": "documented",
