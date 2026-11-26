@@ -15,7 +15,7 @@ const profit = (s: PortfolioSummary) => s.report?.profit
 const performance = (s: PortfolioSummary) => s.report?.performance
 
 /**
- * The header tiles of the original design, in its order: Total Value, Unrealized, Realized, Total Return, Dividends Received, Today
+ * The header tiles of the original design, in its order: Total Value, Unrealized, Realized, Total Return, Dividends Received, Value change
  * (Annual Div Est. and Holdings come from the holdings, in `SummaryHeader`), plus the read-only Cash tile the owner chose. Every
  * other figure of these schemas is listed in `SUMMARY_NOT_SHOWN` below.
  */
@@ -36,10 +36,10 @@ export const SUMMARY_FIELDS = defineFields<PortfolioSummary>([
   { id: 'dividends', label: 'Dividends Received', source: 'ProfitLinesResponse.dividends_net_cad', get: (s) => profit(s)?.dividends_net_cad, format: (v) => cad(v), tooltip: 'After tax withheld', places: ['column'] },
   {
     id: 'day_change',
-    label: 'Today',
+    label: 'Value change',
     source: ['ValueHistoryResponse.points', 'ValuePointResponse.value_cad', 'ValuePointResponse.cost_cad', 'ValuePointResponse.cash_cad', 'ValuePointResponse.day'],
     get: (s) => s.day_change_cad,
-    format: (v, s) => (v == null ? 'unavailable (P-D2)' : `${cad(v, true)} (${signedPct(s.day_change_pct)}) since ${day(s.day_change_from)}${s.day_change_includes_flows ? ', includes cash or trades' : ''}`),
+    format: (v, s) => (v == null ? 'unavailable (P-D2)' : `${cad(v, true)} (${signedPct(s.day_change_pct)}) from ${day(s.day_change_from)} to ${day(s.day_change_to)}${s.day_change_includes_flows ? ', includes cash or trades' : ''}`),
     tooltip: 'The last two recorded days of the value history',
     places: ['column'],
   },

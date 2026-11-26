@@ -3,6 +3,7 @@
  * `AnalysisCallResponse`), declared once for every screen that lists stocks. A row only needs `{ stock, call }`. A screen takes a
  * field with `stockField(id)` and says where it shows or how it is drawn there; the default places are the Holdings ones.
  */
+import { PriceDate } from '@/components/PriceDate'
 import { Badge } from '@/components/ui/badge'
 import { StockCall } from '@/components/StockCall'
 import { ConfidenceMeter } from '@/components/ConfidenceMeter'
@@ -62,6 +63,7 @@ export const STOCK_ROW_FIELDS = defineFields<StockRow>([
       ) : (
         <>
           {formatNumber(h.call.price)} <span className="text-xs text-muted-foreground">{h.stock.currency}</span>
+          <PriceDate day={h.call.priceDay} />
         </>
       ),
   },

@@ -31,7 +31,7 @@ export function PortfolioSnapshotBar() {
         <div className="text-xs text-muted-foreground mt-0.5">as of {formatDate(data.as_of)}</div>
         {change != null && (
           <div className={cn('text-sm font-medium mt-0.5', gainLossColor(change))}>
-            {formatCAD(change, { signed: true })} ({formatPct(data.day_change_pct)}) since the previous close
+            {formatCAD(change, { signed: true })} ({formatPct(data.day_change_pct)}) from {formatDate(data.day_change_from ?? '')} to {formatDate(data.day_change_to ?? '')}
             {data.day_change_includes_flows ? ', includes cash or trades' : ''}
           </div>
         )}

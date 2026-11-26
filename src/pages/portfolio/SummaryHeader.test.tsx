@@ -42,9 +42,9 @@ describe('SummaryHeader: the original tiles', () => {
   it('shows the tiles of the original design in its order, with Realized right beside Unrealized', () => {
     show()
     const labels = screen
-      .getAllByText(/^(Total Value|Cash|Unrealized|Realized|Total Return|Dividends Received|Today|Expected dividend income)/)
+      .getAllByText(/^(Total Value|Cash|Unrealized|Realized|Total Return|Dividends Received|Value change|Expected dividend income)/)
       .map((e) => e.textContent?.replace(/ \(next 12 months\)/, ''))
-    expect(labels).toEqual(['Total Value', 'Cash', 'Unrealized', 'Realized', 'Total Return', 'Dividends Received', 'Today', 'Expected dividend income'])
+    expect(labels).toEqual(['Total Value', 'Cash', 'Unrealized', 'Realized', 'Total Return', 'Dividends Received', 'Value change', 'Expected dividend income'])
   })
 
   it("shows the API's own value and unrealised gain for the whole portfolio", () => {

@@ -75,7 +75,7 @@ describe('StockPage: the latest call', () => {
 
   it('says which day the price is from', async () => {
     show({ [`${DIR}/snapshot.json`]: { ...snapshotFile, data: [{ ...snapshotFile.data[0], price_day: '2026-11-20' }] } })
-    expect(await screen.findByText('Close of Nov 20, 2026')).toBeInTheDocument()
+    expect(await screen.findByText(/as of Nov 20, 2026/i)).toBeInTheDocument()
   })
 
   it("keeps the summary's paragraphs, and drops the price note when the call has no target", async () => {
