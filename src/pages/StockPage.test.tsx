@@ -1,4 +1,3 @@
-import React from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -18,11 +17,6 @@ vi.mock('@/hooks/use-ticker-search')
 vi.mock('@/hooks/use-watchlist')
 vi.mock('@/hooks/use-user-profile', () => ({ useUserProfile: () => ({ data: undefined, isLoading: false, isError: false }) }))
 vi.mock('@/hooks/use-fx-rates', () => ({ useFxRates: () => ({ rates: { CAD: 1, USD: 1.4 }, isLoading: false }) }))
-vi.mock('@/context/UserContext', () => ({
-  UserProvider: ({ children }: { children: React.ReactNode }) => children,
-  useUser: () => ({ userId: 'user_01', setUserId: vi.fn() }),
-}))
-
 import { usePortfolioHoldings, useTransactionHistory } from '@/hooks/use-portfolio'
 import { useTickerSearch } from '@/hooks/use-ticker-search'
 import { useWatchlist } from '@/hooks/use-watchlist'
@@ -78,6 +72,19 @@ describe('StockPage: the latest call', () => {
     expect(await screen.findByText('Margin expansion')).toBeInTheDocument()
     expect(screen.getByText(/the margin trend outweighs the valuation/)).toBeInTheDocument()
     expect(screen.getByText(/unavailable \(S-2\)/)).toBeInTheDocument()
+  })
+
+  it('says which day the price is from', async () => {
+    show({ [`${DIR}/snapshot.json`]: { ...snapshotFile, data: [{ ...snapshotFile.data[0], price_day: '2026-11-20' }] } })
+    expect(await screen.findByText('Close of Nov 20, 2026')).toBeInTheDocument()
+  })
+
+  it("keeps the summary's paragraphs, and drops the price note when the call has no target", async () => {
+    show({
+      [`${DIR}/snapshot.json`]: { ...snapshotFile, data: [{ ...snapshotFile.data[0], analysis: { ...snapshotFile.data[0].analysis, target_price: null } }] },
+    })
+    expect(await screen.findByText(/the margin trend outweighs the valuation/)).toHaveClass('whitespace-pre-line')
+    expect(screen.queryByText('Target and return are at the latest price.')).not.toBeInTheDocument()
   })
 
   it('says a stock with no analysis at all is awaiting one', async () => {
@@ -175,6 +182,14 @@ describe('StockPage: your position and its history', () => {
     for (const name of ['Buy', 'Sell', 'Log Dividend', 'Edit']) {
       expect(await screen.findByRole('button', { name })).toBeInTheDocument()
     }
+  })
+
+  it('does not colour a return it does not know as a loss', async () => {
+    holdings.mockReturnValue({ data: [{ ...mockHolding, unrealised_cad: null, stock: { ...mockHolding.stock, stock_id: stockFile.stock_id } }] } as unknown as ReturnType<typeof usePortfolioHoldings>)
+    show()
+    const value = (await screen.findByText('Total Return')).nextElementSibling!
+    expect(value).toHaveTextContent('— (—)')
+    expect(value).toHaveClass('text-muted-foreground')
   })
 
   it("lists that stock's transactions and dividends together, and no other stock's", async () => {

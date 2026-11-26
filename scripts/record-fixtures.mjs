@@ -26,7 +26,7 @@ const SCREENS = {
     { file: 'snapshot', path: `/api/stocks/snapshots?stock_ids=${ctx.stockId}` },
     { file: 'fundamentals', path: `/api/stocks/${ctx.stockId}/fundamentals` },
     { file: 'prices', path: `/api/stocks/${ctx.stockId}/prices?page=1&per_page=100` },
-    { file: 'runs', path: `/api/analysis?stock_id=${ctx.stockId}&user_id=${ctx.userId}&status=complete&page=1&per_page=100` },
+    { file: 'runs', path: `/api/analysis?stock_id=${ctx.stockId}&status=complete&page=1&per_page=100` },
     { file: 'predictions', path: `/api/predictions?stock_id=${ctx.stockId}&page=1&per_page=100` },
     { file: 'result', path: `/api/analysis/${ctx.runId}` },
   ],
@@ -44,6 +44,8 @@ const SCREENS = {
     { file: 'exposure', path: `/api/portfolios/${ctx.portfolioId}/exposure` },
     { file: 'dividends', path: `/api/portfolios/${ctx.portfolioId}/dividends?page=1&per_page=100` },
   ],
+  // The USD/CAD observations. Last, because the backend reads them from the Bank of Canada: an outage stops only this one.
+  market: () => [{ file: 'exchange-rates', path: '/api/exchange-rates' }],
 }
 
 async function call({ path, method = 'GET', body }) {

@@ -41,7 +41,8 @@ const returns = (r: HistoryRow) => (r.returnLow == null ? '—' : `${signedPct(r
 /** The history table: the original columns, and the rest of what a past run holds in the expanded row. */
 export const HISTORY_FIELDS = defineFields<HistoryRow>([
   stockField('call_as_of', { label: 'Date', places: ['column'] }),
-  stockField('outlook', { places: ['column'], render: (r) => <CallHeadline analysis={r.call?.analysis} /> }),
+  // wraps, as Account and Timeline below, so the narrow page keeps Return and View in sight
+  stockField('outlook', { places: ['column'], render: (r) => <span className="inline-block max-w-32 whitespace-normal leading-tight"><CallHeadline analysis={r.call?.analysis} /></span> }),
   stockField('confidence', { places: ['column'], render: confidenceCell }),
   {
     id: 'price_at_analysis',
@@ -59,7 +60,6 @@ export const HISTORY_FIELDS = defineFields<HistoryRow>([
     get: () => null,
     format: () => unavailableLabel('S-3'),
     places: ['column'],
-    // wraps, so the narrow page keeps the View button in sight
     render: () => <span className="inline-block max-w-20 whitespace-normal text-xs leading-tight text-muted-foreground">{unavailableLabel('S-3')}</span>,
   },
   { id: 'timeline', label: 'Timeline', source: 'AnalysisRunSummary.timeline', get: (r) => r.timeline, format: (v) => String(v).replaceAll('_', ' '), places: ['column'], render: (r) => <span className="inline-block max-w-16 whitespace-normal leading-tight">{r.timeline.replaceAll('_', ' ')}</span> },
@@ -201,6 +201,8 @@ export const STOCK_DETAIL_SCREEN: ScreenFieldSet = {
   fields: [...FUNDAMENTAL_FIELDS, ...HISTORY_FIELDS],
   notShown: STOCK_DETAIL_NOT_SHOWN,
   notShownSchemas: {
+    ExchangeRateListResponse: { reason: 'An envelope: the newest observation is read (useFxRates)' },
+    ExchangeRatePoint: { reason: 'The newest USD/CAD rate converts figures to CAD (also on Dividends); neither it nor its day is drawn' },
     PriceListResponse: { reason: 'An envelope: every page is read (fetchAllPages)' },
     StockSnapshotListResponse: { reason: 'An envelope around the one stock asked for' },
     AnalysisListResponse: { reason: 'An envelope: every page is read' },

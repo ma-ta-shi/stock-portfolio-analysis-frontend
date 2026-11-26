@@ -1,7 +1,6 @@
 /** What the Stock page reads about one stock. Each read is its own query, so one failing does not blank the page. */
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { useUser } from '@/context/UserContext'
 import { apiFetch } from '@/lib/api'
 import { fetchAllPages } from '@/lib/fetch-all-pages'
 import { dayFromToday } from '@/lib/format'
@@ -52,15 +51,17 @@ export function useStockPrices(stockId: string) {
   })
 }
 
-/** The completed analyses of the stock, each with its prediction, newest first. */
+/**
+ * Every completed analysis of the stock, each with its prediction, newest first, whoever started it: a pipeline run is shared by all
+ * users (owner rule) and holds nothing about one. Everything else about a user (portfolio, watchlist, settings) is read for them alone.
+ */
 export function useStockHistory(stockId: string, stock: Stock | undefined) {
-  const { userId } = useUser()
   const result = useQuery({
-    queryKey: queryKeys.stocks.history(stockId, userId),
+    queryKey: queryKeys.stocks.history(stockId),
     enabled: !!stockId,
     queryFn: async ({ signal }) => {
       const [runs, predictions] = await Promise.all([
-        fetchAllPages<ApiRunSummary>(`${DIR}/runs.json`, `/api/analysis?stock_id=${stockId}&user_id=${userId}&status=complete`, { signal }),
+        fetchAllPages<ApiRunSummary>(`${DIR}/runs.json`, `/api/analysis?stock_id=${stockId}&status=complete`, { signal }),
         fetchAllPages<ApiPrediction>(`${DIR}/predictions.json`, `/api/predictions?stock_id=${stockId}`, { signal }),
       ])
       return { runs, predictions }

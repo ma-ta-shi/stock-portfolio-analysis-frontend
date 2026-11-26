@@ -20,10 +20,11 @@ export const queryKeys = {
   market: {
     overview: ['market', 'overview'] as const,
     news: ['market', 'news'] as const,
+    exchangeRates: ['market', 'exchange-rates'] as const,
   },
   stocks: {
     detail: (stockId: string) => ['stocks', stockId] as const,
-    history: (stockId: string, userId: string) => ['stocks', stockId, 'history', userId] as const,
+    history: (stockId: string) => ['stocks', stockId, 'history'] as const,
     snapshot: (stockId: string) => ['stocks', stockId, 'snapshot'] as const,
     fundamentals: (stockId: string) => ['stocks', stockId, 'fundamentals'] as const,
     prices: (stockId: string) => ['stocks', stockId, 'prices'] as const,

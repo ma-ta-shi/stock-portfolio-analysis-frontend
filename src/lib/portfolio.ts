@@ -6,9 +6,9 @@ import { parseDate } from './format'
  * Aggregate one stock's holdings (possibly across TFSA/RRSP/Trading) into a snapshot.
  *
  * Share-based amounts (average_cost, book_cost, current_value, by_account) stay in the
- * stock's own currency. The `_cad` fields are converted with `rates`; if the rate isn't
- * available yet they are NaN, which the formatters render as "—" instead of mislabelling
- * a USD amount as CAD.
+ * stock's own currency. The return is the server's CAD gain, which includes the exchange
+ * rate's effect (the figure Holdings shows). The day change is converted with `rates`; if
+ * the rate isn't available it is NaN, which the formatters render as "—".
  */
 export function buildHoldingSnapshot(
   holdings: readonly Holding[],
@@ -22,7 +22,8 @@ export function buildHoldingSnapshot(
   const sum = (value: (h: Holding) => number | null) =>
     holdings.reduce((s, h) => s + (value(h) ?? Number.NaN), 0)
   const currentValue = sum((h) => h.market_value)
-  const totalReturn = sum((h) => h.total_gain_loss)
+  const totalReturn = sum((h) => h.unrealised_cad)
+  const costCad = sum((h) => h.value_cad) - totalReturn
   const dayChange = sum((h) =>
     h.current_price != null && h.change_day != null ? h.shares * (h.current_price - h.current_price / (1 + h.change_day)) : null,
   )
@@ -36,8 +37,8 @@ export function buildHoldingSnapshot(
     average_cost: bookCost / totalShares,
     book_cost: bookCost,
     current_value: currentValue,
-    total_return_cad: cad(totalReturn),
-    total_return_pct: bookCost > 0 ? totalReturn / bookCost : 0,
+    total_return_cad: totalReturn,
+    total_return_pct: costCad > 0 ? totalReturn / costCad : Number.NaN,
     day_change_cad: cad(dayChange),
     yield_on_cost: yieldOnCost > 0 ? yieldOnCost : undefined,
     by_account:

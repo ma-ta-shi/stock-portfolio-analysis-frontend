@@ -116,6 +116,7 @@ export function StockPage() {
       <StockInfoSection
         stock={stock}
         price={call?.price ?? null}
+        priceDay={call?.priceDay}
         marketCap={fundamentals.data?.marketCap}
         marketCapCurrency={(fundamentals.data?.currency as typeof stock.currency | null) ?? stock.currency}
         fundamentals={fundamentals.data?.values}
@@ -241,7 +242,7 @@ export function StockPage() {
               </ButtonLink>
             </div>
             <FieldList fields={CALL_FIELDS} row={{ stock, call }} />
-            <p className="text-xs text-muted-foreground">Target and return are at the latest price.</p>
+            {call.analysis.targetPrice != null && <p className="text-xs text-muted-foreground">Target and return are at the latest price.</p>}
           </section>
 
           {/* Layer 1 — Stock Outlook */}
@@ -267,7 +268,7 @@ export function StockPage() {
                     ))}
                   </ul>
                 )}
-                {result?.synthesis_narrative && <p className="text-sm leading-relaxed">{result.synthesis_narrative}</p>}
+                {result?.synthesis_narrative && <p className="text-sm leading-relaxed whitespace-pre-line">{result.synthesis_narrative}</p>}
               </>
             )}
           </div>

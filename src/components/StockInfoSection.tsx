@@ -44,6 +44,9 @@ function RangeBar({ low, high, current }: RangeBarProps) {
   )
 }
 
+/** An unknown figure (NaN, drawn as "—") is neither a gain nor a loss. */
+const toneOf = (value: number) => (Number.isFinite(value) ? gainLossColor(value) : 'text-muted-foreground')
+
 interface HoldingPanelProps {
   snapshot: HoldingSnapshot
   /** Currency of the stock; share-based amounts are in this currency, `_cad` fields in CAD. */
@@ -74,7 +77,7 @@ function HoldingPanel({ snapshot, currency }: HoldingPanelProps) {
           <div className="text-xs text-muted-foreground">
             Total Return{currency !== 'CAD' && ' (CAD)'}
           </div>
-          <div className={cn('text-sm font-medium', gainLossColor(snapshot.total_return_pct))}>
+          <div className={cn('text-sm font-medium', toneOf(snapshot.total_return_cad))}>
             {formatCAD(snapshot.total_return_cad, { signed: true })} ({formatPct(snapshot.total_return_pct, 1)})
           </div>
         </div>
@@ -82,7 +85,7 @@ function HoldingPanel({ snapshot, currency }: HoldingPanelProps) {
           <div className="text-xs text-muted-foreground">
             Day Change{currency !== 'CAD' && ' (CAD)'}
           </div>
-          <div className={cn('text-sm font-medium', gainLossColor(snapshot.day_change_cad))}>
+          <div className={cn('text-sm font-medium', toneOf(snapshot.day_change_cad))}>
             {formatCAD(snapshot.day_change_cad, { signed: true })}
           </div>
         </div>
@@ -120,6 +123,8 @@ interface StockInfoSectionProps {
   stock: Stock
   /** null when the stock hasn't been priced yet */
   price: number | null
+  /** The day of that close: stored prices can be days old. */
+  priceDay?: string | null
   marketCap?: number | null
   /** The currency the market cap is in: the stock's own for a live read. */
   marketCapCurrency?: CurrencyCode
@@ -138,6 +143,7 @@ const tile = (spec: FieldSpec<StockFundamentals>, f: StockFundamentals) => {
 export function StockInfoSection({
   stock,
   price,
+  priceDay,
   marketCap,
   marketCapCurrency = 'CAD',
   fundamentals,
@@ -171,6 +177,7 @@ export function StockInfoSection({
                 </>
               )}
             </div>
+            {price != null && priceDay && <div className="text-xs text-muted-foreground">Close of {formatDate(priceDay)}</div>}
             {marketCap != null && (
               <div className="text-xs text-muted-foreground">Mkt cap {formatMoney(marketCap, marketCapCurrency, { compact: true })}</div>
             )}
