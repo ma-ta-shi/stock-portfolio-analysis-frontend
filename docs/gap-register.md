@@ -15,6 +15,9 @@ expects, with why and the ClickUp ticket that closes it. The code cites these id
 | Id | Screen | What | Why | Ticket |
 |---|---|---|---|---|
 | E-1 | end-to-end | Mock mode cannot reproduce server-side filtering and paging, so the Transactions filter flows are not tested end to end | A recorded file is the same for every query. The Transactions filters are covered by the live run (npm run test:e2e:live) against a seeded scratch backend. | [86bd5z6mq](https://app.clickup.com/t/86bd5z6mq) |
+| F-1 | feedback | Accuracy of each agent | The agents' readings are stored with every run, but nothing scores them; the feedback design (5.3) describes how. Its own backend ticket. | [86bd5z6nc](https://app.clickup.com/t/86bd5z6nc) |
+| F-3 | feedback | One composite score for each prediction, and a right or wrong verdict on a check-in | The design showed a score and coloured dots; nothing stores a score or a verdict. | [86bd5z6nc](https://app.clickup.com/t/86bd5z6nc) |
+| F-4 | feedback | The agent portfolio's line on the performance chart, and the fund's dividends | The agent portfolio is not built; the recorded fund prices carry no distributions. | [86bd5z6nc](https://app.clickup.com/t/86bd5z6nc) |
 | O-9 | optimizer | The predicted lines in dollars or percent without a declared unit (total return, baseline, score, exit tax) | The API declares no unit for these fields, so they are not drawn. | [86bd5z6n5](https://app.clickup.com/t/86bd5z6n5) |
 | O-10 | optimizer | Confidence and "lower or higher risk" of a suggestion, current and target weights in percent, and an expected improvement figure | The old design showed them; the optimizer produces none of them, and none is computed to fill the place. | [86bd5z6n5](https://app.clickup.com/t/86bd5z6n5) |
 | P-A2 | portfolio | Allocation for a single account (TFSA, RRSP or Trading) | The exposure report has no account filter yet; until it has, the sector, industry and currency donuts say they cover the whole portfolio. | [86bd6r34c](https://app.clickup.com/t/86bd6r34c) |
@@ -43,6 +46,7 @@ expects, with why and the ClickUp ticket that closes it. The code cites these id
 
 | Id | Screen | What | Why | Ticket |
 |---|---|---|---|---|
+| F-2 | feedback | The rest of the scorecard and of a prediction: written page, consistency, baseline scoring, earlier pipeline versions, figure tracing, the shadow call, each stock's record (design 9.6) | Served by the backend; the original page has no place for them. | [86bd5z6nc](https://app.clickup.com/t/86bd5z6nc) |
 | O-1 | optimizer | History of optimizer runs | GET .../proposal-runs lists them; the original tab shows only the latest. | [86bd5z6n5](https://app.clickup.com/t/86bd5z6n5) |
 | O-2 | optimizer | The target book: what to hold, in which account, and why | GET .../target-book serves it; the original tab has no place for it. | [86bd5z6n5](https://app.clickup.com/t/86bd5z6n5) |
 | O-3 | optimizer | The account matrix: the after-tax return of each stock in each account | GET .../account-matrix serves it; no place in the original design. | [86bd5z6n5](https://app.clickup.com/t/86bd5z6n5) |

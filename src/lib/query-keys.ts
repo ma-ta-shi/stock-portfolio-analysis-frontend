@@ -39,7 +39,7 @@ export const queryKeys = {
     rawHoldings: (portfolioId: string) => ['portfolio', portfolioId, 'holdings'] as const,
     positions: (portfolioId: string) => ['portfolio', portfolioId, 'positions'] as const,
     report: (portfolioId: string, period = 'since_inception') => ['portfolio', portfolioId, 'report', period] as const,
-    history: (portfolioId: string, view: string) => ['portfolio', portfolioId, 'history', view] as const,
+    history: (portfolioId: string, view: string, days: number) => ['portfolio', portfolioId, 'history', view, days] as const,
     accounts: (portfolioId: string) => ['portfolio', portfolioId, 'accounts'] as const,
     room: (portfolioId: string) => ['portfolio', portfolioId, 'room'] as const,
     exposure: (portfolioId: string, view: string) => ['portfolio', portfolioId, 'exposure', view] as const,
@@ -50,6 +50,10 @@ export const queryKeys = {
     /** The latest stored optimizer run. */
     optimizer: (portfolioId: string) => ['portfolio', portfolioId, 'optimizer'] as const,
   },
-  predictions: (userId: string) => ['predictions', userId] as const,
-  feedback: (userId: string) => ['feedback', userId] as const,
+  /** Pipeline results, the same for every user. */
+  feedback: {
+    scorecard: ['feedback', 'scorecard'] as const,
+    batch: ['feedback', 'batch'] as const,
+    predictions: (page: number) => ['feedback', 'predictions', page] as const,
+  },
 }

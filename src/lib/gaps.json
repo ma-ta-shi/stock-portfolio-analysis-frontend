@@ -411,5 +411,33 @@
     "what": "Confidence and \"lower or higher risk\" of a suggestion, current and target weights in percent, and an expected improvement figure",
     "why": "The old design showed them; the optimizer produces none of them, and none is computed to fill the place.",
     "ticket": "86bd5z6n5"
+  },
+  "F-1": {
+    "screen": "feedback",
+    "kind": "missing",
+    "what": "Accuracy of each agent",
+    "why": "The agents' readings are stored with every run, but nothing scores them; the feedback design (5.3) describes how. Its own backend ticket.",
+    "ticket": "86bd5z6nc"
+  },
+  "F-2": {
+    "screen": "feedback",
+    "kind": "documented",
+    "what": "The rest of the scorecard and of a prediction: written page, consistency, baseline scoring, earlier pipeline versions, figure tracing, the shadow call, each stock's record (design 9.6)",
+    "why": "Served by the backend; the original page has no place for them.",
+    "ticket": "86bd5z6nc"
+  },
+  "F-3": {
+    "screen": "feedback",
+    "kind": "missing",
+    "what": "One composite score for each prediction, and a right or wrong verdict on a check-in",
+    "why": "The design showed a score and coloured dots; nothing stores a score or a verdict.",
+    "ticket": "86bd5z6nc"
+  },
+  "F-4": {
+    "screen": "feedback",
+    "kind": "missing",
+    "what": "The agent portfolio's line on the performance chart, and the fund's dividends",
+    "why": "The agent portfolio is not built; the recorded fund prices carry no distributions.",
+    "ticket": "86bd5z6nc"
   }
 }

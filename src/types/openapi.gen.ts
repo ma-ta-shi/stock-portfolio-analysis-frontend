@@ -674,7 +674,7 @@ export interface paths {
          *     the latest close plus cash, with the cost base, in Canadian dollars. Each day is the same figure `positions` and the reports give for it. A day with
          *     no recorded close for a holding carries that holding at cost and names it in `unpriced`; it is never counted as zero. Prices are the recorded
          *     closes (`scripts/record_prices.py`, scheduled as the `prices` job), so a line is only as recent as the last recorded day. A US stock needs the Bank of
-         *     Canada's rates, fetched in one call. 404 `PORTFOLIO_NOT_FOUND`; 422 `INVALID_DATE_RANGE` when `from` is after `to` or the range is over 400 days.
+         *     Canada's rates, fetched in one call. Each point also gives the same money in the benchmark fund (`fund_value_cad`). 404 `PORTFOLIO_NOT_FOUND`; 422 `INVALID_DATE_RANGE` when `from` is after `to` or the range is over 400 days.
          */
         get: operations["ledger_get_value_history"];
         put?: never;
@@ -8024,6 +8024,11 @@ export interface components {
              * @description Tickers held that day with no close within a week; they are carried at cost, not at zero.
              */
             unpriced: string[];
+            /**
+             * Fund Value Cad
+             * @description The same money in the benchmark fund, on the same days (price only, no distributions). From the first day something is held, as the report compares it: the value at the end of the day before goes into the fund, then the same money in and out. Null before that day, or when the fund has no history.
+             */
+            fund_value_cad?: number | null;
         };
         /**
          * ViewNoteResponse
@@ -11461,6 +11466,8 @@ export interface operations {
                 from?: string | null;
                 /** @description Predictions made on or before this day (a UTC day). */
                 to?: string | null;
+                /** @description Only the weekly batch runs (not experiments) of the pipeline versions that share today's band settings. */
+                current_design?: boolean;
                 page?: number;
                 per_page?: number;
             };

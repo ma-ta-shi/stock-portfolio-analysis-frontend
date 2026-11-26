@@ -2,7 +2,5 @@
   "GET /api/alerts/{}",
   "GET /api/alerts/{}/unread-count",
   "GET /api/market/overview",
-  "GET /api/market/news",
-  "GET /api/predictions/{}",
-  "GET /api/feedback/{}"
+  "GET /api/market/news"
 ]

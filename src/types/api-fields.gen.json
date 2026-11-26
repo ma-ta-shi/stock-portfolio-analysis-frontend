@@ -2304,6 +2304,7 @@
       "cash_cad",
       "cost_cad",
       "day",
+      "fund_value_cad",
       "positions_cad",
       "unpriced",
       "value_cad"

@@ -44,6 +44,7 @@ const SCREENS = {
     { file: 'report', method: 'POST', path: `/api/portfolios/${ctx.portfolioId}/reports`, body: { preset: 'since_inception' } },
     { file: 'report-30d', method: 'POST', path: `/api/portfolios/${ctx.portfolioId}/reports`, body: { start: day(-30), end: day(0) } },
     { file: 'value-history', path: `/api/portfolios/${ctx.portfolioId}/value-history?from=${day(-30)}&to=${day(0)}` },
+    { file: 'value-history-year', path: `/api/portfolios/${ctx.portfolioId}/value-history?from=${day(-365)}&to=${day(0)}` },
     { file: 'transactions', path: `/api/portfolios/${ctx.portfolioId}/transactions?page=1&per_page=100` },
     { file: 'exposure', path: `/api/portfolios/${ctx.portfolioId}/exposure` },
     { file: 'dividends', path: `/api/portfolios/${ctx.portfolioId}/dividends?page=1&per_page=100` },
@@ -53,6 +54,12 @@ const SCREENS = {
   ],
   // The USD/CAD observations. Last, because the backend reads them from the Bank of Canada: an outage stops only this one.
   market: () => [{ file: 'exchange-rates', path: '/api/exchange-rates' }],
+  // the scorecard samples are not recorded: a database has no filled scorecard, so they are the real scorer's output on made-up results
+  feedback: () => [
+    { file: 'weekly-batch', path: '/api/weekly-batch' },
+    { file: 'pipeline-versions', path: '/api/pipeline-versions?per_page=100' },
+    { file: 'predictions', path: '/api/predictions?current_design=true&page=1&per_page=20' },
+  ],
 }
 
 async function call({ path, method = 'GET', body }) {

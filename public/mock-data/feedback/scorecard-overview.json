@@ -1,0 +1,35 @@
+{
+  "as_of": "2027-01-01",
+  "scorer_version": "S4",
+  "section": "overview",
+  "available": [
+    "2027-01-01"
+  ],
+  "data": {
+    "scorer_version": "S4",
+    "as_of": "2027-01-01",
+    "data_date": "2026-12-24",
+    "seed": 20261022,
+    "draws": 50,
+    "current_cohort": "P22-B3",
+    "current_cohort_versions": [
+      "P22"
+    ],
+    "data_fingerprint": "bd00d8ea43e83a15",
+    "thresholds": {
+      "min_block_size": 8,
+      "min_blocks_for_interval": 6,
+      "thin_observations": 30,
+      "thin_blocks": 3,
+      "decision_points_start": 200
+    },
+    "counts": {
+      "observations": 40,
+      "resolved": 40,
+      "not_yet_due": 0,
+      "scoring_set_runs": 40,
+      "descriptive_set_runs": 0,
+      "runs_without_band_output": 0
+    }
+  }
+}

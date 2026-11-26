@@ -95,16 +95,17 @@ export function useDividendsReceived(view: PortfolioAccountView) {
   return { data: report ? (part?.profit.dividends_net_cad ?? 0) : undefined, isError }
 }
 
-function useValueHistory(view: PortfolioAccountView) {
+/** The value line over the last `days` (30 for the summary, 365 for the Feedback chart). */
+export function useValueHistory(view: PortfolioAccountView, days = 30) {
   const { id, path } = usePortfolioPath()
   const account = accountParam(view)
   return useQuery({
-    queryKey: queryKeys.portfolio.history(id ?? '', view),
+    queryKey: queryKeys.portfolio.history(id ?? '', view, days),
     enabled: !!id,
     queryFn: ({ signal }) => {
-      const from = dayFromToday(-30)
+      const from = dayFromToday(-days)
       return apiFetch<Api['ValueHistoryResponse']>(
-        `${DIR}/value-history.json`,
+        `${DIR}/value-history${days > 30 ? '-year' : ''}.json`,
         path(`/value-history?from=${from}${account ? `&account_type=${account}` : ''}`),
         { signal },
       )
