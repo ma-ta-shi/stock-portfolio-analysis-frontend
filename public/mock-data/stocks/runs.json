@@ -1,0 +1,48 @@
+{
+  "data": [
+    {
+      "analysis_id": "4052936a-30c1-42d3-9ca7-1565de60a579",
+      "stock_id": "7e8b0f73-e2f1-4f3e-99e2-efa1c685ae39",
+      "ticker": "RY.TO",
+      "name": "Royal Bank of Canada",
+      "timeline": "medium_term",
+      "status": "complete",
+      "triggered_at": "2026-11-24T09:30:00Z",
+      "completed_at": "2026-11-24T09:30:00Z",
+      "duration_s": 0,
+      "stock_outlook_direction": "bullish",
+      "overall_confidence": 70,
+      "expected_return_tier": "outperform",
+      "expected_return_pct": 8.8,
+      "expected_return_low": -12,
+      "expected_return_high": 31,
+      "disagreement_class": "mild_dissent",
+      "pipeline_version": null
+    },
+    {
+      "analysis_id": "d0f99985-a8ef-4eee-bb11-d20d6895ddc6",
+      "stock_id": "7e8b0f73-e2f1-4f3e-99e2-efa1c685ae39",
+      "ticker": "RY.TO",
+      "name": "Royal Bank of Canada",
+      "timeline": "medium_term",
+      "status": "complete",
+      "triggered_at": "2026-08-16T09:30:00Z",
+      "completed_at": "2026-08-16T09:30:00Z",
+      "duration_s": 0,
+      "stock_outlook_direction": "bullish",
+      "overall_confidence": 70,
+      "expected_return_tier": "outperform",
+      "expected_return_pct": null,
+      "expected_return_low": null,
+      "expected_return_high": null,
+      "disagreement_class": null,
+      "pipeline_version": null
+    }
+  ],
+  "meta": {
+    "total": 2,
+    "page": 1,
+    "per_page": 100,
+    "pages": 1
+  }
+}

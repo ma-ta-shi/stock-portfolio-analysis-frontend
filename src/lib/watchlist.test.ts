@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { isAwaitingAnalysis, mapWatchlistEntry, watchlistCounts, type ApiWatchlistEntry } from './watchlist'
+import { mapWatchlistEntry, watchlistCounts, type ApiWatchlistEntry } from './watchlist'
+import { isAwaitingAnalysis } from './stock-snapshot'
 import recorded from '../../public/mock-data/watchlist/watchlist.json'
 
 // The recorded set: RY.TO with a usable call, TD.TO with an out-of-date one, MSFT never analysed.

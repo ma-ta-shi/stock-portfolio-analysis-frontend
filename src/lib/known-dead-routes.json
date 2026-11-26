@@ -6,6 +6,5 @@
   "GET /api/portfolio/{}/optimizer",
   "GET /api/predictions/{}",
   "GET /api/feedback/{}",
-  "GET /api/analysis/{}/agents",
-  "GET /api/stocks/{}/history"
+  "GET /api/analysis/{}/agents"
 ]

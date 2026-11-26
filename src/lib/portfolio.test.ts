@@ -21,8 +21,8 @@ describe('buildHoldingSnapshot', () => {
   })
 
   it('aggregates the same stock across accounts with a weighted average cost', () => {
-    const tfsa = { ...mockHolding, shares: 10, average_cost_basis: 100, market_value: 1500, total_gain_loss: 500 }
-    const rrsp = { ...mockHolding, holding_id: 'h_x', account_type: 'rrsp' as const, shares: 30, average_cost_basis: 140, market_value: 4500, total_gain_loss: 300 }
+    const tfsa = { ...mockHolding, shares: 10, average_cost_basis: 100, market_value: 1500, value_cad: 1500, unrealised_cad: 500 }
+    const rrsp = { ...mockHolding, holding_id: 'h_x', account_type: 'rrsp' as const, shares: 30, average_cost_basis: 140, market_value: 4500, value_cad: 4500, unrealised_cad: 300 }
     const snap = buildHoldingSnapshot([tfsa, rrsp], rates)!
     expect(snap.shares).toBe(40)
     expect(snap.book_cost).toBe(10 * 100 + 30 * 140)
@@ -33,18 +33,20 @@ describe('buildHoldingSnapshot', () => {
     expect(snap.by_account).toHaveLength(2)
   })
 
-  it('converts the _cad fields of a USD holding to CAD', () => {
+  it("shows the server's CAD return for a USD holding and converts only the day change", () => {
     const snap = buildHoldingSnapshot([mockUsdHolding], rates)!
     const h = mockUsdHolding
-    expect(snap.total_return_cad).toBeCloseTo(h.total_gain_loss! * 1.4)
+    // includes the exchange rate's effect since the purchase, so it is not the USD gain at today's rate
+    expect(snap.total_return_cad).toBe(h.unrealised_cad)
+    expect(snap.total_return_pct).toBeCloseTo(h.unrealised_cad! / (h.value_cad! - h.unrealised_cad!))
     expect(snap.day_change_cad).toBeCloseTo(h.shares * (h.current_price! - h.current_price! / (1 + h.change_day!)) * 1.4)
     // Share-based amounts stay in USD
     expect(snap.current_value).toBe(h.market_value)
   })
 
-  it('leaves _cad fields as NaN (rendered as —) when the USD rate is unknown', () => {
+  it('leaves the converted day change as NaN (rendered as —) when the USD rate is unknown', () => {
     const snap = buildHoldingSnapshot([mockUsdHolding], CAD_ONLY)!
-    expect(snap.total_return_cad).toBeNaN()
+    expect(snap.day_change_cad).toBeNaN()
   })
 })
 

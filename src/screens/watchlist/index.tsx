@@ -2,7 +2,6 @@
  * The Watchlist: the columns of the original design and, in the expanded row, what else the API knows. The stock and its call are
  * the shared fields (`../stock`); this file says where each shows here and adds what only a watchlist entry has.
  */
-import { ConfidenceMeter } from '@/components/ConfidenceMeter'
 import { CallHeadline, CallWarning } from '@/components/StockCall'
 import { Badge } from '@/components/ui/badge'
 import { defineFields, type ApiFieldKey, type FieldSpec, type NotShown, type ScreenFieldSet } from '@/lib/fields'
@@ -10,12 +9,11 @@ import { formatPct } from '@/lib/format'
 import { unavailableLabel, type GapId } from '@/lib/gaps'
 import { DISAGREEMENT_CLASS_LABELS, gainLossColor } from '@/lib/labels'
 import { cn } from '@/lib/utils'
-import { isAwaitingAnalysis } from '@/lib/watchlist'
+import { isAwaitingAnalysis } from '@/lib/stock-snapshot'
 import type { WatchlistItem } from '@/types/watchlist'
 import { day, text } from '../formatters'
-import { stockField } from '../stock'
+import { confidenceCell, dash, stockField } from '../stock'
 
-const dash = <span className="text-xs text-muted-foreground">—</span>
 const column = { places: ['column' as const] }
 const detail = { places: ['detail' as const] }
 
@@ -56,10 +54,7 @@ export const WATCHLIST_FIELDS = defineFields<WatchlistItem>([
         </span>
       ),
   }),
-  stockField('confidence', {
-    ...column,
-    render: (i) => (i.call?.analysis?.confidence == null ? dash : <ConfidenceMeter score={i.call.analysis.confidence} />),
-  }),
+  stockField('confidence', { ...column, render: confidenceCell }),
   stockField('disagreement', {
     ...column,
     render: (i) => {

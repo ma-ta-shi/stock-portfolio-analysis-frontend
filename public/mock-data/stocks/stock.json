@@ -1,0 +1,12 @@
+{
+  "instrument_type": null,
+  "pipeline_supported": true,
+  "unsupported_reason": null,
+  "stock_id": "7e8b0f73-e2f1-4f3e-99e2-efa1c685ae39",
+  "ticker": "RY.TO",
+  "name": "Royal Bank of Canada",
+  "exchange": "TSX",
+  "currency": "CAD",
+  "sector": "Financials",
+  "industry": "Banks - Diversified"
+}

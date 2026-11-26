@@ -6,6 +6,7 @@
  * Ratios (changes, expected return) become fractions through `asFraction`; a stock with no usable call is a normal state
  * (`status: 'excluded'` with reasons, or `analysis: null`), never an error.
  */
+import { localDateInputValue, parseDate } from './format'
 import { asFraction } from './units'
 import type { components } from '@/types/openapi.gen'
 import type { Stock } from '@/types/stock'
@@ -112,5 +113,44 @@ export function mapStock(stock: components['schemas']['StockSummary']): Stock {
     pipeline_supported: stock.pipeline_supported,
     instrument_type: stock.instrument_type ?? null,
     unsupported_reason: stock.unsupported_reason ?? null,
+  }
+}
+
+/** No completed analysis (a stock the pipeline cannot analyse never gets one; screens say why instead). */
+export const isAwaitingAnalysis = (row: { call: StockSnapshot | null }) => row.call?.analysis == null
+
+/**
+ * A past run from the history list, in the shape every call is drawn from. A past run has no usability status (so no warning is
+ * drawn) and the list serves no target price; its range is a return, not a price, so the price range stays empty.
+ */
+export function mapRunCall(run: Api['AnalysisRunSummary'], currency: string): StockSnapshot {
+  return {
+    stockId: run.stock_id,
+    ticker: run.ticker,
+    currency,
+    price: null,
+    priceDay: null,
+    changeDay: null,
+    changeWeek: null,
+    changeMonth: null,
+    status: 'usable',
+    exclusions: [],
+    rerunReasons: [],
+    nextEarningsDate: null,
+    analysis: {
+      runId: run.analysis_id,
+      asOf: localDateInputValue(parseDate(run.completed_at ?? run.triggered_at)), // the instant's day here, not in UTC
+      outlook: run.stock_outlook_direction ?? null,
+      confidence: run.overall_confidence ?? null,
+      tier: run.expected_return_tier ?? null,
+      expectedReturn: asFraction('AnalysisRunSummary.expected_return_pct', run.expected_return_pct),
+      targetPrice: null,
+      rangeLow: null,
+      rangeHigh: null,
+      incomePerShare: null,
+      disagreementClass: run.disagreement_class ?? null,
+      previousOutlook: null,
+      outlookChanged: null,
+    },
   }
 }

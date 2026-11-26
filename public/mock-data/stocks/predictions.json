@@ -1,0 +1,105 @@
+{
+  "data": [
+    {
+      "prediction_id": "18a27666-1393-4032-b55c-6055e9150af8",
+      "analysis_id": "d0f99985-a8ef-4eee-bb11-d20d6895ddc6",
+      "stock": {
+        "stock_id": "7e8b0f73-e2f1-4f3e-99e2-efa1c685ae39",
+        "ticker": "RY.TO",
+        "name": "Royal Bank of Canada",
+        "exchange": "TSX",
+        "currency": "CAD"
+      },
+      "created_at": "2026-08-16T09:30:00Z",
+      "price_at_recommendation": 95,
+      "benchmark_price_at_recommendation": 500,
+      "predicted_return_tier": "outperform",
+      "predicted_return_pct": 9,
+      "predicted_return_low": -12,
+      "predicted_return_high": 31,
+      "stock_outlook_direction": "bullish",
+      "overall_confidence": 70,
+      "checkpoints": [
+        {
+          "interval": "1m",
+          "due_date": "2026-09-15T09:30:00Z",
+          "status": "resolved",
+          "status_reason": null,
+          "actual_price": null,
+          "dividends_per_share": null,
+          "benchmark_price": null,
+          "benchmark_dividends_per_share": null,
+          "actual_total_return_pct": 2.5,
+          "benchmark_total_return_pct": null,
+          "excess_return_pct": 0.8,
+          "interpolated_expected": null,
+          "exit_date": null,
+          "checked_at": "2026-09-15T09:30:00Z",
+          "resolver_version": null,
+          "resolution_detail": null
+        },
+        {
+          "interval": "3m",
+          "due_date": "2026-11-15T09:30:00Z",
+          "status": "resolved",
+          "status_reason": null,
+          "actual_price": null,
+          "dividends_per_share": null,
+          "benchmark_price": null,
+          "benchmark_dividends_per_share": null,
+          "actual_total_return_pct": 6.4,
+          "benchmark_total_return_pct": null,
+          "excess_return_pct": 2.1,
+          "interpolated_expected": null,
+          "exit_date": null,
+          "checked_at": "2026-11-15T09:30:00Z",
+          "resolver_version": null,
+          "resolution_detail": null
+        },
+        {
+          "interval": "6m",
+          "due_date": "2027-02-14T09:30:00Z",
+          "status": "pending",
+          "status_reason": null,
+          "actual_price": null,
+          "dividends_per_share": null,
+          "benchmark_price": null,
+          "benchmark_dividends_per_share": null,
+          "actual_total_return_pct": null,
+          "benchmark_total_return_pct": null,
+          "excess_return_pct": null,
+          "interpolated_expected": null,
+          "exit_date": null,
+          "checked_at": null,
+          "resolver_version": null,
+          "resolution_detail": null
+        },
+        {
+          "interval": "12m",
+          "due_date": "2027-08-16T09:30:00Z",
+          "status": "pending",
+          "status_reason": null,
+          "actual_price": null,
+          "dividends_per_share": null,
+          "benchmark_price": null,
+          "benchmark_dividends_per_share": null,
+          "actual_total_return_pct": null,
+          "benchmark_total_return_pct": null,
+          "excess_return_pct": null,
+          "interpolated_expected": null,
+          "exit_date": null,
+          "checked_at": null,
+          "resolver_version": null,
+          "resolution_detail": null
+        }
+      ],
+      "shadow": null
+    }
+  ],
+  "meta": {
+    "total": 1,
+    "page": 1,
+    "per_page": 100,
+    "pages": 1
+  }
+}

@@ -1,20 +1,13 @@
 import { useId, useState } from 'react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import { formatCAD, formatMoney, formatNumber, formatPct, formatPercent } from '@/lib/format'
+import { fieldText, fieldsFor, type FieldSpec } from '@/lib/fields'
+import { formatCAD, formatDate, formatMoney, formatNumber, formatPct, formatPercent } from '@/lib/format'
 import { gainLossColor } from '@/lib/labels'
 import { cn } from '@/lib/utils'
+import { FUNDAMENTAL_FIELDS } from '@/screens/stock-detail'
 import type { CurrencyCode, Stock } from '@/types'
 import type { StockFundamentals, HoldingSnapshot } from '@/types/analysis'
-
-function fmt(value: number | undefined, decimals = 1): string {
-  if (value == null) return '—'
-  return value.toFixed(decimals)
-}
-
-function fmtPct(value: number | undefined): string {
-  return formatPct(value, 1)
-}
 
 interface MetricProps {
   label: string
@@ -39,17 +32,20 @@ function RangeBar({ low, high, current }: RangeBarProps) {
   const pct = high > low ? ((current - low) / (high - low)) * 100 : 50
   return (
     <div className="flex items-center gap-2 text-xs text-muted-foreground w-full">
-      <span className="shrink-0">{fmt(low, 2)}</span>
+      <span className="shrink-0">{formatNumber(low)}</span>
       <div className="relative flex-1 h-1.5 rounded-full bg-muted">
         <div
           className="absolute top-0 h-1.5 w-1.5 rounded-full bg-primary -translate-x-1/2"
           style={{ left: `${Math.max(0, Math.min(100, pct))}%` }}
         />
       </div>
-      <span className="shrink-0">{fmt(high, 2)}</span>
+      <span className="shrink-0">{formatNumber(high)}</span>
     </div>
   )
 }
+
+/** An unknown figure (NaN, drawn as "—") is neither a gain nor a loss. */
+const toneOf = (value: number) => (Number.isFinite(value) ? gainLossColor(value) : 'text-muted-foreground')
 
 interface HoldingPanelProps {
   snapshot: HoldingSnapshot
@@ -81,15 +77,15 @@ function HoldingPanel({ snapshot, currency }: HoldingPanelProps) {
           <div className="text-xs text-muted-foreground">
             Total Return{currency !== 'CAD' && ' (CAD)'}
           </div>
-          <div className={cn('text-sm font-medium', gainLossColor(snapshot.total_return_pct))}>
-            {formatCAD(snapshot.total_return_cad, { signed: true })} ({fmtPct(snapshot.total_return_pct)})
+          <div className={cn('text-sm font-medium', toneOf(snapshot.total_return_cad))}>
+            {formatCAD(snapshot.total_return_cad, { signed: true })} ({formatPct(snapshot.total_return_pct, 1)})
           </div>
         </div>
         <div>
           <div className="text-xs text-muted-foreground">
             Day Change{currency !== 'CAD' && ' (CAD)'}
           </div>
-          <div className={cn('text-sm font-medium', gainLossColor(snapshot.day_change_cad))}>
+          <div className={cn('text-sm font-medium', toneOf(snapshot.day_change_cad))}>
             {formatCAD(snapshot.day_change_cad, { signed: true })}
           </div>
         </div>
@@ -127,16 +123,31 @@ interface StockInfoSectionProps {
   stock: Stock
   /** null when the stock hasn't been priced yet */
   price: number | null
-  marketCapCad?: number | null
+  /** The day of that close: stored prices can be days old. */
+  priceDay?: string | null
+  marketCap?: number | null
+  /** The currency the market cap is in: the stock's own for a live read. */
+  marketCapCurrency?: CurrencyCode
   fundamentals?: StockFundamentals
+  /** The day of the analysis the fundamentals come from. */
+  fundamentalsAsOf?: string | null
   holdingSnapshot?: HoldingSnapshot
+}
+
+/** A bar or grid tile for one registry field. */
+const tile = (spec: FieldSpec<StockFundamentals>, f: StockFundamentals) => {
+  const value = fieldText(spec, f)
+  return <Metric key={spec.id} label={spec.label} value={value} muted={value === '—'} />
 }
 
 export function StockInfoSection({
   stock,
   price,
-  marketCapCad,
+  priceDay,
+  marketCap,
+  marketCapCurrency = 'CAD',
   fundamentals,
+  fundamentalsAsOf,
   holdingSnapshot,
 }: StockInfoSectionProps) {
   const [expanded, setExpanded] = useState(false)
@@ -166,8 +177,9 @@ export function StockInfoSection({
                 </>
               )}
             </div>
-            {marketCapCad != null && (
-              <div className="text-xs text-muted-foreground">Mkt cap {formatCAD(marketCapCad, { compact: true })}</div>
+            {price != null && priceDay && <div className="text-xs text-muted-foreground">Close of {formatDate(priceDay)}</div>}
+            {marketCap != null && (
+              <div className="text-xs text-muted-foreground">Mkt cap {formatMoney(marketCap, marketCapCurrency, { compact: true })}</div>
             )}
           </div>
         </div>
@@ -182,25 +194,17 @@ export function StockInfoSection({
       {f && (
         <div className="bg-card border border-border rounded-lg overflow-hidden">
           <div className="flex flex-wrap divide-x divide-border">
-            <Metric label="P/E" value={fmt(f.pe_ratio)} />
-            <Metric label="P/E (FY est.)" value={fmt(f.forward_pe)} />
-            <Metric label="EV/EBITDA" value={fmt(f.ev_ebitda)} />
-            <Metric
-              label="Div Yield"
-              value={
-                f.dividend_yield_trailing != null && f.dividend_yield_trailing > 0
-                  ? formatPercent(f.dividend_yield_trailing)
-                  : '—'
-              }
-              muted={!f.dividend_yield_trailing}
-            />
-            <Metric label="Beta" value={fmt(f.beta, 2)} />
-            {f.week_52_high != null && f.week_52_low != null && price != null && (
-              <div className="flex-1 min-w-40 px-3 py-2">
-                <div className="text-xs text-muted-foreground mb-1">52-Week Range</div>
-                <RangeBar low={f.week_52_low} high={f.week_52_high} current={price} />
-              </div>
-            )}
+            {fieldsFor(FUNDAMENTAL_FIELDS, 'column').map((spec) => {
+              if (spec.id !== 'week_52') return tile(spec, f)
+              // the range is drawn, with the price's place in it
+              if (f.week_52_high == null || f.week_52_low == null || price == null) return null
+              return (
+                <div key={spec.id} className="flex-1 min-w-40 px-3 py-2">
+                  <div className="text-xs text-muted-foreground mb-1">{spec.label}</div>
+                  <RangeBar low={f.week_52_low} high={f.week_52_high} current={price} />
+                </div>
+              )
+            })}
           </div>
 
           {/* Expandable additional fundamentals */}
@@ -217,18 +221,13 @@ export function StockInfoSection({
 
           {expanded && (
             <div id={moreId} className="grid grid-cols-2 sm:grid-cols-4 gap-0 divide-x divide-y divide-border border-t border-border">
-              <Metric label="P/B" value={fmt(f.price_to_book)} />
-              <Metric label="P/S" value={fmt(f.price_to_sales)} />
-              <Metric label="ROE" value={fmtPct(f.roe)} />
-              <Metric label="Rev Growth" value={fmtPct(f.revenue_growth_yoy)} />
-              <Metric label="EPS Growth" value={fmtPct(f.earnings_growth_yoy)} />
-              <Metric label="Gross Margin" value={fmtPct(f.gross_margin)} />
-              <Metric label="Net Margin" value={fmtPct(f.net_margin)} />
-              <Metric label="D/E" value={fmt(f.debt_to_equity)} />
+              {fieldsFor(FUNDAMENTAL_FIELDS, 'detail').map((spec) => tile(spec, f))}
             </div>
           )}
         </div>
       )}
+
+      {f && fundamentalsAsOf && <p className="text-xs text-muted-foreground">Fundamentals as of {formatDate(fundamentalsAsOf)}</p>}
 
       {/* Holding Panel */}
       {holdingSnapshot && <HoldingPanel snapshot={holdingSnapshot} currency={stock.currency} />}

@@ -5,6 +5,7 @@
  */
 import { Badge } from '@/components/ui/badge'
 import { StockCall } from '@/components/StockCall'
+import { ConfidenceMeter } from '@/components/ConfidenceMeter'
 import { defineFields, type ApiFieldKey, type FieldSpec, type NotShown, type ScreenFieldSet } from '@/lib/fields'
 import { formatMoney, formatNumber } from '@/lib/format'
 import { DISAGREEMENT_CLASS_LABELS, OUTLOOK_LABELS, TIER_LABELS, TONE_TEXT, exclusionLabel } from '@/lib/labels'
@@ -112,6 +113,12 @@ export const STOCK_ROW_FIELDS = defineFields<StockRow>([
   { id: 'disagreement', label: 'Disagreement', source: 'AnalysisCallResponse.disagreement_class', get: (h) => h.call?.analysis?.disagreementClass, format: (v) => (v ? DISAGREEMENT_CLASS_LABELS[v as keyof typeof DISAGREEMENT_CLASS_LABELS].label : '—'), places: ['detail', 'csv'] },
   { id: 'income_per_share', label: 'Expected dividends / share', source: 'AnalysisCallResponse.income_per_share', get: (h) => h.call?.analysis?.incomePerShare, format: (v, h) => money(h, v), tooltip: "The dividends the analysis expects per share over the next 12 months, in the stock's currency.", places: ['detail', 'csv'] },
 ])
+
+/** A missing value in a table cell. */
+export const dash = <span className="text-xs text-muted-foreground">—</span>
+
+/** The confidence meter of a row's call, for a table column. */
+export const confidenceCell = (r: StockRow) => (r.call?.analysis?.confidence == null ? dash : <ConfidenceMeter score={r.call.analysis.confidence} />)
 
 /** One shared field, with what this screen changes about it (places, label, tooltip, cell). */
 export function stockField(id: string, overrides: Partial<FieldSpec<StockRow>> = {}): FieldSpec<StockRow> {

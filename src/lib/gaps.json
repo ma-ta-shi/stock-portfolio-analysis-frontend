@@ -216,13 +216,6 @@
     "why": "The original design has no such screen (owner decision, 2026-11-25). A candidate for the owner to design; nothing was built.",
     "ticket": "86bd5z6kr"
   },
-  "S-1": {
-    "screen": "stock",
-    "kind": "missing",
-    "what": "The latest call on the Stock page: outlook, tier, confidence, 12-month target price, expected return and the price band, as the Holdings Call and Target columns show them",
-    "why": "Owner decision, 2026-11-25: not added with the Portfolio writes; it belongs to the Stock and Analysis pages ticket and must not be missed there.",
-    "ticket": "86bd5z6n0"
-  },
   "P-H6": {
     "screen": "portfolio",
     "kind": "documented",
@@ -278,5 +271,47 @@
     "what": "Marking a watched stock that is also held",
     "why": "The original design has no such marker. A candidate for the owner to design; nothing was built.",
     "ticket": "86bd5z6mt"
+  },
+  "S-2": {
+    "screen": "stock",
+    "kind": "missing",
+    "what": "The Layer 2 portfolio context: fit, suggested action and account note",
+    "why": "Analyses are account-neutral, so nothing serves it. The card stays and says unavailable (backend handoff BH-13).",
+    "ticket": "86bd5z6n0"
+  },
+  "S-3": {
+    "screen": "stock",
+    "kind": "missing",
+    "what": "The account of an analysis",
+    "why": "Analyses are account-neutral; the column and header say unavailable (owner, 2026-11-25).",
+    "ticket": "86bd5z6n0"
+  },
+  "S-4": {
+    "screen": "stock",
+    "kind": "not-connected",
+    "what": "Running a new analysis from the Stock page",
+    "why": "The route exists (POST /api/analysis); the owner chose to leave the button disabled for now (2026-11-25).",
+    "ticket": "86bd5z6n0"
+  },
+  "S-5": {
+    "screen": "stock",
+    "kind": "missing",
+    "what": "Company description, headquarters, employees and website; market cap of Canadian stocks",
+    "why": "Nothing serves them (backend handoff BH-16).",
+    "ticket": "86bd5z6n0"
+  },
+  "S-8": {
+    "screen": "stock",
+    "kind": "missing",
+    "what": "Whether a past prediction was right",
+    "why": "No stored verdict; the history shows whether a checkpoint is resolved and the return (backend handoff BH-17).",
+    "ticket": "86bd5z6n0"
+  },
+  "S-9": {
+    "screen": "stock",
+    "kind": "documented",
+    "what": "Stock, price, fundamentals, run and prediction fields with no place in the design",
+    "why": "Industry, daily open, high, low and volume, further ratios, checkpoint detail, the shadow call, failed runs and run versions are served and not shown.",
+    "ticket": "86bd5z6n0"
   }
 }

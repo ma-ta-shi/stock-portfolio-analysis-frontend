@@ -40,9 +40,11 @@ interface StockCallProps {
   call: StockSnapshot | null
   /** False for an instrument the pipeline cannot analyse (a fund, a preferred share): shown as a dash, the stock cell says why. */
   supported?: boolean
+  /** False where the page has its own link to the analysis. */
+  link?: boolean
 }
 
-export function StockCall({ call, supported = true }: StockCallProps) {
+export function StockCall({ call, supported = true, link = true }: StockCallProps) {
   if (!supported) return <span className="text-muted-foreground">—</span>
   if (!call) return <span className="text-muted-foreground text-sm">No call</span>
 
@@ -58,7 +60,7 @@ export function StockCall({ call, supported = true }: StockCallProps) {
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
         {age != null && <span>{age === 0 ? 'Today' : `${age}d ago`}</span>}
         <CallWarning call={call} />
-        {analysis && (
+        {link && analysis && (
           <Link to={`/analysis/${analysis.runId}`} className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>
             Analysis
           </Link>
