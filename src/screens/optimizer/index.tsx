@@ -149,7 +149,6 @@ export const WAITING_FIELDS = defineFields<Waiting>([
 
 const keys = (schema: string, fields: readonly string[], entry: NotShown) => Object.fromEntries(fields.map((f) => [`${schema}.${f}`, entry]))
 const record: NotShown = { reason: 'Record bookkeeping' }
-const never: NotShown = { reason: 'The optimizer is advice only for the user: following a suggestion is never tracked (owner)' }
 const report: NotShown = { reason: 'Report detail with no place in the design', gap: 'O-6' }
 const unit: NotShown = { reason: 'The API declares no unit for it, so it is not drawn', gap: 'O-9' }
 
@@ -164,7 +163,7 @@ export const OPTIMIZER_NOT_SHOWN = {
   ...keys('ReportBlockResponse', ['caps', 'currency_share', 'room', 'ytd_gain_cad', 'run_sale_tax_cad', 'harvest', 'parked_share', 'fund_by_account', 'unfilled', 'breaches', 'view_notes'], report),
   ...keys('ExcludedViewResponse', ['reasons'], report),
   ...keys('OrderViewResponse', ['proposal_id', 'sequence', 'chain'], { reason: 'Orders the cards and groups the linked ones' }),
-  ...keys('OrderViewResponse', ['status', 'followed_by'], never),
+  ...keys('OrderViewResponse', ['status'], { reason: 'Only the latest run is shown, whose steps are current' }),
   ...keys('OrderViewResponse', ['rule'], { reason: 'The code of the rule; its words are shown' }),
   ...keys('ReasonLineResponse', ['field', 'value'], { reason: 'Where in the data the sentence comes from' }),
   ...keys('OrderValueResponse', ['held_return', 'utility', 'loss', 'jump', 'signal_to_noise'], { reason: 'Inputs of the rule, not shown', gap: 'O-6' }),
