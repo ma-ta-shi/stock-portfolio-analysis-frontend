@@ -15,7 +15,6 @@ import transactionsFixture from '../../public/mock-data/portfolio/transactions.j
 vi.mock('@/hooks/use-portfolio')
 vi.mock('@/hooks/use-ticker-search')
 vi.mock('@/hooks/use-watchlist')
-vi.mock('@/hooks/use-user-profile', () => ({ useUserProfile: () => ({ data: undefined, isLoading: false, isError: false }) }))
 vi.mock('@/hooks/use-fx-rates', () => ({ useFxRates: () => ({ rates: { CAD: 1, USD: 1.4 }, isLoading: false }) }))
 import { usePortfolioHoldings, useTransactionHistory } from '@/hooks/use-portfolio'
 import { useTickerSearch } from '@/hooks/use-ticker-search'

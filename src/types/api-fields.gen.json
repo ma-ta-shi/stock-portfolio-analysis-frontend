@@ -219,12 +219,16 @@
     ],
     "AccountRoomResponse": [
       "account",
+      "annual_limit",
       "base_as_of",
       "base_room",
+      "contributed_this_year",
       "estimated",
       "events",
+      "limit_estimated",
       "room_today",
-      "shortfalls"
+      "shortfalls",
+      "year"
     ],
     "ActionLineResponse": [
       "account",

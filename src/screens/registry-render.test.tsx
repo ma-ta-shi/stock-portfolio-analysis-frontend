@@ -21,6 +21,10 @@ import { SCREEN_FIELD_SETS } from '@/screens'
 import { WATCHLIST_FIELDS } from './watchlist'
 import { FUNDAMENTAL_FIELDS, HISTORY_FIELDS } from './stock-detail'
 import { AGENT_FIELDS, FOOTER_FIELDS } from './analysis'
+import { PROFILE_PREFILL, RULE_FIELDS, TAX_FIELDS, YEAR_FIELDS } from './settings'
+import type { Profile } from '@/lib/settings-form'
+import profileFixture from '../../public/mock-data/settings/profile.json'
+import orderSettingsFixture from '../../public/mock-data/settings/order-settings.json'
 import { mapAgents, type ApiResult } from '@/lib/analysis-result'
 import resultFixture from '../../public/mock-data/stocks/result.json'
 import { mapHistory, type ApiPrediction, type ApiRunSummary } from '@/lib/stock-detail'
@@ -139,3 +143,11 @@ check('analysis footer', FOOTER_FIELDS, [
   { analysisId: 'a', currency: 'CAD' as const, price: 100, durationS: 161.4, completedAt: '2026-11-24T09:30:00Z' },
   { analysisId: 'b', currency: 'USD' as const, price: null, durationS: null, completedAt: null },
 ])
+
+// the recorded profile, and one with nothing filled in
+check('settings profile', [...TAX_FIELDS, ...PROFILE_PREFILL], [
+  profileFixture as unknown as Profile,
+  { user_id: 'u', display_name: 'Empty', is_active: true } as Profile,
+])
+check('settings room year', YEAR_FIELDS, Object.values((roomFixture as unknown as Api['RoomResponse']).accounts))
+check('optimizer rules', RULE_FIELDS, (orderSettingsFixture as unknown as Api['OrderSettingsSchemaResponse']).settings)

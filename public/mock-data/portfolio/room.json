@@ -1,6 +1,6 @@
 {
   "portfolio_id": "e3ba3a97-cedc-4d75-9976-0655d9fd9340",
-  "as_of": "2026-11-24",
+  "as_of": "2026-11-26",
   "accounts": {
     "tfsa": {
       "account": "tfsa",
@@ -8,6 +8,10 @@
       "base_room": 32000,
       "base_as_of": "2026-09-29T20:52:46.598309",
       "estimated": false,
+      "year": 2026,
+      "annual_limit": 7000,
+      "limit_estimated": false,
+      "contributed_this_year": 0,
       "events": [],
       "shortfalls": []
     },
@@ -17,6 +21,10 @@
       "base_room": 28000,
       "base_as_of": "2026-09-29T20:52:46.598309",
       "estimated": false,
+      "year": 2026,
+      "annual_limit": 33810,
+      "limit_estimated": false,
+      "contributed_this_year": 0,
       "events": [],
       "shortfalls": []
     }

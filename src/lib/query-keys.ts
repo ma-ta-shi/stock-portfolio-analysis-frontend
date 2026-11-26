@@ -28,6 +28,8 @@ export const queryKeys = {
     prices: (stockId: string) => ['stocks', stockId, 'prices'] as const,
     search: (query: string) => ['stocks', 'search', query] as const,
   },
+  /** The published optimizer rules: the same for everyone. */
+  orderSettings: ['order-settings'] as const,
   watchlist: (userId: string) => ['watchlist', userId] as const,
   portfolio: {
     all: ['portfolio'] as const,
