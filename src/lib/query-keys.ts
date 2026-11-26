@@ -14,6 +14,7 @@ export const queryKeys = {
   },
   analysis: {
     run: (analysisId: string) => ['analysis', 'run', analysisId] as const,
+    result: (analysisId: string) => ['analysis', 'result', analysisId] as const,
     agents: (analysisId: string) => ['analysis', 'agents', analysisId] as const,
   },
   market: {
@@ -22,7 +23,10 @@ export const queryKeys = {
   },
   stocks: {
     detail: (stockId: string) => ['stocks', stockId] as const,
-    history: (stockId: string) => ['stocks', stockId, 'history'] as const,
+    history: (stockId: string, userId: string) => ['stocks', stockId, 'history', userId] as const,
+    snapshot: (stockId: string) => ['stocks', stockId, 'snapshot'] as const,
+    fundamentals: (stockId: string) => ['stocks', stockId, 'fundamentals'] as const,
+    prices: (stockId: string) => ['stocks', stockId, 'prices'] as const,
     search: (query: string) => ['stocks', 'search', query] as const,
   },
   watchlist: (userId: string) => ['watchlist', userId] as const,

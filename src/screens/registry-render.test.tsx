@@ -19,6 +19,10 @@ import { HOLDING_FIELDS } from './portfolio/holdings'
 import { STOCK_ROW_FIELDS } from './stock'
 import { SCREEN_FIELD_SETS } from '@/screens'
 import { WATCHLIST_FIELDS } from './watchlist'
+import { FUNDAMENTAL_FIELDS, HISTORY_FIELDS } from './stock-detail'
+import { mapHistory, type ApiPrediction, type ApiRunSummary } from '@/lib/stock-detail'
+import runsFixture from '../../public/mock-data/stocks/runs.json'
+import predictionsFixture from '../../public/mock-data/stocks/predictions.json'
 import { mapWatchlistEntry, type ApiWatchlistEntry } from '@/lib/watchlist'
 import watchlistFixture from '../../public/mock-data/watchlist/watchlist.json'
 import { PREVIEW_FIELDS, type PreviewRow } from './portfolio/preview'
@@ -73,6 +77,8 @@ describe('shared stock fields', () => {
     expect(STOCK_ROW_FIELDS.map((f) => f.id).filter((id) => !used.has(id))).toEqual([])
   })
 })
+check('stock fundamentals', FUNDAMENTAL_FIELDS, [{ pe_ratio: 12, week_52_low: 1, week_52_high: 2, dividend_yield_trailing: 0.03 }, {}])
+check('stock history', HISTORY_FIELDS, mapHistory(holdings[0].stock, runsFixture.data as unknown as ApiRunSummary[], predictionsFixture.data as unknown as ApiPrediction[]))
 check('watchlist', WATCHLIST_FIELDS, (watchlistFixture.data as unknown as ApiWatchlistEntry[]).map(mapWatchlistEntry))
 check('transactions', TRANSACTION_FIELDS, mapTransactions(transactionsFixture.data as unknown as ApiTransaction[]))
 check('summary', SUMMARY_FIELDS, summaries)

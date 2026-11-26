@@ -1,0 +1,76 @@
+{
+  "data": [
+    {
+      "day": "2026-11-25",
+      "open": 100,
+      "high": 100,
+      "low": 100,
+      "close": 100,
+      "volume": 1000,
+      "currency": "CAD",
+      "source": "seed",
+      "recorded_at": "2026-11-26T01:00:43.871122Z"
+    },
+    {
+      "day": "2026-11-23",
+      "open": 99,
+      "high": 99,
+      "low": 99,
+      "close": 99,
+      "volume": 1000,
+      "currency": "CAD",
+      "source": "seed",
+      "recorded_at": "2026-11-26T01:00:44.001113Z"
+    },
+    {
+      "day": "2026-11-22",
+      "open": 98.5,
+      "high": 98.5,
+      "low": 98.5,
+      "close": 98.5,
+      "volume": 1000,
+      "currency": "CAD",
+      "source": "seed",
+      "recorded_at": "2026-11-26T01:00:43.999611Z"
+    },
+    {
+      "day": "2026-11-21",
+      "open": 97,
+      "high": 97,
+      "low": 97,
+      "close": 97,
+      "volume": 1000,
+      "currency": "CAD",
+      "source": "seed",
+      "recorded_at": "2026-11-26T01:00:43.997611Z"
+    },
+    {
+      "day": "2026-11-20",
+      "open": 97.5,
+      "high": 97.5,
+      "low": 97.5,
+      "close": 97.5,
+      "volume": 1000,
+      "currency": "CAD",
+      "source": "seed",
+      "recorded_at": "2026-11-26T01:00:43.995611Z"
+    },
+    {
+      "day": "2026-11-19",
+      "open": 96,
+      "high": 96,
+      "low": 96,
+      "close": 96,
+      "volume": 1000,
+      "currency": "CAD",
+      "source": "seed",
+      "recorded_at": "2026-11-26T01:00:43.989105Z"
+    }
+  ],
+  "meta": {
+    "total": 6,
+    "page": 1,
+    "per_page": 100,
+    "pages": 1
+  }
+}

@@ -1,19 +1,31 @@
 import { useId } from 'react'
 import { formatCAD } from '@/lib/format'
+import { unavailableLabel } from '@/lib/gaps'
 import { FIT_BADGE_COLORS, FIT_BOX_COLORS, FIT_LABELS } from '@/lib/labels'
 import { cn } from '@/lib/utils'
 import type { Layer2PortfolioContext } from '@/types'
 
 interface PortfolioContextCardProps {
-  context: Omit<Layer2PortfolioContext, 'holding_snapshot'>
+  /** Absent when nothing serves it: the card then says so (analyses are account-neutral, gap S-2). */
+  context?: Omit<Layer2PortfolioContext, 'holding_snapshot'>
   /** Account note with template placeholders already filled in. */
   accountNote?: string
 }
 
 /** "Layer 2 — Portfolio Context" card shared by the Stock and Analysis pages. */
 export function PortfolioContextCard({ context, accountNote }: PortfolioContextCardProps) {
-  const fit = context.portfolio_fit
   const headingId = useId()
+  if (!context) {
+    return (
+      <section aria-labelledby={headingId} className="border border-border rounded-lg p-5 space-y-2">
+        <h2 id={headingId} className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
+          Layer 2 — Portfolio Context
+        </h2>
+        <p className="text-sm text-muted-foreground">Fit, suggested action and account note: {unavailableLabel('S-2')}</p>
+      </section>
+    )
+  }
+  const fit = context.portfolio_fit
   return (
     <section
       aria-labelledby={headingId}

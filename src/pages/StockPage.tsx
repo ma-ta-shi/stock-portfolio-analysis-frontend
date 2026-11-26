@@ -1,50 +1,40 @@
-import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useMemo, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { TrendingUp, TrendingDown, Plus, DollarSign, Pencil } from 'lucide-react'
-import { useStockDetail, useStockAnalysisHistory } from '@/hooks/use-stock-detail'
+import { useAnalysisResult } from '@/hooks/use-analysis'
+import { useStock, useStockFundamentals, useStockHistory, useStockPrices, useStockSnapshot } from '@/hooks/use-stock-detail'
 import { useHoldingActions } from '@/hooks/use-holding-actions'
 import { usePortfolioHoldings, useTransactionHistory } from '@/hooks/use-portfolio'
 import { StockInfoSection } from '@/components/StockInfoSection'
-import { OutlookBadge } from '@/components/OutlookBadge'
-import { ConfidenceMeter } from '@/components/ConfidenceMeter'
-import { DisagreementIndicator } from '@/components/DisagreementIndicator'
+import { FieldList } from '@/components/FieldList'
+import { StockCall } from '@/components/StockCall'
 import { SparklineChart } from '@/components/SparklineChart'
+import { RegistryTable } from '@/components/RegistryTable'
 import { HoldingActionDialogs } from '@/components/ledger/HoldingActionDialogs'
 import { AddStockDialog } from '@/components/AddStockDialog'
 import { LedgerTable } from '@/components/ledger/LedgerTable'
 import { Button } from '@/components/ui/button'
 import { ButtonLink } from '@/components/ButtonLink'
 import { Badge } from '@/components/ui/badge'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import { PortfolioContextCard } from '@/components/PortfolioContextCard'
 import { QueryError } from '@/components/QueryError'
 import { useFxRates } from '@/hooks/use-fx-rates'
 import { isNotFound } from '@/lib/api'
-import { formatDate, formatEnumLabel, formatMoney, formatPct } from '@/lib/format'
+import { fieldsFor } from '@/lib/fields'
+import { formatDate, formatMoney, formatPct } from '@/lib/format'
+import { notConnectedMessage } from '@/lib/gaps'
 import { gainLossColor, TONE_TEXT } from '@/lib/labels'
-import { applyTemplate, buildHoldingSnapshot, disagreementLabel } from '@/lib/portfolio'
+import { buildHoldingSnapshot } from '@/lib/portfolio'
+import { mapDrivers } from '@/lib/stock-detail'
+import { isAwaitingAnalysis, mapStock } from '@/lib/stock-snapshot'
 import { EMPTY_FILTERS } from '@/lib/transactions'
 import { cn } from '@/lib/utils'
-import type { StockAnalysisHistoryEntry } from '@/types'
+import { stockField } from '@/screens/stock'
+import { HISTORY_FIELDS } from '@/screens/stock-detail'
 
-function predictionStatusColor(status: StockAnalysisHistoryEntry['prediction_status']) {
-  if (status === 'scored') return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
-  if (status === 'expired') return 'bg-muted text-muted-foreground'
-  return 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400'
-}
-
-function ReturnCell({ entry }: { entry: StockAnalysisHistoryEntry }) {
-  const value = entry.return_at_3m ?? entry.return_at_1m
-  if (value == null) return <span className="text-xs text-muted-foreground">—</span>
-  return <span className={cn('text-sm font-medium', gainLossColor(value))}>{formatPct(value, 1)}</span>
-}
+/** What the call adds on this page to the shared cell: the price it aims at, its range, and how far the advocates differed. */
+const CALL_FIELDS = [stockField('target_price'), stockField('range_low'), stockField('range_high'), stockField('disagreement')]
+const HISTORY_COLUMNS = fieldsFor(HISTORY_FIELDS, 'column')
 
 /** Every ledger row of one stock, in every account; nothing is drawn until there is one. */
 function StockHistory({ ticker }: { ticker: string }) {
@@ -66,35 +56,26 @@ function StockHistory({ ticker }: { ticker: string }) {
 export function StockPage() {
   const { stockId } = useParams<{ stockId: string }>()
   const id = stockId ?? ''
+  const navigate = useNavigate()
 
-  const {
-    data: stock,
-    isLoading: stockLoading,
-    isError: stockError,
-    error: stockErrorValue,
-    refetch: refetchStock,
-  } = useStockDetail(id)
-  const {
-    data: history,
-    isLoading: historyLoading,
-    isError: historyError,
-    error: historyErrorValue,
-    refetch: refetchHistory,
-  } = useStockAnalysisHistory(id)
+  const detail = useStock(id)
+  const stock = useMemo(() => (detail.data ? mapStock(detail.data) : undefined), [detail.data])
+  const snapshot = useStockSnapshot(id)
+  const call = snapshot.data ?? null
+  const fundamentals = useStockFundamentals(id)
+  const prices = useStockPrices(id)
+  const latest = useAnalysisResult(call?.analysis?.runId)
+  const history = useStockHistory(id, stock)
   const { data: allHoldings } = usePortfolioHoldings()
   const { rates } = useFxRates()
 
   const holdingsForStock = allHoldings?.filter((h) => h.stock.stock_id === id) ?? []
   const holdingSnapshot = buildHoldingSnapshot(holdingsForStock, rates)
-  const holdingsSharesByAccount = holdingsForStock.reduce<Record<string, number>>((acc, h) => {
-    acc[h.account_type] = (acc[h.account_type] ?? 0) + h.shares
-    return acc
-  }, {})
 
   const actions = useHoldingActions()
   const [addDialogOpen, setAddDialogOpen] = useState(false)
 
-  if (stockLoading) {
+  if (detail.isLoading) {
     return (
       <div className="max-w-3xl mx-auto space-y-4">
         {Array.from({ length: 3 }).map((_, i) => (
@@ -104,10 +85,10 @@ export function StockPage() {
     )
   }
 
-  if (stockError && !isNotFound(stockErrorValue)) {
+  if (detail.isError && !isNotFound(detail.error)) {
     return (
       <div className="max-w-3xl mx-auto py-12">
-        <QueryError what="stock data" error={stockErrorValue} onRetry={refetchStock} />
+        <QueryError what="stock data" error={detail.error} onRetry={detail.refetch} />
       </div>
     )
   }
@@ -120,21 +101,29 @@ export function StockPage() {
     )
   }
 
-  const dayPositive = (stock.day_change_pct ?? 0) >= 0
+  const supported = stock.pipeline_supported !== false
+  const closes = prices.data ?? []
+  const change = call?.changeDay ?? null
+  const result = latest.data
+  const drivers = mapDrivers(result?.key_drivers)
+  const neverAnalysed = supported && !snapshot.isLoading && !snapshot.isError && isAwaitingAnalysis({ call }) && history.data?.length === 0
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <h1 className="sr-only">
         {stock.ticker} — {stock.name}
       </h1>
-      {/* Stock Info Section */}
       <StockInfoSection
         stock={stock}
-        price={stock.current_price}
-        marketCapCad={stock.market_cap_cad}
-        fundamentals={stock.fundamentals}
+        price={call?.price ?? null}
+        marketCap={fundamentals.data?.marketCap}
+        marketCapCurrency={(fundamentals.data?.currency as typeof stock.currency | null) ?? stock.currency}
+        fundamentals={fundamentals.data?.values}
+        fundamentalsAsOf={fundamentals.data?.asOf}
         holdingSnapshot={holdingSnapshot}
       />
+      {snapshot.isError && <QueryError what="price and latest call" error={snapshot.error} onRetry={snapshot.refetch} compact />}
+      {fundamentals.isError && <QueryError what="fundamentals" error={fundamentals.error} onRetry={fundamentals.refetch} compact />}
 
       {/* Position Actions */}
       {holdingsForStock.length > 0 ? (
@@ -213,29 +202,28 @@ export function StockPage() {
       <StockHistory ticker={stock.ticker} />
 
       {/* Price Chart */}
-      {stock.price_history_90d && stock.price_history_90d.length > 0 && (
+      {prices.isError && <QueryError what="price history" error={prices.error} onRetry={prices.refetch} compact />}
+      {closes.length > 1 && (
         <div className="bg-card border border-border rounded-lg p-5">
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
               90-Day Price
             </h2>
-            {stock.day_change_pct != null && (
-              <span className={cn('text-sm font-medium', gainLossColor(stock.day_change_pct))}>
-                {formatPct(stock.day_change_pct)} today
-              </span>
+            {change != null && (
+              <span className={cn('text-sm font-medium', gainLossColor(change))}>{formatPct(change)} today</span>
             )}
           </div>
-          <SparklineChart
-            data={stock.price_history_90d}
-            color={dayPositive ? '#10b981' : '#ef4444'}
-            height={80}
-          />
+          <SparklineChart data={closes} color={(change ?? 0) >= 0 ? '#10b981' : '#ef4444'} height={80} />
         </div>
       )}
 
-      {/* Only when we know there are no analyses at all: a stock with history but no
-          latest_analysis must not claim it "hasn't been analysed". */}
-      {!stock.latest_analysis && !historyLoading && !historyError && history?.data.length === 0 && (
+      {!supported && (
+        <div className="border border-dashed border-border rounded-lg px-4 py-3 text-sm text-muted-foreground">
+          This security is not analysed{stock.unsupported_reason ? `: ${stock.unsupported_reason}` : ''}.
+        </div>
+      )}
+
+      {neverAnalysed && (
         <div className="border border-dashed border-border rounded-lg px-4 py-3 text-sm text-muted-foreground">
           <span className="font-medium text-foreground">Awaiting analysis.</span> {stock.ticker} hasn’t
           been analysed yet. Results will appear here once it has been.
@@ -243,197 +231,99 @@ export function StockPage() {
       )}
 
       {/* Latest Analysis */}
-      {stock.latest_analysis && (() => {
-        const a = stock.latest_analysis!
-        const l2 = a.layer2_context
-        const analysisAccountType = a.account_type ?? (holdingsForStock.length === 1 ? holdingsForStock[0].account_type : null)
-        const accountTypeLabel =
-          analysisAccountType != null ? analysisAccountType.toUpperCase() : 'Your accounts'
-        const sharesForTemplate = analysisAccountType
-          ? holdingsSharesByAccount[analysisAccountType] ?? 0
-          : holdingSnapshot?.shares ?? holdingsForStock.reduce((s, h) => s + h.shares, 0)
-        return (
-          <div className="space-y-3">
-            {/* Section header with link */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <OutlookBadge direction={a.stock_outlook} size="lg" />
-                <ConfidenceMeter score={a.confidence_score} />
-                <DisagreementIndicator
-                  label={disagreementLabel(a.disagreement_score)}
-                  score={a.disagreement_score}
-                />
-              </div>
-              <ButtonLink variant="outline" size="sm" to={`/analysis/${a.analysis_id}`}>
+      {supported && call?.analysis && (
+        <div className="space-y-3">
+          <section aria-label="Latest call" className="space-y-2">
+            <div className="flex items-start justify-between gap-3">
+              <StockCall call={call} link={false} />
+              <ButtonLink variant="outline" size="sm" to={`/analysis/${call.analysis.runId}`}>
                 Full Analysis
               </ButtonLink>
             </div>
+            <FieldList fields={CALL_FIELDS} row={{ stock, call }} />
+            <p className="text-xs text-muted-foreground">Target and return are at the latest price.</p>
+          </section>
 
-            {/* Layer 1 — Stock Outlook */}
-            <div className="bg-card border border-border rounded-lg p-5 space-y-3">
-              <div className="flex items-center justify-between">
-                <h2 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
-                  Layer 1 — Stock Outlook
-                </h2>
-                <span className="text-xs text-muted-foreground">
-                  {formatDate(a.analyzed_at)}
-                </span>
-              </div>
-              {a.key_drivers && a.key_drivers.length > 0 && (
-                <ul className="space-y-1">
-                  {a.key_drivers.map((driver, i) => (
-                    <li key={i} className="text-sm flex gap-2">
-                      <span className="text-muted-foreground shrink-0">·</span>
-                      <span className="font-medium">{driver}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {a.executive_summary && (
-                <p className="text-sm leading-relaxed">{a.executive_summary}</p>
-              )}
+          {/* Layer 1 — Stock Outlook */}
+          <div className="bg-card border border-border rounded-lg p-5 space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
+                Layer 1 — Stock Outlook
+              </h2>
+              {call.analysis.asOf && <span className="text-xs text-muted-foreground">{formatDate(call.analysis.asOf)}</span>}
             </div>
-
-            {l2 && (
-              <PortfolioContextCard
-                context={l2}
-                accountNote={
-                  l2.account_note_template
-                    ? applyTemplate(l2.account_note_template, {
-                        shares: holdingSnapshot ? sharesForTemplate : 0,
-                        account_type: accountTypeLabel,
-                      })
-                    : undefined
-                }
-              />
+            {latest.isError ? (
+              <QueryError what="latest analysis" error={latest.error} onRetry={latest.refetch} compact />
+            ) : (
+              <>
+                {drivers.length > 0 && (
+                  <ul className="space-y-1">
+                    {drivers.map((driver, i) => (
+                      <li key={i} className="text-sm flex gap-2">
+                        <span className="text-muted-foreground shrink-0">·</span>
+                        <span className="font-medium">{driver.factor}</span>
+                        {driver.direction && <span className="text-muted-foreground">{driver.direction}</span>}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {result?.synthesis_narrative && <p className="text-sm leading-relaxed">{result.synthesis_narrative}</p>}
+              </>
             )}
           </div>
-        )
-      })()}
+
+          <PortfolioContextCard />
+        </div>
+      )}
 
       {/* Analysis History */}
       <div>
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-semibold">Analysis History</h2>
-          <Button size="sm" disabled title="Requires backend — POST /api/analysis">
+          <Button size="sm" disabled title={notConnectedMessage('S-4')}>
             Run New Analysis
           </Button>
         </div>
 
-        {historyLoading ? (
+        {history.isError ? (
+          <QueryError what="analysis history" error={history.error} onRetry={history.refetch} />
+        ) : !history.data ? (
           <div className="h-32 rounded-lg bg-muted animate-pulse" />
-        ) : historyError ? (
-          <QueryError what="analysis history" error={historyErrorValue} onRetry={refetchHistory} />
-        ) : !history?.data.length ? (
+        ) : !history.data.length ? (
           <div className="border border-border rounded-lg p-8 text-center text-sm text-muted-foreground">
             No analyses yet for {stock.ticker}.
           </div>
         ) : (
-          <div className="border border-border rounded-lg overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Outlook</TableHead>
-                  <TableHead>Confidence</TableHead>
-                  <TableHead className="text-right">Price</TableHead>
-                  <TableHead>Account</TableHead>
-                  <TableHead>Timeline</TableHead>
-                  <TableHead>Prediction</TableHead>
-                  <TableHead className="text-right">Return</TableHead>
-                  <TableHead>
-                  <span className="sr-only">Actions</span>
-                </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {history.data.map((entry) => (
-                  <TableRow key={entry.analysis_id}>
-                    <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
-                      {formatDate(entry.analyzed_at)}
-                    </TableCell>
-                    <TableCell>
-                      <OutlookBadge direction={entry.stock_outlook} />
-                    </TableCell>
-                    <TableCell>
-                      <ConfidenceMeter score={entry.confidence_score} />
-                    </TableCell>
-                    <TableCell className="text-right text-sm font-medium">
-                      {formatMoney(entry.price_at_analysis, stock.currency)}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="text-xs">
-                        {entry.account_type.toUpperCase()}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-xs text-muted-foreground">
-                      {formatEnumLabel(entry.timeline)}
-                    </TableCell>
-                    <TableCell>
-                      <span
-                        className={cn(
-                          'text-xs px-2 py-0.5 rounded-full font-medium',
-                          predictionStatusColor(entry.prediction_status),
-                        )}
-                      >
-                        {entry.prediction_status === 'scored' && entry.direction_correct != null
-                          ? entry.direction_correct
-                            ? '✓ Correct'
-                            : '✗ Incorrect'
-                          : entry.prediction_status}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <ReturnCell entry={entry} />
-                    </TableCell>
-                    <TableCell>
-                      <ButtonLink
-                        variant="ghost"
-                        size="sm"
-                        className="text-xs"
-                        to={`/analysis/${entry.analysis_id}`}
-                        aria-label={`View analysis from ${formatDate(entry.analyzed_at)}`}
-                      >
-                        View
-                      </ButtonLink>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+          <RegistryTable
+            dense
+            columns={HISTORY_COLUMNS}
+            rows={history.data}
+            rowKey={(r) => r.analysis_id}
+            rowLabel={(r) => `the analysis of ${formatDate(r.call.analysis!.asOf!)}`}
+            detail={HISTORY_FIELDS}
+            actions={(r) => (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-xs"
+                aria-label={`View analysis from ${formatDate(r.call.analysis!.asOf!)}`}
+                onClick={() => navigate(`/analysis/${r.analysis_id}`)}
+              >
+                View
+              </Button>
+            )}
+          />
         )}
       </div>
-
-      {/* Company Info Footer */}
-      {(stock.headquarters || stock.employees || stock.website) && (
-        <div className="text-xs text-muted-foreground flex flex-wrap gap-x-6 gap-y-1 border-t border-border pt-4">
-          {stock.headquarters && (
-            <span>HQ: <span className="text-foreground">{stock.headquarters}</span></span>
-          )}
-          {stock.employees && (
-            <span>Employees: <span className="text-foreground">{stock.employees.toLocaleString()}</span></span>
-          )}
-          {stock.website && (
-            <span>Web: <span className="text-foreground">{stock.website}</span></span>
-          )}
-        </div>
-      )}
 
       <HoldingActionDialogs actions={actions} />
       {stock && (
         <AddStockDialog
+          key={stock.stock_id}
           mode="portfolio"
           open={addDialogOpen}
           onOpenChange={setAddDialogOpen}
-          defaultStock={{
-            stock_id: stock.stock_id,
-            ticker: stock.ticker,
-            name: stock.name,
-            sector: stock.sector ?? '',
-            exchange: stock.exchange ?? '',
-            currency: stock.currency ?? 'CAD',
-          }}
+          defaultStock={stock}
         />
       )}
     </div>

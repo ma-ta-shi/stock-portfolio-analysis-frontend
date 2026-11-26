@@ -20,6 +20,16 @@ const day = (offset) => new Date(Date.now() + offset * 86_400_000).toISOString()
 
 // file -> how to read it. `ctx` holds the ids found from the backend.
 const SCREENS = {
+  // one stock with analyses, price history and a scored prediction: the end-to-end seed's RY.TO
+  stocks: (ctx) => [
+    { file: 'stock', path: `/api/stocks/${ctx.stockId}` },
+    { file: 'snapshot', path: `/api/stocks/snapshots?stock_ids=${ctx.stockId}` },
+    { file: 'fundamentals', path: `/api/stocks/${ctx.stockId}/fundamentals` },
+    { file: 'prices', path: `/api/stocks/${ctx.stockId}/prices?page=1&per_page=100` },
+    { file: 'runs', path: `/api/analysis?stock_id=${ctx.stockId}&user_id=${ctx.userId}&status=complete&page=1&per_page=100` },
+    { file: 'predictions', path: `/api/predictions?stock_id=${ctx.stockId}&page=1&per_page=100` },
+    { file: 'result', path: `/api/analysis/${ctx.runId}` },
+  ],
   watchlist: (ctx) => [{ file: 'watchlist', path: `/api/watchlist?user_id=${ctx.userId}&include=snapshot&page=1&per_page=100` }],
   portfolio: (ctx) => [
     { file: 'portfolios', path: `/api/portfolios?user_id=${ctx.userId}` },
@@ -51,6 +61,12 @@ try {
   const chosen = userFlag >= 0 ? owners.find((p) => p.user_id === args[userFlag + 1]) : owners[0]
   if (!chosen) throw new Error('No user portfolio found to record from.')
   const ctx = { userId: chosen.user_id, portfolioId: chosen.portfolio_id }
+  if (!wanted.length || wanted.includes('stocks')) {
+    const stock = (await call({ path: '/api/stocks?q=RY.TO' })).data.find((s) => s.ticker === 'RY.TO')
+    if (!stock) throw new Error('No RY.TO to record the Stock page from.')
+    ctx.stockId = stock.stock_id
+    ctx.runId = (await call({ path: `/api/analysis?stock_id=${stock.stock_id}&status=complete` })).data[0]?.analysis_id
+  }
   for (const [screen, routes] of Object.entries(SCREENS)) {
     if (wanted.length && !wanted.includes(screen)) continue
     const dir = `public/mock-data/${screen}`

@@ -7,7 +7,7 @@
  *   4. always stops both servers and removes the scratch folder (also after an error or Ctrl+C), and exits with Playwright's exit code.
  *
  * Needs the backend checkout next to this folder (`../backend`, or `BACKEND_DIR`) with its virtual environment (`.venv`) and the
- * seed that has a record for every write flow and accounts that reinvest dividends (backend PRs 243 and 244). It never opens the real database: the path is checked to be inside
+ * seed that has a record for every write flow, accounts that reinvest dividends, and the agent outputs of one stock (backend PRs 243, 244 and 247). It never opens the real database: the path is checked to be inside
  * the OS temp folder before anything runs. Set `E2E_KEEP=1` to keep the scratch folder and the server logs.
  */
 import { spawn, spawnSync } from 'node:child_process'

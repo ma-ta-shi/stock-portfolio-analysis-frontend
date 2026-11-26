@@ -1,5 +1,5 @@
 /** The watchlist rows: the API entry as the view-model, and the counts the page header shows. */
-import { mapStock, mapStockSnapshot } from './stock-snapshot'
+import { isAwaitingAnalysis, mapStock, mapStockSnapshot } from './stock-snapshot'
 import type { components } from '@/types/openapi.gen'
 import type { WatchlistItem } from '@/types/watchlist'
 
@@ -14,9 +14,6 @@ export function mapWatchlistEntry(entry: ApiWatchlistEntry): WatchlistItem {
     added_at: entry.added_at,
   }
 }
-
-/** No completed analysis yet (a stock the pipeline cannot analyse never gets one; the page shows a dash for it). */
-export const isAwaitingAnalysis = (item: Pick<WatchlistItem, 'call'>) => item.call?.analysis == null
 
 export function watchlistCounts(items: readonly WatchlistItem[]) {
   const outlook = (i: WatchlistItem) => i.call?.analysis?.outlook

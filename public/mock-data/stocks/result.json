@@ -1,0 +1,501 @@
+{
+  "analysis_id": "4052936a-30c1-42d3-9ca7-1565de60a579",
+  "status": "complete",
+  "stock_outlook_direction": "bullish",
+  "overall_confidence": 70,
+  "expected_return_tier": "outperform",
+  "key_drivers": [
+    {
+      "factor": "Margin expansion",
+      "direction": "bullish",
+      "source": "bull",
+      "evidence": "FUND: margin_trend expanding."
+    },
+    {
+      "factor": "Valuation above peers",
+      "direction": "bearish",
+      "source": "bear",
+      "evidence": "FUND: pe_vs_industry_median_pct 12.0."
+    }
+  ],
+  "synthesis_narrative": "A seeded summary: the margin trend outweighs the valuation, at moderate conviction.",
+  "bull_case_strength": 60,
+  "bear_case_strength": 40,
+  "disagreement_score": null,
+  "disagreement_class": "mild_dissent",
+  "agent_outputs": [
+    {
+      "agent_pass": "synthesis",
+      "status": "completed",
+      "recommendation": null,
+      "confidence": null,
+      "analysis_confidence": null,
+      "narrative": null,
+      "latency_ms": null,
+      "tokens_used": null,
+      "model_used": "code",
+      "prompt_version": "n/a",
+      "agent_name": "cio",
+      "structured_output": {
+        "stock_outlook": "bullish",
+        "confidence": 70,
+        "expected_return_tier": "outperform",
+        "thesis_summary": "A seeded call for the end-to-end tests.",
+        "what_would_change_my_mind": "A seeded condition.",
+        "bull_case_assessment": null,
+        "bear_case_assessment": null,
+        "risk_reward_consumed_as": null,
+        "tail_risk_cross_check": null,
+        "tail_risk_note": null,
+        "key_decision_factors": [],
+        "accuracy_influence_note": null,
+        "dissent_note": null,
+        "parallel_predictions": null,
+        "disagreement_score": null,
+        "disagreement_category": null,
+        "bull_confidence": null,
+        "bear_confidence": null,
+        "technical_trigger": null,
+        "advocate_check": null,
+        "position_sizing_recommendation": null,
+        "synthesis_narrative": null,
+        "tax_summary": null,
+        "risk_profile_summary": null
+      }
+    },
+    {
+      "agent_pass": "pass1",
+      "status": "completed",
+      "recommendation": null,
+      "confidence": null,
+      "analysis_confidence": null,
+      "narrative": "Seeded fundamental narrative.",
+      "latency_ms": null,
+      "tokens_used": null,
+      "model_used": "seed",
+      "prompt_version": "n/a",
+      "agent_name": "FUND",
+      "structured_output": {
+        "caveats": [],
+        "key_factors": null,
+        "narrative": "Seeded fundamental narrative.",
+        "assessment_summary": "Seeded fundamental assessment.",
+        "analysis_confidence": "high",
+        "risks": [
+          {
+            "risk": "Seeded fundamental risk",
+            "severity": "medium",
+            "likelihood": "medium",
+            "evidence": "FUND: seeded evidence."
+          }
+        ],
+        "interpretive_fields": {
+          "health_rating": "healthy",
+          "valuation_vs_sector": "fair"
+        }
+      }
+    },
+    {
+      "agent_pass": "pass1",
+      "status": "completed",
+      "recommendation": null,
+      "confidence": null,
+      "analysis_confidence": null,
+      "narrative": "Seeded technical narrative.",
+      "latency_ms": null,
+      "tokens_used": null,
+      "model_used": "seed",
+      "prompt_version": "n/a",
+      "agent_name": "TECH",
+      "structured_output": {
+        "caveats": [],
+        "key_factors": null,
+        "narrative": "Seeded technical narrative.",
+        "assessment_summary": "Seeded technical assessment.",
+        "analysis_confidence": "high",
+        "risks": [
+          {
+            "risk": "Seeded technical risk",
+            "severity": "medium",
+            "likelihood": "medium",
+            "evidence": "FUND: seeded evidence."
+          }
+        ],
+        "interpretive_fields": {
+          "primary_trend": "bullish",
+          "confluence_score": 3
+        }
+      }
+    },
+    {
+      "agent_pass": "pass1",
+      "status": "completed",
+      "recommendation": null,
+      "confidence": null,
+      "analysis_confidence": null,
+      "narrative": "Seeded sentiment narrative.",
+      "latency_ms": null,
+      "tokens_used": null,
+      "model_used": "seed",
+      "prompt_version": "n/a",
+      "agent_name": "SENT",
+      "structured_output": {
+        "caveats": [],
+        "key_factors": null,
+        "narrative": "Seeded sentiment narrative.",
+        "assessment_summary": "Seeded sentiment assessment.",
+        "analysis_confidence": "high",
+        "risks": [
+          {
+            "risk": "Seeded sentiment risk",
+            "severity": "medium",
+            "likelihood": "medium",
+            "evidence": "FUND: seeded evidence."
+          }
+        ],
+        "structured_data": {
+          "news_sentiment": {
+            "overall": "neutral"
+          }
+        }
+      }
+    },
+    {
+      "agent_pass": "pass1",
+      "status": "completed",
+      "recommendation": null,
+      "confidence": null,
+      "analysis_confidence": null,
+      "narrative": "Seeded macro narrative.",
+      "latency_ms": null,
+      "tokens_used": null,
+      "model_used": "seed",
+      "prompt_version": "n/a",
+      "agent_name": "MACRO",
+      "structured_output": {
+        "caveats": [],
+        "key_factors": null,
+        "narrative": "Seeded macro narrative.",
+        "assessment_summary": "Seeded macro assessment.",
+        "analysis_confidence": "high",
+        "risks": [
+          {
+            "risk": "Seeded macro risk",
+            "severity": "medium",
+            "likelihood": "medium",
+            "evidence": "FUND: seeded evidence."
+          }
+        ],
+        "structured_data": {
+          "interest_rate_impact": "positive"
+        }
+      }
+    },
+    {
+      "agent_pass": "pass1",
+      "status": "completed",
+      "recommendation": null,
+      "confidence": null,
+      "analysis_confidence": null,
+      "narrative": "Seeded researcher narrative.",
+      "latency_ms": null,
+      "tokens_used": null,
+      "model_used": "seed",
+      "prompt_version": "n/a",
+      "agent_name": "RSRCH",
+      "structured_output": {
+        "caveats": [],
+        "key_factors": null,
+        "narrative": "Seeded researcher narrative.",
+        "assessment_summary": "Seeded researcher assessment.",
+        "analysis_confidence": "high",
+        "risks": [
+          {
+            "risk": "Seeded researcher risk",
+            "severity": "medium",
+            "likelihood": "medium",
+            "evidence": "FUND: seeded evidence."
+          }
+        ],
+        "structured_data": {
+          "competitive_position": "strong"
+        }
+      }
+    },
+    {
+      "agent_pass": "pass2",
+      "status": "completed",
+      "recommendation": null,
+      "confidence": null,
+      "analysis_confidence": null,
+      "narrative": "Seeded bull narrative.",
+      "latency_ms": null,
+      "tokens_used": null,
+      "model_used": "seed",
+      "prompt_version": "n/a",
+      "agent_name": "bull",
+      "structured_output": {
+        "caveats": [],
+        "key_factors": null,
+        "narrative": "Seeded bull narrative.",
+        "recommendation": "bullish",
+        "confidence": 60,
+        "thesis_summary": "Seeded bull thesis.",
+        "strongest_argument": "Seeded bull strongest argument.",
+        "weakest_point": "Seeded bull weakest point.",
+        "weakest_point_type": null,
+        "thesis_risks": [
+          {
+            "risk": "Seeded bull thesis risk",
+            "severity": "low",
+            "likelihood": "medium",
+            "evidence": "FUND: seeded evidence."
+          }
+        ],
+        "structured_data": null
+      }
+    },
+    {
+      "agent_pass": "pass2",
+      "status": "completed",
+      "recommendation": null,
+      "confidence": null,
+      "analysis_confidence": null,
+      "narrative": "Seeded bear narrative.",
+      "latency_ms": null,
+      "tokens_used": null,
+      "model_used": "seed",
+      "prompt_version": "n/a",
+      "agent_name": "bear",
+      "structured_output": {
+        "caveats": [],
+        "key_factors": null,
+        "narrative": "Seeded bear narrative.",
+        "recommendation": "bearish",
+        "confidence": 60,
+        "thesis_summary": "Seeded bear thesis.",
+        "strongest_argument": "Seeded bear strongest argument.",
+        "weakest_point": "Seeded bear weakest point.",
+        "weakest_point_type": null,
+        "thesis_risks": [
+          {
+            "risk": "Seeded bear thesis risk",
+            "severity": "low",
+            "likelihood": "medium",
+            "evidence": "FUND: seeded evidence."
+          }
+        ],
+        "structured_data": null
+      }
+    },
+    {
+      "agent_pass": "pass2",
+      "status": "completed",
+      "recommendation": null,
+      "confidence": null,
+      "analysis_confidence": null,
+      "narrative": "Seeded risk narrative.",
+      "latency_ms": null,
+      "tokens_used": null,
+      "model_used": "seed",
+      "prompt_version": "n/a",
+      "agent_name": "risk",
+      "structured_output": {
+        "caveats": [],
+        "key_factors": null,
+        "narrative": "Seeded risk narrative.",
+        "groundedness_score": 80,
+        "thesis_summary": "Seeded risk summary.",
+        "strongest_signal": "Seeded strongest signal.",
+        "risk_profile": {
+          "volatility_assessment": "moderate"
+        },
+        "stage_b": null
+      }
+    }
+  ],
+  "price_band": {
+    "status": "ok",
+    "ticker": "RY.TO",
+    "timeline": "medium_term",
+    "as_of_date": "2026-11-25",
+    "flags": [
+      "edge_history_short",
+      "vol_3m_missing"
+    ],
+    "reason": null,
+    "current_price": 100,
+    "price_source": "quote",
+    "currency": "CAD",
+    "horizon_years": 1,
+    "range": {
+      "low": 80.04400829208234,
+      "low_percentile": 10,
+      "median": 104.89083954444904,
+      "high": 137.4504907374515,
+      "high_percentile": 90
+    },
+    "model_range": {
+      "p10": 80.04400829208234,
+      "p25": 90.97970114662256,
+      "p50": 104.89083954444904,
+      "p75": 120.92904331053394,
+      "p90": 137.4504907374515
+    },
+    "by_horizon": {
+      "1m": {
+        "status": "ok",
+        "horizon_years": 0.08333333333333333,
+        "p10": 92.86138318409184,
+        "p25": 96.35849571985425,
+        "p50": 100.39870940616682,
+        "p75": 104.60832514166168,
+        "p90": 108.54782154645663,
+        "target_price": 101.01396408427946,
+        "income_expected": 0,
+        "expected_total_return_pct": 1.0139640842794648,
+        "stock_baseline_pct": 0.5850380353085605
+      },
+      "3m": {
+        "status": "ok",
+        "horizon_years": 0.25,
+        "p10": 88.40565043339943,
+        "p25": 94.25141143463505,
+        "p50": 101.20090363246861,
+        "p75": 108.66280663744689,
+        "p90": 115.84805774087647,
+        "target_price": 102.51578053989,
+        "income_expected": 0,
+        "expected_total_return_pct": 2.5157805398900024,
+        "stock_baseline_pct": 1.7654022150761728
+      },
+      "6m": {
+        "status": "ok",
+        "horizon_years": 0.5,
+        "p10": 84.59569628183796,
+        "p25": 92.61354157801568,
+        "p50": 102.416228960282,
+        "p75": 113.25648253726614,
+        "p90": 123.99075148574467,
+        "target_price": 104.63917942069415,
+        "income_expected": 0,
+        "expected_total_return_pct": 4.639179420694148,
+        "stock_baseline_pct": 3.5619708799623284
+      },
+      "12m": {
+        "status": "ok",
+        "horizon_years": 1,
+        "p10": 80.04400829208234,
+        "p25": 90.97970114662256,
+        "p50": 104.89083954444904,
+        "p75": 120.92904331053394,
+        "p90": 137.4504907374515,
+        "target_price": 108.82052662978722,
+        "income_expected": 0,
+        "expected_total_return_pct": 8.820526629787224,
+        "stock_baseline_pct": 7.250818125421654
+      }
+    },
+    "slider": {
+      "no_view_position": 0.4739327106347382,
+      "shift": 0.02734375,
+      "position": 0.5012764606347382
+    },
+    "target_price": 108.82052662978722,
+    "vs_current_pct": {
+      "low": -19.955991707917665,
+      "median": 4.890839544449044,
+      "high": 37.4504907374515,
+      "target_price": 8.820526629787228
+    },
+    "income_per_share": {
+      "low_state": 0,
+      "expected": 0,
+      "method": "none"
+    },
+    "expected_total_return_pct": 8.820526629787228,
+    "stock_baseline_pct": 7.250818125421654,
+    "market_reference_pct": null,
+    "view_pts": 1.5697085043655745,
+    "view_per_unit_risk": 0.06938065442788058,
+    "inputs": {
+      "sigma": 0.2,
+      "sigma_3m": null,
+      "sigma_eff": 0.2109502310972899,
+      "rf": 0.03,
+      "mu0": 0.07,
+      "y": 0,
+      "m0": 107.25081812542166,
+      "z_raw": 0.875,
+      "z_smooth": 0.875,
+      "z_ref": 0,
+      "z_view": 0.875,
+      "income_annual_expected": 0,
+      "next_earnings_date": null
+    },
+    "risk_profile": {
+      "volatility": {
+        "one_year": 0.2,
+        "three_month": null,
+        "used": 0.2109502310972899
+      },
+      "loss_probability_12m": {
+        "over_15_pct": 0.15943800375253253,
+        "over_30_pct": 0.027608924751522435
+      },
+      "loss_risk_class": "low",
+      "drawdown": {
+        "one_year_pct": 10,
+        "three_year_pct": 20
+      },
+      "main_risks": []
+    },
+    "stretch": {
+      "risk_scenario_used": null,
+      "applied": false
+    },
+    "settings": {
+      "version": "B3",
+      "gain": 0.03125,
+      "slider_cap": 0.15,
+      "tier_scores": {
+        "strong_outperform": 1.5,
+        "outperform": 0.75,
+        "market_perform": 0,
+        "underperform": -0.75,
+        "strong_underperform": -1.5
+      },
+      "confidence_scale": 60,
+      "confidence_clip": [
+        0.5,
+        1.25
+      ],
+      "smoothing_runs": 4,
+      "min_reference_stocks": 10,
+      "cold_start_z_ref": 0,
+      "blend_3m": 0.5,
+      "shrink": 0.2,
+      "shrink_level": 0.25,
+      "erp": 0.04,
+      "group_gain": {},
+      "group": null,
+      "group_multiplier": 1
+    }
+  },
+  "business_profile": null,
+  "failure": null,
+  "stock": {
+    "stock_id": "7e8b0f73-e2f1-4f3e-99e2-efa1c685ae39",
+    "ticker": "RY.TO",
+    "name": "Royal Bank of Canada",
+    "exchange": "TSX",
+    "currency": "CAD"
+  },
+  "timeline": "medium_term",
+  "triggered_at": "2026-11-24T09:30:00Z",
+  "pass1_completed_at": null,
+  "pass2_completed_at": null,
+  "completed_at": "2026-11-24T09:30:00Z",
+  "duration_s": 0,
+  "pipeline_version": null
+}

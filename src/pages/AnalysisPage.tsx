@@ -92,7 +92,7 @@ export function AnalysisPage() {
       <StockInfoSection
         stock={run.stock}
         price={run.data_bundle_summary.price_at_analysis}
-        marketCapCad={run.data_bundle_summary.market_cap_cad}
+        marketCap={run.data_bundle_summary.market_cap_cad}
         fundamentals={run.stock_fundamentals}
         holdingSnapshot={fallbackHoldingSnapshot}
       />
