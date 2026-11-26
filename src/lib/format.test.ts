@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
-  formatAgentName,
   formatCAD,
   formatDate,
   formatEnumLabel,
@@ -161,18 +160,6 @@ describe('formatDate', () => {
   })
   it('handles invalid input', () => {
     expect(formatDate('')).toBe('—')
-  })
-})
-
-describe('formatAgentName', () => {
-  it('converts snake_case to Title Case', () => {
-    expect(formatAgentName('fundamental_analyst')).toBe('Fundamental Analyst')
-  })
-  it('handles single word', () => {
-    expect(formatAgentName('cio')).toBe('Cio')
-  })
-  it('handles multiple underscores', () => {
-    expect(formatAgentName('bull_bear_advisor')).toBe('Bull Bear Advisor')
   })
 })
 

@@ -8,8 +8,6 @@ export type StockOutlookDirection =
   | 'neutral'
   | 'somewhat_bearish'
   | 'bearish'
-export type PortfolioFit = 'strong_candidate' | 'worth_monitoring' | 'poor_fit'
-export type DisagreementLabel = 'low' | 'moderate' | 'high'
 
 /**
  * A stock on the watchlist.

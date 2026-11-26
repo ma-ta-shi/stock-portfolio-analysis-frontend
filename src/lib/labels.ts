@@ -1,4 +1,3 @@
-import type { PortfolioFit } from '@/types'
 import type { DisagreementClass, Outlook, ReturnTier } from './stock-snapshot'
 import type { components } from '@/types/openapi.gen'
 
@@ -25,24 +24,6 @@ export const BADGE = {
   negative: 'bg-red-700 text-white',
   neutral: 'bg-muted text-foreground',
 } as const
-
-export const FIT_LABELS: Record<PortfolioFit, string> = {
-  strong_candidate: 'Strong Candidate',
-  worth_monitoring: 'Worth Monitoring',
-  poor_fit: 'Poor Fit',
-}
-
-export const FIT_BOX_COLORS: Record<PortfolioFit, string> = {
-  strong_candidate: 'bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800',
-  worth_monitoring: 'bg-amber-50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800',
-  poor_fit: 'bg-muted border-border',
-}
-
-export const FIT_BADGE_COLORS: Record<PortfolioFit, string> = {
-  strong_candidate: BADGE.positive,
-  worth_monitoring: BADGE.warningSoft,
-  poor_fit: BADGE.neutral,
-}
 
 /** Text colour for a signed value: gains green, losses red. */
 export function gainLossColor(value: number): string {

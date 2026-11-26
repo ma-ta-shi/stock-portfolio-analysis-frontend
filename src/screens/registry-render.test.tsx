@@ -20,6 +20,9 @@ import { STOCK_ROW_FIELDS } from './stock'
 import { SCREEN_FIELD_SETS } from '@/screens'
 import { WATCHLIST_FIELDS } from './watchlist'
 import { FUNDAMENTAL_FIELDS, HISTORY_FIELDS } from './stock-detail'
+import { AGENT_FIELDS, FOOTER_FIELDS } from './analysis'
+import { mapAgents, type ApiResult } from '@/lib/analysis-result'
+import resultFixture from '../../public/mock-data/stocks/result.json'
 import { mapHistory, type ApiPrediction, type ApiRunSummary } from '@/lib/stock-detail'
 import runsFixture from '../../public/mock-data/stocks/runs.json'
 import predictionsFixture from '../../public/mock-data/stocks/predictions.json'
@@ -125,4 +128,14 @@ check('dividend events', DIVIDEND_FIELDS, [
   ...dividends,
   { ...dividends[0], status: 'confirmed' as const, decided_by: 'owner' as const, decided_at: '2026-11-22T12:00:00Z', note: 'per statement', planned_reinvest_shares: 0.4, planned_reinvest_price: 100, planned_reinvest_date: '2026-11-23' },
   { ...dividends[0], status: 'dismissed' as const, decided_by: 'owner' as const, decided_at: '2026-11-22T12:00:00Z', flags: ['probable_duplicate'] },
+])
+
+// the recorded run's agents, and one that did not finish
+check('analysis agents', AGENT_FIELDS, [
+  ...mapAgents((resultFixture as unknown as ApiResult).agent_outputs),
+  ...mapAgents([{ agent_name: 'bull', status: 'failed', structured_output: null }] as unknown as ApiResult['agent_outputs']),
+])
+check('analysis footer', FOOTER_FIELDS, [
+  { analysisId: 'a', currency: 'CAD' as const, price: 100, durationS: 161.4, completedAt: '2026-11-24T09:30:00Z' },
+  { analysisId: 'b', currency: 'USD' as const, price: null, durationS: null, completedAt: null },
 ])

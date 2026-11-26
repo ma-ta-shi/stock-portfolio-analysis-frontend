@@ -6,7 +6,7 @@ import { fetchAllPages } from '@/lib/fetch-all-pages'
 import { dayFromToday } from '@/lib/format'
 import { queryKeys } from '@/lib/query-keys'
 import { mapFundamentals, mapHistory, type ApiFundamentals, type ApiPrediction, type ApiRunSummary } from '@/lib/stock-detail'
-import { mapStockSnapshot } from '@/lib/stock-snapshot'
+import { mapStock, mapStockSnapshot, PRICE_BAND_FROM } from '@/lib/stock-snapshot'
 import type { components } from '@/types/openapi.gen'
 import type { Stock } from '@/types/stock'
 
@@ -18,6 +18,7 @@ export function useStock(stockId: string) {
     queryKey: queryKeys.stocks.detail(stockId),
     enabled: !!stockId,
     queryFn: ({ signal }) => apiFetch<Api['StockResponse']>(`${DIR}/stock.json`, `/api/stocks/${stockId}`, { signal }),
+    select: mapStock,
   })
 }
 
@@ -52,7 +53,7 @@ export function useStockPrices(stockId: string) {
 }
 
 /**
- * Every completed analysis of the stock, each with its prediction, newest first, whoever started it: a pipeline run is shared by all
+ * Every completed analysis of the stock since the price band, each with its prediction, newest first, whoever started it: a pipeline run is shared by all
  * users (owner rule) and holds nothing about one. Everything else about a user (portfolio, watchlist, settings) is read for them alone.
  */
 export function useStockHistory(stockId: string, stock: Stock | undefined) {
@@ -61,8 +62,8 @@ export function useStockHistory(stockId: string, stock: Stock | undefined) {
     enabled: !!stockId,
     queryFn: async ({ signal }) => {
       const [runs, predictions] = await Promise.all([
-        fetchAllPages<ApiRunSummary>(`${DIR}/runs.json`, `/api/analysis?stock_id=${stockId}&status=complete`, { signal }),
-        fetchAllPages<ApiPrediction>(`${DIR}/predictions.json`, `/api/predictions?stock_id=${stockId}`, { signal }),
+        fetchAllPages<ApiRunSummary>(`${DIR}/runs.json`, `/api/analysis?stock_id=${stockId}&status=complete&from=${PRICE_BAND_FROM}`, { signal }),
+        fetchAllPages<ApiPrediction>(`${DIR}/predictions.json`, `/api/predictions?stock_id=${stockId}&from=${PRICE_BAND_FROM}`, { signal }),
       ])
       return { runs, predictions }
     },

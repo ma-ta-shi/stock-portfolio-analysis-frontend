@@ -18,7 +18,7 @@ test('shows the latest call, its drivers and the history the API holds', async (
   const id = await stockId(request, 'RY.TO')
   const snap = (await json(request, `/api/stocks/snapshots?stock_ids=${id}`)).data[0]
   const result = await json(request, `/api/analysis/${snap.analysis.run_id}`)
-  const runs = (await json(request, `/api/analysis?stock_id=${id}&status=complete`)).data
+  const runs = (await json(request, `/api/analysis?stock_id=${id}&status=complete&from=2026-10-13`)).data // the page loads none from before the price band
 
   await page.goto(`/stocks/${id}`)
   const call = page.getByRole('region', { name: 'Latest call' })

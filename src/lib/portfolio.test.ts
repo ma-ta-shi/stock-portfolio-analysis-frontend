@@ -1,9 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { mockHolding, mockUsdHolding } from '@/test/mock-data'
 import {
-  applyTemplate,
   buildHoldingSnapshot,
-  disagreementLabel,
   filterByAccount,
   holdingPeriod,
 } from './portfolio'
@@ -47,28 +45,6 @@ describe('buildHoldingSnapshot', () => {
   it('leaves the converted day change as NaN (rendered as —) when the USD rate is unknown', () => {
     const snap = buildHoldingSnapshot([mockUsdHolding], CAD_ONLY)!
     expect(snap.day_change_cad).toBeNaN()
-  })
-})
-
-describe('applyTemplate', () => {
-  it('fills known placeholders', () => {
-    expect(applyTemplate('You hold {{shares}} in {{account_type}}', { shares: 50, account_type: 'TFSA' }))
-      .toBe('You hold 50 in TFSA')
-  })
-  it('leaves unknown placeholders untouched', () => {
-    expect(applyTemplate('{{missing}} stays', {})).toBe('{{missing}} stays')
-  })
-})
-
-describe('disagreementLabel', () => {
-  it.each([
-    [0, 'low'],
-    [0.249, 'low'],
-    [0.25, 'moderate'],
-    [0.49, 'moderate'],
-    [0.5, 'high'],
-  ] as const)('%s → %s', (score, label) => {
-    expect(disagreementLabel(score)).toBe(label)
   })
 })
 

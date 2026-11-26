@@ -1,4 +1,4 @@
-import type { DisagreementLabel, Holding, HoldingSnapshot } from '@/types'
+import type { Holding, HoldingSnapshot } from '@/types'
 import { toCad, type FxRatesToCad } from './fx'
 import { parseDate } from './format'
 
@@ -51,20 +51,6 @@ export function buildHoldingSnapshot(
           }))
         : undefined,
   }
-}
-
-/** Fill `{{name}}` placeholders. Unknown placeholders are left untouched. */
-export function applyTemplate(template: string, vars: Record<string, string | number>): string {
-  return template.replace(/\{\{(\w+)\}\}/g, (match, key: string) =>
-    key in vars ? String(vars[key]) : match,
-  )
-}
-
-/** Same thresholds the backend uses for `disagreement_label`. */
-export function disagreementLabel(score: number): DisagreementLabel {
-  if (score < 0.25) return 'low'
-  if (score < 0.5) return 'moderate'
-  return 'high'
 }
 
 /** Filter holdings by the Portfolio page's account switcher value. */

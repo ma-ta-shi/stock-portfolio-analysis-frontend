@@ -126,14 +126,6 @@ export function formatDate(
   return date.toLocaleDateString(LOCALE, options)
 }
 
-/** "fundamental_analyst" → "Fundamental Analyst" */
-export function formatAgentName(name: string): string {
-  return name
-    .split('_')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ')
-}
-
 /** "medium_term" → "medium term" */
 export function formatEnumLabel(value: string): string {
   return value.replaceAll('_', ' ')

@@ -1,10 +1,11 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { TrendingUp, TrendingDown, Plus, DollarSign, Pencil } from 'lucide-react'
 import { useAnalysisResult } from '@/hooks/use-analysis'
 import { useStock, useStockFundamentals, useStockHistory, useStockPrices, useStockSnapshot } from '@/hooks/use-stock-detail'
 import { useHoldingActions } from '@/hooks/use-holding-actions'
 import { usePortfolioHoldings, useTransactionHistory } from '@/hooks/use-portfolio'
+import { DetailLoading } from '@/components/DetailLoading'
 import { StockInfoSection } from '@/components/StockInfoSection'
 import { FieldList } from '@/components/FieldList'
 import { StockCall } from '@/components/StockCall'
@@ -17,6 +18,7 @@ import { Button } from '@/components/ui/button'
 import { ButtonLink } from '@/components/ButtonLink'
 import { Badge } from '@/components/ui/badge'
 import { PortfolioContextCard } from '@/components/PortfolioContextCard'
+import { StockOutlookLayer } from '@/components/StockOutlookLayer'
 import { QueryError } from '@/components/QueryError'
 import { useFxRates } from '@/hooks/use-fx-rates'
 import { isNotFound } from '@/lib/api'
@@ -26,14 +28,12 @@ import { notConnectedMessage } from '@/lib/gaps'
 import { gainLossColor, TONE_TEXT } from '@/lib/labels'
 import { buildHoldingSnapshot } from '@/lib/portfolio'
 import { mapDrivers } from '@/lib/stock-detail'
-import { isAwaitingAnalysis, mapStock } from '@/lib/stock-snapshot'
+import { isAwaitingAnalysis } from '@/lib/stock-snapshot'
 import { EMPTY_FILTERS } from '@/lib/transactions'
 import { cn } from '@/lib/utils'
-import { stockField } from '@/screens/stock'
+import { CALL_DETAIL_FIELDS } from '@/screens/stock'
 import { HISTORY_FIELDS } from '@/screens/stock-detail'
 
-/** What the call adds on this page to the shared cell: the price it aims at, its range, and how far the advocates differed. */
-const CALL_FIELDS = [stockField('target_price'), stockField('range_low'), stockField('range_high'), stockField('disagreement')]
 const HISTORY_COLUMNS = fieldsFor(HISTORY_FIELDS, 'column')
 
 /** Every ledger row of one stock, in every account; nothing is drawn until there is one. */
@@ -59,7 +59,7 @@ export function StockPage() {
   const navigate = useNavigate()
 
   const detail = useStock(id)
-  const stock = useMemo(() => (detail.data ? mapStock(detail.data) : undefined), [detail.data])
+  const stock = detail.data
   const snapshot = useStockSnapshot(id)
   const call = snapshot.data ?? null
   const fundamentals = useStockFundamentals(id)
@@ -76,13 +76,7 @@ export function StockPage() {
   const [addDialogOpen, setAddDialogOpen] = useState(false)
 
   if (detail.isLoading) {
-    return (
-      <div className="max-w-3xl mx-auto space-y-4">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-24 rounded-lg bg-muted animate-pulse" />
-        ))}
-      </div>
-    )
+    return <DetailLoading />
   }
 
   if (detail.isError && !isNotFound(detail.error)) {
@@ -116,11 +110,8 @@ export function StockPage() {
       <StockInfoSection
         stock={stock}
         price={call?.price ?? null}
-        priceDay={call?.priceDay}
-        marketCap={fundamentals.data?.marketCap}
-        marketCapCurrency={(fundamentals.data?.currency as typeof stock.currency | null) ?? stock.currency}
-        fundamentals={fundamentals.data?.values}
-        fundamentalsAsOf={fundamentals.data?.asOf}
+        priceNote={call?.priceDay ? `Close of ${formatDate(call.priceDay)}` : undefined}
+        fundamentals={fundamentals.data}
         holdingSnapshot={holdingSnapshot}
       />
       {snapshot.isError && <QueryError what="price and latest call" error={snapshot.error} onRetry={snapshot.refetch} compact />}
@@ -241,37 +232,16 @@ export function StockPage() {
                 Full Analysis
               </ButtonLink>
             </div>
-            <FieldList fields={CALL_FIELDS} row={{ stock, call }} />
+            <FieldList fields={CALL_DETAIL_FIELDS} row={{ stock, call }} />
             {call.analysis.targetPrice != null && <p className="text-xs text-muted-foreground">Target and return are at the latest price.</p>}
           </section>
 
-          {/* Layer 1 — Stock Outlook */}
-          <div className="bg-card border border-border rounded-lg p-5 space-y-3">
-            <div className="flex items-center justify-between">
-              <h2 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
-                Layer 1 — Stock Outlook
-              </h2>
-              {call.analysis.asOf && <span className="text-xs text-muted-foreground">{formatDate(call.analysis.asOf)}</span>}
-            </div>
-            {latest.isError ? (
-              <QueryError what="latest analysis" error={latest.error} onRetry={latest.refetch} compact />
-            ) : (
-              <>
-                {drivers.length > 0 && (
-                  <ul className="space-y-1">
-                    {drivers.map((driver, i) => (
-                      <li key={i} className="text-sm flex gap-2">
-                        <span className="text-muted-foreground shrink-0">·</span>
-                        <span className="font-medium">{driver.factor}</span>
-                        {driver.direction && <span className="text-muted-foreground">{driver.direction}</span>}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {result?.synthesis_narrative && <p className="text-sm leading-relaxed whitespace-pre-line">{result.synthesis_narrative}</p>}
-              </>
-            )}
-          </div>
+          <StockOutlookLayer
+            date={call.analysis.asOf}
+            drivers={drivers}
+            narrative={result?.synthesis_narrative}
+            error={latest.isError ? <QueryError what="latest analysis" error={latest.error} onRetry={latest.refetch} compact /> : null}
+          />
 
           <PortfolioContextCard />
         </div>
