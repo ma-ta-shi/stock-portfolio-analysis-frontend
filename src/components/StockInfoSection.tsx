@@ -119,18 +119,25 @@ function HoldingPanel({ snapshot, currency }: HoldingPanelProps) {
   )
 }
 
+interface FundamentalsRead {
+  values?: StockFundamentals
+  marketCap: number | null
+  currency: string | null
+  asOf: string | null
+}
+
 interface StockInfoSectionProps {
   stock: Stock
   /** null when the stock hasn't been priced yet */
   price: number | null
-  /** The day of that close: stored prices can be days old. */
-  priceDay?: string | null
-  marketCap?: number | null
-  /** The currency the market cap is in: the stock's own for a live read. */
-  marketCapCurrency?: CurrencyCode
-  fundamentals?: StockFundamentals
-  /** The day of the analysis the fundamentals come from. */
-  fundamentalsAsOf?: string | null
+  /** Which price that is, under it: stored closes can be days old, and an analysis shows the price it was made at. */
+  priceNote?: string
+  /** Said instead of a price when there is none. */
+  noPrice?: string
+  /** Said after the day of the fundamentals, where they are not the figures of what the page is about. */
+  fundamentalsNote?: string
+  /** The newest stored fundamentals (`useStockFundamentals`): the figures, the market cap and its currency, and their day. */
+  fundamentals?: FundamentalsRead
   holdingSnapshot?: HoldingSnapshot
 }
 
@@ -143,16 +150,18 @@ const tile = (spec: FieldSpec<StockFundamentals>, f: StockFundamentals) => {
 export function StockInfoSection({
   stock,
   price,
-  priceDay,
-  marketCap,
-  marketCapCurrency = 'CAD',
+  priceNote,
+  noPrice = 'Price not available yet',
+  fundamentalsNote,
   fundamentals,
-  fundamentalsAsOf,
   holdingSnapshot,
 }: StockInfoSectionProps) {
   const [expanded, setExpanded] = useState(false)
   const moreId = useId()
-  const f = fundamentals
+  const f = fundamentals?.values
+  const marketCap = fundamentals?.marketCap
+  const marketCapCurrency = (fundamentals?.currency as CurrencyCode | null) ?? stock.currency
+  const fundamentalsAsOf = fundamentals?.asOf
 
   return (
     <div className="space-y-3">
@@ -170,14 +179,14 @@ export function StockInfoSection({
           <div className="text-right shrink-0">
             <div className="text-xl font-semibold">
               {price == null ? (
-                <span className="text-sm font-normal text-muted-foreground">Price not available yet</span>
+                <span className="text-sm font-normal text-muted-foreground">{noPrice}</span>
               ) : (
                 <>
                   {formatNumber(price)} <span className="text-xs text-muted-foreground">{stock.currency}</span>
                 </>
               )}
             </div>
-            {price != null && priceDay && <div className="text-xs text-muted-foreground">Close of {formatDate(priceDay)}</div>}
+            {price != null && priceNote && <div className="text-xs text-muted-foreground">{priceNote}</div>}
             {marketCap != null && (
               <div className="text-xs text-muted-foreground">Mkt cap {formatMoney(marketCap, marketCapCurrency, { compact: true })}</div>
             )}
@@ -227,7 +236,7 @@ export function StockInfoSection({
         </div>
       )}
 
-      {f && fundamentalsAsOf && <p className="text-xs text-muted-foreground">Fundamentals as of {formatDate(fundamentalsAsOf)}</p>}
+      {f && fundamentalsAsOf && <p className="text-xs text-muted-foreground">Fundamentals as of {formatDate(fundamentalsAsOf)}{fundamentalsNote && `. ${fundamentalsNote}`}</p>}
 
       {/* Holding Panel */}
       {holdingSnapshot && <HoldingPanel snapshot={holdingSnapshot} currency={stock.currency} />}

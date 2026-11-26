@@ -9,7 +9,7 @@ const ROUTES: [string, string | RegExp][] = [
   ['/portfolio?tab=optimizer', 'Portfolio'],
   ['/portfolio?tab=allocation', 'Portfolio'],
   ['/stocks/7e8b0f73-e2f1-4f3e-99e2-efa1c685ae39', /RY\.TO/], // mock mode serves the one recorded stock
-  ['/analysis/run_001', 'SHOP.TO'],
+  ['/analysis/4052936a-30c1-42d3-9ca7-1565de60a579', 'RY.TO'], // the recorded result
   ['/feedback', 'Feedback & Accuracy'],
   ['/settings', 'Settings'],
 ]

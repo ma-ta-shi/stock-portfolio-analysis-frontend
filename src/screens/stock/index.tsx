@@ -127,6 +127,9 @@ export function stockField(id: string, overrides: Partial<FieldSpec<StockRow>> =
   return { ...spec, ...overrides }
 }
 
+/** What a page about one call adds to the shared cell: the price it aims at, its range, and how far the advocates differed. */
+export const CALL_DETAIL_FIELDS = [stockField('target_price'), stockField('range_low'), stockField('range_high'), stockField('disagreement')]
+
 const repeats = 'Repeats the stock the row is for'
 
 export const STOCK_NOT_SHOWN: Partial<Record<ApiFieldKey, NotShown>> = {

@@ -275,14 +275,14 @@
   "S-2": {
     "screen": "stock",
     "kind": "missing",
-    "what": "The Layer 2 portfolio context: fit, suggested action and account note",
+    "what": "The Layer 2 portfolio context: fit, suggested action and account note (Stock and Analysis pages)",
     "why": "Analyses are account-neutral, so nothing serves it. The card stays and says unavailable (backend handoff BH-13).",
     "ticket": "86bd5z6n0"
   },
   "S-3": {
     "screen": "stock",
     "kind": "missing",
-    "what": "The account of an analysis",
+    "what": "The account of an analysis (history column and Analysis page header)",
     "why": "Analyses are account-neutral; the column and header say unavailable (owner, 2026-11-25).",
     "ticket": "86bd5z6n0"
   },
@@ -310,8 +310,29 @@
   "S-9": {
     "screen": "stock",
     "kind": "documented",
-    "what": "Stock, price, fundamentals, run and prediction fields with no place in the design",
-    "why": "Industry, daily open, high, low and volume, further ratios, checkpoint detail, the shadow call, failed runs and run versions are served and not shown.",
+    "what": "Stock, price, fundamentals, run, result and prediction fields with no place in the design",
+    "why": "Industry, daily open, high, low and volume, further ratios, the business profile, price-band detail and horizons, agent ratings and interpretive fields, the rest of the CIO record, the shadow call, retired agents, checkpoint detail, the history of failed runs and run versions are served and not shown.",
+    "ticket": "86bd5z6n0"
+  },
+  "S-6": {
+    "screen": "analysis",
+    "kind": "missing",
+    "what": "The fundamentals as they were at one analysis",
+    "why": "The Analysis page shows the newest stored fundamentals, with the day they are from (backend handoff BH-15).",
+    "ticket": "86bd5z6n0"
+  },
+  "S-7": {
+    "screen": "analysis",
+    "kind": "documented",
+    "what": "The signal and the BUY, HOLD or SELL badge of each agent",
+    "why": "Agents no longer give them; the agent sections show what they do write (owner, 2026-11-25).",
+    "ticket": "86bd5z6n0"
+  },
+  "S-10": {
+    "screen": "stock",
+    "kind": "documented",
+    "what": "Runs from before the price band, in the history, as a latest call and on the Analysis page",
+    "why": "Not loaded or shown (owner, 2026-11-26): no longer informative, and the account-based ones can quote one user's details. A stock whose newest run is one reads as not analysed yet (backend handoff BH-19).",
     "ticket": "86bd5z6n0"
   }
 }

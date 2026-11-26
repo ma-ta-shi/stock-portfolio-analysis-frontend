@@ -1,277 +1,190 @@
 import { useParams } from 'react-router-dom'
-import { useAnalysisRun, useAgentResults } from '@/hooks/use-analysis'
+import { useAnalysisResult } from '@/hooks/use-analysis'
+import { useStock, useStockFundamentals, useStockHistory } from '@/hooks/use-stock-detail'
 import { usePortfolioHoldings } from '@/hooks/use-portfolio'
-import { OutlookBadge } from '@/components/OutlookBadge'
-import { RecommendationBadge } from '@/components/RecommendationBadge'
-import { ConfidenceMeter } from '@/components/ConfidenceMeter'
-import { DisagreementIndicator } from '@/components/DisagreementIndicator'
+import { useFxRates } from '@/hooks/use-fx-rates'
+import { DetailLoading } from '@/components/DetailLoading'
 import { StockInfoSection } from '@/components/StockInfoSection'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
-import { Badge } from '@/components/ui/badge'
+import { StockCall } from '@/components/StockCall'
+import { StockOutlookLayer } from '@/components/StockOutlookLayer'
+import { FieldList } from '@/components/FieldList'
 import { PortfolioContextCard } from '@/components/PortfolioContextCard'
 import { QueryError } from '@/components/QueryError'
-import { useFxRates } from '@/hooks/use-fx-rates'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { Badge } from '@/components/ui/badge'
+import { mapAgents, type AgentView, type ApiResult } from '@/lib/analysis-result'
 import { isNotFound } from '@/lib/api'
-import { formatAgentName, formatDate, formatEnumLabel, formatMoney } from '@/lib/format'
-import { applyTemplate, buildHoldingSnapshot } from '@/lib/portfolio'
-import { BADGE, TONE_TEXT } from '@/lib/labels'
+import { fieldText, fieldsFor } from '@/lib/fields'
+import { formatDate, formatEnumLabel } from '@/lib/format'
+import { unavailableLabel } from '@/lib/gaps'
+import { TONE_TEXT } from '@/lib/labels'
+import { buildHoldingSnapshot } from '@/lib/portfolio'
+import { mapDrivers } from '@/lib/stock-detail'
+import { mapResultCall, predatesPriceBand } from '@/lib/stock-snapshot'
 import { cn } from '@/lib/utils'
-import type { SignalDirection } from '@/types'
+import { AGENT_FIELDS, FOOTER_FIELDS, type AnalysisFooter } from '@/screens/analysis'
+import { CALL_DETAIL_FIELDS } from '@/screens/stock'
 
-const signalColors: Record<SignalDirection, string> = {
-  bullish: BADGE.positiveSoft,
-  neutral: BADGE.neutral,
-  bearish: 'bg-red-100 text-red-900 dark:bg-red-900/50 dark:text-red-200',
+const SECTIONS = fieldsFor(AGENT_FIELDS, 'detail')
+const [CONFIDENCE] = fieldsFor(AGENT_FIELDS, 'column')
+
+function AgentItem({ agent }: { agent: AgentView }) {
+  const sections = SECTIONS.map((spec) => ({ spec, content: spec.render?.(agent) })).filter((s) => s.content)
+  return (
+    <AccordionItem value={agent.key} className="border border-border rounded-lg px-4">
+      <AccordionTrigger className="hover:no-underline py-3">
+        <div className="flex items-center gap-3 text-left">
+          <span className="text-sm font-medium">{agent.name}</span>
+          <Badge variant="outline" className="text-xs">Pass {agent.pass}</Badge>
+          {agent.confidence != null && (
+            <span className="text-xs text-muted-foreground">
+              {CONFIDENCE.label} {fieldText(CONFIDENCE, agent)}
+            </span>
+          )}
+          {!agent.completed && <span className={cn('text-xs', TONE_TEXT.warning)}>Did not finish</span>}
+        </div>
+      </AccordionTrigger>
+      <AccordionContent className="pb-4 space-y-3">
+        {sections.map(({ spec, content }) => (
+          <div key={spec.id} className="space-y-1.5">
+            <h3 className="text-xs font-medium text-muted-foreground">{spec.label}</h3>
+            {content}
+          </div>
+        ))}
+        {sections.length === 0 && <p className="text-sm text-muted-foreground">Nothing was recorded.</p>}
+      </AccordionContent>
+    </AccordionItem>
+  )
+}
+
+/** What a run that is not complete says instead of a call. */
+function RunState({ result }: { result: ApiResult }) {
+  if (result.status === 'complete') return null
+  return (
+    <div role="status" className="border border-dashed border-border rounded-lg px-4 py-3 text-sm text-muted-foreground">
+      {result.status === 'failed'
+        ? `This analysis failed${result.failure ? ` at ${result.failure.stage}: ${result.failure.message}` : '.'}`
+        : 'This analysis is still running. Reload the page to check again.'}
+    </div>
+  )
 }
 
 export function AnalysisPage() {
   const { analysisId } = useParams<{ analysisId: string }>()
-  const id = analysisId ?? ''
+  const query = useAnalysisResult(analysisId)
+  const result = query.data
+  const old = predatesPriceBand(result?.triggered_at)
+  // nothing else is read for a run that is not shown
+  const stockId = old ? '' : (result?.stock?.stock_id ?? '')
 
-  const runQuery = useAnalysisRun(id)
-  const agentsQuery = useAgentResults(id)
+  // The result names the stock without its sector, so the header reads the directory row, as the Stock page does.
+  const detail = useStock(stockId)
+  const stock = detail.data
+  const fundamentals = useStockFundamentals(stockId)
+  // Where the price band was unavailable, the price of the run is the one its prediction recorded.
+  const history = useStockHistory(stockId, stock)
   const { data: holdings } = usePortfolioHoldings()
   const { rates } = useFxRates()
-  const run = runQuery.data
-  const agents = agentsQuery.data
-  const runLoading = runQuery.isLoading
-  const agentsLoading = agentsQuery.isLoading
 
-  if (runLoading || agentsLoading) {
-    return (
-      <div className="max-w-3xl mx-auto space-y-4">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-24 rounded-lg bg-muted animate-pulse" />
-        ))}
-      </div>
-    )
+  if (query.isLoading || detail.isLoading) {
+    return <DetailLoading />
   }
 
-  const failed = [runQuery, agentsQuery].find((q) => q.isError && !isNotFound(q.error))
+  const failed = [query, detail].find((q) => q.isError && !isNotFound(q.error))
   if (failed) {
     return (
       <div className="max-w-3xl mx-auto py-12">
-        <QueryError
-          what="analysis"
-          error={failed.error}
-          onRetry={() => {
-            void runQuery.refetch()
-            void agentsQuery.refetch()
-          }}
-        />
+        <QueryError what="analysis" error={failed.error} onRetry={failed.refetch} />
       </div>
     )
   }
 
-  if (!run || !agents) {
+  if (old) {
     return (
-      <div className="max-w-3xl mx-auto text-center py-12 text-muted-foreground">
-        Analysis not found.
+      <div role="status" className="max-w-3xl mx-auto text-center py-12 text-muted-foreground">
+        This analysis was made before the price range was introduced and is no longer shown.
       </div>
     )
   }
 
-  const rec = run.final_recommendation
-  const l2 = run.layer2_context
-  const keyDrivers = rec.stock_outlook.key_drivers ?? []
+  if (!result?.stock || !stock) {
+    return <div className="max-w-3xl mx-auto text-center py-12 text-muted-foreground">Analysis not found.</div>
+  }
 
-  // Prefer the position in the analysed account; fall back to all accounts holding this stock.
-  const stockHoldings = holdings?.filter((h) => h.stock.stock_id === run.stock.stock_id) ?? []
-  const fallbackHoldingSnapshot =
-    buildHoldingSnapshot(stockHoldings.filter((h) => h.account_type === run.account_type), rates) ??
-    buildHoldingSnapshot(stockHoldings, rates)
+  const call = mapResultCall(result, result.stock)
+  const price = result.price_band?.current_price ?? history.data?.find((r) => r.analysis_id === result.analysis_id)?.priceAtAnalysis ?? null
+  const footer: AnalysisFooter = {
+    analysisId: result.analysis_id,
+    currency: stock.currency,
+    price,
+    durationS: result.duration_s ?? null,
+    completedAt: result.completed_at ?? null,
+  }
+  const holdingSnapshot = buildHoldingSnapshot(holdings?.filter((h) => h.stock.stock_id === stockId) ?? [], rates)
+  const agents = mapAgents(result.agent_outputs ?? [])
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      {/* Stock Info */}
       <StockInfoSection
-        stock={run.stock}
-        price={run.data_bundle_summary.price_at_analysis}
-        marketCap={run.data_bundle_summary.market_cap_cad}
-        fundamentals={run.stock_fundamentals}
-        holdingSnapshot={fallbackHoldingSnapshot}
+        stock={stock}
+        price={price}
+        priceNote="Price at analysis"
+        noPrice={history.isLoading ? 'Loading price' : 'No price recorded'}
+        fundamentalsNote={`These and the market cap are the newest. Those at the time of this analysis: ${unavailableLabel('S-6')}`}
+        fundamentals={fundamentals.data}
+        holdingSnapshot={holdingSnapshot}
       />
+      {fundamentals.isError && <QueryError what="fundamentals" error={fundamentals.error} onRetry={fundamentals.refetch} compact />}
 
-      {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between gap-3">
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold">{run.stock.ticker}</h1>
-            <OutlookBadge direction={rec.stock_outlook.direction} size="lg" />
-          </div>
-          <div className="text-muted-foreground mt-0.5">{run.stock.name}</div>
-          <div className="flex items-center gap-4 mt-2">
-            <ConfidenceMeter score={rec.confidence_score} />
-            <DisagreementIndicator
-              label={rec.disagreement_label}
-              score={rec.disagreement_score}
-            />
-          </div>
+          <h1 className="text-2xl font-bold">{stock.ticker}</h1>
+          <div className="text-muted-foreground mt-0.5">{stock.name}</div>
         </div>
         <div className="text-right text-sm text-muted-foreground">
-          <div>{run.account_type.toUpperCase()} · {formatEnumLabel(run.timeline)}</div>
-          <div>{formatDate(run.completed_at)}</div>
+          <div>
+            Account: {unavailableLabel('S-3')}
+            {result.timeline && ` · ${formatEnumLabel(result.timeline)}`}
+          </div>
+          {call.analysis?.asOf && <div>{formatDate(call.analysis.asOf)}</div>}
         </div>
       </div>
 
-      {/* Layer 1 — Stock Outlook */}
-      <div className="bg-card border border-border rounded-lg p-5 space-y-3">
-        <h2 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
-          Layer 1 — Stock Outlook
-        </h2>
-        {keyDrivers.length > 0 && (
-          <ul className="space-y-1">
-            {keyDrivers.map((driver, i) => (
-              <li key={i} className="text-sm flex gap-2">
-                <span className="text-muted-foreground shrink-0">·</span>
-                <span className="font-medium">{driver}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-        <p className="text-sm leading-relaxed">{rec.executive_summary}</p>
-        {rec.cio_rationale && (
-          <div className="border-t border-border pt-3">
-            <p className="text-xs font-medium text-muted-foreground mb-1">Rationale</p>
-            <p className="text-sm leading-relaxed text-muted-foreground">{rec.cio_rationale}</p>
-          </div>
-        )}
-      </div>
+      <RunState result={result} />
 
-      {l2 && (
-        <PortfolioContextCard
-          context={l2}
-          accountNote={
-            agents.cio.account_specific_note
-              ? applyTemplate(agents.cio.account_specific_note, {
-                  shares: fallbackHoldingSnapshot?.shares ?? 0,
-                  account_type: run.account_type.toUpperCase(),
-                })
-              : undefined
-          }
-        />
+      {result.status === 'complete' && (
+        <>
+          <section aria-label="Call" className="space-y-2">
+            <StockCall call={call} link={false} />
+            <FieldList fields={CALL_DETAIL_FIELDS} row={{ stock, call }} />
+            {call.analysis?.targetPrice != null && <p className="text-xs text-muted-foreground">Target and return are at the price at analysis.</p>}
+          </section>
+
+          <StockOutlookLayer drivers={mapDrivers(result.key_drivers)} narrative={result.synthesis_narrative} />
+
+          <PortfolioContextCard />
+        </>
       )}
 
-      {/* Agent Accordion */}
-      <div>
-        <h2 className="font-semibold mb-3">Agent Results</h2>
-        <Accordion multiple className="space-y-2">
-          {/* Pass 1 */}
-          {Object.values(agents.pass_1 ?? {}).map((result) => {
-            const keyFindings = result.key_findings ?? []
-            const criticalRisks = result.critical_risks ?? []
-            return (
-            <AccordionItem
-              key={result.agent}
-              value={result.agent}
-              className="border border-border rounded-lg px-4"
-            >
-              <AccordionTrigger className="hover:no-underline py-3">
-                <div className="flex items-center gap-3 text-left">
-                  <span
-                    className={cn(
-                      'text-xs px-2 py-0.5 rounded-full font-medium',
-                      signalColors[result.signal],
-                    )}
-                  >
-                    {result.signal}
-                  </span>
-                  <span className="text-sm font-medium">{formatAgentName(result.agent)}</span>
-                  <Badge variant="outline" className="text-xs">Pass 1</Badge>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="pb-4 space-y-3">
-                {keyFindings.length > 0 && (
-                  <div>
-                    <p className="text-xs font-medium text-muted-foreground mb-1.5">Key Findings</p>
-                    <ul className="space-y-1">
-                      {keyFindings.map((f, i) => (
-                        <li key={i} className="text-sm flex gap-2">
-                          <span className="text-muted-foreground shrink-0">·</span>
-                          <span>{f}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {criticalRisks.length > 0 && (
-                  <div>
-                    <p className={cn('text-xs font-medium', TONE_TEXT.negative, 'mb-1.5')}>Critical Risks</p>
-                    <ul className="space-y-1">
-                      {criticalRisks.map((r, i) => (
-                        <li key={i} className="text-sm flex gap-2 text-red-700 dark:text-red-400">
-                          <span className="shrink-0" aria-hidden="true">⚠</span>
-                          <span>{r}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </AccordionContent>
-            </AccordionItem>
-            )
-          })}
+      {agents.length > 0 && (
+        <div>
+          <h2 className="font-semibold mb-3">Agent Results</h2>
+          <Accordion multiple className="space-y-2">
+            {agents.map((agent) => (
+              <AgentItem key={agent.key} agent={agent} />
+            ))}
+          </Accordion>
+        </div>
+      )}
 
-          {/* Pass 2 */}
-          {Object.values(agents.pass_2 ?? {}).map((result) => {
-            const keyArguments = result.key_arguments ?? []
-            return (
-            <AccordionItem
-              key={result.agent}
-              value={result.agent}
-              className="border border-border rounded-lg px-4"
-            >
-              <AccordionTrigger className="hover:no-underline py-3">
-                <div className="flex items-center gap-3 text-left">
-                  <RecommendationBadge recommendation={result.recommendation} />
-                  <span className="text-xs text-muted-foreground">{result.confidence_score}%</span>
-                  <span className="text-sm font-medium">{formatAgentName(result.agent)}</span>
-                  <Badge variant="outline" className="text-xs">Pass 2</Badge>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="pb-4">
-                {keyArguments.length > 0 && (
-                  <ul className="space-y-1">
-                    {keyArguments.map((a, i) => (
-                      <li key={i} className="text-sm flex gap-2">
-                        <span className="text-muted-foreground shrink-0">·</span>
-                        <span>{a}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </AccordionContent>
-            </AccordionItem>
-            )
-          })}
-        </Accordion>
-      </div>
-
-      {/* Metadata */}
-      <div className="text-xs text-muted-foreground flex flex-wrap gap-x-6 gap-y-1 border-t border-border pt-4">
-        <span>
-          Price at analysis:{' '}
-          <span className="font-medium text-foreground">
-            {formatMoney(run.data_bundle_summary.price_at_analysis, run.stock.currency)}
-          </span>
-        </span>
-        <span>
-          Duration:{' '}
-          <span className="font-medium text-foreground">{run.duration_seconds}s</span>
-        </span>
-        <span>
-          Completed:{' '}
-          <span className="font-medium text-foreground">{formatDate(run.completed_at)}</span>
-        </span>
-        <span>
-          Trace: <span className="font-mono text-foreground">{run.trace_id}</span>
-        </span>
-      </div>
+      <dl className="text-xs text-muted-foreground flex flex-wrap gap-x-6 gap-y-1 border-t border-border pt-4">
+        {FOOTER_FIELDS.map((spec) => (
+          <div key={spec.id} className="flex gap-1">
+            <dt>{spec.label}:</dt>
+            <dd className={cn('text-foreground', spec.id === 'trace' ? 'font-mono break-all' : 'font-medium')}>{fieldText(spec, footer)}</dd>
+          </div>
+        ))}
+      </dl>
     </div>
   )
 }
