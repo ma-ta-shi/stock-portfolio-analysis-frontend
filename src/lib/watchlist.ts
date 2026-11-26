@@ -1,32 +1,30 @@
-import type { WatchlistItem } from '@/types'
-import { parseDate } from './format'
+/** The watchlist rows: the API entry as the view-model, and the counts the page header shows. */
+import { mapStock, mapStockSnapshot } from './stock-snapshot'
+import type { components } from '@/types/openapi.gen'
+import type { WatchlistItem } from '@/types/watchlist'
 
-/** True until the backend has completed a first analysis of this stock. */
-export function isAwaitingAnalysis(item: Pick<WatchlistItem, 'last_analyzed_at'>): boolean {
-  return item.last_analyzed_at == null
-}
+export type ApiWatchlistEntry = components['schemas']['WatchlistResponse']
 
-export type WatchlistSortKey = 'projected_return_pct' | 'confidence_score' | 'day_change_pct' | 'last_analyzed_at'
-export type SortDir = 'asc' | 'desc'
-
-function sortValue(item: WatchlistItem, key: WatchlistSortKey): number | null {
-  if (key === 'last_analyzed_at') {
-    return item.last_analyzed_at == null ? null : parseDate(item.last_analyzed_at).getTime()
+export function mapWatchlistEntry(entry: ApiWatchlistEntry): WatchlistItem {
+  return {
+    watchlist_id: entry.watchlist_id,
+    stock: mapStock(entry.stock),
+    call: entry.snapshot ? mapStockSnapshot(entry.snapshot) : null,
+    notes: entry.notes ?? null,
+    added_at: entry.added_at,
   }
-  return item[key]
 }
 
-/**
- * Sort a copy of the watchlist. Items without a value for the column (not yet priced or
- * analysed) always go last, in either direction, so they never crowd the top of the list.
- */
-export function sortWatchlist(items: readonly WatchlistItem[], key: WatchlistSortKey, dir: SortDir): WatchlistItem[] {
-  return [...items].sort((a, b) => {
-    const va = sortValue(a, key)
-    const vb = sortValue(b, key)
-    if (va == null && vb == null) return 0
-    if (va == null) return 1
-    if (vb == null) return -1
-    return dir === 'asc' ? va - vb : vb - va
-  })
+/** No completed analysis yet (a stock the pipeline cannot analyse never gets one; the page shows a dash for it). */
+export const isAwaitingAnalysis = (item: Pick<WatchlistItem, 'call'>) => item.call?.analysis == null
+
+export function watchlistCounts(items: readonly WatchlistItem[]) {
+  const outlook = (i: WatchlistItem) => i.call?.analysis?.outlook
+  return {
+    total: items.length,
+    bullish: items.filter((i) => outlook(i) === 'bullish' || outlook(i) === 'somewhat_bullish').length,
+    awaiting: items.filter((i) => i.stock.pipeline_supported !== false && isAwaitingAnalysis(i)).length,
+    /** Against the analysis before, not against the owner's last visit. */
+    changed: items.filter((i) => i.call?.analysis?.outlookChanged).length,
+  }
 }

@@ -229,5 +229,54 @@
     "what": "The Remove icon is shown on every holding",
     "why": "The original design showed it only for a holding with no transactions (transaction_count). The API serves no transaction count, so the icon is always shown and the server decides (it reverses every entry; NOT_REMOVABLE when it cannot).",
     "ticket": "86bd5z6kr"
+  },
+  "W-1": {
+    "screen": "watchlist",
+    "kind": "missing",
+    "what": "Portfolio Fit of a watched stock",
+    "why": "Analyses no longer judge fit for a portfolio, so nothing serves it. The column stays and says unavailable (backend handoff BH-13).",
+    "ticket": "86bd5z6mt"
+  },
+  "W-2": {
+    "screen": "watchlist",
+    "kind": "missing",
+    "what": "The suggested account for a watched stock",
+    "why": "The account matrix scores each account but names no suggestion, and choosing one in the browser would be a second rule (backend handoff BH-13).",
+    "ticket": "86bd5z6mt"
+  },
+  "W-3": {
+    "screen": "watchlist",
+    "kind": "documented",
+    "what": "The numeric Bull and Bear disagreement score and the low, moderate, high labels",
+    "why": "The API serves four disagreement classes and no score; the column shows the class.",
+    "ticket": "86bd5z6mt"
+  },
+  "W-4": {
+    "screen": "watchlist",
+    "kind": "missing",
+    "what": "An analysis of a newly added stock",
+    "why": "The weekly batch reads its own list, not the watchlist, and the screen has no control to start one, so a new stock stays \"Awaiting analysis\" (backend handoff BH-14).",
+    "ticket": "86bd5z6mt"
+  },
+  "W-5": {
+    "screen": "watchlist",
+    "kind": "documented",
+    "what": "Writing a note on a watched stock (PATCH /api/watchlist/{id})",
+    "why": "The original design has no such control. A note that exists is shown in the expanded row.",
+    "ticket": "86bd5z6mt"
+  },
+  "W-6": {
+    "screen": "watchlist",
+    "kind": "documented",
+    "what": "Starting an analysis from the watchlist (POST /api/analysis and its status)",
+    "why": "The original design has no such control. A candidate for the owner to design; nothing was built.",
+    "ticket": "86bd5z6mt"
+  },
+  "W-7": {
+    "screen": "watchlist",
+    "kind": "documented",
+    "what": "Marking a watched stock that is also held",
+    "why": "The original design has no such marker. A candidate for the owner to design; nothing was built.",
+    "ticket": "86bd5z6mt"
   }
 }

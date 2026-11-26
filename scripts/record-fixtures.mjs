@@ -13,12 +13,14 @@ const args = process.argv.slice(2)
 const userFlag = args.indexOf('--user')
 const onlyFlag = args.indexOf('--only')
 const only = onlyFlag >= 0 ? args[onlyFlag + 1].split(',') : []
-const wanted = args.filter((a, i) => !a.startsWith('--') && i !== userFlag + 1 && i !== onlyFlag + 1)
+// a flag's value is not a screen name (an absent flag has index -1, which must not drop the first argument)
+const wanted = args.filter((a, i) => !a.startsWith('--') && !(userFlag >= 0 && i === userFlag + 1) && !(onlyFlag >= 0 && i === onlyFlag + 1))
 
 const day = (offset) => new Date(Date.now() + offset * 86_400_000).toISOString().slice(0, 10)
 
 // file -> how to read it. `ctx` holds the ids found from the backend.
 const SCREENS = {
+  watchlist: (ctx) => [{ file: 'watchlist', path: `/api/watchlist?user_id=${ctx.userId}&include=snapshot&page=1&per_page=100` }],
   portfolio: (ctx) => [
     { file: 'portfolios', path: `/api/portfolios?user_id=${ctx.userId}` },
     { file: 'positions', path: `/api/portfolios/${ctx.portfolioId}/positions` },

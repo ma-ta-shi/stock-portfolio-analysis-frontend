@@ -85,6 +85,19 @@ export function fieldsFor<Row>(specs: readonly FieldSpec<Row>[], place: FieldPla
   return specs.filter((spec) => spec.places.includes(place))
 }
 
+export type SortDir = 'asc' | 'desc'
+
+/** A sorted copy by a field's own value: numbers as numbers, text and ISO days as text, a row without a value always last. */
+export function sortRows<Row>(rows: readonly Row[], spec: FieldSpec<Row>, dir: SortDir): Row[] {
+  return [...rows].sort((a, b) => {
+    const va = spec.get(a)
+    const vb = spec.get(b)
+    if (va == null || vb == null) return va == null ? (vb == null ? 0 : 1) : -1
+    const order = typeof va === 'number' ? va - (vb as number) : String(va).localeCompare(String(vb))
+    return dir === 'asc' ? order : -order
+  })
+}
+
 /** CSV header and rows from the `csv` specs; the same text a table cell would show. */
 export function fieldsToCsvRows<Row>(specs: readonly FieldSpec<Row>[], rows: readonly Row[]): string[][] {
   const csv = fieldsFor(specs, 'csv')

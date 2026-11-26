@@ -9,6 +9,7 @@ import {
   type ApiFieldsFile,
   type FieldSpec,
   type ScreenFieldSet,
+  sortRows,
 } from './fields'
 
 interface Row {
@@ -117,5 +118,21 @@ describe('checkScreen', () => {
 describe('unclaimedSchemas', () => {
   it('lists the response schemas no screen claims', () => {
     expect(unclaimedSchemas([screen()], api)).toEqual(['FundResultResponse'])
+  })
+})
+
+describe('sortRows', () => {
+  const spec = { id: 'n', label: 'N', source: [], get: (r: { n: number | string | null }) => r.n, places: ['column' as const] }
+  const rows = [{ n: 2 }, { n: null }, { n: 10 }, { n: -1 }]
+
+  it('sorts numbers as numbers in either direction, with missing values last', () => {
+    expect(sortRows(rows, spec, 'asc').map((r) => r.n)).toEqual([-1, 2, 10, null])
+    expect(sortRows(rows, spec, 'desc').map((r) => r.n)).toEqual([10, 2, -1, null])
+    expect(rows[0].n).toBe(2) // a copy
+  })
+
+  it('sorts ISO days as text', () => {
+    const days = [{ n: '2026-11-02' }, { n: null }, { n: '2026-09-30' }]
+    expect(sortRows(days, spec, 'desc').map((r) => r.n)).toEqual(['2026-11-02', '2026-09-30', null])
   })
 })

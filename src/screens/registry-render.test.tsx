@@ -1,5 +1,5 @@
 /**
- * Walks every field registry of the Portfolio screen over the recorded API responses and fails on a label that is empty, a value
+ * Walks every field registry of the wired screens over the recorded API responses and fails on a label that is empty, a value
  * that renders as "undefined" or "NaN", or a get/format that throws. Sits beside `field-coverage.test.ts`, which checks that every
  * API field is decided; this checks that every decided field draws.
  */
@@ -7,22 +7,27 @@ import { describe, expect, it } from 'vitest'
 import { fieldText, type FieldSpec } from '@/lib/fields'
 import { buildSummary, mapHolding, mapTransactions, type ApiHolding, type ApiPositions, type ApiTransaction } from '@/lib/portfolio-mappers'
 import type { components } from '@/types/openapi.gen'
-import holdingsFixture from '../../../public/mock-data/portfolio/holdings.json'
-import positionsFixture from '../../../public/mock-data/portfolio/positions.json'
-import historyFixture from '../../../public/mock-data/portfolio/value-history.json'
-import reportFixture from '../../../public/mock-data/portfolio/report.json'
-import accountsFixture from '../../../public/mock-data/portfolio/accounts.json'
-import roomFixture from '../../../public/mock-data/portfolio/room.json'
-import transactionsFixture from '../../../public/mock-data/portfolio/transactions.json'
-import exposureFixture from '../../../public/mock-data/portfolio/exposure.json'
-import { HOLDING_FIELDS } from './holdings'
-import { PREVIEW_FIELDS, type PreviewRow } from './preview'
-import { LOOKUP_FIELDS, type StockLookup } from './lookup'
-import { DIVIDEND_FIELDS, mapDividendEvent, type ApiDividendEvent } from './dividends'
-import dividendsFixture from '../../../public/mock-data/portfolio/dividends.json'
-import { TRANSACTION_FIELDS } from './ledger'
-import { ROOM_FIELDS, SUMMARY_FIELDS } from './summary'
-import { EXPOSURE_FIELDS } from './exposure'
+import holdingsFixture from '../../public/mock-data/portfolio/holdings.json'
+import positionsFixture from '../../public/mock-data/portfolio/positions.json'
+import historyFixture from '../../public/mock-data/portfolio/value-history.json'
+import reportFixture from '../../public/mock-data/portfolio/report.json'
+import accountsFixture from '../../public/mock-data/portfolio/accounts.json'
+import roomFixture from '../../public/mock-data/portfolio/room.json'
+import transactionsFixture from '../../public/mock-data/portfolio/transactions.json'
+import exposureFixture from '../../public/mock-data/portfolio/exposure.json'
+import { HOLDING_FIELDS } from './portfolio/holdings'
+import { STOCK_ROW_FIELDS } from './stock'
+import { SCREEN_FIELD_SETS } from '@/screens'
+import { WATCHLIST_FIELDS } from './watchlist'
+import { mapWatchlistEntry, type ApiWatchlistEntry } from '@/lib/watchlist'
+import watchlistFixture from '../../public/mock-data/watchlist/watchlist.json'
+import { PREVIEW_FIELDS, type PreviewRow } from './portfolio/preview'
+import { LOOKUP_FIELDS, type StockLookup } from './portfolio/lookup'
+import { DIVIDEND_FIELDS, mapDividendEvent, type ApiDividendEvent } from './portfolio/dividends'
+import dividendsFixture from '../../public/mock-data/portfolio/dividends.json'
+import { TRANSACTION_FIELDS } from './portfolio/ledger'
+import { ROOM_FIELDS, SUMMARY_FIELDS } from './portfolio/summary'
+import { EXPOSURE_FIELDS } from './portfolio/exposure'
 
 type Api = components['schemas']
 
@@ -59,6 +64,16 @@ const room = Object.values((roomFixture as unknown as Api['RoomResponse']).accou
 const exposure = exposureFixture as unknown as Api['ExposureResponse']
 
 check('holdings', HOLDING_FIELDS, holdings)
+// the shared stock fields, over the same rows and one stock with nothing recorded yet
+check('stock rows', STOCK_ROW_FIELDS, [...holdings, { stock: holdings[0].stock, call: null }])
+// The shared set claims the stock schemas for coverage, which would pass for a field no screen shows: so each must be taken by one.
+describe('shared stock fields', () => {
+  it('are each used by at least one screen', () => {
+    const used = new Set(SCREEN_FIELD_SETS.filter((s) => s.screen !== 'stock').flatMap((s) => s.fields.map((f) => f.id)))
+    expect(STOCK_ROW_FIELDS.map((f) => f.id).filter((id) => !used.has(id))).toEqual([])
+  })
+})
+check('watchlist', WATCHLIST_FIELDS, (watchlistFixture.data as unknown as ApiWatchlistEntry[]).map(mapWatchlistEntry))
 check('transactions', TRANSACTION_FIELDS, mapTransactions(transactionsFixture.data as unknown as ApiTransaction[]))
 check('summary', SUMMARY_FIELDS, summaries)
 check('contribution room', ROOM_FIELDS, room)

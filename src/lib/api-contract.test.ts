@@ -50,7 +50,7 @@ function usedRoutes(): string[] {
       const path = /[`'"](\/api\/[^`'"]*)[`'"]/.exec(call)?.[1] ?? (viaHelper ? `/api/portfolios/\${id}${viaHelper}` : undefined)
       if (!path) continue
       // `apiQuery` is a read made through a POST (lib/api.ts).
-      const method = m[0] === 'apiQuery' ? 'POST' : (/jsonBody\(\s*'(\w+)'/.exec(call)?.[1] ?? 'GET')
+      const method = m[0] === 'apiQuery' ? 'POST' : (/jsonBody\(\s*'(\w+)'/.exec(call)?.[1] ?? /\bmethod:\s*'(\w+)'/.exec(call)?.[1] ?? 'GET')
       // A `${query}` glued to the end of a segment is a query string, not a path part.
       const clean = path.split('?')[0].replace(/([a-z_-])\$\{[^}]*\}/gi, '$1').replace(/\$\{[^}]*\}/g, '{}')
       found.add(`${method.toUpperCase()} ${clean}`)
@@ -72,6 +72,7 @@ describe('API contract', () => {
   it('finds the hooks API calls (so the scan itself cannot silently break)', () => {
     expect(routes.length).toBeGreaterThan(10)
     expect(routes).toContain('GET /api/users')
+    expect(routes).toContain('DELETE /api/watchlist/{}') // a method written in the options, not through jsonBody
     // Portfolio hooks build their path through `path(...)`; the scan must still see them.
     expect(routes).toEqual(expect.arrayContaining(['GET /api/portfolios/{}/positions', 'GET /api/portfolios/{}/holdings', 'POST /api/portfolios/{}/reports', 'GET /api/portfolios/{}/transactions', 'GET /api/portfolios/{}/exposure']))
   })

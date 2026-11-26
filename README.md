@@ -16,7 +16,7 @@ Open http://localhost:5173.
 
 | Setting (`.env.local`) | Behaviour |
 |---|---|
-| `VITE_USE_MOCK=true` | Reads static JSON from `public/mock-data/`. No backend needed. Portfolio and watchlist edits update the in-memory cache only and are lost on reload. |
+| `VITE_USE_MOCK=true` | Reads static JSON from `public/mock-data/`. No backend needed. Reads only: anything that writes says it needs the real backend. |
 | `VITE_USE_MOCK` unset/false | Calls the FastAPI backend at `/api/...`. In dev, Vite proxies `/api` to `VITE_API_PROXY_TARGET` (default `http://localhost:8000`). |
 | `VITE_API_BASE_URL` | Backend origin for production builds served from a different host. Leave empty when the backend serves the built frontend itself. |
 

@@ -70,8 +70,8 @@ async function toHttpError(res: Response, url: string): Promise<ApiError> {
 }
 
 /**
- * @param mockPath  Path of the static mock file, e.g. `/mock-data/watchlist/user_01.json`
- * @param apiPath   Backend path, e.g. `/api/watchlist/user_01`
+ * @param mockPath  Path of the static mock file, e.g. `/mock-data/watchlist/watchlist.json`
+ * @param apiPath   Backend path, e.g. `/api/watchlist?user_id=…`
  * @param options   Standard fetch options. Pass TanStack Query's `signal` for cancellation.
  */
 export async function apiFetch<T>(

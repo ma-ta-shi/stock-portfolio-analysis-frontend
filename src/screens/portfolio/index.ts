@@ -8,11 +8,11 @@ import { LOOKUP_FIELDS, LOOKUP_NOT_SHOWN } from './lookup'
 import { PREVIEW_FIELDS, PREVIEW_NOT_SHOWN } from './preview'
 import { ROOM_FIELDS, SUMMARY_FIELDS, SUMMARY_NOT_SHOWN } from './summary'
 
-/** The Portfolio page: header, Holdings, Closed positions, Transactions and Allocation. */
+/** The Portfolio page: header, Holdings, Closed positions, Transactions and Allocation. The stock and its call are the shared set (`../stock`). */
 export const PORTFOLIO_SCREEN: ScreenFieldSet = {
   screen: 'portfolio',
   schemas: [
-    'HoldingResponse', 'StockSummary', 'StockSnapshotResponse', 'AnalysisCallResponse', 'PositionLineResponse', 'ScopeValueResponse',
+    'HoldingResponse', 'PositionLineResponse', 'ScopeValueResponse',
     'PositionsResponse', 'ConfirmationResponse', 'PortfolioAccountResponse', 'PortfolioResponse', 'ReportResponse', 'ScopeReportResponse',
     'PeriodResponse', 'ProfitLinesResponse', 'TaxEstimateResponse', 'PerformanceResponse', 'FundResultResponse', 'FlowResponse',
     'ValueHistoryResponse', 'ValuePointResponse', 'RoomResponse', 'AccountRoomResponse', 'RoomEventResponse', 'ExposureResponse',
