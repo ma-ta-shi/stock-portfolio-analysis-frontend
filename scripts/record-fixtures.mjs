@@ -30,6 +30,10 @@ const SCREENS = {
     { file: 'predictions', path: `/api/predictions?stock_id=${ctx.stockId}&page=1&per_page=100` },
     { file: 'result', path: `/api/analysis/${ctx.runId}` },
   ],
+  settings: (ctx) => [
+    { file: 'profile', path: `/api/users/${ctx.userId}` },
+    { file: 'order-settings', path: '/api/order-settings/schema' },
+  ],
   watchlist: (ctx) => [{ file: 'watchlist', path: `/api/watchlist?user_id=${ctx.userId}&include=snapshot&page=1&per_page=100` }],
   portfolio: (ctx) => [
     { file: 'portfolios', path: `/api/portfolios?user_id=${ctx.userId}` },

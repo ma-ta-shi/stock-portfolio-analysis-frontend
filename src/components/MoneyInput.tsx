@@ -2,7 +2,8 @@ import type { ComponentProps } from 'react'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 
-type MoneyInputProps = Omit<ComponentProps<typeof Input>, 'type'>
+/** `type="text"` where blank means something: a number input reports text it cannot read ("12e") as blank. */
+type MoneyInputProps = ComponentProps<typeof Input>
 
 /** Non-negative decimal input with a leading "$" adornment. */
 export function MoneyInput({ className, ...props }: MoneyInputProps) {

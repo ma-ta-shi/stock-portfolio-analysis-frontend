@@ -1,0 +1,26 @@
+{
+  "province": "ON",
+  "marginal_tax_rate_override_pct": null,
+  "income_annual": 85000,
+  "tfsa_room_remaining": 32000,
+  "tfsa_room_as_of": "2026-09-29T20:52:46.598309",
+  "rrsp_room_remaining": 28000,
+  "rrsp_room_as_of": "2026-09-29T20:52:46.598309",
+  "time_sensitive_cash_needs": [
+    {
+      "description": "Car replacement fund",
+      "amount": 12000,
+      "deadline": "2027-06-30"
+    }
+  ],
+  "max_position_size_pct": 10,
+  "max_sector_weight_pct": 30,
+  "rrsp_annual_contribution_cap": 15300,
+  "rrsp_claimed_amount": 0,
+  "rrsp_claimed_tax_year": 2026,
+  "rrsp_claimed_as_of": "2026-01-01T00:00:00",
+  "user_id": "e63ca677-5e2a-4177-8dde-9a0c78e10df3",
+  "display_name": "Test User",
+  "is_active": true,
+  "marginal_tax_rate_pct": 29.65
+}

@@ -8,9 +8,6 @@ import { formatMoney, formatPct } from '@/lib/format'
 import { mockLedgerHooks } from '@/test/ledger-mocks'
 
 vi.mock('@/hooks/use-portfolio')
-vi.mock('@/hooks/use-user-profile', () => ({
-  useUserProfile: () => ({ data: undefined, isLoading: false, isError: false }),
-}))
 vi.mock('@/hooks/use-fx-rates', () => ({
   useFxRates: () => ({ rates: { CAD: 1, USD: 1.4 }, isLoading: false }),
 }))

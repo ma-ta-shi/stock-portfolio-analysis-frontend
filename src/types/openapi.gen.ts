@@ -1655,6 +1655,26 @@ export interface components {
             base_as_of: string;
             /** Estimated */
             estimated: boolean;
+            /**
+             * Year
+             * @description The year `annual_limit` and `contributed_this_year` are for.
+             */
+            year: number;
+            /**
+             * Annual Limit
+             * @description That year's TFSA limit, or the RRSP maximum, in CAD.
+             */
+            annual_limit: number;
+            /**
+             * Limit Estimated
+             * @description True when the year has no published limit here and the latest known one stands in.
+             */
+            limit_estimated: boolean;
+            /**
+             * Contributed This Year
+             * @description CAD contributed for the year by the record (cash, and securities moved in kind). RRSP: for that tax year, with the owner's own figure for what was contributed before the record began.
+             */
+            contributed_this_year: number;
             /** Events */
             events: components["schemas"]["RoomEventResponse"][];
             /** Shortfalls */

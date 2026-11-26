@@ -1,445 +1,278 @@
-import { useUserProfile } from '@/hooks/use-user-profile'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { Badge } from '@/components/ui/badge'
-import type { ReactNode } from 'react'
+import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
+import { useBlocker } from 'react-router-dom'
+import { DiscardChangesDialog } from '@/components/DiscardChangesDialog'
+import { FormField } from '@/components/FormField'
+import { MoneyInput } from '@/components/MoneyInput'
 import { QueryError } from '@/components/QueryError'
-import { formatCAD, formatEnumLabel, formatPercent, parseDate } from '@/lib/format'
-import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { useAccounts, useRoom } from '@/hooks/use-portfolio'
+import { usePortfolioId } from '@/hooks/use-portfolio-id'
+import { useOrderSettingsSchema, useSaveSettings } from '@/hooks/use-settings'
+import { useUserProfile } from '@/hooks/use-user-profile'
+import { ApiError } from '@/lib/api'
+import { fieldText } from '@/lib/fields'
+import { formatDate, localDateInputValue } from '@/lib/format'
+import { notConnectedMessage } from '@/lib/gaps'
 import { TONE_TEXT } from '@/lib/labels'
-import type { GoalPriority, InvestmentGoalType, RrspContributionStrategy } from '@/types'
+import {
+  PROFILE_INPUTS,
+  accountInputs,
+  inputError,
+  ruleInput,
+  savedValue,
+  type OptimizerSettings,
+  type Profile,
+  type SettingInput,
+  type Values,
+} from '@/lib/settings-form'
+import { setUnsaved } from '@/lib/unsaved'
+import { cn } from '@/lib/utils'
+import { ROOM_FIELDS } from '@/screens/portfolio/summary'
+import { TAX_FIELDS, YEAR_FIELDS } from '@/screens/settings'
 
-function InfoRow({ label, value, note }: { label: string; value: ReactNode; note?: string }) {
+const ACCOUNTS = ['tfsa', 'rrsp', 'trading'] as const
+const [ROOM_TODAY] = ROOM_FIELDS
+
+function Card({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <div className="flex items-start justify-between py-2 border-b border-border last:border-0">
-      <div>
-        <span className="text-sm text-muted-foreground">{label}</span>
-        {note && <div className="text-xs text-muted-foreground mt-0.5">{note}</div>}
-      </div>
-      <span className="text-sm font-medium text-right max-w-xs">{value}</span>
-    </div>
+    <section aria-label={title} className="bg-card border border-border rounded-lg p-4 space-y-3">
+      <h2 className="text-sm font-medium">{title}</h2>
+      {children}
+    </section>
   )
 }
 
-function NotificationRow({ label, enabled }: { label: string; enabled: boolean }) {
+/** A figure the page only shows. */
+function Figure({ label, value }: { label: string; value: ReactNode }) {
   return (
-    <div className="flex items-center justify-between py-2 border-b border-border last:border-0">
+    <div className="flex items-start justify-between gap-4 py-1.5 border-b border-border">
       <span className="text-sm text-muted-foreground">{label}</span>
-      <span
-        className={cn(
-          'inline-block w-2.5 h-2.5 rounded-full',
-          enabled ? 'bg-emerald-500' : 'bg-muted-foreground/30',
-        )}
-      >
-        <span className="sr-only">{enabled ? 'On' : 'Off'}</span>
-      </span>
+      <span className="text-sm font-medium text-right">{value}</span>
     </div>
   )
 }
 
-const RISK_DESCRIPTIONS: Record<string, string> = {
-  conservative: 'Capital preservation — prioritise stability and income over growth.',
-  moderate: 'Balanced — willing to accept volatility in exchange for higher long-term returns.',
-  aggressive: 'Growth-focused — comfortable with significant swings for maximum long-term gain.',
+interface FieldsProps {
+  value: (input: SettingInput) => string
+  set: (input: SettingInput, value: string) => void
 }
 
-const GOAL_TYPE_LABELS: Record<InvestmentGoalType, string> = {
-  early_retirement: 'Early Retirement',
-  passive_income: 'Passive Income',
-  down_payment: 'Down Payment',
-  education: 'Education',
-  wealth_building: 'Wealth Building',
-  emergency_fund: 'Emergency Fund',
-  other: 'Other',
-}
-
-const PRIORITY_COLORS: Record<GoalPriority, string> = {
-  high: 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-400',
-  medium: 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400',
-  low: 'bg-muted text-muted-foreground',
-}
-
-const RRSP_STRATEGY_LABELS: Record<RrspContributionStrategy, string> = {
-  maximize_each_year: 'Maximize each year',
-  maximize_when_possible: 'Maximize when possible',
-  targeted_deduction: 'Targeted deduction (match tax bracket)',
-  system_advised: 'Let the system advise',
-}
-
-const RRSP_STRATEGY_DESCRIPTIONS: Record<RrspContributionStrategy, string> = {
-  maximize_each_year: 'Always contribute the maximum RRSP room annually.',
-  maximize_when_possible: 'Contribute as much as cash flow allows, without forcing it.',
-  targeted_deduction: 'Contribute only enough to bring income into a lower tax bracket.',
-  system_advised: 'The portfolio optimizer determines optimal RRSP vs TFSA allocation.',
-}
-
-function ProfileTab() {
-  const { data, isLoading } = useUserProfile()
-
-  if (isLoading) return <div className="h-48 rounded-lg bg-muted animate-pulse" />
-  if (!data) return null
-
-  const f = data.financial_profile
-  const riskColor =
-    f.risk_tolerance === 'aggressive'
-      ? 'bg-red-100 text-red-700 border-red-200'
-      : f.risk_tolerance === 'moderate'
-        ? 'bg-amber-100 text-amber-700 border-amber-200'
-        : 'bg-blue-100 text-blue-700 border-blue-200'
-
+function Editor({ input, value, set, note }: FieldsProps & { input: SettingInput; note?: string }) {
+  const current = value(input)
+  const error = inputError(input, current)
+  const hint = note ?? input.hint
   return (
-    <div className="space-y-4">
-      <div className="bg-card border border-border rounded-lg p-4">
-        <h2 className="text-lg font-semibold">{data.display_name}</h2>
-        <p className="text-xs text-muted-foreground font-mono mt-0.5">{data.user_id}</p>
-        {data.created_at && (
-          <p className="text-xs text-muted-foreground mt-1">
-            Member since{' '}
-            {parseDate(data.created_at).toLocaleDateString('en-CA', {
-              year: 'numeric',
-              month: 'long',
-            })}
-          </p>
-        )}
-      </div>
-
-      <div className="bg-card border border-border rounded-lg p-4">
-        <h3 className="text-sm font-medium mb-2">Tax &amp; Income</h3>
-        <InfoRow label="Province / Territory" value={f.province} />
-        <InfoRow
-          label="Income Bracket"
-          value={f.income_bracket}
-          note="7-bracket scale in $50K increments"
-        />
-        <InfoRow
-          label="Marginal Tax Rate"
-          value={
-            <div className="flex items-center gap-2">
-              <span>{formatPercent(f.marginal_tax_rate)}</span>
-              <span className="text-xs text-muted-foreground">
-                {f.marginal_tax_rate_is_manual ? '(manual override)' : '(auto-calculated)'}
-              </span>
-            </div>
-          }
-        />
-      </div>
-
-      <div className="bg-card border border-border rounded-lg p-4">
-        <h3 className="text-sm font-medium mb-2">Investment Profile</h3>
-        <InfoRow label="Experience Level" value={f.investment_experience} />
-        <InfoRow
-          label="Risk Tolerance"
-          value={
-            <div className="text-right">
-              <Badge variant="outline" className={cn('text-xs', riskColor)}>
-                {f.risk_tolerance}
-              </Badge>
-              <p className="text-xs text-muted-foreground mt-1 max-w-52">
-                {RISK_DESCRIPTIONS[f.risk_tolerance]}
-              </p>
-            </div>
-          }
-        />
-        <InfoRow label="Default Account" value={f.default_account_type.toUpperCase()} />
-        <InfoRow label="Default Timeline" value={f.default_timeline.replace(/_/g, ' ')} />
-      </div>
-
-      <div className="bg-card border border-border rounded-lg p-4">
-        <h3 className="text-sm font-medium mb-2">Contribution Room</h3>
-        <InfoRow
-          label="TFSA Room"
-          value={formatCAD(f.tfsa_contribution_room)}
-          note="Auto-updated when transactions are recorded. Jan 1: new limit + prior withdrawals added."
-        />
-        <InfoRow
-          label="RRSP Room"
-          value={formatCAD(f.rrsp_contribution_room)}
-          note="Update each February from your CRA Notice of Assessment."
-        />
-      </div>
-
-      {data.context_and_goals.notes_to_agents && (
-        <div className="bg-card border border-border rounded-lg p-4">
-          <h3 className="text-sm font-medium mb-2">Notes to Agents</h3>
-          <blockquote className="text-sm text-muted-foreground border-l-2 border-border pl-3 italic">
-            {data.context_and_goals.notes_to_agents}
-          </blockquote>
-        </div>
-      )}
-    </div>
+    <FormField label={input.label} hint={hint} error={error ?? undefined}>
+      {(id, describedBy) => {
+        const shared = { id, 'aria-describedby': describedBy, 'aria-invalid': error ? true : undefined }
+        if (input.kind === 'boolean') {
+          return <input {...shared} type="checkbox" className="block h-4 w-4" checked={current === 'true'} onChange={(e) => set(input, String(e.target.checked))} />
+        }
+        const Control = input.kind === 'money' ? MoneyInput : Input
+        return (
+          <Control
+            {...shared}
+            // text, not number: a number input reports "12e" as blank, and blank clears the stored value
+            type="text"
+            inputMode={input.kind === 'text' ? undefined : 'decimal'}
+            placeholder={input.placeholder}
+            value={current}
+            onChange={(e) => set(input, e.target.value)}
+          />
+        )
+      }}
+    </FormField>
   )
 }
 
-function GoalsTab() {
-  const { data, isLoading } = useUserProfile()
-
-  if (isLoading) return <div className="h-48 rounded-lg bg-muted animate-pulse" />
-  if (!data) return null
-
-  const g = data.context_and_goals
-  const goals = g.goals ?? []
-
-  // Fall back to legacy single-goal display if no goals array
-  const legacyGoal = !goals.length && g.primary_goal
-    ? [{
-        name: g.primary_goal.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
-        type: g.primary_goal as InvestmentGoalType,
-        target_amount: g.target_portfolio_value,
-        target_date: undefined,
-        target_passive_income: g.target_annual_passive_income,
-        priority: 'high' as GoalPriority,
-      }]
-    : goals
-
-  const constraints = g.time_sensitive_constraints
-
-  return (
-    <div className="space-y-4">
-      {legacyGoal.length === 0 ? (
-        <div className="bg-card border border-border rounded-lg p-8 text-center text-muted-foreground text-sm">
-          No goals configured yet.
-        </div>
-      ) : (
-        legacyGoal.map((goal, i) => (
-          <div key={i} className="bg-card border border-border rounded-lg p-4 space-y-2">
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="font-medium text-sm">{goal.name}</div>
-                <div className="text-xs text-muted-foreground mt-0.5">
-                  {GOAL_TYPE_LABELS[goal.type] ?? goal.type}
-                </div>
-              </div>
-              <Badge variant="outline" className={cn('text-xs', PRIORITY_COLORS[goal.priority])}>
-                {goal.priority} priority
-              </Badge>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1">
-              {goal.target_amount != null && (
-                <div>
-                  <div className="text-xs text-muted-foreground">Target Amount</div>
-                  <div className="text-sm font-medium">{formatCAD(goal.target_amount)}</div>
-                </div>
-              )}
-              {goal.target_date && (
-                <div>
-                  <div className="text-xs text-muted-foreground">Target Date</div>
-                  <div className="text-sm font-medium">
-                    {parseDate(goal.target_date).toLocaleDateString('en-CA', {
-                      year: 'numeric',
-                      month: 'short',
-                    })}
-                  </div>
-                </div>
-              )}
-              {goal.target_passive_income != null && (
-                <div>
-                  <div className="text-xs text-muted-foreground">Target Passive Income</div>
-                  <div className="text-sm font-medium">
-                    {formatCAD(goal.target_passive_income)}/yr
-                  </div>
-                </div>
-              )}
-            </div>
-            {goal.notes && (
-              <p className="text-xs text-muted-foreground border-t border-border pt-2 mt-1">
-                {goal.notes}
-              </p>
-            )}
-          </div>
-        ))
-      )}
-
-      {constraints.length > 0 && (
-        <div className="bg-card border border-border rounded-lg p-4">
-          <h3 className="text-sm font-medium mb-2">Time-Sensitive Constraints</h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-xs text-muted-foreground border-b border-border">
-                  <th className="text-left py-1 pr-4">Description</th>
-                  <th className="text-right py-1 pr-4">Amount</th>
-                  <th className="text-left py-1 pr-4">Deadline</th>
-                  <th className="text-left py-1">Priority</th>
-                </tr>
-              </thead>
-              <tbody>
-                {constraints.map((c, i) => (
-                  <tr key={i} className="border-b border-border last:border-0">
-                    <td className="py-2 pr-4">{c.description}</td>
-                    <td className="py-2 pr-4 text-right">{formatCAD(c.amount_needed)}</td>
-                    <td className="py-2 pr-4 text-muted-foreground">{c.deadline}</td>
-                    <td className="py-2">
-                      <Badge variant="outline" className="text-xs">
-                        {c.priority}
-                      </Badge>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
-
-function InvestmentPreferencesTab() {
-  const { data, isLoading } = useUserProfile()
-
-  if (isLoading) return <div className="h-48 rounded-lg bg-muted animate-pulse" />
-  if (!data) return null
-
-  const prefs = data.context_and_goals.investment_preferences
-  const divPref = typeof prefs.dividend_preference === 'boolean'
-    ? (prefs.dividend_preference ? 'high' : 'none')
-    : prefs.dividend_preference
-  const geoPref = typeof prefs.geographic_preference === 'string'
-    ? prefs.geographic_preference.replace(/_/g, ' ')
-    : prefs.geographic_preference
-  const rrspStrategy = prefs.rrsp_contribution_strategy
-
-  return (
-    <div className="space-y-4">
-      <div className="bg-card border border-border rounded-lg p-4">
-        <h3 className="text-sm font-medium mb-2">Sectors</h3>
-        <InfoRow
-          label="Sectors of Interest"
-          value={
-            prefs.sectors_of_interest.length > 0 ? (
-              <div className="flex flex-wrap gap-1 justify-end">
-                {prefs.sectors_of_interest.map((s) => (
-                  <Badge key={s} variant="outline" className="text-xs">
-                    {s}
-                  </Badge>
-                ))}
-              </div>
-            ) : (
-              <span className="text-muted-foreground">None specified</span>
-            )
-          }
-        />
-        <InfoRow
-          label="Sectors to Avoid"
-          value={
-            prefs.sectors_to_avoid.length > 0 ? (
-              <div className="flex flex-wrap gap-1 justify-end">
-                {prefs.sectors_to_avoid.map((s) => (
-                  <Badge key={s} variant="outline" className={cn('text-xs', TONE_TEXT.negative)}>
-                    {s}
-                  </Badge>
-                ))}
-              </div>
-            ) : (
-              <span className="text-muted-foreground">None</span>
-            )
-          }
-        />
-      </div>
-
-      <div className="bg-card border border-border rounded-lg p-4">
-        <h3 className="text-sm font-medium mb-2">Position Sizing &amp; Preferences</h3>
-        <InfoRow
-          label="Max Single Position"
-          value={formatPercent(prefs.max_single_position_pct, 0)}
-          note="Applies as a hard cap per holding across all accounts"
-        />
-        <InfoRow
-          label="Dividend Preference"
-          value={
-            <div className="text-right">
-              <span className="capitalize">{divPref}</span>
-              <div className="text-xs text-muted-foreground mt-0.5">
-                {{
-                  high: 'Strong preference for dividend-paying stocks.',
-                  moderate: 'Dividends are welcome but not required.',
-                  minimal: 'Focus on growth; dividends are incidental.',
-                  none: 'Pure growth focus — no dividend filter applied.',
-                }[divPref] ?? ''}
-              </div>
-            </div>
-          }
-        />
-        <InfoRow
-          label="Geographic Preference"
-          value={<span className="capitalize">{geoPref}</span>}
-        />
-      </div>
-
-      {rrspStrategy && (
-        <div className="bg-card border border-border rounded-lg p-4">
-          <h3 className="text-sm font-medium mb-2">RRSP Contribution Strategy</h3>
-          <div className="space-y-1">
-            <div className="text-sm font-medium">{RRSP_STRATEGY_LABELS[rrspStrategy]}</div>
-            <div className="text-xs text-muted-foreground">
-              {RRSP_STRATEGY_DESCRIPTIONS[rrspStrategy]}
-            </div>
-            <p className="text-xs text-muted-foreground border-t border-border pt-2 mt-2">
-              Note: Maximizing RRSP is not always optimal — the benefit depends on your marginal
-              rate at contribution vs your expected effective rate at withdrawal. The system respects
-              this strategy preference when making portfolio optimization recommendations.
-            </p>
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
-
-function NotificationsTab() {
-  const { data, isLoading } = useUserProfile()
-
-  if (isLoading) return <div className="h-48 rounded-lg bg-muted animate-pulse" />
-  if (!data) return null
-
-  const n = data.app_settings.notifications
-  const s = data.app_settings
-
-  return (
-    <div className="space-y-4">
-      <div className="bg-card border border-border rounded-lg p-4">
-        <h3 className="text-sm font-medium mb-2">Notifications</h3>
-        <NotificationRow label="Outlook Changes" enabled={n.recommendation_changes} />
-        <NotificationRow label="Price Alerts" enabled={n.price_alerts} />
-        <NotificationRow label="Prediction Checkpoints" enabled={n.prediction_checkpoints} />
-        <NotificationRow label="Market News" enabled={n.market_news} />
-      </div>
-      <div className="bg-card border border-border rounded-lg p-4">
-        <h3 className="text-sm font-medium mb-2">System</h3>
-        <InfoRow label="LLM Mode" value={formatEnumLabel(s.llm_mode)} />
-        <InfoRow label="Batch Analysis Schedule" value={formatEnumLabel(s.batch_analysis_schedule)} />
-      </div>
-    </div>
-  )
-}
+const grid = 'grid gap-3 sm:grid-cols-2'
 
 export function SettingsPage() {
-  // Each tab reads this same (deduplicated) query; report a failure once, above the tabs.
-  const { isError, error, refetch } = useUserProfile()
+  const profile = useUserProfile()
+  const owner = usePortfolioId()
+  const accounts = useAccounts()
+  const room = useRoom()
+  const schema = useOrderSettingsSchema()
+  const save = useSaveSettings()
+  // only what the owner has typed; everything else shows the stored value
+  const [edits, setEdits] = useState<Values>({})
+
+  const today = localDateInputValue()
+  const year = Number(today.slice(0, 4))
+  const settings = (owner.portfolio?.settings ?? {}) as OptimizerSettings
+  const stored = { profile: profile.data as Profile, accounts: accounts.data?.data ?? [], settings }
+  const rules = (schema.data?.settings ?? []).map(ruleInput)
+  const hasPortfolio = !!owner.portfolio
+  const inputs = [
+    ...(profile.data ? Object.values(PROFILE_INPUTS) : []),
+    ...(profile.data && accounts.data ? ACCOUNTS.flatMap(accountInputs) : []),
+    ...(profile.data && hasPortfolio ? rules : []),
+  ]
+  const saved = (input: SettingInput) => savedValue(input, stored, year)
+  const value = (input: SettingInput) => edits[input.key] ?? saved(input)
+  const changes = inputs.filter((i) => value(i) !== saved(i)).map((input) => ({ input, value: value(input) }))
+  const dirty = changes.length > 0
+  const invalid = changes.some((c) => inputError(c.input, c.value))
+  const fields: FieldsProps = {
+    value,
+    set: (input, next) => {
+      if (!save.isPending) save.reset()
+      setEdits((e) => ({ ...e, [input.key]: next }))
+    },
+  }
+
+  const blocker = useBlocker(dirty)
+  useEffect(() => {
+    setUnsaved(dirty)
+    if (!dirty) return () => setUnsaved(false)
+    const warn = (e: BeforeUnloadEvent) => e.preventDefault()
+    window.addEventListener('beforeunload', warn)
+    return () => {
+      window.removeEventListener('beforeunload', warn)
+      setUnsaved(false)
+    }
+  }, [dirty])
+
+  function submit(e: FormEvent) {
+    e.preventDefault()
+    if (!dirty || invalid || save.isPending) return
+    save.mutate({ changes, today }, {
+      // what was saved now shows the server's value; what was refused stays typed
+      onSuccess: ({ saved: keys }) => setEdits((current) => Object.fromEntries(Object.entries(current).filter(([key]) => !keys.includes(key)))),
+    })
+  }
+
+  const noPortfolio = <p role="status" className="text-sm text-muted-foreground">You have no portfolio yet. {notConnectedMessage('P-R1')}</p>
+  const portfolioError = <QueryError what="portfolio" error={owner.error} onRetry={owner.refetch} compact />
+  // the server names the profile figures room lacks; asking again would not change that
+  const roomIncomplete = room.error instanceof ApiError && room.error.code === 'PROFILE_INCOMPLETE'
+
+  const entered = (day: string | null | undefined) =>
+    `What you had on a day you know. Saving a new figure dates it today, and anything dated that day or earlier counts as already in it. ${day ? `Entered on ${formatDate(day)}.` : 'Not entered yet.'}`
+
+  function roomAccount(account: 'tfsa' | 'rrsp', p: Profile) {
+    const figures = room.data?.accounts[account]
+    const label = account.toUpperCase()
+    return (
+      <div role="group" aria-label={`${label} room`} className="space-y-2">
+        <h3 className="text-sm font-medium">{label}</h3>
+        {figures && (
+          <div>
+            {YEAR_FIELDS.map((spec) => (
+              <Figure key={spec.id} label={spec.label} value={fieldText(spec, figures)} />
+            ))}
+            <Figure label="Room left today" value={`${fieldText(ROOM_TODAY, figures)}${figures.estimated ? ' (estimated)' : ''}`} />
+          </div>
+        )}
+        <div className={grid}>
+          {account === 'tfsa' ? (
+            <Editor {...fields} input={PROFILE_INPUTS.tfsa_room_remaining} note={entered(p.tfsa_room_as_of)} />
+          ) : (
+            <>
+              <Editor {...fields} input={PROFILE_INPUTS.rrsp_room_remaining} note={entered(p.rrsp_room_as_of)} />
+              <Editor {...fields} input={PROFILE_INPUTS.rrsp_annual_contribution_cap} />
+              <Editor {...fields} input={PROFILE_INPUTS.rrsp_claimed_amount} />
+            </>
+          )}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div>
       <h1 className="text-xl font-semibold mb-4">Settings</h1>
-      {isError && <QueryError what="your profile" error={error} onRetry={refetch} className="mb-4" />}
-      <Tabs defaultValue="profile">
-        <TabsList className="mb-4">
-          <TabsTrigger value="profile">Profile</TabsTrigger>
-          <TabsTrigger value="goals">Goals</TabsTrigger>
-          <TabsTrigger value="preferences">Preferences</TabsTrigger>
-          <TabsTrigger value="notifications">Notifications</TabsTrigger>
-        </TabsList>
-        <TabsContent value="profile">
-          <ProfileTab />
-        </TabsContent>
-        <TabsContent value="goals">
-          <GoalsTab />
-        </TabsContent>
-        <TabsContent value="preferences">
-          <InvestmentPreferencesTab />
-        </TabsContent>
-        <TabsContent value="notifications">
-          <NotificationsTab />
-        </TabsContent>
-      </Tabs>
+      {profile.isLoading && <div className="h-48 rounded-lg bg-muted animate-pulse" />}
+      {profile.isError && <QueryError what="your profile" error={profile.error} onRetry={profile.refetch} />}
+      {profile.data && (
+        <form onSubmit={submit} noValidate>
+          <fieldset disabled={save.isPending} className="space-y-4 min-w-0">
+          <Card title="Profile">
+            <Editor {...fields} input={PROFILE_INPUTS.display_name} />
+            <p className="text-xs text-muted-foreground font-mono break-all">{profile.data.user_id}</p>
+          </Card>
+
+          <Card title="Tax & Income">
+            <div>
+              {TAX_FIELDS.map((spec) => (
+                <Figure key={spec.id} label={spec.label} value={fieldText(spec, profile.data)} />
+              ))}
+            </div>
+            <div className={grid}>
+              <Editor {...fields} input={PROFILE_INPUTS.income_annual} />
+              <Editor {...fields} input={PROFILE_INPUTS.marginal_tax_rate_override_pct} />
+            </div>
+          </Card>
+
+          <Card title="Contribution Room">
+            {owner.isEmpty && noPortfolio}
+            {owner.isError && portfolioError}
+            {room.isError && <QueryError what="contribution room" error={room.error} onRetry={roomIncomplete ? undefined : room.refetch} compact />}
+            {roomAccount('tfsa', profile.data)}
+            {roomAccount('rrsp', profile.data)}
+          </Card>
+
+          <Card title="Position Sizing">
+            <div className={grid}>
+              <Editor {...fields} input={PROFILE_INPUTS.max_position_size_pct} />
+              <Editor {...fields} input={PROFILE_INPUTS.max_sector_weight_pct} />
+            </div>
+          </Card>
+
+          <Card title="Accounts">
+            {owner.isEmpty && noPortfolio}
+            {owner.isError && portfolioError}
+            {accounts.isError && <QueryError what="accounts" error={accounts.error} onRetry={accounts.refetch} compact />}
+            {accounts.data &&
+              ACCOUNTS.map((account) => (
+                <div key={account} role="group" aria-label={`${account.toUpperCase()} account`} className="space-y-2">
+                  <h3 className="text-sm font-medium">{account.toUpperCase()}</h3>
+                  <div className={grid}>
+                    {accountInputs(account).map((input) => (
+                      <Editor key={input.key} {...fields} input={input} />
+                    ))}
+                  </div>
+                </div>
+              ))}
+          </Card>
+
+          <Card title="Optimizer Rules">
+            <p className="text-xs text-muted-foreground">Blank uses the default.</p>
+            {owner.isEmpty && noPortfolio}
+            {owner.isError && portfolioError}
+            {schema.isError && <QueryError what="optimizer rules" error={schema.error} onRetry={schema.refetch} compact />}
+            {hasPortfolio && (
+              <div className={grid}>
+                {rules.map((input) => (
+                  <Editor key={input.key} {...fields} input={input} />
+                ))}
+              </div>
+            )}
+          </Card>
+
+          <div className="sticky bottom-0 bg-background border-t border-border py-3 space-y-2">
+            {save.data?.failed.map((f) => (
+              <p key={f.label} role="alert" className="text-sm text-destructive">
+                {f.label} was not saved. {f.message}
+              </p>
+            ))}
+            <div className="flex items-center gap-3">
+              <Button type="submit" disabled={!dirty || invalid || save.isPending}>
+                {save.isPending ? 'Saving…' : 'Save changes'}
+              </Button>
+              <Button type="button" variant="outline" disabled={!dirty || save.isPending} onClick={() => setEdits({})}>
+                Discard
+              </Button>
+              <p role="status" className={cn('text-sm', invalid ? 'text-destructive' : save.data && !save.data.failed.length ? TONE_TEXT.positive : 'text-muted-foreground')}>
+                {invalid ? 'Fix the marked values to save.' : dirty ? 'You have unsaved changes.' : save.data && !save.data.failed.length ? 'Saved.' : ''}
+              </p>
+            </div>
+          </div>
+          </fieldset>
+        </form>
+      )}
+      <DiscardChangesDialog open={blocker.state === 'blocked'} onStay={() => blocker.reset?.()} onDiscard={() => blocker.proceed?.()} />
     </div>
   )
 }

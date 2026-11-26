@@ -13,13 +13,6 @@
     "why": "The optimizer's stored proposals replace it in the Optimizer ticket; this page does not touch that tab.",
     "ticket": "86bd5z6n5"
   },
-  "P-S1": {
-    "screen": "portfolio",
-    "kind": "documented",
-    "what": "The portfolio's optimizer settings (PortfolioResponse.settings) are not shown",
-    "why": "They are owner rules edited in Settings, not a Portfolio page figure.",
-    "ticket": "86bd5z6n3"
-  },
   "P-D1": {
     "screen": "portfolio",
     "kind": "missing",
@@ -139,13 +132,6 @@
     "why": "recommendation_id is not sent: proposals are shown by the Optimizer ticket, which links a trade to the proposal it follows.",
     "ticket": "86bd5z6n5"
   },
-  "P-S2": {
-    "screen": "portfolio",
-    "kind": "missing",
-    "what": "Editing an account's settings (commission per trade, conversion cost, reinvest dividends, Norbert's gambit)",
-    "why": "The PATCH route exists; the form belongs with the account settings in the Settings ticket.",
-    "ticket": "86bd5z6n3"
-  },
   "E-1": {
     "screen": "end-to-end",
     "kind": "missing",
@@ -192,13 +178,6 @@
     "screen": "portfolio",
     "kind": "documented",
     "what": "The rest of the performance report in the header: estimated tax (capital gains, dividends and interest on the Trading account), fees, profit lines, return per year, the benchmark fund comparison, and money in and out",
-    "why": "The original design has no such screen (owner decision, 2026-11-25). A candidate for the owner to design; nothing was built.",
-    "ticket": "86bd5z6kr"
-  },
-  "P-N6": {
-    "screen": "portfolio",
-    "kind": "documented",
-    "what": "Per-account settings: commission, conversion cost, Norbert's gambit, reinvesting dividends (shown nowhere; the commission is used as the default fee of a Buy or Sell)",
     "why": "The original design has no such screen (owner decision, 2026-11-25). A candidate for the owner to design; nothing was built.",
     "ticket": "86bd5z6kr"
   },
@@ -291,7 +270,7 @@
     "kind": "not-connected",
     "what": "Running a new analysis from the Stock page",
     "why": "The route exists (POST /api/analysis); the owner chose to leave the button disabled for now (2026-11-25).",
-    "ticket": "86bd5z6n0"
+    "ticket": "86bd5z6kr"
   },
   "S-5": {
     "screen": "stock",
@@ -334,5 +313,54 @@
     "what": "Runs from before the price band, in the history, as a latest call and on the Analysis page",
     "why": "Not loaded or shown (owner, 2026-11-26): no longer informative, and the account-based ones can quote one user's details. A stock whose newest run is one reads as not analysed yet (backend handoff BH-19).",
     "ticket": "86bd5z6n0"
+  },
+  "T-2": {
+    "screen": "settings",
+    "kind": "documented",
+    "what": "Creating a profile on first run",
+    "why": "The original page has no create flow. POST /api/users exists. Creating a portfolio is P-R1.",
+    "ticket": "86bd5z6n3"
+  },
+  "T-3": {
+    "screen": "settings",
+    "kind": "documented",
+    "what": "Change history of a setting, and archiving or restoring a profile",
+    "why": "The API serves both (GET /api/history, DELETE and PATCH is_active); the original page has no place for them.",
+    "ticket": "86bd5z6n3"
+  },
+  "T-5": {
+    "screen": "settings",
+    "kind": "documented",
+    "what": "Time-sensitive cash needs",
+    "why": "Stored, but nothing in the system reads them, so the table was removed (owner, 2026-11-26).",
+    "ticket": "86bd5z6n3"
+  },
+  "T-6": {
+    "screen": "settings",
+    "kind": "missing",
+    "what": "Member since",
+    "why": "The profile has no created date (backend handoff BH-22). The line was removed.",
+    "ticket": "86bd5z6n3"
+  },
+  "T-7": {
+    "screen": "settings",
+    "kind": "documented",
+    "what": "Income bracket, experience, risk tolerance, default account and timeline, notes to agents, goals, sector lists, dividend and geographic preference, RRSP strategy, notification toggles, LLM mode and batch schedule",
+    "why": "Nothing stores or reads them; removed from the page with its tabs (owner, 2026-11-26). Annual income replaces the bracket.",
+    "ticket": "86bd5z6n3"
+  },
+  "T-8": {
+    "screen": "settings",
+    "kind": "documented",
+    "what": "The optimizer's list of stocks to sell",
+    "why": "A trading decision for the Optimizer screen, not a setting (owner, 2026-11-26). Settings keeps the stored list as it is.",
+    "ticket": "86bd5z6n3"
+  },
+  "T-9": {
+    "screen": "settings",
+    "kind": "documented",
+    "what": "Cash balances of the accounts",
+    "why": "Cash waits for deposits and withdrawals (owner, 2026-11-26).",
+    "ticket": "86bd5z6n3"
   }
 }
