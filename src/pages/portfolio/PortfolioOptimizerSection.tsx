@@ -1,153 +1,67 @@
-import { ArrowRight, TrendingUp, TrendingDown, Minus } from 'lucide-react'
-import { usePortfolioOptimizer } from '@/hooks/use-portfolio'
-import { Badge } from '@/components/ui/badge'
+import { useState } from 'react'
+import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { QueryError } from '@/components/QueryError'
-import { formatCAD } from '@/lib/format'
-import { BADGE, TONE_TEXT } from '@/lib/labels'
-import { cn } from '@/lib/utils'
-import type { PortfolioAccountView, SwapSuggestion, RebalanceSuggestion } from '@/types'
+import { Button } from '@/components/ui/button'
+import { useLatestRun, useRunOptimizer } from '@/hooks/use-optimizer'
+import { ApiError, getErrorMessage } from '@/lib/api'
+import { fieldText } from '@/lib/fields'
+import { RUN_FIELDS } from '@/screens/optimizer'
+import type { PortfolioAccountView } from '@/types'
+import { OptimizerRun } from './OptimizerRun'
 
-const riskColors = {
-  lower: TONE_TEXT.positive,
-  neutral: 'text-muted-foreground',
-  higher: TONE_TEXT.negative,
-}
+const [HEADLINE, AS_OF] = RUN_FIELDS
 
-const riskIcons = {
-  lower: TrendingDown,
-  neutral: Minus,
-  higher: TrendingUp,
-}
-
-function SwapCard({ swap }: { swap: SwapSuggestion }) {
-  const RiskIcon = riskIcons[swap.risk_change]
-  return (
-    <div className="border border-border rounded-lg p-4 space-y-3">
-      <div className="flex items-center gap-3">
-        <div className="text-center">
-          <div className="text-xs text-muted-foreground mb-0.5">Sell</div>
-          <div className={cn('font-semibold', TONE_TEXT.negative)}>{swap.sell.ticker}</div>
-          <Badge variant="outline" className="text-xs mt-1">{swap.sell.account_type.toUpperCase()}</Badge>
-        </div>
-        <ArrowRight className="w-5 h-5 text-muted-foreground shrink-0" aria-hidden="true" />
-        <div className="text-center">
-          <div className="text-xs text-muted-foreground mb-0.5">Buy</div>
-          <div className={cn('font-semibold', TONE_TEXT.positive)}>{swap.buy.ticker}</div>
-          <Badge variant="outline" className="text-xs mt-1">{swap.buy.account_type.toUpperCase()}</Badge>
-        </div>
-        <div className="ml-auto text-right space-y-0.5">
-          <div className={cn('text-sm font-medium', TONE_TEXT.positive)}>
-            +{(swap.expected_return_improvement_pct).toFixed(1)}% expected
-          </div>
-          <div className="text-xs text-muted-foreground">
-            {Math.round(swap.confidence * 100)}% confidence
-          </div>
-          <div className={cn('text-xs flex items-center gap-1 justify-end', riskColors[swap.risk_change])}>
-            <RiskIcon className="w-3 h-3" aria-hidden="true" />
-            {swap.risk_change} risk
-          </div>
-        </div>
-      </div>
-      <div className="space-y-1 text-xs text-muted-foreground border-t border-border pt-2">
-        <p><span className="font-medium text-foreground">Sell rationale:</span> {swap.sell.rationale}</p>
-        <p><span className="font-medium text-foreground">Buy rationale:</span> {swap.buy.rationale}</p>
-      </div>
-    </div>
-  )
-}
-
-function RebalanceCard({ suggestion }: { suggestion: RebalanceSuggestion }) {
-  const isIncrease = suggestion.action === 'increase'
-  return (
-    <div className="border border-border rounded-lg p-4 space-y-2">
-      <div className="flex items-start justify-between">
-        <div>
-          <div className="font-semibold">{suggestion.ticker}</div>
-          <div className="text-xs text-muted-foreground mt-0.5">
-            {suggestion.current_weight_pct.toFixed(1)}% → {suggestion.target_weight_pct.toFixed(1)}%
-          </div>
-        </div>
-        <div className="text-right">
-          <Badge
-            className={cn(
-              'text-xs',
-              isIncrease
-                ? BADGE.positive
-                : 'bg-orange-700 text-white',
-            )}
-          >
-            {isIncrease ? '▲' : '▼'} {isIncrease ? 'Add' : 'Trim'} {formatCAD(suggestion.amount_cad)}
-          </Badge>
-          <div className="text-xs text-muted-foreground mt-1">
-            {Math.round(suggestion.confidence * 100)}% confidence
-          </div>
-        </div>
-      </div>
-      <p className="text-xs text-muted-foreground">{suggestion.rationale}</p>
-    </div>
-  )
-}
-
-interface PortfolioOptimizerSectionProps {
-  accountFilter?: PortfolioAccountView
-}
-
-export function PortfolioOptimizerSection({ accountFilter }: PortfolioOptimizerSectionProps) {
-  const { data: rawData, isLoading, isError, error, refetch } = usePortfolioOptimizer()
-
-  const data = rawData && accountFilter && accountFilter !== 'combined'
-    ? {
-        ...rawData,
-        swap_suggestions: rawData.swap_suggestions.filter(
-          (s) => s.sell.account_type === accountFilter || s.buy.account_type === accountFilter,
-        ),
-        // RebalanceSuggestion has no account_type yet, so these can't be filtered per account.
-        rebalance_suggestions: rawData.rebalance_suggestions,
-      }
-    : rawData
-
-  if (isLoading) {
-    return <div className="h-32 rounded-lg bg-muted animate-pulse" />
-  }
-
-  if (isError) {
-    return <QueryError what="optimizer suggestions" error={error} onRetry={refetch} />
-  }
-
-  if (!data) return null
+/** The latest stored run, and the button that makes and saves a new one. */
+export function PortfolioOptimizerSection({ accountFilter = 'combined' }: { accountFilter?: PortfolioAccountView }) {
+  const latest = useLatestRun()
+  const run = useRunOptimizer()
+  const [asking, setAsking] = useState(false)
+  // a portfolio that has never had a run is an ordinary state, not a failure
+  const none = latest.error instanceof ApiError && latest.error.code === 'NO_RUN_STORED'
 
   return (
     <div className="space-y-4">
-      <h2 className="font-semibold">Portfolio Optimizer</h2>
+      <div className="flex items-start justify-between gap-3 flex-wrap">
+        <div>
+          <h2 className="font-semibold">Portfolio Optimizer</h2>
+          {latest.data && (
+            <>
+              <p className="text-sm">{fieldText(HEADLINE, latest.data)}</p>
+              <p className="text-xs text-muted-foreground">
+                {AS_OF.label} {fieldText(AS_OF, latest.data)}. Advice only: nothing is ever traded for you.
+              </p>
+            </>
+          )}
+        </div>
+        <Button size="sm" variant="outline" disabled={run.isPending || !latest.isFetched} onClick={() => setAsking(true)}>
+          {run.isPending ? 'Running…' : 'Run optimizer'}
+        </Button>
+      </div>
 
-      {data.no_changes_needed ? (
-        <div className="border border-border rounded-lg p-6 text-center text-muted-foreground text-sm">
-          Your portfolio is well-positioned — no changes suggested.
-        </div>
-      ) : (
-        <div className="space-y-6">
-          {data.swap_suggestions.length > 0 && (
-            <div className="space-y-3">
-              <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-                Swap Suggestions
-              </h3>
-              {data.swap_suggestions.map((swap, i) => (
-                <SwapCard key={`${swap.sell.ticker}-${swap.buy.ticker}-${i}`} swap={swap} />
-              ))}
-            </div>
-          )}
-          {data.rebalance_suggestions.length > 0 && (
-            <div className="space-y-3">
-              <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-                Rebalance Suggestions
-              </h3>
-              {data.rebalance_suggestions.map((s, i) => (
-                <RebalanceCard key={`${s.ticker}-${i}`} suggestion={s} />
-              ))}
-            </div>
-          )}
-        </div>
+      {run.isError && (
+        <p role="alert" className="text-sm text-destructive">
+          The run was not saved. {getErrorMessage(run.error, { write: true })}
+        </p>
       )}
+      {latest.isLoading && <div className="h-32 rounded-lg bg-muted animate-pulse" />}
+      {none && <p className="text-sm text-muted-foreground">No run has been saved for this portfolio yet.</p>}
+      {latest.isError && !none && <QueryError what="optimizer suggestions" error={latest.error} onRetry={latest.refetch} />}
+      {latest.data && <OptimizerRun run={latest.data} view={accountFilter} />}
+
+      <ConfirmDialog
+        open={asking}
+        title="Run the optimizer now?"
+        confirmLabel="Run and save"
+        onCancel={() => setAsking(false)}
+        onConfirm={() => {
+          setAsking(false)
+          run.mutate()
+        }}
+      >
+        The new run replaces the open suggestions, and the next weekly run replaces it. It does not count toward the weekly
+        "held for N weeks" rules. It uses the prices already recorded (the weekly job fetches new ones; a price more than 7 days old
+        is not used) and leaves out analyses more than a week old.
+      </ConfirmDialog>
     </div>
   )
 }

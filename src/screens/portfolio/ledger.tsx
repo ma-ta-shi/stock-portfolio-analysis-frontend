@@ -90,7 +90,6 @@ export const TRANSACTION_FIELDS = defineFields<Transaction>([
       'TransactionResponse.supersedes_transaction_id',
       'TransactionResponse.move_id',
       'TransactionResponse.in_kind',
-      'TransactionResponse.recommendation_id',
       'TransactionResponse.denied_loss_cad',
     ],
     get: (t) => linkLabels(t).join('; '),
@@ -127,7 +126,6 @@ export const TRANSACTION_FIELDS = defineFields<Transaction>([
   { id: 'reversed_by', label: 'Reversed by', source: 'TransactionResponse.transaction_id', get: (t) => t.reversed_by_transaction_id, tooltip: 'Known only when the reversing row is among those loaded (gap P-T1)', places: ['detail'] },
   { id: 'initiated_by', label: 'Entered by', source: 'TransactionResponse.initiated_by', get: (t) => t.initiated_by, places: ['detail', 'csv'] },
   { id: 'reason_code', label: 'Reason', source: 'TransactionResponse.reason_code', get: (t) => t.reason_code, format: (v) => (v ? String(v).replaceAll('_', ' ') : '—'), places: ['detail', 'csv'] },
-  { id: 'recommendation_id', label: 'Followed proposal', source: 'TransactionResponse.recommendation_id', get: (t) => t.recommendation_id, places: ['detail', 'csv'] },
   { id: 'system_outlook', label: 'System outlook at sale', source: 'TransactionResponse.system_outlook_at_sell', get: (t) => t.system_outlook_at_sell, places: ['detail', 'csv'] },
   { id: 'aligned', label: 'Sale agreed with the system', source: 'TransactionResponse.sell_aligned_with_system', get: (t) => t.sell_aligned_with_system, places: ['detail', 'csv'] },
   { id: 'holding_id', label: 'Position', source: 'TransactionResponse.holding_id', get: (t) => t.holding_id, tooltip: 'Opens this position\'s history', places: ['csv'] },
@@ -143,11 +141,11 @@ export function linkLabels(t: Transaction): string[] {
   if (t.reversed_by_transaction_id) labels.push('Reversed')
   if (t.supersedes_transaction_id) labels.push('Correction')
   if (t.move_id) labels.push(t.in_kind ? 'Move (in kind)' : 'Move')
-  if (t.recommendation_id) labels.push('Followed a proposal')
   if (t.denied_loss_cad) labels.push('Superficial loss')
   return labels
 }
 
 export const TRANSACTION_NOT_SHOWN: Partial<Record<ApiFieldKey, NotShown>> = {
+  'TransactionResponse.recommendation_id': { reason: 'Following an optimizer suggestion is never tracked for the user (owner)' },
   'TransactionResponse.portfolio_id': { reason: 'An id of the portfolio the page is already in' },
 }

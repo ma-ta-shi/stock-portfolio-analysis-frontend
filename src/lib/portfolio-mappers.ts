@@ -103,7 +103,6 @@ export function mapTransaction(t: ApiTransaction): Transaction {
     in_kind: t.in_kind,
     initiated_by: t.initiated_by,
     reason_code: t.reason_code ?? null,
-    recommendation_id: t.recommendation_id ?? null,
     denied_loss_cad: t.denied_loss_cad ?? null,
     denied_loss_lost_cad: t.denied_loss_lost_cad ?? null,
     cost_removed_cad: t.cost_removed_cad ?? null,

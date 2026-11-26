@@ -47,6 +47,9 @@ const SCREENS = {
     { file: 'transactions', path: `/api/portfolios/${ctx.portfolioId}/transactions?page=1&per_page=100` },
     { file: 'exposure', path: `/api/portfolios/${ctx.portfolioId}/exposure` },
     { file: 'dividends', path: `/api/portfolios/${ctx.portfolioId}/dividends?page=1&per_page=100` },
+    // the latest stored optimizer run (a seeded database has none), and an answer that saves nothing
+    { file: 'proposals', path: `/api/portfolios/${ctx.portfolioId}/proposals` },
+    { file: 'ask', method: 'POST', path: `/api/portfolios/${ctx.portfolioId}/ask`, body: { amount_cad: 5000, account: null, store: false } },
   ],
   // The USD/CAD observations. Last, because the backend reads them from the Bank of Canada: an outage stops only this one.
   market: () => [{ file: 'exchange-rates', path: '/api/exchange-rates' }],

@@ -95,7 +95,6 @@ export interface Transaction {
   in_kind: boolean
   initiated_by: 'owner' | 'system'
   reason_code: Api['TransactionResponse']['reason_code']
-  recommendation_id: string | null
   denied_loss_cad: number | null
   denied_loss_lost_cad: number | null
   cost_removed_cad: number | null

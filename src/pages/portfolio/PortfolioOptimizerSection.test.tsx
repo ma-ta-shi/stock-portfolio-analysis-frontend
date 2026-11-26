@@ -1,72 +1,172 @@
-import { describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen } from '@testing-library/react'
+/** The Optimizer tab and the "Available to trade" answer, over a recorded run and a recorded answer. */
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ApiError } from '@/lib/api'
+import { noOrdersMessage, runSteps, type Order, type Run } from '@/lib/optimizer'
+import askFixture from '../../../public/mock-data/portfolio/ask.json'
+import fixture from '../../../public/mock-data/portfolio/proposals.json'
+import { AvailableToTrade } from './AvailableToTrade'
+import { OptimizerRun } from './OptimizerRun'
 import { PortfolioOptimizerSection } from './PortfolioOptimizerSection'
-import type { PortfolioOptimizerResult } from '@/types'
 
-vi.mock('@/hooks/use-portfolio')
-import { usePortfolioOptimizer } from '@/hooks/use-portfolio'
+const api = vi.hoisted(() => ({ apiFetch: vi.fn(), apiQuery: vi.fn() }))
+vi.mock('@/lib/api', async (importOriginal) => ({ ...(await importOriginal<typeof import('@/lib/api')>()), ...api }))
+vi.mock('@/hooks/use-portfolio-id', () => ({ usePortfolioId: () => ({ portfolioId: 'p1' }) }))
 
-const result: PortfolioOptimizerResult = {
-  user_id: 'user_01',
-  as_of: '2026-03-25T00:00:00Z',
-  no_changes_needed: false,
-  swap_suggestions: [
-    {
-      sell: { ticker: 'ENB.TO', account_type: 'rrsp', rationale: 'Weak outlook' },
-      buy: { ticker: 'WSP.TO', account_type: 'rrsp', rationale: 'Strong outlook' },
-      confidence: 0.68,
-      expected_return_improvement_pct: 4.2,
-      risk_change: 'lower',
-    },
-    {
-      sell: { ticker: 'SHOP.TO', account_type: 'tfsa', rationale: 'r' },
-      buy: { ticker: 'AAPL', account_type: 'tfsa', rationale: 'r' },
-      confidence: 0.5,
-      expected_return_improvement_pct: 2,
-      risk_change: 'higher',
-    },
-  ],
-  rebalance_suggestions: [
-    { ticker: 'RY.TO', current_weight_pct: 5.2, target_weight_pct: 8, action: 'increase', amount_cad: 2500, confidence: 0.74, rationale: 'Underweight' },
-  ],
-}
-const mockQuery = (overrides: object) =>
-  vi.mocked(usePortfolioOptimizer).mockReturnValue({ isLoading: false, isError: false, ...overrides } as unknown as ReturnType<typeof usePortfolioOptimizer>)
+const recorded = fixture as unknown as Run
+const base = recorded.orders[0]
+const order = (over: Partial<Order>): Order => ({ ...base, ...over })
+const run = (over: Partial<Run>): Run => ({ ...recorded, orders: [], transfers: [], waiting: [], drift: [], warnings: [], missing: [], ...over })
+
+const wrap = (ui: React.ReactNode) =>
+  render(<QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>{ui}</QueryClientProvider>)
+const card = (name: RegExp) => screen.getByRole('article', { name })
+
+afterEach(() => vi.resetAllMocks())
+
+describe('runSteps', () => {
+  const sell = order({ sequence: 1, side: 'sell', account: 'trading', chain: 'relocate:tfsa' })
+  const move = order({ sequence: 2, kind: 'transfer', side: 'transfer', account: 'trading', to_account: 'tfsa', ticker: null, chain: 'relocate:tfsa' })
+  const other = order({ sequence: 3, account: 'rrsp', chain: null })
+  const r = run({ orders: [other, sell], transfers: [move] })
+
+  it('groups the linked steps in order and keeps a group whole under either of its accounts', () => {
+    expect(runSteps(r).linked.map((g) => g.map((s) => s.order.sequence))).toEqual([[1, 2]])
+    expect(runSteps(r).single.map((s) => s.order.sequence)).toEqual([3])
+    expect(runSteps(r, 'tfsa').linked[0]).toHaveLength(2)
+    expect(runSteps(r, 'tfsa').single).toEqual([])
+    expect(runSteps(r, 'rrsp').linked).toEqual([])
+  })
+
+  it('drops the analysis note, and what is built from it, when it predates the price band', () => {
+    const old = order({ view: { ...base.view!, exclusions: ['run_predates_band'] }, what_would_change: ['Your TFSA room changes'] })
+    const [step] = runSteps(run({ orders: [old] })).single
+    expect(step.note).toBeNull()
+    expect(step.whatWouldChange).toEqual([])
+  })
+})
+
+describe('noOrdersMessage', () => {
+  const quiet = (over: Partial<Run>) => run({ no_changes: true, report: { ...recorded.report!, excluded: [] }, ...over })
+
+  it('claims "well-positioned" only when nothing waits and nothing was left out', () => {
+    expect(noOrdersMessage(quiet({}))).toMatch(/well-positioned/)
+    expect(noOrdersMessage(quiet({ waiting: recorded.waiting }))).toBe('No orders to place now; what is waiting is listed below.')
+    expect(noOrdersMessage(quiet({ report: recorded.report }))).toMatch(/^No changes suggested. Left out .*RDDT/)
+    expect(noOrdersMessage(quiet({ transfers: [base] }))).toBeNull()
+    expect(noOrdersMessage(recorded)).toBeNull()
+  })
+})
+
+describe('OptimizerRun', () => {
+  it('draws every recorded order and waiting item, with held and target only where the run has them', () => {
+    render(<OptimizerRun run={recorded} view="combined" />)
+    expect(screen.getAllByRole('article')).toHaveLength(recorded.orders.length + recorded.transfers.length)
+    expect(within(screen.getByRole('region', { name: 'Waiting' })).getAllByRole('listitem')).toHaveLength(recorded.waiting.length)
+    const matched = recorded.orders.filter((o) => recorded.drift.some((d) => d.account === o.account && d.ticker === o.ticker))
+    expect(screen.queryAllByText(/held, target/)).toHaveLength(matched.length)
+    expect(screen.queryByText(/confidence/)).not.toBeInTheDocument()
+  })
+
+  it('draws a sale, a move and the rebuy date, and says why an analysis is not usable', () => {
+    const sale = order({ sequence: 1, side: 'sell', ticker: 'AAA', amount_cad: 100, rebuy_not_before: '2026-12-21', view: { ...base.view!, exclusions: ['stale'] } })
+    const move = order({ sequence: 2, side: 'transfer', ticker: null, account: 'trading', to_account: 'tfsa', amount_cad: 100, shares: null, view: null })
+    render(<OptimizerRun run={run({ orders: [sale], transfers: [move] })} view="combined" />)
+    expect(card(/^Sell \$100\.00 AAA$/)).toHaveTextContent('Do not rebuy before')
+    expect(card(/AAA/)).toHaveTextContent('Analysis not usable')
+    expect(card(/^Move \$100\.00 Cash$/)).toHaveTextContent('TRADING to TFSA')
+  })
+
+  it('keeps a whole-portfolio wait under every account, and does not call it cash', () => {
+    render(<OptimizerRun run={recorded} view="tfsa" />)
+    const waiting = screen.getByRole('region', { name: 'Waiting' })
+    expect(waiting).toHaveTextContent('Sell $5,237.74 (whole portfolio)')
+    expect(waiting).not.toHaveTextContent('RY.TO (RRSP)')
+  })
+
+  it('opens the details of a card', () => {
+    render(<OptimizerRun run={run({ orders: [base] })} view="combined" />)
+    expect(screen.queryByText('Commission')).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /Show details/ }))
+    expect(screen.getByText('Commission')).toBeInTheDocument()
+  })
+
+  it('says when nothing is proposed, when the run is dry, and what it did not keep', () => {
+    render(<OptimizerRun run={run({ no_changes: true, dry_run: true, report: undefined, warnings: ['No price for X'], missing: ['target_book'] })} view="combined" />)
+    expect(screen.getByText(/no changes suggested/)).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent('not a basis for orders')
+    const warnings = screen.getByRole('region', { name: 'Warnings' })
+    expect(warnings).toHaveTextContent('No price for X')
+    expect(warnings).toHaveTextContent('This run did not keep: target book')
+  })
+})
 
 describe('PortfolioOptimizerSection', () => {
-  it('shows swaps with whole-percent improvement and fractional confidence', () => {
-    mockQuery({ data: result })
-    render(<PortfolioOptimizerSection accountFilter="combined" />)
-    expect(screen.getByText('+4.2% expected')).toBeInTheDocument() // whole-percent field (see CLAUDE.md)
-    expect(screen.getByText('68% confidence')).toBeInTheDocument()
-    expect(screen.getByText('lower risk')).toBeInTheDocument()
+  it('shows the stored run', async () => {
+    api.apiFetch.mockResolvedValue(recorded)
+    wrap(<PortfolioOptimizerSection />)
+    expect(await screen.findByText(recorded.headline)).toBeInTheDocument()
+    expect(screen.getByText(/^Run of .*weekly run/)).toBeInTheDocument()
   })
 
-  it('shows rebalances with the amount in CAD', () => {
-    mockQuery({ data: result })
-    render(<PortfolioOptimizerSection accountFilter="combined" />)
-    expect(screen.getByText('5.2% → 8.0%')).toBeInTheDocument()
-    expect(screen.getByText(/Add \$2,500\.00/)).toBeInTheDocument()
+  it('treats a portfolio with no run as an empty state, not an error', async () => {
+    api.apiFetch.mockRejectedValue(new ApiError('No run stored', 404, 'NO_RUN_STORED', '/proposals'))
+    wrap(<PortfolioOptimizerSection />)
+    expect(await screen.findByText('No run has been saved for this portfolio yet.')).toBeInTheDocument()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Run optimizer' })).toBeEnabled()
   })
 
-  it('filters swaps to the selected account', () => {
-    mockQuery({ data: result })
-    render(<PortfolioOptimizerSection accountFilter="tfsa" />)
-    expect(screen.getByText('SHOP.TO')).toBeInTheDocument()
-    expect(screen.queryByText('ENB.TO')).not.toBeInTheDocument()
+  it('runs only after a confirmation, saves, and reads the new run', async () => {
+    api.apiFetch.mockResolvedValue(recorded)
+    wrap(<PortfolioOptimizerSection />)
+    await screen.findByText(recorded.headline)
+    fireEvent.click(screen.getByRole('button', { name: 'Run optimizer' }))
+    expect(api.apiFetch).toHaveBeenCalledTimes(1)
+    fireEvent.click(screen.getByRole('button', { name: 'Run and save' }))
+    await waitFor(() => expect(api.apiFetch).toHaveBeenCalledTimes(3)) // the run, then the stored run again
+    const [, url, init] = api.apiFetch.mock.calls[1]
+    expect(url).toBe('/api/portfolios/p1/proposal-runs')
+    expect(JSON.parse(init.body)).toEqual({ store: true, allow_stale: false })
   })
 
-  it('says so when no changes are needed', () => {
-    mockQuery({ data: { ...result, no_changes_needed: true } })
-    render(<PortfolioOptimizerSection accountFilter="combined" />)
-    expect(screen.getByText(/no changes suggested/)).toBeInTheDocument()
+  it("shows the server's reason when a run is refused", async () => {
+    api.apiFetch.mockImplementation((_mock: string, url: string) =>
+      url.endsWith('/proposal-runs')
+        ? Promise.reject(new ApiError('No benchmark history', 422, 'NO_BENCHMARK_HISTORY', '/proposal-runs'))
+        : Promise.resolve(recorded),
+    )
+    wrap(<PortfolioOptimizerSection />)
+    await screen.findByText(recorded.headline)
+    fireEvent.click(screen.getByRole('button', { name: 'Run optimizer' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Run and save' }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('No benchmark history')
+  })
+})
+
+describe('AvailableToTrade', () => {
+  const answer = askFixture as unknown as Run
+
+  it('asks without saving and shows the answer in its own panel', async () => {
+    api.apiQuery.mockResolvedValue(answer)
+    wrap(<AvailableToTrade />)
+    fireEvent.change(screen.getByLabelText('Available to trade:'), { target: { value: '5000' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Analyze allocation' }))
+    const panel = await screen.findByRole('region', { name: 'Allocation answer' })
+    expect(panel).toHaveTextContent(answer.headline)
+    expect(panel).toHaveTextContent('Not saved')
+    expect(api.apiQuery.mock.calls[0].slice(1)).toEqual(['/api/portfolios/p1/ask', { amount_cad: 5000, account: null, store: false }])
+    expect(api.apiFetch).not.toHaveBeenCalled()
   })
 
-  it('shows an error with retry', () => {
-    const refetch = vi.fn()
-    mockQuery({ data: undefined, isError: true, error: new Error('x'), refetch })
-    render(<PortfolioOptimizerSection accountFilter="combined" />)
-    fireEvent.click(screen.getByRole('button', { name: 'Retry' }))
-    expect(refetch).toHaveBeenCalled()
+  it('sends the chosen account', async () => {
+    api.apiQuery.mockResolvedValue(answer)
+    wrap(<AvailableToTrade />)
+    fireEvent.change(screen.getByLabelText('Available to trade:'), { target: { value: '100' } })
+    fireEvent.change(screen.getByLabelText('in'), { target: { value: 'tfsa' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Analyze allocation' }))
+    await waitFor(() => expect(api.apiQuery).toHaveBeenCalled())
+    expect(api.apiQuery.mock.calls[0][2]).toMatchObject({ account: 'tfsa' })
   })
 })

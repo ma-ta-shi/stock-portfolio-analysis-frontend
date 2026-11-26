@@ -54,9 +54,12 @@ test('watchlist: lists the recorded stocks, expands a row, and says adding needs
   await expect(page.getByRole('dialog').getByRole('alert')).toContainText('Writes need the real backend')
 })
 
-test('"Analyze allocation" explains it is not connected yet', async ({ page }) => {
+test('Optimizer tab shows the stored run, and "Analyze allocation" answers without saving', async ({ page }) => {
   await page.goto('/portfolio?tab=optimizer')
+  await expect(page.getByRole('region', { name: 'Rebalance Suggestions' })).toBeVisible()
+  await page.getByRole('button', { name: /Show details/ }).first().click()
+  await expect(page.getByText('Commission').first()).toBeVisible()
   await page.getByLabel('Available to trade:').fill('5000')
   await page.getByRole('button', { name: 'Analyze allocation' }).click()
-  await expect(page.getByRole('alert')).toContainText('isn’t connected to the backend yet')
+  await expect(page.getByRole('region', { name: 'Allocation answer' })).toContainText('Not saved')
 })

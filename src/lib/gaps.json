@@ -6,13 +6,6 @@
     "why": "Creating a profile and a portfolio is the first-run flow of the Settings ticket.",
     "ticket": "86bd5z6n3"
   },
-  "P-O1": {
-    "screen": "portfolio",
-    "kind": "missing",
-    "what": "The Optimizer tab and its Available to trade box still show the retired suggestions model",
-    "why": "The optimizer's stored proposals replace it in the Optimizer ticket; this page does not touch that tab.",
-    "ticket": "86bd5z6n5"
-  },
   "P-D1": {
     "screen": "portfolio",
     "kind": "missing",
@@ -124,13 +117,6 @@
     "what": "Recording an RRSP contribution for the previous tax year (January and February)",
     "why": "The form does not send tax_year, so a contribution counts for the year of its date; the API allows the prior year during the first 60 days.",
     "ticket": "86bd5z6mq"
-  },
-  "P-W12": {
-    "screen": "portfolio",
-    "kind": "missing",
-    "what": "Marking a trade as following an optimizer proposal",
-    "why": "recommendation_id is not sent: proposals are shown by the Optimizer ticket, which links a trade to the proposal it follows.",
-    "ticket": "86bd5z6n5"
   },
   "E-1": {
     "screen": "end-to-end",
@@ -362,5 +348,75 @@
     "what": "Cash balances of the accounts",
     "why": "Cash waits for deposits and withdrawals (owner, 2026-11-26).",
     "ticket": "86bd5z6n3"
+  },
+  "O-1": {
+    "screen": "optimizer",
+    "kind": "documented",
+    "what": "History of optimizer runs",
+    "why": "GET .../proposal-runs lists them; the original tab shows only the latest.",
+    "ticket": "86bd5z6n5"
+  },
+  "O-2": {
+    "screen": "optimizer",
+    "kind": "documented",
+    "what": "The target book: what to hold, in which account, and why",
+    "why": "GET .../target-book serves it; the original tab has no place for it.",
+    "ticket": "86bd5z6n5"
+  },
+  "O-3": {
+    "screen": "optimizer",
+    "kind": "documented",
+    "what": "The account matrix: the after-tax return of each stock in each account",
+    "why": "GET .../account-matrix serves it; no place in the original design.",
+    "ticket": "86bd5z6n5"
+  },
+  "O-4": {
+    "screen": "optimizer",
+    "kind": "documented",
+    "what": "Raising cash: which holdings to sell",
+    "why": "POST .../raise-cash serves it; no place in the original design.",
+    "ticket": "86bd5z6n5"
+  },
+  "O-5": {
+    "screen": "optimizer",
+    "kind": "documented",
+    "what": "The monthly plan across accounts",
+    "why": "POST .../monthly-plan serves it; no place in the original design. The ask answer uses the same split.",
+    "ticket": "86bd5z6n5"
+  },
+  "O-6": {
+    "screen": "optimizer",
+    "kind": "documented",
+    "what": "A run's report and the inputs behind each rule: caps, room, harvest, left-out stocks, currency share, breaches",
+    "why": "Served with every run; the original cards have no place for them.",
+    "ticket": "86bd5z6n5"
+  },
+  "O-7": {
+    "screen": "optimizer",
+    "kind": "documented",
+    "what": "A look without saving, and runs that use analyses over a week old",
+    "why": "The API offers both (store false, allow_stale); the tab runs and saves on fresh analyses only (owner, 2026-11-26).",
+    "ticket": "86bd5z6n5"
+  },
+  "O-8": {
+    "screen": "optimizer",
+    "kind": "documented",
+    "what": "The settings a run used",
+    "why": "Stored with the run; Settings shows the current ones.",
+    "ticket": "86bd5z6n5"
+  },
+  "O-9": {
+    "screen": "optimizer",
+    "kind": "missing",
+    "what": "The predicted lines in dollars or percent without a declared unit (total return, baseline, score, exit tax)",
+    "why": "The API declares no unit for these fields, so they are not drawn.",
+    "ticket": "86bd5z6n5"
+  },
+  "O-10": {
+    "screen": "optimizer",
+    "kind": "missing",
+    "what": "Confidence and \"lower or higher risk\" of a suggestion, current and target weights in percent, and an expected improvement figure",
+    "why": "The old design showed them; the optimizer produces none of them, and none is computed to fill the place.",
+    "ticket": "86bd5z6n5"
   }
 }
