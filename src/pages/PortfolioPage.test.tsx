@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest'
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MemoryRouter, useLocation } from 'react-router-dom'
 import { PortfolioPage } from './PortfolioPage'
@@ -110,12 +110,5 @@ describe('Analyze allocation', () => {
     expect(analyze).toBeDisabled()
     fireEvent.change(screen.getByLabelText('Available to trade:'), { target: { value: '5000' } })
     expect(analyze).toBeEnabled()
-  })
-
-  it('says clearly that it is not connected yet', async () => {
-    renderPage('/portfolio?tab=optimizer')
-    fireEvent.change(screen.getByLabelText('Available to trade:'), { target: { value: '5000' } })
-    fireEvent.click(screen.getByRole('button', { name: 'Analyze allocation' }))
-    await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('isn’t connected to the backend yet'))
   })
 })

@@ -2,7 +2,7 @@
  * The gap registry: every place the frontend cannot show or do something the owner expects, with why and which ticket
  * closes it. One list (`gaps.json`); the register document `docs/gap-register.md` is generated from it
  * (`npm run gen:gaps`), and `notConnected(id)` in `lib/api.ts` builds the visible error from it, so a control, a label and
- * the document always agree. Ids start with the screen: `P-` portfolio, `W-` watchlist, `S-` stock and analysis,
+ * the document always agree. Ids start with the screen: `P-` portfolio, `W-` watchlist, `S-` stock and analysis, `O-` optimizer,
  * `T-` settings, `F-` feedback, `H-` home, `E-` end-to-end.
  */
 import gaps from './gaps.json'

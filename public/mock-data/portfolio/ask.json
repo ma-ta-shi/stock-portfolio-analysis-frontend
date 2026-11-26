@@ -1,0 +1,793 @@
+{
+  "run_id": null,
+  "portfolio_id": "e3ba3a97-cedc-4d75-9976-0655d9fd9340",
+  "kind": "inquiry",
+  "as_of": "2026-11-26",
+  "created_at": null,
+  "stored": false,
+  "dry_run": false,
+  "settings": {
+    "orders": {
+      "minimum_order": 500,
+      "minimum_holding": 500,
+      "placeholder_minimum_order": 500,
+      "per_run": 10
+    },
+    "drift": {
+      "low": 0.5,
+      "high": 1.5,
+      "stock_share_points": 5
+    },
+    "caps": {
+      "tolerance": 0.5,
+      "trading_tax_ceiling": 0.01
+    },
+    "harvest": {
+      "floor": 100
+    },
+    "tfsa": {
+      "recent_window_days": 365,
+      "recent_bar": 2,
+      "sales_flag": 20
+    },
+    "persistence": {
+      "runs": 2,
+      "fast_lane_jump": 2
+    },
+    "sell": []
+  },
+  "headline": "3 order(s) to place; 2 waiting (not saved)",
+  "no_changes": false,
+  "orders": [
+    {
+      "proposal_id": null,
+      "sequence": 1,
+      "kind": "order",
+      "status": "unsaved",
+      "followed_by": null,
+      "account": "rrsp",
+      "to_account": null,
+      "ticker": "VFV.TO",
+      "side": "buy",
+      "shares": 29,
+      "price": 176.29,
+      "currency": "CAD",
+      "amount_cad": 5112.41,
+      "rule": "deploy_fund",
+      "rule_text": "Park cash in the benchmark fund",
+      "chain": null,
+      "reasons": [
+        {
+          "text": "the book parks 14,151.24 in the fund here and 0.00 is held",
+          "field": null,
+          "value": 14151.24
+        },
+        {
+          "text": "a dollar held there earns 5.64% a year after tax",
+          "field": null,
+          "value": 0.056416
+        }
+      ],
+      "costs": {
+        "commission_cad": 0,
+        "conversion_cad": 0,
+        "cash_effect_cad": 5112.41
+      },
+      "value": {
+        "gap_cad": 14151.24,
+        "held_return": 0.05641637584669912,
+        "utility": null,
+        "benefit_cad": null,
+        "benefit_years": null,
+        "costs_cad": null,
+        "noise_margin_cad": null,
+        "tax_cad": null,
+        "tax_exact": null,
+        "loss": null,
+        "jump": null,
+        "signal_to_noise": null,
+        "qualified_runs": null
+      },
+      "rebuy_not_before": null,
+      "what_would_change": [],
+      "view": null,
+      "predicted": {
+        "after_tax_12m": 0.06538468776923843,
+        "total_return_cad": 0.0679062972162392,
+        "baseline_cad": null,
+        "view_applied": null,
+        "noise_margin_pts": null,
+        "sigma": null,
+        "market_line_12m": null,
+        "score_12m": null,
+        "entry_cost": 0,
+        "exit_tax_cad": null,
+        "tax_rate_pct": null,
+        "usable": true,
+        "flags": [],
+        "status": "ok",
+        "reason": null
+      },
+      "alternatives": [
+        {
+          "rank": 1,
+          "account": "rrsp",
+          "ticker": "ENB.TO",
+          "action_type": "deploy",
+          "expected_return_at_time": 0.03839606014064977,
+          "reason_not_chosen": "waiting: the book wants no more of it overall until its holding in another account is sold"
+        }
+      ]
+    },
+    {
+      "proposal_id": null,
+      "sequence": 2,
+      "kind": "order",
+      "status": "unsaved",
+      "followed_by": null,
+      "account": "tfsa",
+      "to_account": null,
+      "ticker": "VFV.TO",
+      "side": "buy",
+      "shares": 9,
+      "price": 176.29,
+      "currency": "CAD",
+      "amount_cad": 1586.61,
+      "rule": "deploy_fund",
+      "rule_text": "Park cash in the benchmark fund",
+      "chain": null,
+      "reasons": [
+        {
+          "text": "the book parks 26,897.08 in the fund here and 21,154.80 is held",
+          "field": null,
+          "value": 26897.08
+        },
+        {
+          "text": "a dollar held there earns 6.54% a year after tax",
+          "field": null,
+          "value": 0.065385
+        }
+      ],
+      "costs": {
+        "commission_cad": 0,
+        "conversion_cad": 0,
+        "cash_effect_cad": 1586.61
+      },
+      "value": {
+        "gap_cad": 5742.28,
+        "held_return": 0.06538468776923834,
+        "utility": null,
+        "benefit_cad": null,
+        "benefit_years": null,
+        "costs_cad": null,
+        "noise_margin_cad": null,
+        "tax_cad": null,
+        "tax_exact": null,
+        "loss": null,
+        "jump": null,
+        "signal_to_noise": null,
+        "qualified_runs": null
+      },
+      "rebuy_not_before": null,
+      "what_would_change": [],
+      "view": null,
+      "predicted": {
+        "after_tax_12m": 0.06538468776923843,
+        "total_return_cad": 0.0679062972162392,
+        "baseline_cad": null,
+        "view_applied": null,
+        "noise_margin_pts": null,
+        "sigma": null,
+        "market_line_12m": null,
+        "score_12m": null,
+        "entry_cost": 0,
+        "exit_tax_cad": 0,
+        "tax_rate_pct": null,
+        "usable": true,
+        "flags": [],
+        "status": "ok",
+        "reason": null
+      },
+      "alternatives": [
+        {
+          "rank": 1,
+          "account": "tfsa",
+          "ticker": "ENB.TO",
+          "action_type": "deploy",
+          "expected_return_at_time": 0.04721139089412582,
+          "reason_not_chosen": "waiting: the book wants no more of it overall until its holding in another account is sold"
+        }
+      ]
+    },
+    {
+      "proposal_id": null,
+      "sequence": 3,
+      "kind": "order",
+      "status": "unsaved",
+      "followed_by": null,
+      "account": "trading",
+      "to_account": null,
+      "ticker": "VFV.TO",
+      "side": "buy",
+      "shares": 8,
+      "price": 176.29,
+      "currency": "CAD",
+      "amount_cad": 1410.32,
+      "rule": "deploy_fund",
+      "rule_text": "Park cash in the benchmark fund",
+      "chain": null,
+      "reasons": [
+        {
+          "text": "the book parks 11,469.77 in the fund here and 0.00 is held",
+          "field": null,
+          "value": 11469.77
+        },
+        {
+          "text": "a dollar held there earns 5.67% a year after tax",
+          "field": null,
+          "value": 0.056688
+        }
+      ],
+      "costs": {
+        "commission_cad": 0,
+        "conversion_cad": 0,
+        "cash_effect_cad": 1410.32
+      },
+      "value": {
+        "gap_cad": 11469.77,
+        "held_return": 0.056688207518932554,
+        "utility": null,
+        "benefit_cad": null,
+        "benefit_years": null,
+        "costs_cad": null,
+        "noise_margin_cad": null,
+        "tax_cad": null,
+        "tax_exact": null,
+        "loss": null,
+        "jump": null,
+        "signal_to_noise": null,
+        "qualified_runs": null
+      },
+      "rebuy_not_before": null,
+      "what_would_change": [],
+      "view": null,
+      "predicted": {
+        "after_tax_12m": 0.06380091587600102,
+        "total_return_cad": 0.0679062972162392,
+        "baseline_cad": null,
+        "view_applied": null,
+        "noise_margin_pts": null,
+        "sigma": null,
+        "market_line_12m": null,
+        "score_12m": null,
+        "entry_cost": 0,
+        "exit_tax_cad": null,
+        "tax_rate_pct": null,
+        "usable": true,
+        "flags": [],
+        "status": "ok",
+        "reason": null
+      },
+      "alternatives": []
+    }
+  ],
+  "transfers": [],
+  "waiting": [
+    {
+      "account": "rrsp",
+      "ticker": "ENB.TO",
+      "side": "buy",
+      "amount_cad": 1572.36,
+      "rule": "deploy_cash",
+      "rule_text": "Buy with cash the account already holds",
+      "reason": "waiting: the book wants no more of it overall until its holding in another account is sold"
+    },
+    {
+      "account": "tfsa",
+      "ticker": "ENB.TO",
+      "side": "buy",
+      "amount_cad": 2988.56,
+      "rule": "deploy_cash",
+      "rule_text": "Buy with cash the account already holds",
+      "reason": "waiting: the book wants no more of it overall until its holding in another account is sold"
+    }
+  ],
+  "drift": [
+    {
+      "account": "rrsp",
+      "ticker": "ENB.TO",
+      "held_cad": 0,
+      "target_cad": 1572.36,
+      "ratio": 0,
+      "status": "new"
+    },
+    {
+      "account": "rrsp",
+      "ticker": "RY.TO",
+      "held_cad": 10522,
+      "target_cad": 0,
+      "ratio": null,
+      "status": "exit"
+    },
+    {
+      "account": "tfsa",
+      "ticker": "ENB.TO",
+      "held_cad": 0,
+      "target_cad": 2988.56,
+      "ratio": 0,
+      "status": "new"
+    },
+    {
+      "account": "tfsa",
+      "ticker": "SHOP.TO",
+      "held_cad": 7083.6,
+      "target_cad": 0,
+      "ratio": null,
+      "status": "exit"
+    },
+    {
+      "account": "trading",
+      "ticker": "BCE.TO",
+      "held_cad": 6272,
+      "target_cad": 3660.87,
+      "ratio": 1.713,
+      "status": "above"
+    },
+    {
+      "account": "trading",
+      "ticker": "ENB.TO",
+      "held_cad": 9831,
+      "target_cad": 3660.87,
+      "ratio": 2.685,
+      "status": "above"
+    },
+    {
+      "account": "trading",
+      "ticker": "RDDT",
+      "held_cad": 4853.23,
+      "target_cad": 4853.23,
+      "ratio": 1,
+      "status": "within"
+    },
+    {
+      "account": "trading",
+      "ticker": "TD.TO",
+      "held_cad": 12964,
+      "target_cad": 12964,
+      "ratio": 1,
+      "status": "within"
+    }
+  ],
+  "warnings": [
+    "The 2026 RRSP amount uses the profile's income of 85,000.00; enter the year's actual taxable income to true it up"
+  ],
+  "report": {
+    "caps": [
+      {
+        "name": "AAPL position",
+        "kind": "position",
+        "account": null,
+        "exposure_cad": 2265.22,
+        "cap_cad": 8221.8,
+        "share_of_cap": 0.2755
+      },
+      {
+        "name": "BCE.TO position",
+        "kind": "position",
+        "account": null,
+        "exposure_cad": 6272,
+        "cap_cad": 8221.8,
+        "share_of_cap": 0.7629
+      },
+      {
+        "name": "BMO.TO position",
+        "kind": "position",
+        "account": null,
+        "exposure_cad": 0,
+        "cap_cad": 8221.8,
+        "share_of_cap": 0
+      },
+      {
+        "name": "ENB.TO position",
+        "kind": "position",
+        "account": null,
+        "exposure_cad": 9831,
+        "cap_cad": 8221.8,
+        "share_of_cap": 1.1957
+      },
+      {
+        "name": "RY.TO position",
+        "kind": "position",
+        "account": null,
+        "exposure_cad": 10522,
+        "cap_cad": 8221.8,
+        "share_of_cap": 1.2798
+      },
+      {
+        "name": "SHOP.TO position",
+        "kind": "position",
+        "account": null,
+        "exposure_cad": 7083.6,
+        "cap_cad": 8221.8,
+        "share_of_cap": 0.8616
+      },
+      {
+        "name": "RDDT position",
+        "kind": "position",
+        "account": null,
+        "exposure_cad": 4853.23,
+        "cap_cad": 8221.8,
+        "share_of_cap": 0.5903
+      },
+      {
+        "name": "TD.TO position",
+        "kind": "position",
+        "account": null,
+        "exposure_cad": 12964,
+        "cap_cad": 8221.8,
+        "share_of_cap": 1.5768
+      },
+      {
+        "name": "industry group (BMO.TO, RY.TO, TD.TO)",
+        "kind": "group",
+        "account": null,
+        "exposure_cad": 23486,
+        "cap_cad": 8221.8,
+        "share_of_cap": 2.8566
+      },
+      {
+        "name": "moves-together group (BMO.TO, RY.TO)",
+        "kind": "group",
+        "account": null,
+        "exposure_cad": 10522,
+        "cap_cad": 8221.8,
+        "share_of_cap": 1.2798
+      },
+      {
+        "name": "SHOP.TO position in the TFSA (the account's cap, on the account once the money has moved in)",
+        "kind": "account",
+        "account": "tfsa",
+        "exposure_cad": 7083.6,
+        "cap_cad": 2988.56,
+        "share_of_cap": 2.3702
+      },
+      {
+        "name": "RY.TO position in the RRSP (the account's cap, on the account once the money has moved in)",
+        "kind": "account",
+        "account": "rrsp",
+        "exposure_cad": 10522,
+        "cap_cad": 1572.36,
+        "share_of_cap": 6.6919
+      },
+      {
+        "name": "Communication Services sector",
+        "kind": "sector",
+        "account": null,
+        "exposure_cad": 12821.18,
+        "cap_cad": 24665.4,
+        "share_of_cap": 0.5198
+      },
+      {
+        "name": "Energy sector",
+        "kind": "sector",
+        "account": null,
+        "exposure_cad": 9831,
+        "cap_cad": 24665.4,
+        "share_of_cap": 0.3986
+      },
+      {
+        "name": "Financials sector",
+        "kind": "sector",
+        "account": null,
+        "exposure_cad": 23486,
+        "cap_cad": 24665.4,
+        "share_of_cap": 0.9522
+      },
+      {
+        "name": "Technology sector",
+        "kind": "sector",
+        "account": null,
+        "exposure_cad": 11123.9,
+        "cap_cad": 24665.4,
+        "share_of_cap": 0.451
+      }
+    ],
+    "currency_share": {
+      "CAD": {
+        "value_cad": 46672.6,
+        "share": 0.9058
+      },
+      "USD": {
+        "value_cad": 4853.23,
+        "share": 0.0942
+      }
+    },
+    "room": {
+      "rrsp_limit_cad": 2650,
+      "rrsp_room_cad": 23000,
+      "tfsa_limit_cad": 32000,
+      "rrsp_open": true,
+      "rrsp_closed_reason": null
+    },
+    "ytd_gain_cad": 0,
+    "run_sale_tax_cad": 39.78,
+    "harvest": [
+      {
+        "ticker": "RDDT",
+        "loss_cad": 258.37,
+        "saving_cad": 38.3
+      }
+    ],
+    "excluded": [
+      {
+        "ticker": "RDDT",
+        "reasons": [
+          "the analysis is more than 7 days old",
+          "earnings were reported after the analysis"
+        ]
+      },
+      {
+        "ticker": "TD.TO",
+        "reasons": [
+          "the analysis is more than 7 days old"
+        ]
+      },
+      {
+        "ticker": "CNQ.TO",
+        "reasons": [
+          "the analysis is more than 7 days old",
+          "earnings were reported after the analysis",
+          "the price has crossed the CIO's trigger at 72.32"
+        ]
+      },
+      {
+        "ticker": "FTS.TO",
+        "reasons": [
+          "the analysis is more than 7 days old",
+          "earnings were reported after the analysis"
+        ]
+      },
+      {
+        "ticker": "JNJ",
+        "reasons": [
+          "the analysis is more than 7 days old"
+        ]
+      }
+    ],
+    "parked_share": 0.6387663659049967,
+    "fund_by_account": {
+      "tfsa": {
+        "weight": 0.3271434422916718,
+        "listing": "VFV.TO"
+      },
+      "rrsp": {
+        "weight": 0.1721185368363311,
+        "listing": "VFV.TO"
+      },
+      "trading": {
+        "weight": 0.13950438677699378,
+        "listing": "VOO"
+      }
+    },
+    "unfilled": [
+      {
+        "account": "tfsa",
+        "left_cad": 32000,
+        "reasons": [
+          "relocation is off"
+        ]
+      },
+      {
+        "account": "rrsp",
+        "left_cad": 23000,
+        "reasons": [
+          "relocation is off"
+        ]
+      }
+    ],
+    "breaches": [
+      "RDDT in the TRADING position cap 10% of the account",
+      "TD.TO in the TRADING position cap 10% of the account",
+      "industry group (BMO.TO, RY.TO, TD.TO) counts as one position, cap 10%"
+    ],
+    "view_notes": [
+      {
+        "ticker": "AAPL",
+        "outlook": "bullish",
+        "confidence": 70,
+        "tier": "outperform",
+        "reason_text": "Apple’s medium‑term upside is driven by accelerating revenue growth in Greater China and Europe, margin tightening that fuels a high ROIC, and a resilient balance sheet that can support future AI and services expansion. The high P/E is justified by the margin and capital‑efficiency gains expected within 12–18 months.",
+        "dissent_text": "The stock sits near the upper Bollinger band with diverging volume; a pullback below the 351.73 support could erode up to 12% of the share price within 3–12 months.",
+        "falsifier_text": "RSRCH: gross_margin falls below 48.8% and remains stagnant, the 38.93 P/E premium would become unsustainable and the outlook would shift to bearish.",
+        "falsifier": null,
+        "flags": [
+          "target_below_price",
+          "view_against_data",
+          "edge_history_short"
+        ],
+        "status": "usable",
+        "exclusions": []
+      },
+      {
+        "ticker": "BCE.TO",
+        "outlook": "somewhat_bearish",
+        "confidence": 45,
+        "tier": "market_perform",
+        "reason_text": "BCE’s medium‑term prospects are weighed against a sharp earnings collapse, liquidity strain and dividend uncertainty, while a tower‑infrastructure partnership could provide a cash‑flow boost if it succeeds. The risk profile is unfavorable, suggesting the stock will likely stay near its current valuation baseline.",
+        "dissent_text": "",
+        "falsifier_text": "FUND: current_ratio 0.62 improves to >1.0, reducing liquidity risk and shifting the outlook bullish.",
+        "falsifier": null,
+        "flags": [
+          "edge_history_short"
+        ],
+        "status": "usable",
+        "exclusions": []
+      },
+      {
+        "ticker": "BMO.TO",
+        "outlook": "somewhat_bearish",
+        "confidence": 45,
+        "tier": "underperform",
+        "reason_text": "BMO’s earnings are under pressure from a contracting net margin and a late‑cycle macro environment, while the stock’s valuation edge is negative, suggesting a medium‑term downside relative to the baseline.",
+        "dissent_text": "The bull’s value argument is weakened by the baseline’s negative valuation edge, which already prices the stock as expensive.",
+        "falsifier_text": "FUND: net_margin expands beyond current quarter, reducing margin compression risk and shifting outlook to bullish.",
+        "falsifier": null,
+        "flags": [],
+        "status": "usable",
+        "exclusions": []
+      },
+      {
+        "ticker": "CNQ.TO",
+        "outlook": "somewhat_bullish",
+        "confidence": 65,
+        "tier": "outperform",
+        "reason_text": "Canadian Natural Resources offers a medium‑term upside driven by a deep P/E discount, record production, and a strong dividend legacy, though a negative revenue CAGR and high volatility temper the outlook.",
+        "dissent_text": "The bear’s argument that a negative revenue CAGR signals a value trap is the strongest dissent, but the single‑metric evidence and counter‑evidence from production growth weaken its impact.",
+        "falsifier_text": "FUND: revenue_growth_3yr_cagr turns positive and remains above 0% would shift the outlook to bullish.",
+        "falsifier": {
+          "level": 72.32,
+          "direction": "below",
+          "currency": "CAD"
+        },
+        "flags": [
+          "target_below_price",
+          "view_against_data",
+          "edge_history_short",
+          "stale",
+          "earnings_since"
+        ],
+        "status": "excluded",
+        "exclusions": [
+          "stale",
+          "earnings_since",
+          "trigger_crossed"
+        ]
+      },
+      {
+        "ticker": "ENB.TO",
+        "outlook": "bearish",
+        "confidence": 42,
+        "tier": "underperform",
+        "reason_text": "Enbridge’s medium‑term outlook is constrained by margin erosion, thin interest coverage and a valuation premium that outweighs the dividend appeal and macro tailwinds.",
+        "dissent_text": "",
+        "falsifier_text": "FUND: operating_margin rises above 16% in Q4 2026 would reverse the bearish view.",
+        "falsifier": null,
+        "flags": [
+          "edge_history_short"
+        ],
+        "status": "usable",
+        "exclusions": []
+      },
+      {
+        "ticker": "FTS.TO",
+        "outlook": "somewhat_bearish",
+        "confidence": 60,
+        "tier": "underperform",
+        "reason_text": "Fortis Inc. faces a realistic valuation‑reset risk due to a 13% P/E premium and high leverage, with technical overbought conditions adding near‑term downside pressure. While regulated growth and macro tailwinds provide some upside, the risk profile suggests a modest pullback in the medium term.",
+        "dissent_text": "The bull’s argument of steady regulated growth with a 4.1% YoY revenue rise and 28.3% operating margin is the strongest counterpoint, but it is outweighed by the valuation and leverage concerns.",
+        "falsifier_text": "RSRCH: regulatory approval of Tilbury LNG Phase 1B or Roadrunner Reserve II projects would reduce the valuation‑reset risk and shift the outlook to bullish.",
+        "falsifier": null,
+        "flags": [
+          "edge_history_short",
+          "stale",
+          "earnings_since"
+        ],
+        "status": "excluded",
+        "exclusions": [
+          "stale",
+          "earnings_since"
+        ]
+      },
+      {
+        "ticker": "JNJ",
+        "outlook": "somewhat_bullish",
+        "confidence": 60,
+        "tier": "outperform",
+        "reason_text": "Johnson & Johnson’s medium‑term prospects are driven by strong revenue and EPS growth, supported by new oncology launches, and a resilient balance sheet, which outweighs the potential downside from the 2027 patent cliff and margin contraction.",
+        "dissent_text": "The bear case highlights a significant patent cliff and margin erosion; if the cliff materializes sooner or margins decline sharply, the upside thesis would be undermined.",
+        "falsifier_text": "RSRCH: patent cliff materializes earlier than 2027, causing a >12% revenue hit, would shift outlook to somewhat_bearish.",
+        "falsifier": null,
+        "flags": [
+          "edge_history_short",
+          "stale"
+        ],
+        "status": "excluded",
+        "exclusions": [
+          "stale"
+        ]
+      },
+      {
+        "ticker": "RDDT",
+        "outlook": "somewhat_bullish",
+        "confidence": 55,
+        "tier": "outperform",
+        "reason_text": "Reddit’s rapid revenue and margin expansion, coupled with a debt‑free balance sheet and an AI‑ad catalyst, support a medium‑term upside that current valuation underappreciates, though high volatility and a steep valuation premium temper the outlook.",
+        "dissent_text": "The bear case’s valuation premium and earnings volatility remain the strongest counterpoint, but the projected earnings acceleration mitigates these concerns.",
+        "falsifier_text": "FUND: sustained revenue growth above 60% YoY and margin expansion beyond 31% would justify the current P/E and shift the outlook to bearish.",
+        "falsifier": null,
+        "flags": [
+          "rich_vs_industry",
+          "edge_history_short",
+          "high_volatility",
+          "stale",
+          "earnings_since"
+        ],
+        "status": "excluded",
+        "exclusions": [
+          "stale",
+          "earnings_since"
+        ]
+      },
+      {
+        "ticker": "RY.TO",
+        "outlook": "bullish",
+        "confidence": 70,
+        "tier": "market_perform",
+        "reason_text": "Royal Bank of Canada is expected to deliver medium‑term upside driven by the Yarra Capital acquisition and BoC‑induced margin expansion, while its solid capital base and dividend sustainability cushion against credit tightening risks.",
+        "dissent_text": "",
+        "falsifier_text": "FUND: payout_ratio 0.4148 if it rises above 0.60, the outlook would shift to somewhat_bearish.",
+        "falsifier": null,
+        "flags": [],
+        "status": "usable",
+        "exclusions": []
+      },
+      {
+        "ticker": "SHOP.TO",
+        "outlook": "somewhat_bullish",
+        "confidence": 52,
+        "tier": "market_perform",
+        "reason_text": "Shopify’s improving operating margin and AI‑driven commerce expansion provide a medium‑term upside that the current valuation has not fully absorbed, while the high P/E and margin erosion risk temper enthusiasm.",
+        "dissent_text": "The bear case’s high valuation premium and margin decline are strong arguments, but the baseline already incorporates a -6% edge, so they do not shift the overall view.",
+        "falsifier_text": "FUND: margin decline continues beyond 48.1% and EPS growth remains negative, turning the outlook bearish.",
+        "falsifier": null,
+        "flags": [
+          "rich_vs_industry",
+          "edge_history_short",
+          "high_volatility"
+        ],
+        "status": "usable",
+        "exclusions": []
+      },
+      {
+        "ticker": "TD.TO",
+        "outlook": "somewhat_bullish",
+        "confidence": 78,
+        "tier": "outperform",
+        "reason_text": "TD.TO is a quality compounder with a strong capital allocation plan and fair valuation, positioning it for medium‑term upside, while dividend payout limits and a nearby resistance level are the main risks.",
+        "dissent_text": "The bear’s argument that a 48.2% payout ratio and a price just above the 164.62 resistance could trigger a pullback is the strongest counterpoint, but it is outweighed by the bank’s capital allocation strength.",
+        "falsifier_text": "MACRO: U.S. GDP slowdown leading to cross‑border earnings compression would reverse the bullish outlook.",
+        "falsifier": null,
+        "flags": [
+          "edge_history_short",
+          "stale"
+        ],
+        "status": "excluded",
+        "exclusions": [
+          "stale"
+        ]
+      }
+    ]
+  },
+  "missing": [],
+  "superseded_proposal_ids": []
+}

@@ -47,8 +47,8 @@ export const queryKeys = {
     /** Every row of a filter, unpaged. */
     allTransactions: (portfolioId: string, query: string) => ['portfolio', portfolioId, 'transactions-all', query] as const,
     dividends: (portfolioId: string) => ['portfolio', portfolioId, 'dividends'] as const,
-    /** The Optimizer tab (not changed by the Portfolio read ticket). */
-    optimizer: (userId: string) => ['portfolio', 'optimizer', userId] as const,
+    /** The latest stored optimizer run. */
+    optimizer: (portfolioId: string) => ['portfolio', portfolioId, 'optimizer'] as const,
   },
   predictions: (userId: string) => ['predictions', userId] as const,
   feedback: (userId: string) => ['feedback', userId] as const,

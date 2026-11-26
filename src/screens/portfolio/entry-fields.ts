@@ -42,7 +42,7 @@ export const ENTRY_NOT_SENT: Partial<Record<ApiFieldKey, NotShown>> = {
   'TransactionCreate.in_kind': { reason: 'Only a move between accounts sets it; moves are not in the original design' },
   'TransactionCreate.initiated_by': { reason: 'The API default, the owner, is right for every form' },
   'TransactionCreate.tax_year': { reason: "Defaults to the entry's year", gap: 'P-W11' },
-  'TransactionCreate.recommendation_id': { reason: 'Proposals are shown by the Optimizer ticket', gap: 'P-W12' },
+  'TransactionCreate.recommendation_id': { reason: 'Never sent: the optimizer is advice only for the user, and following a suggestion is not tracked (owner)' },
   'TransactionCreate.reason_code': { reason: 'Not sent: the owner gives no reason for a trade (owner decision 2026-11-25)' },
   'TransactionCreate.notes': { reason: 'Not sent: the original forms had no notes field' },
   'TransactionCreate.counter_currency': { reason: 'Only a currency conversion carries it; entering cash and conversions is not in the original design' },

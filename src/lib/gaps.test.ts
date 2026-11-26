@@ -7,7 +7,7 @@ const sources = import.meta.glob('/src/**/*.{ts,tsx}', { query: '?raw', import: 
 describe('gap registry', () => {
   it('gives every gap a screen-prefixed id, a kind, what, why and a ClickUp ticket', () => {
     for (const [id, gap] of Object.entries(GAPS)) {
-      expect(id, id).toMatch(/^[PWSTFHE]-[A-Za-z0-9]+$/)
+      expect(id, id).toMatch(/^[PWSTFHEO]-[A-Za-z0-9]+$/)
       expect(['not-connected', 'missing', 'documented'], id).toContain(gap.kind)
       expect(gap.what.length, id).toBeGreaterThan(5)
       expect(gap.why.length, id).toBeGreaterThan(5)

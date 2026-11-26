@@ -22,9 +22,8 @@ import {
   type ApiTransaction,
 } from '@/lib/portfolio-mappers'
 import { transactionsQuery, type TransactionFilters } from '@/lib/transactions'
-import { useUser } from '@/context/UserContext'
 import { usePortfolioId } from '@/hooks/use-portfolio-id'
-import type { ListResponse, PortfolioOptimizerResult } from '@/types'
+import type { ListResponse } from '@/types'
 import type { components } from '@/types/openapi.gen'
 import type { PortfolioAccountView, Transaction } from '@/types/portfolio'
 
@@ -223,16 +222,6 @@ export function useTransactionHistory(filters: TransactionFilters, view: Portfol
     queryKey: queryKeys.portfolio.allTransactions(id ?? '', transactionsQuery(filters, view)),
     enabled: !!id,
     queryFn: ({ signal }) => fetchAllTransactions(id ?? '', filters, view, signal),
-  })
-}
-
-/** The Optimizer tab's suggestions (still the retired model; the Optimizer ticket, 86bd5z6n5, replaces it). */
-export function usePortfolioOptimizer() {
-  const { userId } = useUser()
-  return useQuery({
-    queryKey: queryKeys.portfolio.optimizer(userId),
-    queryFn: ({ signal }) =>
-      apiFetch<PortfolioOptimizerResult>(`/mock-data/portfolio/${userId}/optimizer.json`, `/api/portfolio/${userId}/optimizer`, { signal }),
   })
 }
 
