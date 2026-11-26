@@ -41,7 +41,7 @@ export function useSaveSettings() {
   return useMutation({
     mutationFn: async ({ changes, today }: { changes: readonly Change[]; today: string }): Promise<SaveResult> => {
       const result: SaveResult = { saved: [], failed: [] }
-      // The server replaces the optimizer's `settings` whole, and they change outside this page (the sell list, a command
+      // The server replaces the optimizer's `settings` whole, and they change outside this page (a command
       // line): so they are read again now, and not saved at all if that read fails.
       let settings: OptimizerSettings = {}
       let toSave = changes

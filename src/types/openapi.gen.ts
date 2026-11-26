@@ -5034,11 +5034,6 @@ export interface components {
             /** Settings */
             settings: components["schemas"]["OrderSettingResponse"][];
             /**
-             * Sell
-             * @description `sell` is a further key of the settings object: a list of tickers the owner has told the book to sell. It has no range.
-             */
-            sell: string;
-            /**
              * Other Keys
              * @description What happens to keys not listed here.
              */
