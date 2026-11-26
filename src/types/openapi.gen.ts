@@ -489,7 +489,7 @@ export interface paths {
         put?: never;
         /**
          * Record events
-         * @description Records the rows that `events/preview` shows, in one commit and answers 201. A row carrying `recommendation_id` marks that proposal followed; a stale id never fails the entry. 409 `DUPLICATE_ENTRY` for the same event within 30 seconds; 422 `INSUFFICIENT_SHARES`, `CURRENCY_MISMATCH`, `MISSING_FX_RATE`, `MISSING_CAD_AMOUNT`, `MIXED_SECURITIES` or `CONTRIBUTION_EXCEEDS_ROOM` (only for an event the system starts: a contribution the owner made over room is recorded, and the preview warns). Refused with 403 `AGENT_PORTFOLIO_READ_ONLY` for the agent portfolio. A stock with no recent recorded price has its prices fetched before the answer; a failure there never fails the entry.
+         * @description Records the rows that `events/preview` shows, in one commit and answers 201. A `recommendation_id` is ignored here: suggestions are advice only, and only the agent portfolio, which the API does not write, keeps the link. 409 `DUPLICATE_ENTRY` for the same event within 30 seconds; 422 `INSUFFICIENT_SHARES`, `CURRENCY_MISMATCH`, `MISSING_FX_RATE`, `MISSING_CAD_AMOUNT`, `MIXED_SECURITIES` or `CONTRIBUTION_EXCEEDS_ROOM` (only for an event the system starts: a contribution the owner made over room is recorded, and the preview warns). Refused with 403 `AGENT_PORTFOLIO_READ_ONLY` for the agent portfolio. A stock with no recent recorded price has its prices fetched before the answer; a failure there never fails the entry.
          */
         post: operations["ledger_record_events"];
         delete?: never;
@@ -5104,9 +5104,7 @@ export interface components {
              * Status
              * @enum {string}
              */
-            status: "open" | "followed" | "superseded" | "unsaved";
-            /** Followed By */
-            followed_by: string | null;
+            status: "open" | "superseded" | "unsaved";
             /** Account */
             account: string;
             /** To Account */
@@ -7633,7 +7631,10 @@ export interface components {
             initiated_by: "owner" | "system";
             /** Reason Code */
             reason_code?: ("life_need" | "rebalancing" | "opinion" | "other") | null;
-            /** Recommendation Id */
+            /**
+             * Recommendation Id
+             * @description The proposal the agent portfolio is carrying out. Ignored for a person's portfolio, whose suggestions are advice only.
+             */
             recommendation_id?: string | null;
             /** Notes */
             notes?: string | null;
