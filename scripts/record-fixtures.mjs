@@ -1,20 +1,24 @@
-// Records the real responses a screen reads into src/test/fixtures/<screen>/, untrimmed. That one copy is what the test server answers with,
+// Records the responses a screen reads into src/test/fixtures/<screen>/, untrimmed. That one copy is what the test server answers with,
 // what the mapper and render tests import, and what the field-coverage render test walks, so nothing is hand-built twice.
-// Run it against a backend on a scratch copy of the database (never the real file), after `alembic upgrade head`:
-//   API_URL=http://localhost:8010 npm run record:fixtures                 (every screen below)
-//   API_URL=http://localhost:8010 npm run record:fixtures -- portfolio    (one screen)
-//   ... -- --user <uuid>                                                  (a user other than the first owner of a portfolio)
-//   ... -- portfolio --only dividends                                     (just those files of the screen, leaving the others as recorded)
+// It starts its own backend on a freshly seeded database of invented data (`scratch-backend.mjs`) and records only from that:
+// there is no way to point it anywhere else, so nobody's records can end up in a recording.
+//   npm run record:fixtures                                (every screen below)
+//   npm run record:fixtures -- portfolio                   (one screen)
+//   npm run record:fixtures -- portfolio --only dividends  (just those files of the screen, leaving the others as recorded)
 // To record a new screen, add its routes to src/test/fixture-routes.json (step 6 of "Wiring a screen" in CLAUDE.md).
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { startScratchBackend } from './scratch-backend.mjs'
 
-const base = (process.env.API_URL ?? 'http://localhost:8000').replace(/\/$/, '')
 const args = process.argv.slice(2)
-const userFlag = args.indexOf('--user')
 const onlyFlag = args.indexOf('--only')
 const only = onlyFlag >= 0 ? args[onlyFlag + 1].split(',') : []
+const unknown = args.filter((a) => a.startsWith('--') && a !== '--only')
+if (unknown.length) {
+  console.error(`record:fixtures: no such option ${unknown.join(' ')}`)
+  process.exit(1)
+}
 // a flag's value is not a screen name (an absent flag has index -1, which must not drop the first argument)
-const wanted = args.filter((a, i) => !a.startsWith('--') && !(userFlag >= 0 && i === userFlag + 1) && !(onlyFlag >= 0 && i === onlyFlag + 1))
+const wanted = args.filter((a, i) => !a.startsWith('--') && !(onlyFlag >= 0 && i === onlyFlag + 1))
 
 const day = (offset) => new Date(Date.now() + offset * 86_400_000).toISOString().slice(0, 10)
 
@@ -42,9 +46,10 @@ async function call({ path, method = 'GET', body }) {
   return res.json()
 }
 
+const base = await startScratchBackend('record-fixtures')
 try {
   const owners = (await call({ path: '/api/portfolios?per_page=100' })).data.filter((p) => p.kind === 'user')
-  const chosen = userFlag >= 0 ? owners.find((p) => p.user_id === args[userFlag + 1]) : owners[0]
+  const chosen = owners[0]
   if (!chosen) throw new Error('No user portfolio found to record from.')
   const ctx = { userId: chosen.user_id, portfolioId: chosen.portfolio_id }
   if (!wanted.length || wanted.includes('stocks')) {
@@ -68,3 +73,4 @@ try {
   console.error(`record:fixtures failed: ${error.message}`)
   process.exitCode = 1
 }
+process.exit() // stops the backend and removes its database
