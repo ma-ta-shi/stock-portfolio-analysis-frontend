@@ -87,6 +87,7 @@ export const EXCLUSION_LABELS: Record<string, string> = {
   unsupported_instrument: 'Cannot be analysed (fund, preferred share or unsupported listing)',
   no_completed_run: 'Not analysed yet',
   band_unavailable: 'No price range available',
+  split_since_analysis: 'Stock split since the analysis',
 }
 
 export function exclusionLabel(code: string): string {

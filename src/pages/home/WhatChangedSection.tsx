@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { CircleDollarSign, LayoutGrid, Target, TrendingUp } from 'lucide-react'
+import { CircleDollarSign, LayoutGrid, Split, Target, TrendingUp } from 'lucide-react'
 import type { ElementType } from 'react'
 import { QueryError } from '@/components/QueryError'
 import { useActivity } from '@/hooks/use-home'
@@ -15,6 +15,7 @@ const ICONS: Record<Kind, ElementType> = {
   portfolio_optimization: LayoutGrid,
   prediction_result: Target,
   dividend_waiting: CircleDollarSign,
+  stock_split: Split,
 }
 /** One and many, for what did not fit. */
 const KIND_WORDS: Record<Kind, [string, string]> = {
@@ -22,6 +23,7 @@ const KIND_WORDS: Record<Kind, [string, string]> = {
   portfolio_optimization: ['new proposal list', 'new proposal lists'],
   prediction_result: ['prediction result', 'prediction results'],
   dividend_waiting: ['dividend to confirm', 'dividends to confirm'],
+  stock_split: ['stock split', 'stock splits'],
 }
 const NEEDS_YOU: ReadonlySet<Kind> = new Set(['dividend_waiting'])
 
