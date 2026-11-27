@@ -4,9 +4,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { AnalysisPage } from './AnalysisPage'
 import { installFixtureFetch } from '@/test/fixture-fetch'
-import result from '../../public/mock-data/stocks/result.json'
-import runs from '../../public/mock-data/stocks/runs.json'
-import fundamentals from '../../public/mock-data/stocks/fundamentals.json'
+import result from '@/test/fixtures/stocks/result.json'
+import runs from '@/test/fixtures/stocks/runs.json'
+import fundamentals from '@/test/fixtures/stocks/fundamentals.json'
 
 vi.mock('@/hooks/use-portfolio')
 vi.mock('@/hooks/use-fx-rates', () => ({ useFxRates: () => ({ rates: { CAD: 1, USD: 1.4 }, isLoading: false }) }))

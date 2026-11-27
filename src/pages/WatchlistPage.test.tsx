@@ -5,7 +5,7 @@ import { WatchlistPage } from './WatchlistPage'
 import { ApiError } from '@/lib/api'
 import { mapWatchlistEntry, type ApiWatchlistEntry } from '@/lib/watchlist'
 import type { WatchlistItem } from '@/types/watchlist'
-import recorded from '../../public/mock-data/watchlist/watchlist.json'
+import recorded from '@/test/fixtures/watchlist/watchlist.json'
 
 vi.mock('@/hooks/use-watchlist')
 vi.mock('@/hooks/use-ticker-search')

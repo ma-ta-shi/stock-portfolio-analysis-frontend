@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { mapAgents, type ApiResult } from './analysis-result'
 import { mapResultCall } from './stock-snapshot'
-import fixture from '../../public/mock-data/stocks/result.json'
+import fixture from '@/test/fixtures/stocks/result.json'
 
 const result = fixture as unknown as ApiResult
 const outputs = (list: unknown[]) => list as ApiResult['agent_outputs']

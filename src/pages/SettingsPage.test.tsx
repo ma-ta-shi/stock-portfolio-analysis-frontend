@@ -6,19 +6,19 @@ import { createMemoryRouter, Link, RouterProvider } from 'react-router-dom'
 import { SettingsPage } from './SettingsPage'
 import { hasUnsaved } from '@/lib/unsaved'
 import { installFixtureFetch, recordingFor } from '@/test/fixture-fetch'
-import profile from '../../public/mock-data/settings/profile.json'
-import room from '../../public/mock-data/portfolio/room.json'
-import portfoliosFile from '../../public/mock-data/portfolio/portfolios.json'
+import profile from '@/test/fixtures/settings/profile.json'
+import room from '@/test/fixtures/portfolio/room.json'
+import portfoliosFile from '@/test/fixtures/portfolio/portfolios.json'
 
 vi.mock('@/context/UserContext', () => ({
   UserProvider: ({ children }: { children: React.ReactNode }) => children,
   useUser: () => ({ userId: 'ann', setUserId: vi.fn() }),
 }))
-// Writes go through this one function; mock mode itself refuses them.
+// Writes go through this one function.
 const { send } = vi.hoisted(() => ({ send: vi.fn() }))
 vi.mock('@/lib/api', async (importOriginal) => {
   const api = await importOriginal<typeof import('@/lib/api')>()
-  return { ...api, apiFetch: (mock: string, path: string, init?: RequestInit) => (init?.method === 'PATCH' ? send(path, JSON.parse(init.body as string)) : api.apiFetch(mock, path, init)) }
+  return { ...api, apiFetch: (path: string, init?: RequestInit) => (init?.method === 'PATCH' ? send(path, JSON.parse(init.body as string)) : api.apiFetch(path, init)) }
 })
 
 const PROFILE = 'settings/profile'

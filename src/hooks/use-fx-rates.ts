@@ -18,7 +18,7 @@ export function useFxRates(): { rates: FxRatesToCad; isLoading: boolean; asOf?: 
     // The server asks the Bank on every request, and the Bank publishes once a business day.
     staleTime: 60 * 60 * 1000,
     queryFn: ({ signal }) =>
-      apiFetch<components['schemas']['ExchangeRateListResponse']>('/mock-data/market/exchange-rates.json', '/api/exchange-rates', { signal }),
+      apiFetch<components['schemas']['ExchangeRateListResponse']>('/api/exchange-rates', { signal }),
   })
   const latest = data?.data.at(-1)
   const usdCad = latest?.rate

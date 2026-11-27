@@ -15,7 +15,7 @@ export function useActivity() {
     // read afresh on every visit: what was just confirmed or run elsewhere in the app must not linger here
     staleTime: 0,
     queryFn: ({ signal }) =>
-      apiFetch<Api['ActivityListResponse']>('/mock-data/home/activity.json', `/api/activity?user_id=${encodeURIComponent(userId)}&per_page=100`, { signal }),
+      apiFetch<Api['ActivityListResponse']>(`/api/activity?user_id=${encodeURIComponent(userId)}&per_page=100`, { signal }),
   })
 }
 
@@ -23,6 +23,6 @@ export function useActivity() {
 export function useMacro() {
   return useQuery({
     queryKey: queryKeys.market.macro,
-    queryFn: ({ signal }) => apiFetch<Api['MacroSnapshotResponse']>('/mock-data/market/macro.json', '/api/macro', { signal }),
+    queryFn: ({ signal }) => apiFetch<Api['MacroSnapshotResponse']>('/api/macro', { signal }),
   })
 }

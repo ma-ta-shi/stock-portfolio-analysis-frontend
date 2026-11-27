@@ -15,7 +15,7 @@ import { EMPTY_FILTERS } from '@/lib/transactions'
 
 // Mock UserContext so renderHook doesn't need localStorage
 vi.mock('@/context/UserContext', () => ({
-  useUser: () => ({ userId: 'user_01', setUserId: vi.fn() }),
+  useUser: () => ({ userId: 'u1', setUserId: vi.fn() }),
 }))
 
 function makeWrapper() {

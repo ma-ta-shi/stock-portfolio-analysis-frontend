@@ -11,13 +11,11 @@ import type { components } from '@/types/openapi.gen'
 import type { Stock } from '@/types/stock'
 
 type Api = components['schemas']
-const DIR = '/mock-data/stocks'
-
 export function useStock(stockId: string) {
   return useQuery({
     queryKey: queryKeys.stocks.detail(stockId),
     enabled: !!stockId,
-    queryFn: ({ signal }) => apiFetch<Api['StockResponse']>(`${DIR}/stock.json`, `/api/stocks/${stockId}`, { signal }),
+    queryFn: ({ signal }) => apiFetch<Api['StockResponse']>(`/api/stocks/${stockId}`, { signal }),
     select: mapStock,
   })
 }
@@ -27,7 +25,7 @@ export function useStockSnapshot(stockId: string) {
   const result = useQuery({
     queryKey: queryKeys.stocks.snapshot(stockId),
     enabled: !!stockId,
-    queryFn: ({ signal }) => apiFetch<Api['StockSnapshotListResponse']>(`${DIR}/snapshot.json`, `/api/stocks/snapshots?stock_ids=${stockId}`, { signal }),
+    queryFn: ({ signal }) => apiFetch<Api['StockSnapshotListResponse']>(`/api/stocks/snapshots?stock_ids=${stockId}`, { signal }),
   })
   const data = useMemo(() => (result.data?.data[0] ? mapStockSnapshot(result.data.data[0]) : null), [result.data])
   return { ...result, data }
@@ -37,7 +35,7 @@ export function useStockFundamentals(stockId: string) {
   return useQuery({
     queryKey: queryKeys.stocks.fundamentals(stockId),
     enabled: !!stockId,
-    queryFn: ({ signal }) => apiFetch<ApiFundamentals>(`${DIR}/fundamentals.json`, `/api/stocks/${stockId}/fundamentals`, { signal }),
+    queryFn: ({ signal }) => apiFetch<ApiFundamentals>(`/api/stocks/${stockId}/fundamentals`, { signal }),
     select: (f) => ({ values: mapFundamentals(f), marketCap: f.price?.market_cap ?? null, currency: f.price?.currency ?? null, asOf: f.run_day ?? null }),
   })
 }
@@ -47,7 +45,7 @@ export function useStockPrices(stockId: string) {
   return useQuery({
     queryKey: queryKeys.stocks.prices(stockId),
     enabled: !!stockId,
-    queryFn: ({ signal }) => fetchAllPages<Api['PriceResponse']>(`${DIR}/prices.json`, `/api/stocks/${stockId}/prices?from=${dayFromToday(-90)}`, { signal }),
+    queryFn: ({ signal }) => fetchAllPages<Api['PriceResponse']>(`/api/stocks/${stockId}/prices?from=${dayFromToday(-90)}`, { signal }),
     select: (rows) => rows.map((r) => r.close).reverse(),
   })
 }
@@ -62,8 +60,8 @@ export function useStockHistory(stockId: string, stock: Stock | undefined) {
     enabled: !!stockId,
     queryFn: async ({ signal }) => {
       const [runs, predictions] = await Promise.all([
-        fetchAllPages<ApiRunSummary>(`${DIR}/runs.json`, `/api/analysis?stock_id=${stockId}&status=complete&from=${PRICE_BAND_FROM}`, { signal }),
-        fetchAllPages<ApiPrediction>(`${DIR}/predictions.json`, `/api/predictions?stock_id=${stockId}&from=${PRICE_BAND_FROM}`, { signal }),
+        fetchAllPages<ApiRunSummary>(`/api/analysis?stock_id=${stockId}&status=complete&from=${PRICE_BAND_FROM}`, { signal }),
+        fetchAllPages<ApiPrediction>(`/api/predictions?stock_id=${stockId}&from=${PRICE_BAND_FROM}`, { signal }),
       ])
       return { runs, predictions }
     },

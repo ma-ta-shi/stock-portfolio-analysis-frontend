@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { mapWatchlistEntry, watchlistCounts, type ApiWatchlistEntry } from './watchlist'
 import { isAwaitingAnalysis } from './stock-snapshot'
-import recorded from '../../public/mock-data/watchlist/watchlist.json'
+import recorded from '@/test/fixtures/watchlist/watchlist.json'
 
 // The recorded set: RY.TO with a usable call, TD.TO with an out-of-date one, MSFT never analysed.
 const items = (recorded.data as unknown as ApiWatchlistEntry[]).map(mapWatchlistEntry)

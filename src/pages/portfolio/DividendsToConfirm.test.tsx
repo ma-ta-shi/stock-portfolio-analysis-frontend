@@ -5,7 +5,7 @@ import { DividendsToConfirm } from './DividendsToConfirm'
 import { ApiError } from '@/lib/api'
 import { mapDividendEvent, type ApiDividendEvent, type DividendEvent } from '@/screens/portfolio/dividends'
 import { mockLedgerHooks } from '@/test/ledger-mocks'
-import dividendsFixture from '../../../public/mock-data/portfolio/dividends.json'
+import dividendsFixture from '@/test/fixtures/portfolio/dividends.json'
 
 vi.mock('@/hooks/use-portfolio')
 import { useDividends } from '@/hooks/use-portfolio'

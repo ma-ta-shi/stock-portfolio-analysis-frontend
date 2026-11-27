@@ -12,7 +12,6 @@ export function usePredictions(page: number) {
     placeholderData: keepPreviousData,
     queryFn: ({ signal }) =>
       apiFetch<components['schemas']['PredictionListResponse']>(
-        '/mock-data/feedback/predictions.json',
         `/api/predictions?current_design=true&page=${page}&per_page=${PREDICTIONS_PER_PAGE}`,
         { signal },
       ),

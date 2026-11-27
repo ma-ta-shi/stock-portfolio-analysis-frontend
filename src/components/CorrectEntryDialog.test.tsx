@@ -4,7 +4,7 @@ import { CorrectEntryDialog } from './CorrectEntryDialog'
 import { mapTransactions, type ApiTransaction } from '@/lib/portfolio-mappers'
 import { mockLedgerHooks } from '@/test/ledger-mocks'
 import type { Transaction } from '@/types/portfolio'
-import transactionsFixture from '../../public/mock-data/portfolio/transactions.json'
+import transactionsFixture from '@/test/fixtures/portfolio/transactions.json'
 
 vi.mock('@/hooks/use-portfolio')
 

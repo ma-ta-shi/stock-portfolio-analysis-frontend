@@ -4,11 +4,11 @@ import { SummaryHeader } from './SummaryHeader'
 import { buildSummary, type ApiPositions } from '@/lib/portfolio-mappers'
 import { mockHoldings } from '@/test/mock-data'
 import type { components } from '@/types/openapi.gen'
-import positionsFixture from '../../../public/mock-data/portfolio/positions.json'
-import historyFixture from '../../../public/mock-data/portfolio/value-history.json'
-import reportFixture from '../../../public/mock-data/portfolio/report.json'
-import accountsFixture from '../../../public/mock-data/portfolio/accounts.json'
-import roomFixture from '../../../public/mock-data/portfolio/room.json'
+import positionsFixture from '@/test/fixtures/portfolio/positions.json'
+import historyFixture from '@/test/fixtures/portfolio/value-history.json'
+import reportFixture from '@/test/fixtures/portfolio/report.json'
+import accountsFixture from '@/test/fixtures/portfolio/accounts.json'
+import roomFixture from '@/test/fixtures/portfolio/room.json'
 
 type Api = components['schemas']
 

@@ -4,7 +4,7 @@ import { renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useFxRates } from './use-fx-rates'
 import { installFixtureFetch } from '@/test/fixture-fetch'
-import file from '../../public/mock-data/market/exchange-rates.json'
+import file from '@/test/fixtures/market/exchange-rates.json'
 
 const FILE = 'market/exchange-rates'
 

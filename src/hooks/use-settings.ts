@@ -7,13 +7,11 @@ import { buildSave, type Change, type OptimizerSettings, type SavePart } from '@
 import type { components } from '@/types/openapi.gen'
 
 type Api = components['schemas']
-const DIR = '/mock-data/settings'
-
 /** The optimizer rules a portfolio may carry, with their ranges and defaults. The same table the update is checked against. */
 export function useOrderSettingsSchema() {
   return useQuery({
     queryKey: queryKeys.orderSettings,
-    queryFn: ({ signal }) => apiFetch<Api['OrderSettingsSchemaResponse']>(`${DIR}/order-settings.json`, '/api/order-settings/schema', { signal }),
+    queryFn: ({ signal }) => apiFetch<Api['OrderSettingsSchemaResponse']>('/api/order-settings/schema', { signal }),
   })
 }
 
@@ -33,9 +31,9 @@ export function useSaveSettings() {
   const queryClient = useQueryClient()
 
   const send = (part: SavePart) => {
-    if (part.to === 'profile') return apiFetch(`${DIR}/profile.json`, `/api/users/${userId}`, jsonBody('PATCH', part.body))
-    if (part.to === 'portfolio') return apiFetch('/mock-data/portfolio/portfolios.json', `/api/portfolios/${portfolioId}`, jsonBody('PATCH', part.body))
-    return apiFetch('/mock-data/portfolio/accounts.json', `/api/portfolios/${portfolioId}/accounts/${part.account}`, jsonBody('PATCH', part.body))
+    if (part.to === 'profile') return apiFetch(`/api/users/${userId}`, jsonBody('PATCH', part.body))
+    if (part.to === 'portfolio') return apiFetch(`/api/portfolios/${portfolioId}`, jsonBody('PATCH', part.body))
+    return apiFetch(`/api/portfolios/${portfolioId}/accounts/${part.account}`, jsonBody('PATCH', part.body))
   }
 
   return useMutation({

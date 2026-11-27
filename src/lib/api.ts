@@ -1,8 +1,7 @@
 /**
  * Thin fetch wrapper shared by every TanStack Query hook.
  *
- * - Mock mode (`VITE_USE_MOCK=true`) reads static JSON from `public/mock-data/`.
- * - Real mode calls the FastAPI backend. `VITE_API_BASE_URL` is empty by default so
+ * - Calls the FastAPI backend. `VITE_API_BASE_URL` is empty by default so
  *   requests go to same-origin `/api/...` (proxied to the backend by the Vite dev server).
  * - Errors are always thrown as `ApiError`, except caller cancellations, which are
  *   re-thrown untouched so TanStack Query can recognise them.
@@ -11,7 +10,6 @@
 import { notConnectedMessage, type GapId } from './gaps'
 import { WRITE_ERRORS } from './labels'
 
-export const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
 const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '')
 export const API_TIMEOUT_MS = 15_000
 
@@ -20,7 +18,6 @@ export type ApiErrorCode =
   | 'timeout'
   | 'network_error'
   | 'invalid_json'
-  | 'mock_mode_unsupported'
   | 'not_connected'
   // Backend domain codes (docs/api-conventions.md) are passed through as-is.
   | (string & {})
@@ -70,27 +67,11 @@ async function toHttpError(res: Response, url: string): Promise<ApiError> {
 }
 
 /**
- * @param mockPath  Path of the static mock file, e.g. `/mock-data/watchlist/watchlist.json`
  * @param apiPath   Backend path, e.g. `/api/watchlist?user_id=…`
  * @param options   Standard fetch options. Pass TanStack Query's `signal` for cancellation.
  */
-export async function apiFetch<T>(
-  mockPath: string,
-  apiPath: string,
-  options: RequestInit = {},
-): Promise<T> {
-  const method = (options.method ?? 'GET').toUpperCase()
-  const url = USE_MOCK ? mockPath : `${API_BASE}${apiPath}`
-
-  if (USE_MOCK && method !== 'GET') {
-    // Static JSON files can't accept writes; fail loudly instead of silently doing a GET.
-    throw new ApiError(
-      `${method} ${apiPath} is not available in mock mode`,
-      null,
-      'mock_mode_unsupported',
-      apiPath,
-    )
-  }
+export async function apiFetch<T>(apiPath: string, options: RequestInit = {}): Promise<T> {
+  const url = `${API_BASE}${apiPath}`
 
   const timeoutController = new AbortController()
   let timedOut = false
@@ -104,7 +85,7 @@ export async function apiFetch<T>(
     : timeoutController.signal
 
   try {
-    const res = await fetch(url, { ...(USE_MOCK ? {} : options), signal })
+    const res = await fetch(url, { ...options, signal })
 
     if (!res.ok) {
       throw await toHttpError(res, url)
@@ -133,7 +114,7 @@ export async function apiFetch<T>(
   }
 }
 
-/** JSON body helper for POST/PUT calls: `apiFetch(m, a, jsonBody('POST', payload))` */
+/** JSON body helper for POST/PUT calls: `apiFetch(path, jsonBody('POST', payload))` */
 export function jsonBody(method: 'POST' | 'PUT' | 'PATCH' | 'DELETE', body?: unknown): RequestInit {
   return {
     method,
@@ -142,12 +123,9 @@ export function jsonBody(method: 'POST' | 'PUT' | 'PATCH' | 'DELETE', body?: unk
   }
 }
 
-/**
- * Read through a POST: a report names its period and scope in a body but changes nothing. Real mode sends the POST;
- * mock mode (which refuses writes) serves the recorded file. The contract test scans `apiQuery` calls as POSTs.
- */
-export function apiQuery<T>(mockPath: string, apiPath: string, body: unknown, options: RequestInit = {}): Promise<T> {
-  return apiFetch<T>(mockPath, apiPath, USE_MOCK ? options : { ...options, ...jsonBody('POST', body) })
+/** A read made through a POST: a report names its period and scope in a body but changes nothing. */
+export function apiQuery<T>(apiPath: string, body: unknown, options: RequestInit = {}): Promise<T> {
+  return apiFetch<T>(apiPath, { ...options, ...jsonBody('POST', body) })
 }
 
 /**
@@ -165,7 +143,6 @@ export interface ErrorMessageOptions {
 
 /** What a failed request says for a write: the page's wording where it has some, else the backend's own message. */
 function writeErrorMessage(error: ApiError): string {
-  if (error.code === 'mock_mode_unsupported') return 'Writes need the real backend (run npm run dev:live).'
   if (error.code === 'VALIDATION_ERROR') {
     const errors = Array.isArray(error.details?.errors) ? (error.details.errors as { loc?: unknown[]; msg?: string }[]) : []
     const lines = errors.map((e) => {

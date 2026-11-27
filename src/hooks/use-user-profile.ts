@@ -4,12 +4,12 @@ import { queryKeys } from '@/lib/query-keys'
 import { useUser } from '@/context/UserContext'
 import type { components } from '@/types/openapi.gen'
 
-/** The active user's own profile (`GET /api/users/{id}`). Mock mode serves the one recorded profile. */
+/** The active user's own profile (`GET /api/users/{id}`). */
 export function useUserProfile() {
   const { userId } = useUser()
   return useQuery({
     queryKey: queryKeys.users.profile(userId),
     queryFn: ({ signal }) =>
-      apiFetch<components['schemas']['UserProfileResponse']>('/mock-data/settings/profile.json', `/api/users/${userId}`, { signal }),
+      apiFetch<components['schemas']['UserProfileResponse']>(`/api/users/${userId}`, { signal }),
   })
 }

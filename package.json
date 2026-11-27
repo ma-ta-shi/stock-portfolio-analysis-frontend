@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:live": "vite --mode live",
     "gen:api": "node scripts/gen-api.mjs",
     "gen:gaps": "node scripts/gen-gaps.mjs",
     "coverage:api": "vitest run src/lib/field-coverage.test.ts -t claimed",

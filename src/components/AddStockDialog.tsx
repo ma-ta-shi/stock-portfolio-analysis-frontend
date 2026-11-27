@@ -25,7 +25,7 @@ interface AddStockDialogProps {
   defaultStock?: TickerResult
 }
 
-/** The stock the search found: the lookup's own fields when there are any, else the few the mock list has. */
+/** The stock found: the lookup's own fields when it was searched for, else the few a page already holds. */
 function FoundCard({ found }: { found: TickerResult }) {
   return (
     <div className="border border-border rounded-lg p-4 space-y-2.5 bg-muted/30">

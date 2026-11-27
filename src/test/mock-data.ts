@@ -1,5 +1,5 @@
 import { mapHolding, type ApiHolding } from '@/lib/portfolio-mappers'
-import holdingsFixture from '../../public/mock-data/portfolio/holdings.json'
+import holdingsFixture from '@/test/fixtures/portfolio/holdings.json'
 
 // Portfolio rows come from the recorded API responses (`npm run record:fixtures`), mapped by the real mapper.
 const rows = holdingsFixture.data as unknown as ApiHolding[]

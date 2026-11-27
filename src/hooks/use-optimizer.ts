@@ -5,8 +5,6 @@ import { apiFetch, apiQuery, jsonBody } from '@/lib/api'
 import { queryKeys } from '@/lib/query-keys'
 import type { Run } from '@/lib/optimizer'
 
-const DIR = '/mock-data/portfolio'
-
 /** The latest weekly or on-demand run. A portfolio with none answers 404 `NO_RUN_STORED`. */
 export function useLatestRun() {
   const { portfolioId } = usePortfolioId()
@@ -14,7 +12,7 @@ export function useLatestRun() {
     queryKey: queryKeys.portfolio.optimizer(portfolioId ?? ''),
     enabled: !!portfolioId,
     retry: false, // "no run" is an answer, not a glitch
-    queryFn: ({ signal }) => apiFetch<Run>(`${DIR}/proposals.json`, `/api/portfolios/${portfolioId}/proposals`, { signal }),
+    queryFn: ({ signal }) => apiFetch<Run>(`/api/portfolios/${portfolioId}/proposals`, { signal }),
   })
 }
 
@@ -24,18 +22,18 @@ export function useRunOptimizer() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: () =>
-      apiFetch<Run>(`${DIR}/proposals.json`, `/api/portfolios/${portfolioId}/proposal-runs`, jsonBody('POST', { store: true, allow_stale: false })),
+      apiFetch<Run>(`/api/portfolios/${portfolioId}/proposal-runs`, jsonBody('POST', { store: true, allow_stale: false })),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.portfolio.optimizer(portfolioId ?? '') }),
   })
 }
 
 export type AskAccount = 'any' | 'tfsa' | 'rrsp' | 'trading'
 
-/** A look, never saved: a read made through a POST (mock mode serves the recorded answer). */
+/** A look, never saved: a read made through a POST. */
 export function useAsk() {
   const { portfolioId } = usePortfolioId()
   return useMutation({
     mutationFn: ({ amount_cad, account }: { amount_cad: number; account: AskAccount }) =>
-      apiQuery<Run>(`${DIR}/ask.json`, `/api/portfolios/${portfolioId}/ask`, { amount_cad, account: account === 'any' ? null : account, store: false }),
+      apiQuery<Run>(`/api/portfolios/${portfolioId}/ask`, { amount_cad, account: account === 'any' ? null : account, store: false }),
   })
 }
