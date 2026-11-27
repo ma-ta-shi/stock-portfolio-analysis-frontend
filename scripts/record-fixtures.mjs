@@ -53,7 +53,11 @@ const SCREENS = {
     { file: 'ask', method: 'POST', path: `/api/portfolios/${ctx.portfolioId}/ask`, body: { amount_cad: 5000, account: null, store: false } },
   ],
   // The USD/CAD observations. Last, because the backend reads them from the Bank of Canada: an outage stops only this one.
-  market: () => [{ file: 'exchange-rates', path: '/api/exchange-rates' }],
+  market: () => [
+    { file: 'exchange-rates', path: '/api/exchange-rates' },
+    { file: 'macro', path: '/api/macro' },
+  ],
+  home: (ctx) => [{ file: 'activity', path: `/api/activity?user_id=${ctx.userId}&per_page=100` }],
   // the scorecard samples are not recorded: a database has no filled scorecard, so they are the real scorer's output on made-up results
   feedback: () => [
     { file: 'weekly-batch', path: '/api/weekly-batch' },

@@ -1,11 +1,8 @@
 import { NavLink, Link } from 'react-router-dom'
 import { Bell } from 'lucide-react'
-import { useUnreadCount } from '@/hooks/use-alerts'
 import { ProfileSwitcher } from './ProfileSwitcher'
 
 export function Header() {
-  const { data: unreadCount } = useUnreadCount()
-
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     isActive
       ? 'text-primary font-medium text-sm'
@@ -37,20 +34,9 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-3">
-          <div
-            role="img"
-            className="relative p-1"
-            aria-label={unreadCount ? `${unreadCount} unread alerts` : 'No unread alerts'}
-          >
+          {/* no count: nothing stores what has been read (gap H-3) */}
+          <div role="img" className="p-1" aria-label="Notifications are not counted yet">
             <Bell className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
-            {!!unreadCount && unreadCount > 0 && (
-              <span
-                aria-hidden="true"
-                className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-blue-600 text-white text-[9px] flex items-center justify-center leading-none"
-              >
-                {unreadCount > 9 ? '9+' : unreadCount}
-              </span>
-            )}
           </div>
           <ProfileSwitcher />
         </div>

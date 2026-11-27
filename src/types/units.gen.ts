@@ -73,6 +73,7 @@ export const UNIT_BY_FIELD = {
   'MacroSnapshotResponse.ca_unemployment_6m_delta': 'points',
   'MacroSnapshotResponse.canada_bond_10y': 'percent',
   'MacroSnapshotResponse.canada_bond_2y': 'percent',
+  'MacroSnapshotResponse.fed_funds_rate': 'percent',
   'MarketLineResponse.holding': 'fraction',
   'MarketLineResponse.twelve_month': 'fraction',
   'MatrixCellResponse.after_tax_12m': 'fraction',

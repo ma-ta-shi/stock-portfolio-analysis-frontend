@@ -1,4 +1,5 @@
 import { usePortfolioSummary } from '@/hooks/use-portfolio'
+import { usePortfolioId } from '@/hooks/use-portfolio-id'
 import { SparklineChart } from '@/components/SparklineChart'
 import { QueryError } from '@/components/QueryError'
 import { formatCAD, formatDate, formatPct } from '@/lib/format'
@@ -7,8 +8,14 @@ import { cn } from '@/lib/utils'
 
 /** Home's value bar. It reads the same summary hook as the Portfolio header, so the two can never disagree. */
 export function PortfolioSnapshotBar() {
+  const portfolio = usePortfolioId()
   const { data, isLoading, isError, error, refetch } = usePortfolioSummary()
 
+  // without these two the bar would just be missing, with no way to know why
+  if (portfolio.isEmpty) return <p className="text-sm text-muted-foreground mb-6">You have no portfolio yet.</p>
+  if (portfolio.isError) {
+    return <QueryError what="your portfolio" error={portfolio.error} onRetry={portfolio.refetch} compact className="mb-6" />
+  }
   if (isLoading) {
     return (
       <div className="h-16 rounded-lg bg-muted animate-pulse mb-6" />
