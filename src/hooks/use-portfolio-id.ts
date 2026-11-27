@@ -17,7 +17,6 @@ export function usePortfolioId() {
     queryKey: queryKeys.portfolio.id(userId),
     queryFn: ({ signal }) =>
       apiFetch<ListResponse<PortfolioResponse>>(
-        '/mock-data/portfolio/portfolios.json',
         `/api/portfolios?user_id=${encodeURIComponent(userId)}`,
         { signal },
       ),

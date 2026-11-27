@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { PROFILE_INPUTS, accountInputs, buildSave, inputError, ruleInput, savedValue, type Profile, type SettingInput } from './settings-form'
 import { SETTINGS_ENTRY_FIELDS, SET_BY_PAGE } from '@/screens/settings/entry-fields'
-import profile from '../../public/mock-data/settings/profile.json'
-import schema from '../../public/mock-data/settings/order-settings.json'
-import accounts from '../../public/mock-data/portfolio/accounts.json'
+import profile from '@/test/fixtures/settings/profile.json'
+import schema from '@/test/fixtures/settings/order-settings.json'
+import accounts from '@/test/fixtures/portfolio/accounts.json'
 import type { components } from '@/types/openapi.gen'
 
 type Rule = components['schemas']['OrderSettingResponse']

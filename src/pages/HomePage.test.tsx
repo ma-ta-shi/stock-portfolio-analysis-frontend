@@ -5,8 +5,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MemoryRouter } from 'react-router-dom'
 import { Header } from '@/components/layout/Header'
 import { installFixtureFetch } from '@/test/fixture-fetch'
-import activityFile from '../../public/mock-data/home/activity.json'
-import macroFile from '../../public/mock-data/market/macro.json'
+import activityFile from '@/test/fixtures/home/activity.json'
+import macroFile from '@/test/fixtures/market/macro.json'
 import { HomePage } from './HomePage'
 
 const portfolio = vi.hoisted(() => ({ portfolioId: 'p1', isEmpty: false, isError: false, error: undefined as Error | undefined, refetch: vi.fn() }))

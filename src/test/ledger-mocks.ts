@@ -12,7 +12,7 @@ import { useState } from 'react'
 import { vi } from 'vitest'
 import { useAccounts, useLedgerPreview, useLedgerRecord, type LedgerCall } from '@/hooks/use-portfolio'
 import type { EventPreview } from '@/screens/portfolio/preview'
-import accountsFixture from '../../public/mock-data/portfolio/accounts.json'
+import accountsFixture from '@/test/fixtures/portfolio/accounts.json'
 
 /**
  * `pending`: the request is in flight and never settles, and the hook has not re-rendered yet. The real mutation hook batches its

@@ -11,7 +11,7 @@ export function useUsers() {
   return useQuery({
     queryKey: queryKeys.users.all,
     queryFn: ({ signal }) =>
-      apiFetch<UsersResponse>('/mock-data/users.json', '/api/users', { signal }),
+      apiFetch<UsersResponse>('/api/users', { signal }),
     select: (res) => res.data,
   })
 }

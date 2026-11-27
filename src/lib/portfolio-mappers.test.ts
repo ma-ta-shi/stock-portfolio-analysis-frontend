@@ -9,13 +9,13 @@ import {
   type ApiPositions,
   type ApiTransaction,
 } from './portfolio-mappers'
-import holdingsFixture from '../../public/mock-data/portfolio/holdings.json'
-import positionsFixture from '../../public/mock-data/portfolio/positions.json'
-import historyFixture from '../../public/mock-data/portfolio/value-history.json'
-import reportFixture from '../../public/mock-data/portfolio/report.json'
-import accountsFixture from '../../public/mock-data/portfolio/accounts.json'
-import roomFixture from '../../public/mock-data/portfolio/room.json'
-import transactionsFixture from '../../public/mock-data/portfolio/transactions.json'
+import holdingsFixture from '@/test/fixtures/portfolio/holdings.json'
+import positionsFixture from '@/test/fixtures/portfolio/positions.json'
+import historyFixture from '@/test/fixtures/portfolio/value-history.json'
+import reportFixture from '@/test/fixtures/portfolio/report.json'
+import accountsFixture from '@/test/fixtures/portfolio/accounts.json'
+import roomFixture from '@/test/fixtures/portfolio/room.json'
+import transactionsFixture from '@/test/fixtures/portfolio/transactions.json'
 import type { components } from '@/types/openapi.gen'
 
 // Every row below is a recorded API response (`npm run record:fixtures`), except where a test says it is built by hand.

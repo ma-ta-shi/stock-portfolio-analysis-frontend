@@ -32,7 +32,7 @@ function show(...data: ReturnType<typeof fixtureHolding>[]) {
   )
 }
 
-// The rows are the recorded API responses (public/mock-data/portfolio/holdings.json) through the real mapper.
+// The rows are the recorded API responses (src/test/fixtures/portfolio/holdings.json) through the real mapper.
 import { beforeEach } from 'vitest'
 beforeEach(() => {
   mockNavigate.mockClear()

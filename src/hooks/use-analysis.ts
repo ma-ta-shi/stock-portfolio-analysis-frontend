@@ -9,6 +9,6 @@ export function useAnalysisResult(analysisId: string | null | undefined) {
     queryKey: queryKeys.analysis.result(analysisId ?? ''),
     enabled: !!analysisId,
     queryFn: ({ signal }) =>
-      apiFetch<components['schemas']['AnalysisResultResponse']>('/mock-data/stocks/result.json', `/api/analysis/${analysisId}`, { signal }),
+      apiFetch<components['schemas']['AnalysisResultResponse']>(`/api/analysis/${analysisId}`, { signal }),
   })
 }

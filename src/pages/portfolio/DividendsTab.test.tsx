@@ -6,8 +6,8 @@ import { localDateInputValue } from '@/lib/format'
 import { mapDividendEvent, type ApiDividendEvent, type DividendEvent } from '@/screens/portfolio/dividends'
 import { mockLedgerHooks } from '@/test/ledger-mocks'
 import { mapTransactions } from '@/lib/portfolio-mappers'
-import transactionsFixture from '../../../public/mock-data/portfolio/transactions.json'
-import dividendsFixture from '../../../public/mock-data/portfolio/dividends.json'
+import transactionsFixture from '@/test/fixtures/portfolio/transactions.json'
+import dividendsFixture from '@/test/fixtures/portfolio/dividends.json'
 
 vi.mock('@/hooks/use-portfolio')
 vi.mock('@/hooks/use-fx-rates', () => ({ useFxRates: () => ({ rates: { CAD: 1, USD: 1.4 }, isLoading: false }) }))

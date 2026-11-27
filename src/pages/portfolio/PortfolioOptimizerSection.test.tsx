@@ -4,8 +4,8 @@ import { fireEvent, render, screen, waitFor, within } from '@testing-library/rea
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ApiError } from '@/lib/api'
 import { noOrdersMessage, runSteps, type Order, type Run } from '@/lib/optimizer'
-import askFixture from '../../../public/mock-data/portfolio/ask.json'
-import fixture from '../../../public/mock-data/portfolio/proposals.json'
+import askFixture from '@/test/fixtures/portfolio/ask.json'
+import fixture from '@/test/fixtures/portfolio/proposals.json'
 import { AvailableToTrade } from './AvailableToTrade'
 import { OptimizerRun } from './OptimizerRun'
 import { PortfolioOptimizerSection } from './PortfolioOptimizerSection'
@@ -126,13 +126,13 @@ describe('PortfolioOptimizerSection', () => {
     expect(api.apiFetch).toHaveBeenCalledTimes(1)
     fireEvent.click(screen.getByRole('button', { name: 'Run and save' }))
     await waitFor(() => expect(api.apiFetch).toHaveBeenCalledTimes(3)) // the run, then the stored run again
-    const [, url, init] = api.apiFetch.mock.calls[1]
+    const [url, init] = api.apiFetch.mock.calls[1]
     expect(url).toBe('/api/portfolios/p1/proposal-runs')
     expect(JSON.parse(init.body)).toEqual({ store: true, allow_stale: false })
   })
 
   it("shows the server's reason when a run is refused", async () => {
-    api.apiFetch.mockImplementation((_mock: string, url: string) =>
+    api.apiFetch.mockImplementation((url: string) =>
       url.endsWith('/proposal-runs')
         ? Promise.reject(new ApiError('No benchmark history', 422, 'NO_BENCHMARK_HISTORY', '/proposal-runs'))
         : Promise.resolve(recorded),
@@ -156,7 +156,7 @@ describe('AvailableToTrade', () => {
     const panel = await screen.findByRole('region', { name: 'Allocation answer' })
     expect(panel).toHaveTextContent(answer.headline)
     expect(panel).toHaveTextContent('Not saved')
-    expect(api.apiQuery.mock.calls[0].slice(1)).toEqual(['/api/portfolios/p1/ask', { amount_cad: 5000, account: null, store: false }])
+    expect(api.apiQuery.mock.calls[0]).toEqual(['/api/portfolios/p1/ask', { amount_cad: 5000, account: null, store: false }])
     expect(api.apiFetch).not.toHaveBeenCalled()
   })
 
@@ -167,6 +167,6 @@ describe('AvailableToTrade', () => {
     fireEvent.change(screen.getByLabelText('in'), { target: { value: 'tfsa' } })
     fireEvent.click(screen.getByRole('button', { name: 'Analyze allocation' }))
     await waitFor(() => expect(api.apiQuery).toHaveBeenCalled())
-    expect(api.apiQuery.mock.calls[0][2]).toMatchObject({ account: 'tfsa' })
+    expect(api.apiQuery.mock.calls[0][1]).toMatchObject({ account: 'tfsa' })
   })
 })

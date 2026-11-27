@@ -2,7 +2,7 @@
  * End-to-end run against a real backend on a seeded scratch database: `npm run test:e2e [playwright args]`.
  *
  *   1. makes a scratch database in the OS temp folder and seeds it with `<backend>/scripts/seed_e2e.py` (which refuses `app.db`);
- *   2. starts the backend on it (`DATABASE_URL`) and the Vite dev server in live mode, pointed at that backend;
+ *   2. starts the backend on it (`DATABASE_URL`) and the Vite dev server, pointed at that backend;
  *   3. runs Playwright (the specs in `e2e/`, one at a time);
  *   4. always stops both servers and removes the scratch folder (also after an error or Ctrl+C), and exits with Playwright's exit code.
  *
@@ -108,9 +108,11 @@ start(python, ['-m', 'uvicorn', 'api.main:app', '--app-dir', 'src', '--port', St
 })
 await waitFor(`http://127.0.0.1:${apiPort}/api/users`, 'the backend')
 
-start(process.execPath, [path.join(frontend, 'node_modules/vite/bin/vite.js'), '--mode', 'live', '--port', String(webPort), '--strictPort'], {
+start(process.execPath, [path.join(frontend, 'node_modules/vite/bin/vite.js'), '--port', String(webPort), '--strictPort'], {
   cwd: frontend,
-  env: { ...process.env, VITE_API_PROXY_TARGET: `http://127.0.0.1:${apiPort}` },
+  // Both addresses are given, so no `.env` can send these tests (they write) anywhere but the scratch backend: the app calls
+  // the dev server, which forwards to it. (A real value: an empty variable may not survive starting a process on Windows.)
+  env: { ...process.env, VITE_API_BASE_URL: `http://localhost:${webPort}`, VITE_API_PROXY_TARGET: `http://127.0.0.1:${apiPort}` },
   stdio: ['ignore', webLog, webLog],
 })
 await waitFor(`http://localhost:${webPort}/`, 'the dev server')

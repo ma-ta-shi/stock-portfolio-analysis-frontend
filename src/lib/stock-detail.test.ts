@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { historyReturn, mapDrivers, mapFundamentals, mapHistory, type ApiFundamentals, type ApiPrediction, type ApiRunSummary } from './stock-detail'
 import { predictionState } from './predictions'
-import runsFile from '../../public/mock-data/stocks/runs.json'
-import predictionsFile from '../../public/mock-data/stocks/predictions.json'
-import fundamentalsFile from '../../public/mock-data/stocks/fundamentals.json'
+import runsFile from '@/test/fixtures/stocks/runs.json'
+import predictionsFile from '@/test/fixtures/stocks/predictions.json'
+import fundamentalsFile from '@/test/fixtures/stocks/fundamentals.json'
 
 const stock = { stock_id: 's', ticker: 'RY.TO', name: 'Royal Bank', sector: 'Financials', exchange: 'TSX', currency: 'CAD' as const }
 const rows = mapHistory(stock, runsFile.data as unknown as ApiRunSummary[], predictionsFile.data as unknown as ApiPrediction[])

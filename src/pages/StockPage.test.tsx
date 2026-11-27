@@ -7,10 +7,10 @@ import { installFixtureFetch } from '@/test/fixture-fetch'
 import { mockHolding } from '@/test/mock-data'
 import { mockLedgerHooks } from '@/test/ledger-mocks'
 import { mapTransactions } from '@/lib/portfolio-mappers'
-import stockFile from '../../public/mock-data/stocks/stock.json'
-import snapshotFile from '../../public/mock-data/stocks/snapshot.json'
-import fundamentalsFile from '../../public/mock-data/stocks/fundamentals.json'
-import transactionsFixture from '../../public/mock-data/portfolio/transactions.json'
+import stockFile from '@/test/fixtures/stocks/stock.json'
+import snapshotFile from '@/test/fixtures/stocks/snapshot.json'
+import fundamentalsFile from '@/test/fixtures/stocks/fundamentals.json'
+import transactionsFixture from '@/test/fixtures/portfolio/transactions.json'
 
 vi.mock('@/hooks/use-portfolio')
 vi.mock('@/hooks/use-ticker-search')

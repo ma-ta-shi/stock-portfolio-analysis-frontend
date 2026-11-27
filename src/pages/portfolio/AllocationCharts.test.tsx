@@ -2,8 +2,8 @@ import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { AllocationCharts } from './AllocationCharts'
 import { slicesOf } from '@/lib/allocation'
-import exposureFixture from '../../../public/mock-data/portfolio/exposure.json'
-import positionsFixture from '../../../public/mock-data/portfolio/positions.json'
+import exposureFixture from '@/test/fixtures/portfolio/exposure.json'
+import positionsFixture from '@/test/fixtures/portfolio/positions.json'
 import type { components } from '@/types/openapi.gen'
 
 vi.mock('recharts', async (importOriginal) => ({ ...(await importOriginal<typeof import('recharts')>()), ResponsiveContainer: () => null }))

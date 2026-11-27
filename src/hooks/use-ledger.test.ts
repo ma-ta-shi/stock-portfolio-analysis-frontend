@@ -3,11 +3,6 @@ import { act, renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createElement } from 'react'
 
-// `.env` sets VITE_USE_MOCK=true for local dev; a write needs real mode (hoisted: runs before `@/lib/api` reads the flag).
-vi.hoisted(() => {
-  vi.stubEnv('VITE_USE_MOCK', 'false')
-})
-
 import { useLedgerPreview, useLedgerRecord } from '@/hooks/use-portfolio'
 import { usePortfolioId } from '@/hooks/use-portfolio-id'
 import { ApiError } from '@/lib/api'

@@ -3,7 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { ConfirmDividendDialog } from './ConfirmDividendDialog'
 import { mapDividendEvent, type ApiDividendEvent } from '@/screens/portfolio/dividends'
 import { mockLedgerHooks } from '@/test/ledger-mocks'
-import dividendsFixture from '../../public/mock-data/portfolio/dividends.json'
+import dividendsFixture from '@/test/fixtures/portfolio/dividends.json'
 
 vi.mock('@/hooks/use-portfolio')
 

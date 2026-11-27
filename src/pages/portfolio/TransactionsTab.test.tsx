@@ -5,7 +5,7 @@ import { MemoryRouter, useLocation } from 'react-router-dom'
 import { TransactionsTab } from './TransactionsTab'
 import { mapTransactions, type ApiTransaction } from '@/lib/portfolio-mappers'
 import { mockHoldings } from '@/test/mock-data'
-import transactionsFixture from '../../../public/mock-data/portfolio/transactions.json'
+import transactionsFixture from '@/test/fixtures/portfolio/transactions.json'
 
 vi.mock('@/hooks/use-portfolio')
 vi.mock('@/hooks/use-portfolio-id', () => ({ usePortfolioId: () => ({ portfolioId: 'p1' }) }))
@@ -20,7 +20,7 @@ import { downloadFile } from '@/lib/csv'
 import { ApiError } from '@/lib/api'
 import { mockLedgerHooks } from '@/test/ledger-mocks'
 
-// The ledger rows are the recorded API response (public/mock-data/portfolio/transactions.json) through the real mapper.
+// The ledger rows are the recorded API response (src/test/fixtures/portfolio/transactions.json) through the real mapper.
 const rows = mapTransactions((transactionsFixture.data as unknown as ApiTransaction[]).slice(0, 5))
 const meta = { total: 41, page: 1, per_page: 20, pages: 3 }
 

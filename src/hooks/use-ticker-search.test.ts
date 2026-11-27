@@ -3,28 +3,9 @@ import { act, renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createElement } from 'react'
 
-// `.env` sets VITE_USE_MOCK=true for local dev; the lookup request needs real mode (hoisted: runs before `@/lib/api` reads the flag).
-vi.hoisted(() => {
-  vi.stubEnv('VITE_USE_MOCK', 'false')
-})
-
-import { findMockTicker, fromLookup, useTickerSearch } from './use-ticker-search'
+import { fromLookup, useTickerSearch } from './use-ticker-search'
 import { ApiError } from '@/lib/api'
 import type { StockLookup } from '@/screens/portfolio/lookup'
-
-describe('findMockTicker', () => {
-  it('matches an exact ticker case-insensitively', () => {
-    expect(findMockTicker('ry.to')?.stock_id).toBe('stk_ry_to')
-  })
-  it('does not match a company name: the lookup is by ticker only', () => {
-    expect(findMockTicker('shopify')).toBeNull()
-    expect(findMockTicker('Royal Bank')).toBeNull()
-  })
-  it('returns null for no match or blank input', () => {
-    expect(findMockTicker('zzzz')).toBeNull()
-    expect(findMockTicker('   ')).toBeNull()
-  })
-})
 
 const bns: StockLookup = {
   stock_id: 'sid-1', ticker: 'BNS.TO', name: 'Bank of Nova Scotia', exchange: 'TSX', currency: 'CAD', sector: 'Financials',

@@ -11,8 +11,8 @@ export default defineConfig({
     // Unit/component tests only; Playwright specs in e2e/ run via `npm run test:e2e`.
     include: ['src/**/*.test.{ts,tsx}'],
     // Users are in Canada; a UTC test runner would hide off-by-one-day bugs.
-    // The flag is forced off so a developer's `.env` cannot change what a test does.
-    env: { TZ: 'America/Toronto', VITE_USE_MOCK: 'false' },
+    // The backend address is forced empty so a developer's `.env` cannot change what a test asks for.
+    env: { TZ: 'America/Toronto', VITE_API_BASE_URL: '' },
   },
   resolve: {
     alias: {

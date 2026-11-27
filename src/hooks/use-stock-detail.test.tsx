@@ -15,7 +15,7 @@ describe('useStockHistory', () => {
 
     renderHook(() => useStockHistory('s1', undefined), { wrapper })
 
-    await waitFor(() => expect(read.mock.calls.map((c) => c[1])).toContain('/api/analysis?stock_id=s1&status=complete&from=2026-10-13'))
-    expect(read.mock.calls.map((c) => c[1])).toContain('/api/predictions?stock_id=s1&from=2026-10-13')
+    await waitFor(() => expect(read.mock.calls.map((c) => c[0])).toContain('/api/analysis?stock_id=s1&status=complete&from=2026-10-13'))
+    expect(read.mock.calls.map((c) => c[0])).toContain('/api/predictions?stock_id=s1&from=2026-10-13')
   })
 })

@@ -5,7 +5,7 @@ import type { ReactNode } from 'react'
 import { useAddToWatchlist, useRemoveFromWatchlist, useWatchlist } from './use-watchlist'
 import { installFixtureFetch } from '@/test/fixture-fetch'
 
-vi.mock('@/context/UserContext', () => ({ useUser: () => ({ userId: 'user_01', setUserId: vi.fn() }) }))
+vi.mock('@/context/UserContext', () => ({ useUser: () => ({ userId: 'u1', setUserId: vi.fn() }) }))
 
 const client = () => new QueryClient({ defaultOptions: { queries: { retry: false } } })
 const wrap = (c: QueryClient) => ({ children }: { children: ReactNode }) => <QueryClientProvider client={c}>{children}</QueryClientProvider>

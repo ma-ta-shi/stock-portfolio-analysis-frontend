@@ -100,13 +100,6 @@ describe('LedgerPanel', () => {
     expect(screen.getByLabelText('Field')).toBeInTheDocument()
   })
 
-  it('says writes need the real backend in mock mode', () => {
-    ledger.outcomes.preview = { error: new ApiError('x', null, 'mock_mode_unsupported', '/u') }
-    render(<Harness />)
-    review()
-    expect(screen.getByRole('alert')).toHaveTextContent(/real backend/)
-  })
-
   it('lists warnings and notes the server returned', () => {
     ledger.outcomes.preview = { data: { ...(ledger.outcomes.preview as { data: object }).data, warnings: ['Cash goes negative'], notes: ['A superficial loss'] } }
     render(<Harness />)

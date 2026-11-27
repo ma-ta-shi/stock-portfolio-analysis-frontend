@@ -1,4 +1,4 @@
-// Records the real responses a screen reads into public/mock-data/<screen>/, untrimmed. That one copy is what mock mode serves,
+// Records the real responses a screen reads into src/test/fixtures/<screen>/, untrimmed. That one copy is what the test server answers with,
 // what the mapper and render tests import, and what the field-coverage render test walks, so nothing is hand-built twice.
 // Run it against a backend on a scratch copy of the database (never the real file), after `alembic upgrade head`:
 //   API_URL=http://localhost:8010 npm run record:fixtures                 (every screen below)
@@ -55,7 +55,7 @@ try {
   }
   for (const screen of SCREENS) {
     if (wanted.length && !wanted.includes(screen)) continue
-    const dir = `public/mock-data/${screen}`
+    const dir = `src/test/fixtures/${screen}`
     mkdirSync(dir, { recursive: true })
     for (const route of table.filter((r) => r.screen === screen)) {
       if (only.length && !only.includes(route.file)) continue

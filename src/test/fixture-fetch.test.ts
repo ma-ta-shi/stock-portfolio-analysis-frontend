@@ -3,7 +3,7 @@ import { installFixtureFetch, recordingFor, recordingId } from './fixture-fetch'
 import routes from './fixture-routes.json'
 
 const day = (offset: number) => new Date(Date.now() + offset * 86_400_000).toISOString().slice(0, 10)
-const recorded = Object.keys(import.meta.glob('../../public/mock-data/**/*.json')).map((p) => p.replace('../../public/mock-data/', '').replace('.json', ''))
+const recorded = Object.keys(import.meta.glob('./fixtures/**/*.json')).map((p) => p.replace('./fixtures/', '').replace('.json', ''))
 
 describe('the recordings and the requests that answer with them', () => {
   it('every route of the table has its recording', () => {

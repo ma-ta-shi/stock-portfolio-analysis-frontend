@@ -14,7 +14,7 @@ vi.mock('./portfolio/AllocationCharts', () => ({ AllocationCharts: () => <div>al
 vi.mock('@/components/AddStockDialog', () => ({ AddStockDialog: ({ open }: { open: boolean }) => (open ? <div>add-stock-dialog</div> : null) }))
 vi.mock('./portfolio/SummaryHeader', () => ({ SummaryHeader: ({ accountView }: { accountView: string }) => <div>header:{accountView}</div> }))
 vi.mock('@/hooks/use-portfolio-id')
-vi.mock('@/context/UserContext', () => ({ useUser: () => ({ userId: 'user_01', setUserId: vi.fn() }) }))
+vi.mock('@/context/UserContext', () => ({ useUser: () => ({ userId: 'u1', setUserId: vi.fn() }) }))
 vi.mock('@/hooks/use-portfolio')
 import { usePortfolioId } from '@/hooks/use-portfolio-id'
 

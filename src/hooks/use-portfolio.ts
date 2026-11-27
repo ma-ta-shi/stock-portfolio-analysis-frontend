@@ -28,7 +28,6 @@ import type { components } from '@/types/openapi.gen'
 import type { PortfolioAccountView, Transaction } from '@/types/portfolio'
 
 type Api = components['schemas']
-const DIR = '/mock-data/portfolio'
 const ONE_PAGE = 20
 
 function usePortfolioPath(): { id: string | null; path: (rest: string) => string } {
@@ -42,7 +41,7 @@ export function usePositions() {
   return useQuery({
     queryKey: queryKeys.portfolio.positions(id ?? ''),
     enabled: !!id,
-    queryFn: ({ signal }) => apiFetch<ApiPositions>(`${DIR}/positions.json`, path('/positions'), { signal }),
+    queryFn: ({ signal }) => apiFetch<ApiPositions>(path('/positions'), { signal }),
   })
 }
 
@@ -52,7 +51,7 @@ function useRawHoldings() {
     queryKey: queryKeys.portfolio.rawHoldings(id ?? ''),
     enabled: !!id,
     queryFn: ({ signal }) =>
-      fetchAllPages<ApiHolding>(`${DIR}/holdings.json`, path('/holdings?include=snapshot&include=position&include_closed=true'), { signal }),
+      fetchAllPages<ApiHolding>(path('/holdings?include=snapshot&include=position&include_closed=true'), { signal }),
   })
 }
 
@@ -77,14 +76,14 @@ export function useClosedPositions() {
   return { ...rows, data }
 }
 
-/** The report since inception, or for an inclusive range of days (mock mode serves the 30-day recording for any range). */
+/** The report since inception, or for an inclusive range of days. */
 function useReport(range?: { start: string; end: string }) {
   const { id, path } = usePortfolioPath()
   return useQuery({
     queryKey: queryKeys.portfolio.report(id ?? '', range ? `${range.start}:${range.end}` : undefined),
     enabled: !!id,
     queryFn: ({ signal }) =>
-      apiQuery<Api['ReportResponse']>(`${DIR}/${range ? 'report-30d' : 'report'}.json`, path('/reports'), range ?? { preset: 'since_inception' }, { signal }),
+      apiQuery<Api['ReportResponse']>(path('/reports'), range ?? { preset: 'since_inception' }, { signal }),
   })
 }
 
@@ -105,7 +104,6 @@ export function useValueHistory(view: PortfolioAccountView, days = 30) {
     queryFn: ({ signal }) => {
       const from = dayFromToday(-days)
       return apiFetch<Api['ValueHistoryResponse']>(
-        `${DIR}/value-history${days > 30 ? '-year' : ''}.json`,
         path(`/value-history?from=${from}${account ? `&account_type=${account}` : ''}`),
         { signal },
       )
@@ -119,7 +117,7 @@ export function useAccounts() {
   return useQuery({
     queryKey: queryKeys.portfolio.accounts(id ?? ''),
     enabled: !!id,
-    queryFn: ({ signal }) => apiFetch<Api['AccountListResponse']>(`${DIR}/accounts.json`, path('/accounts'), { signal }),
+    queryFn: ({ signal }) => apiFetch<Api['AccountListResponse']>(path('/accounts'), { signal }),
   })
 }
 
@@ -129,7 +127,7 @@ export function useRoom() {
     queryKey: queryKeys.portfolio.room(id ?? ''),
     enabled: !!id,
     retry: false, // 422 PROFILE_INCOMPLETE is an answer, not a glitch
-    queryFn: ({ signal }) => apiFetch<Api['RoomResponse']>(`${DIR}/room.json`, path('/room'), { signal }),
+    queryFn: ({ signal }) => apiFetch<Api['RoomResponse']>(path('/room'), { signal }),
   })
 }
 
@@ -142,7 +140,7 @@ export function useExposure() {
   return useQuery({
     queryKey: queryKeys.portfolio.exposure(id ?? '', 'combined'),
     enabled: !!id,
-    queryFn: ({ signal }) => apiFetch<Api['ExposureResponse']>(`${DIR}/exposure.json`, path('/exposure'), { signal }),
+    queryFn: ({ signal }) => apiFetch<Api['ExposureResponse']>(path('/exposure'), { signal }),
   })
 }
 
@@ -195,7 +193,7 @@ export function useTransactions(filters: TransactionFilters, view: PortfolioAcco
     queryKey: queryKeys.portfolio.transactions(id ?? '', query),
     enabled: !!id,
     placeholderData: keepPreviousData,
-    queryFn: ({ signal }) => apiFetch<ListResponse<ApiTransaction>>(`${DIR}/transactions.json`, path(`/transactions${query}`), { signal }),
+    queryFn: ({ signal }) => apiFetch<ListResponse<ApiTransaction>>(path(`/transactions${query}`), { signal }),
   })
   const data = useMemo(() => (result.data ? { rows: mapTransactions(result.data.data), meta: result.data.meta } : undefined), [result.data])
   return { ...result, data }
@@ -209,7 +207,7 @@ export async function fetchAllTransactions(
   signal?: AbortSignal,
 ): Promise<Transaction[]> {
   const query = transactionsQuery(filters, view)
-  const rows = await fetchAllPages<ApiTransaction>(`${DIR}/transactions.json`, `/api/portfolios/${portfolioId}/transactions${query}`, { signal })
+  const rows = await fetchAllPages<ApiTransaction>(`/api/portfolios/${portfolioId}/transactions${query}`, { signal })
   return mapTransactions(rows)
 }
 
@@ -232,7 +230,7 @@ export function useDividends() {
   const result = useQuery({
     queryKey: queryKeys.portfolio.dividends(id ?? ''),
     enabled: !!id,
-    queryFn: ({ signal }) => fetchAllPages<ApiDividendEvent>(`${DIR}/dividends.json`, path('/dividends'), { signal }),
+    queryFn: ({ signal }) => fetchAllPages<ApiDividendEvent>(path('/dividends'), { signal }),
   })
   const data = useMemo(() => result.data?.map(mapDividendEvent), [result.data])
   return { ...result, data }
@@ -248,8 +246,7 @@ export interface LedgerCall {
 async function postLedger<T>(portfolioId: string | null, route: LedgerRoute, { params, body }: LedgerCall): Promise<T> {
   if (!portfolioId) throw new Error('No portfolio to write to')
   const apiPath = `/api/portfolios/${portfolioId}${fillRoute(route, params)}`
-  // A write has no recorded file: mock mode refuses it with `mock_mode_unsupported` before any request.
-  return apiFetch<T>(`${DIR}/ledger.json`, apiPath, jsonBody(route.method, body))
+  return apiFetch<T>(apiPath, jsonBody(route.method, body))
 }
 
 /**

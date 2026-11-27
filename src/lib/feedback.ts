@@ -1,7 +1,7 @@
 /**
  * The monthly scorecard as the Feedback page reads it. The API serves a scorecard's `data` untyped (its structure is in
  * backend docs, feedback-engine-design.md 5.8 and 5.9), so the few keys read are typed here and nowhere else; a backend test
- * pins their names and the sample in `public/mock-data/feedback` is the real scorer's output.
+ * pins their names and the sample in `test/fixtures/feedback` is the real scorer's output.
  */
 import type { components } from '@/types/openapi.gen'
 
