@@ -1,4 +1,5 @@
 /** The Stock page's reads as view-models: the fundamentals in the shape `StockInfoSection` draws, the history rows, the drivers. */
+import { mapCheckpoints, type ApiPrediction, type Checkpoint } from './predictions'
 import { mapRunCall, type StockSnapshot } from './stock-snapshot'
 import { asFraction } from './units'
 import type { components } from '@/types/openapi.gen'
@@ -8,7 +9,7 @@ import type { Stock } from '@/types/stock'
 type Api = components['schemas']
 export type ApiFundamentals = Api['StockFundamentalsResponse']
 export type ApiRunSummary = Api['AnalysisRunSummary']
-export type ApiPrediction = Api['PredictionResponse']
+export type { ApiPrediction }
 
 const some = (value: number | null | undefined) => value ?? undefined
 
@@ -49,13 +50,6 @@ export function mapDrivers(raw: unknown): Driver[] {
   })
 }
 
-export interface Checkpoint {
-  interval: string
-  resolved: boolean
-  /** Total return from the recommendation to the checkpoint; a fraction. */
-  totalReturn: number | null
-}
-
 /** One past analysis of the stock and its prediction. `stock` and `call` are what every list of stocks has. */
 export interface HistoryRow {
   analysis_id: string
@@ -80,11 +74,7 @@ export function mapHistory(stock: Stock, runs: readonly ApiRunSummary[], predict
       returnLow: asFraction('AnalysisRunSummary.expected_return_low', run.expected_return_low),
       returnHigh: asFraction('AnalysisRunSummary.expected_return_high', run.expected_return_high),
       priceAtAnalysis: prediction?.price_at_recommendation ?? null,
-      checkpoints: (prediction?.checkpoints ?? []).map((c) => ({
-        interval: c.interval,
-        resolved: c.status === 'resolved',
-        totalReturn: asFraction('PredictionCheckpointResponse.actual_total_return_pct', c.actual_total_return_pct),
-      })),
+      checkpoints: mapCheckpoints(prediction),
     }
   })
 }
@@ -93,9 +83,4 @@ export function mapHistory(stock: Stock, runs: readonly ApiRunSummary[], predict
 export function historyReturn(row: HistoryRow): number | null {
   const at = (interval: string) => row.checkpoints.find((c) => c.interval === interval && c.resolved)?.totalReturn ?? null
   return at('3m') ?? at('1m')
-}
-
-export function predictionState(row: HistoryRow): 'resolved' | 'pending' | null {
-  if (!row.checkpoints.length) return null
-  return row.checkpoints.some((c) => c.resolved) ? 'resolved' : 'pending'
 }

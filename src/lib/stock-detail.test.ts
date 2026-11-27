@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { historyReturn, mapDrivers, mapFundamentals, mapHistory, predictionState, type ApiFundamentals, type ApiPrediction, type ApiRunSummary } from './stock-detail'
+import { historyReturn, mapDrivers, mapFundamentals, mapHistory, type ApiFundamentals, type ApiPrediction, type ApiRunSummary } from './stock-detail'
+import { predictionState } from './predictions'
 import runsFile from '../../public/mock-data/stocks/runs.json'
 import predictionsFile from '../../public/mock-data/stocks/predictions.json'
 import fundamentalsFile from '../../public/mock-data/stocks/fundamentals.json'

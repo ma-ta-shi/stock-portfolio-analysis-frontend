@@ -1,17 +1,19 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { apiFetch } from '@/lib/api'
 import { queryKeys } from '@/lib/query-keys'
-import { useUser } from '@/context/UserContext'
-import type { PredictionsResponse } from '@/types'
+import type { components } from '@/types/openapi.gen'
 
-export function usePredictions() {
-  const { userId } = useUser()
+export const PREDICTIONS_PER_PAGE = 20
+
+/** The predictions of the weekly batch runs of the current design, newest first. Shared by all users. */
+export function usePredictions(page: number) {
   return useQuery({
-    queryKey: queryKeys.predictions(userId),
+    queryKey: queryKeys.feedback.predictions(page),
+    placeholderData: keepPreviousData,
     queryFn: ({ signal }) =>
-      apiFetch<PredictionsResponse>(
-        `/mock-data/predictions/${userId}.json`,
-        `/api/predictions/${userId}`,
+      apiFetch<components['schemas']['PredictionListResponse']>(
+        '/mock-data/feedback/predictions.json',
+        `/api/predictions?current_design=true&page=${page}&per_page=${PREDICTIONS_PER_PAGE}`,
         { signal },
       ),
   })

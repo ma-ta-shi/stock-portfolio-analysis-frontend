@@ -1,103 +1,70 @@
-import { usePredictions } from '@/hooks/use-predictions'
-import { RecommendationBadge } from '@/components/RecommendationBadge'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
-import { cn } from '@/lib/utils'
+import { useState } from 'react'
+import { Pager } from '@/components/Pager'
 import { QueryError } from '@/components/QueryError'
-import { formatNumber } from '@/lib/format'
-import { TONE_TEXT } from '@/lib/labels'
-import type { PredictionCheckpoint } from '@/types'
+import { RegistryTable } from '@/components/RegistryTable'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { usePredictions } from '@/hooks/use-predictions'
+import { fieldsFor } from '@/lib/fields'
+import { formatDate, formatPct } from '@/lib/format'
+import { CHECKPOINT_WORDS, INTERVAL_WORDS, mapCheckpoints, type ApiPrediction } from '@/lib/predictions'
+import { PREDICTION_FIELDS } from '@/screens/feedback'
 
-function CheckpointDots({ checkpoints }: { checkpoints: PredictionCheckpoint[] }) {
+const COLUMNS = fieldsFor(PREDICTION_FIELDS, 'column')
+const RIGHT = new Set(['confidence', 'price'])
+const pct = (v: number | null) => formatPct(v, 1)
+
+function Checkpoints({ prediction }: { prediction: ApiPrediction }) {
+  const checks = mapCheckpoints(prediction)
+  if (!checks.length) return <p className="text-xs text-muted-foreground">No price band was made, so there is nothing to check.</p>
   return (
-    <div className="flex gap-1">
-      {checkpoints.map((cp, i) => {
-        let dotClass = 'bg-muted'
-        if (cp.status === 'scored') {
-          dotClass = cp.direction_correct ? 'bg-emerald-500' : 'bg-red-500'
-        }
-        return (
-          <span
-            key={i}
-            className={cn('inline-block w-2 h-2 rounded-full', dotClass)}
-            title={`${cp.interval}: ${cp.status}`}
-          />
-        )
-      })}
-    </div>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          {['Check-in', 'Due', 'Return', 'Market', 'Difference', 'Expected by then', 'Status'].map((h) => (
+            <TableHead key={h}>{h}</TableHead>
+          ))}
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {checks.map((c) => (
+          <TableRow key={c.interval}>
+            <TableCell>{INTERVAL_WORDS[c.interval] ?? c.interval}</TableCell>
+            <TableCell>{formatDate(c.due)}</TableCell>
+            <TableCell>{pct(c.totalReturn)}</TableCell>
+            <TableCell>{pct(c.marketReturn)}</TableCell>
+            <TableCell>{pct(c.excessReturn)}</TableCell>
+            <TableCell>{pct(c.expected)}</TableCell>
+            <TableCell className="whitespace-normal">
+              {CHECKPOINT_WORDS[c.status]}
+              {c.reason && <span className="text-muted-foreground">: {c.reason}</span>}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   )
 }
 
 export function PredictionHistory() {
-  const { data, isLoading, isError, error, refetch } = usePredictions()
+  const [page, setPage] = useState(1)
+  const { data, isLoading, isError, error, refetch } = usePredictions(page)
 
-  if (isLoading) {
-    return <div className="h-48 rounded-lg bg-muted animate-pulse" />
-  }
-  if (isError) {
-    return <QueryError what="prediction history" error={error} onRetry={refetch} />
-  }
-  if (!data?.data.length) {
-    return <p className="text-muted-foreground text-sm py-8 text-center">No predictions yet.</p>
-  }
+  if (isLoading) return <div className="h-48 rounded-lg bg-muted animate-pulse" />
+  if (isError) return <QueryError what="prediction history" error={error} onRetry={refetch} />
+  if (!data?.data.length) return <p className="text-muted-foreground text-sm py-8 text-center">No weekly batch predictions yet.</p>
 
   return (
-    <div className="border border-border rounded-lg overflow-hidden">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Ticker</TableHead>
-            <TableHead>Rec</TableHead>
-            <TableHead className="text-right">Confidence</TableHead>
-            <TableHead className="text-right">Price</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Checkpoints</TableHead>
-            <TableHead className="text-right">Score</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.data.map((p) => (
-            <TableRow key={p.prediction_id}>
-              <TableCell className="font-medium">{p.ticker}</TableCell>
-              <TableCell>
-                <RecommendationBadge recommendation={p.recommendation} />
-              </TableCell>
-              <TableCell className="text-right text-sm">
-                {Math.round(p.confidence_score)}%
-              </TableCell>
-              <TableCell className="text-right text-sm">
-                {formatNumber(p.price_at_recommendation)}
-              </TableCell>
-              <TableCell>
-                <Badge
-                  variant="outline"
-                  className={cn(
-                    'text-xs',
-                    p.status === 'active'
-                      ? `border-blue-500 ${TONE_TEXT.info}`
-                      : 'text-muted-foreground',
-                  )}
-                >
-                  {p.status}
-                </Badge>
-              </TableCell>
-              <TableCell>
-                <CheckpointDots checkpoints={p.checkpoints} />
-              </TableCell>
-              <TableCell className="text-right text-sm">
-                {formatNumber(p.composite_score)}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+    <>
+      <RegistryTable
+        columns={COLUMNS}
+        rows={data.data}
+        rowKey={(p) => p.prediction_id}
+        rowLabel={(p) => `${p.stock.ticker}, ${formatDate(p.created_at)}`}
+        rightAligned={RIGHT}
+        detail={PREDICTION_FIELDS}
+        expandedExtra={(p) => <Checkpoints prediction={p} />}
+      />
+      <Pager page={data.meta.page} pages={data.meta.pages} total={data.meta.total} onPage={setPage} noun="predictions" />
+    </>
   )
 }

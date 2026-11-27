@@ -79,6 +79,7 @@ export const SUMMARY_NOT_SHOWN: Partial<Record<ApiFieldKey, NotShown>> = {
   'ValuePointResponse.positions_cad': { reason: 'The sparkline plots the total value only; the split of a day into positions and cash is not drawn' },
   'ValuePointResponse.unpriced': { reason: "A day's unpriced holdings are not shown; the header warns about today's (ScopeValueResponse.unpriced)" },
   'PortfolioResponse.name': { reason: 'The page title is fixed ("Portfolio"); the portfolio id is what the requests use' },
+  'ValuePointResponse.fund_value_cad': { reason: 'Drawn on the Feedback chart' },
   'ValueHistoryResponse.portfolio_id': { reason: 'Echoes the request' },
   'ValueHistoryResponse.start': { reason: 'Echoes the request' },
   'ValueHistoryResponse.end': { reason: 'Echoes the request' },
