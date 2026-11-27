@@ -34,9 +34,9 @@ uvicorn api.main:app --app-dir src --port 8000
 | `npm test` | Run the Vitest suite once |
 | `npm run gen:gaps` | Writes `docs/gap-register.md` from `src/lib/gaps.json` (every missing or not-yet-connected piece, with its ticket); `-- --check` runs in `npm test` |
 | `npm run coverage:api` | Lists the API response schemas no screen has claimed yet (the epic is done when it is empty or every entry has a reason) |
-| `npm run record:fixtures` | Records the real API responses the unit tests use into `src/test/fixtures/`, from a backend on a scratch copy of the database (`API_URL=...`). The routes are listed in `src/test/fixture-routes.json` |
+| `npm run record:fixtures` | Records the API responses the unit tests use into `src/test/fixtures/`. It starts its own backend on a freshly seeded database of invented data and cannot be pointed at any other (needs `../backend` or `BACKEND_DIR`, like `test:e2e`). The routes are listed in `src/test/fixture-routes.json` |
 | `npm run test:watch` | Vitest in watch mode |
-| `npm run test:e2e` | Playwright against a real backend on a seeded scratch database (`scripts/e2e.mjs` seeds it with the backend's `seed_e2e.py`, starts the backend and the dev server, runs `e2e/`, tears everything down): every page in light and dark with axe-core, and the user flows. Needs the backend checkout at `../backend` (or `BACKEND_DIR`) with its `.venv`, and a network; never touches `app.db` |
+| `npm run test:e2e` | Playwright against a real backend on a seeded scratch database (`scripts/scratch-backend.mjs` seeds it with the backend's `seed_e2e.py` and starts the backend, `scripts/e2e.mjs` starts the dev server and runs `e2e/`, then everything is torn down): every page in light and dark with axe-core, and the user flows. Needs the backend checkout at `../backend` (or `BACKEND_DIR`) with its `.venv`, and a network; never touches `app.db` |
 | `npm run lint` | ESLint |
 | `npx tsc -b` | Type check |
 | `npm run build` | Type check + production build to `dist/` |
