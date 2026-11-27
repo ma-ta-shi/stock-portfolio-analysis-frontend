@@ -12,7 +12,7 @@ const rule = (key: string) => rules.find((r) => r.key === `rule.${key}`)!
 const stored = {
   profile: profile as unknown as Profile,
   accounts: accounts.data as unknown as components['schemas']['PortfolioAccountResponse'][],
-  settings: { synthetic: true, sell: ['PLUG'], orders: { minimum_order: 800 } },
+  settings: { synthetic: true, sell: ['AAA'], orders: { minimum_order: 800 } },
 }
 const change = (input: SettingInput, value: string) => ({ input, value })
 const TODAY = '2026-11-26'
@@ -40,9 +40,9 @@ describe('buildSave', () => {
 
   it('sends the optimizer settings whole, keeping the keys it does not edit, and drops a rule set back to its default', () => {
     const [set] = buildSave([change(rule('drift.low'), '0.4')], stored.settings, TODAY)
-    expect(set.body).toEqual({ settings: { synthetic: true, sell: ['PLUG'], orders: { minimum_order: 800 }, drift: { low: 0.4 } } })
+    expect(set.body).toEqual({ settings: { synthetic: true, sell: ['AAA'], orders: { minimum_order: 800 }, drift: { low: 0.4 } } })
     const [cleared] = buildSave([change(rule('orders.minimum_order'), '')], stored.settings, TODAY)
-    expect(cleared.body).toEqual({ settings: { synthetic: true, sell: ['PLUG'] } })
+    expect(cleared.body).toEqual({ settings: { synthetic: true, sell: ['AAA'] } })
     expect(stored.settings.orders).toEqual({ minimum_order: 800 }) // the stored object is not touched
   })
 
@@ -70,7 +70,7 @@ describe('buildSave', () => {
 
 describe('savedValue', () => {
   it('reads a profile, account and rule value as text, blank when there is none', () => {
-    expect(savedValue(PROFILE_INPUTS.income_annual, stored, 2026)).toBe('85000')
+    expect(savedValue(PROFILE_INPUTS.income_annual, stored, 2026)).toBe('95000')
     expect(savedValue(PROFILE_INPUTS.marginal_tax_rate_override_pct, stored, 2026)).toBe('')
     expect(savedValue(accountInputs('tfsa')[3], stored, 2026)).toBe('true')
     expect(savedValue(rule('orders.minimum_order'), stored, 2026)).toBe('800')

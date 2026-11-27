@@ -9,10 +9,10 @@ const byTicker = (ticker: string) => {
   return mapHolding(row)
 }
 
-/** RY.TO in the RRSP: a Canadian stock with a usable call. */
+/** RY.TO in the TFSA: a Canadian stock with a usable call. */
 export const mockHolding = byTicker('RY.TO')
-/** RDDT in Trading: a USD holding whose call is excluded. */
-export const mockUsdHolding = byTicker('RDDT')
+/** KO in Trading: a USD holding whose call is excluded. */
+export const mockUsdHolding = byTicker('KO')
 
 /** Every recorded holding, mapped: active and closed, usable, stale and unsupported calls. */
 export const mockHoldings = rows.map((row) => mapHolding(row))

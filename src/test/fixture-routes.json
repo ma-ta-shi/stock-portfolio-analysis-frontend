@@ -24,19 +24,19 @@
   { "screen": "portfolio", "file": "transactions", "path": "/api/portfolios/{portfolioId}/transactions?page=1&per_page=100" },
   { "screen": "portfolio", "file": "exposure", "path": "/api/portfolios/{portfolioId}/exposure" },
   { "screen": "portfolio", "file": "dividends", "path": "/api/portfolios/{portfolioId}/dividends?page=1&per_page=100" },
-  { "screen": "portfolio", "file": "proposals", "path": "/api/portfolios/{portfolioId}/proposals" },
-  { "screen": "portfolio", "file": "ask", "method": "POST", "path": "/api/portfolios/{portfolioId}/ask", "body": { "amount_cad": 5000, "account": null, "store": false } },
+  { "screen": "portfolio", "file": "proposals", "path": "/api/portfolios/{portfolioId}/proposals", "record": false },
+  { "screen": "portfolio", "file": "ask", "method": "POST", "path": "/api/portfolios/{portfolioId}/ask", "body": { "amount_cad": 5000, "account": null, "store": false }, "record": false },
 
   { "screen": "market", "file": "exchange-rates", "path": "/api/exchange-rates" },
-  { "screen": "market", "file": "macro", "path": "/api/macro" },
+  { "screen": "market", "file": "macro", "path": "/api/macro", "record": false },
 
   { "screen": "home", "file": "activity", "path": "/api/activity?user_id={userId}&per_page=100" },
 
-  { "screen": "feedback", "file": "weekly-batch", "path": "/api/weekly-batch" },
+  { "screen": "feedback", "file": "weekly-batch", "path": "/api/weekly-batch", "record": false },
   { "screen": "feedback", "file": "pipeline-versions", "path": "/api/pipeline-versions?per_page=100" },
   { "screen": "feedback", "file": "predictions", "path": "/api/predictions?current_design=true&page=1&per_page=20" },
   { "screen": "feedback", "file": "scorecard-overview", "path": "/api/scorecard?section=overview", "record": false },
   { "screen": "feedback", "file": "scorecard-scoring", "path": "/api/scorecard?section=scoring", "record": false },
 
-  { "screen": "", "file": "users", "path": "/api/users", "record": false }
+  { "screen": "", "file": "users", "path": "/api/users" }
 ]

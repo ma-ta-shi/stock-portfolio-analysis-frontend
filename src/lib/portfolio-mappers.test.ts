@@ -26,13 +26,13 @@ const positions = positionsFixture as unknown as ApiPositions
 describe('mapHolding', () => {
   it('turns the position and snapshot into one row with whole percents as fractions', () => {
     const h = mapHolding(raw('RY.TO'))
-    expect(h.shares).toBe(40)
-    expect(h.current_price).toBe(263.05)
-    expect(h.market_value).toBeCloseTo(40 * 263.05)
-    expect(h.total_gain_loss).toBeCloseTo(40 * 263.05 - h.total_book_cost)
-    expect(h.unrealised_pct).toBeCloseTo(0.0911) // the API's 9.11 whole percent
-    expect(h.weight).toBeCloseTo(0.1362)
-    expect(h.value_cad).toBe(10522)
+    expect(h.shares).toBe(45.4)
+    expect(h.current_price).toBe(110)
+    expect(h.market_value).toBeCloseTo(45.4 * 110)
+    expect(h.total_gain_loss).toBeCloseTo(45.4 * 110 - h.total_book_cost)
+    expect(h.unrealised_pct).toBeCloseTo(0.1) // the API's 10 whole percent
+    expect(h.weight).toBeCloseTo(0.0515)
+    expect(h.value_cad).toBe(4994)
   })
 
   it('keeps a usable call, and names the exclusions of an unusable one', () => {
@@ -44,33 +44,43 @@ describe('mapHolding', () => {
   })
 
   it('has no call for an instrument the pipeline cannot analyse', () => {
-    const fund = mapHolding(raw('VFV.TO'))
+    const fund = mapHolding(raw('ZQQ.TO'))
     expect(fund.stock.pipeline_supported).toBe(false)
     expect(fund.call?.analysis).toBeNull()
   })
 
   it('values a USD holding in USD, with the CAD figures beside it', () => {
-    const usd = mapHolding(raw('RDDT'))
+    const usd = mapHolding(raw('KO'))
     expect(usd.stock.currency).toBe('USD')
-    expect(usd.market_value).toBeCloseTo(40 * 85.33, 1)
-    expect(usd.value_cad).toBe(4879.51)
-    expect(usd.unrealised_cad).toBe(-232.09)
-    expect(usd.unrealised_fx_cad).toBe(442.35)
+    expect(usd.market_value).toBeCloseTo(40 * 62, 1)
+    expect(usd.value_cad).toBe(3532.26)
+    expect(usd.unrealised_cad).toBe(-107.74)
+    expect(usd.unrealised_fx_cad).toBe(308.26)
   })
 
   it('gives a closed position no market value', () => {
-    const closed = mapHolding(raw('XOM'))
+    const closed = mapHolding(raw('TRP.TO'))
     expect(closed.is_active).toBe(false)
     expect(closed.market_value).toBeNull()
     expect(closed.total_gain_loss).toBeNull()
   })
 
+  it('carries the day, week and month price changes through', () => {
+    const row = raw('RY.TO')
+    const h = mapHolding(row)
+    for (const key of ['change_day', 'change_week', 'change_month'] as const) {
+      expect(row.snapshot![key]).not.toBeNull()
+      expect(h[key]).toBe(row.snapshot![key]) // the API already sends fractions
+    }
+  })
+
   it('derives yield from the expected income over the price and over the average cost', () => {
     const h = mapHolding(raw('RY.TO'))
     const income = h.expected_income_per_share
-    if (income == null) return
-    expect(h.dividend_yield).toBeCloseTo(income / 263.05)
-    expect(h.yield_on_cost).toBeCloseTo(income / 241.08)
+    expect(income).toBe(4.2) // four quarterly dividends of 1.05
+    expect(h.dividend_yield).toBeCloseTo(4.2 / 110, 5)
+    expect(h.yield_on_cost).toBeCloseTo(4.2 / h.average_cost_basis, 5)
+    expect(h.average_cost_basis).not.toBe(h.current_price) // or the two yields could not be told apart
   })
 
 })

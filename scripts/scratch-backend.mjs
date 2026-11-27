@@ -98,7 +98,7 @@ function isolated(db) {
 }
 
 /** Seeds a scratch database and starts the backend on it. Returns the backend's address. */
-export async function startScratchBackend(caller) {
+export async function startScratchBackend(caller, seedOptions = []) {
   name = caller
   // However the script ends (an error thrown after the servers started, Ctrl+C, a kill), nothing is left running or on disk.
   process.on('exit', cleanup)
@@ -110,7 +110,7 @@ export async function startScratchBackend(caller) {
   const db = path.join(scratch, 'scratch.db')
 
   console.log(`${name}: seeding ${db}`)
-  const seeded = spawnSync(python, ['scripts/seed_e2e.py', '--db', db], { cwd: backend, stdio: 'inherit' })
+  const seeded = spawnSync(python, ['scripts/seed_e2e.py', '--db', db, ...seedOptions], { cwd: backend, stdio: 'inherit' })
   if (seeded.status !== 0) fail('the seed failed')
 
   const port = await freePort()

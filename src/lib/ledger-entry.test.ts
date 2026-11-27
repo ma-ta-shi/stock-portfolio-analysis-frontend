@@ -8,7 +8,7 @@ const buy: TradeInput = {
   ticker: 'ENB.TO',
   currency: 'CAD',
   shares: 10,
-  price: 59.93,
+  price: 61.37,
   date: '2026-11-20',
 }
 
@@ -19,8 +19,8 @@ describe('tradeEntry', () => {
       transaction_type: 'buy',
       ticker: 'ENB.TO',
       shares: 10,
-      price_per_share: 59.93,
-      total_amount: 599.3,
+      price_per_share: 61.37,
+      total_amount: 613.7,
       currency: 'CAD',
       transaction_date: '2026-11-20',
     })
@@ -115,7 +115,7 @@ describe('tradeEntry: an opening balance', () => {
   const opening: TradeInput = { ...buy, kind: 'opening_balance' }
 
   it('is an ordinary entry for a Canadian stock', () => {
-    expect(tradeEntry(opening)).toMatchObject({ transaction_type: 'opening_balance', shares: 10, total_amount: 599.3 })
+    expect(tradeEntry(opening)).toMatchObject({ transaction_type: 'opening_balance', shares: 10, total_amount: 613.7 })
   })
 
   it('must state the exchange rate for a US stock: no day has a rate to look up for something bought before the record began', () => {

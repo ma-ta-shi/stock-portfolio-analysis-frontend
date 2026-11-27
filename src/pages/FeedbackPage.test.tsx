@@ -71,7 +71,8 @@ describe('mapScorecard', () => {
 describe('check-ins', () => {
   it('says where a prediction stands, in fractions', () => {
     const [first] = predictionsFile.data as unknown as ApiPrediction[]
-    expect(checkedText(mapCheckpoints(first))).toBe('Waiting')
+    expect(checkedText(mapCheckpoints(first))).toBe('2 of 4 checked')
+    expect(checkedText(mapCheckpoints({ ...first, checkpoints: first.checkpoints.map((c) => ({ ...c, status: 'pending' as const })) }))).toBe('Waiting')
     expect(checkedText([])).toBe('Not scored: no price band')
     const resolved = { ...first, checkpoints: [{ ...first.checkpoints[0], status: 'resolved' as const, excess_return_pct: -3.5 }] }
     expect(mapCheckpoints(resolved)[0].excessReturn).toBeCloseTo(-0.035)

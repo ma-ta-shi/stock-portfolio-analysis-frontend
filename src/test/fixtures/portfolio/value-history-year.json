@@ -1,1 +1,618 @@
-{"portfolio_id":"e3ba3a97-cedc-4d75-9976-0655d9fd9340","start":"2025-11-27","end":"2026-11-26","account":null,"points":[{"day":"2025-11-27","value_cad":3122.72,"positions_cad":0.0,"cash_cad":3122.72,"cost_cad":0.0,"unpriced":[],"fund_value_cad":null},{"day":"2025-11-28","value_cad":3118.32,"positions_cad":0.0,"cash_cad":3118.32,"cost_cad":0.0,"unpriced":[],"fund_value_cad":null},{"day":"2025-12-01","value_cad":3118.32,"positions_cad":0.0,"cash_cad":3118.32,"cost_cad":0.0,"unpriced":[],"fund_value_cad":null},{"day":"2025-12-02","value_cad":3118.88,"positions_cad":0.0,"cash_cad":3118.88,"cost_cad":0.0,"unpriced":[],"fund_value_cad":null},{"day":"2025-12-03","value_cad":3115.92,"positions_cad":0.0,"cash_cad":3115.92,"cost_cad":0.0,"unpriced":[],"fund_value_cad":null},{"day":"2025-12-04","value_cad":3116.16,"positions_cad":0.0,"cash_cad":3116.16,"cost_cad":0.0,"unpriced":[],"fund_value_cad":null},{"day":"2025-12-05","value_cad":3108.8,"positions_cad":0.0,"cash_cad":3108.8,"cost_cad":0.0,"unpriced":[],"fund_value_cad":null},{"day":"2025-12-08","value_cad":3106.96,"positions_cad":0.0,"cash_cad":3106.96,"cost_cad":0.0,"unpriced":[],"fund_value_cad":null},{"day":"2025-12-09","value_cad":3107.52,"positions_cad":0.0,"cash_cad":3107.52,"cost_cad":0.0,"unpriced":[],"fund_value_cad":null},{"day":"2025-12-10","value_cad":3106.8,"positions_cad":0.0,"cash_cad":3106.8,"cost_cad":0.0,"unpriced":[],"fund_value_cad":null},{"day":"2025-12-11","value_cad":3101.92,"positions_cad":0.0,"cash_cad":3101.92,"cost_cad":0.0,"unpriced":[],"fund_value_cad":null},{"day":"2025-12-12","value_cad":3101.52,"positions_cad":0.0,"cash_cad":3101.52,"cost_cad":0.0,"unpriced":[],"fund_value_cad":null},{"day":"2025-12-15","value_cad":3101.6,"positions_cad":0.0,"cash_cad":3101.6,"cost_cad":0.0,"unpriced":[],"fund_value_cad":null},{"day":"2025-12-16","value_cad":3099.84,"positions_cad":0.0,"cash_cad":3099.84,"cost_cad":0.0,"unpriced":[],"fund_value_cad":null},{"day":"2025-12-17","value_cad":3102.56,"positions_cad":0.0,"cash_cad":3102.56,"cost_cad":0.0,"unpriced":[],"fund_value_cad":null},{"day":"2025-12-18","value_cad":3101.92,"positions_cad":0.0,"cash_cad":3101.92,"cost_cad":0.0,"unpriced":[],"fund_value_cad":null},{"day":"2025-12-19","value_cad":3102.48,"positions_cad":0.0,"cash_cad":3102.48,"cost_cad":0.0,"unpriced":[],"fund_value_cad":null},{"day":"2025-12-22","value_cad":3099.84,"positions_cad":0.0,"cash_cad":3099.84,"cost_cad":0.0,"unpriced":[],"fund_value_cad":null},{"day":"2025-12-23","value_cad":3096.4,"positions_cad":0.0,"cash_cad":3096.4,"cost_cad":0.0,"unpriced":[],"fund_value_cad":null},{"day":"2025-12-24","value_cad":3093.92,"positions_cad":0.0,"cash_cad":3093.92,"cost_cad":0.0,"unpriced":[],"fund_value_cad":null},{"day":"2025-12-26","value_cad":3093.92,"positions_cad":0.0,"cash_cad":3093.92,"cost_cad":0.0,"unpriced":[],"fund_value_cad":null},{"day":"2025-12-29","value_cad":3094.88,"positions_cad":0.0,"cash_cad":3094.88,"cost_cad":0.0,"unpriced":[],"fund_value_cad":null},{"day":"2025-12-30","value_cad":3095.44,"positions_cad":0.0,"cash_cad":3095.44,"cost_cad":0.0,"unpriced":[],"fund_value_cad":null},{"day":"2025-12-31","value_cad":3096.48,"positions_cad":0.0,"cash_cad":3096.48,"cost_cad":0.0,"unpriced":[],"fund_value_cad":null},{"day":"2026-01-02","value_cad":81262.53,"positions_cad":78163.57,"cash_cad":3098.96,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":81260.05},{"day":"2026-01-05","value_cad":82158.66,"positions_cad":79057.22,"cash_cad":3101.44,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":81911.76},{"day":"2026-01-06","value_cad":82611.16,"positions_cad":79508.04,"cash_cad":3103.12,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":82728.84},{"day":"2026-01-07","value_cad":82563.45,"positions_cad":79457.61,"cash_cad":3105.84,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":82733.7},{"day":"2026-01-08","value_cad":82853.56,"positions_cad":79744.28,"cash_cad":3109.28,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":82762.88},{"day":"2026-01-09","value_cad":82543.9,"positions_cad":79432.22,"cash_cad":3111.68,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":83604.28},{"day":"2026-01-12","value_cad":82619.61,"positions_cad":79509.61,"cash_cad":3110.0,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":83531.32},{"day":"2026-01-13","value_cad":83412.39,"positions_cad":80301.51,"cash_cad":3110.88,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":83385.42},{"day":"2026-01-14","value_cad":82542.27,"positions_cad":79432.11,"cash_cad":3110.16,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":82996.33},{"day":"2026-01-15","value_cad":81533.1,"positions_cad":78421.18,"cash_cad":3111.92,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":83263.83},{"day":"2026-01-16","value_cad":81715.51,"positions_cad":78602.47,"cash_cad":3113.04,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":83331.92},{"day":"2026-01-19","value_cad":81243.33,"positions_cad":78133.73,"cash_cad":3109.6,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":82344.62},{"day":"2026-01-20","value_cad":79682.93,"positions_cad":76576.61,"cash_cad":3106.32,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":81114.14},{"day":"2026-01-21","value_cad":78864.16,"positions_cad":75759.04,"cash_cad":3105.12,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":82047.94},{"day":"2026-01-22","value_cad":79206.13,"positions_cad":76102.29,"cash_cad":3103.84,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":82218.17},{"day":"2026-01-23","value_cad":79400.7,"positions_cad":76302.14,"cash_cad":3098.56,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":81741.54},{"day":"2026-01-26","value_cad":78907.19,"positions_cad":75811.03,"cash_cad":3096.16,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":82232.76},{"day":"2026-01-27","value_cad":77752.12,"positions_cad":74662.52,"cash_cad":3089.6,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":81795.04},{"day":"2026-01-28","value_cad":77170.89,"positions_cad":74085.21,"cash_cad":3085.68,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":81610.22},{"day":"2026-01-29","value_cad":77279.0,"positions_cad":74197.8,"cash_cad":3081.2,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":81075.24},{"day":"2026-01-30","value_cad":76387.95,"positions_cad":73302.99,"cash_cad":3084.96,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":81532.41},{"day":"2026-02-02","value_cad":76920.19,"positions_cad":73739.71,"cash_cad":3180.48,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":82325.17},{"day":"2026-02-03","value_cad":75764.97,"positions_cad":72586.41,"cash_cad":3178.56,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":81440.0},{"day":"2026-02-04","value_cad":75018.71,"positions_cad":71838.87,"cash_cad":3179.84,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":81167.64},{"day":"2026-02-05","value_cad":74421.32,"positions_cad":71240.84,"cash_cad":3180.48,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":80433.25},{"day":"2026-02-06","value_cad":74134.04,"positions_cad":70955.8,"cash_cad":3178.24,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":81751.27},{"day":"2026-02-09","value_cad":74746.93,"positions_cad":71574.45,"cash_cad":3172.48,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":81503.23},{"day":"2026-02-10","value_cad":75829.14,"positions_cad":72659.22,"cash_cad":3169.92,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":81216.28},{"day":"2026-02-11","value_cad":74624.51,"positions_cad":71452.19,"cash_cad":3172.32,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":81328.14},{"day":"2026-02-12","value_cad":73390.63,"positions_cad":70215.83,"cash_cad":3174.8,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":80297.07},{"day":"2026-02-13","value_cad":74396.1,"positions_cad":71220.58,"cash_cad":3175.52,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":80370.02},{"day":"2026-02-17","value_cad":74103.28,"positions_cad":70924.4,"cash_cad":3178.88,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":80588.88},{"day":"2026-02-18","value_cad":75370.57,"positions_cad":72189.93,"cash_cad":3180.64,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":81337.87},{"day":"2026-02-19","value_cad":75457.17,"positions_cad":72275.09,"cash_cad":3182.08,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":81162.78},{"day":"2026-02-20","value_cad":76173.93,"positions_cad":72992.41,"cash_cad":3181.52,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":81668.59},{"day":"2026-02-23","value_cad":75144.96,"positions_cad":71963.44,"cash_cad":3181.52,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":80919.6},{"day":"2026-02-24","value_cad":75270.77,"positions_cad":72022.13,"cash_cad":3248.64,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":81532.41},{"day":"2026-02-25","value_cad":76165.64,"positions_cad":72918.84,"cash_cad":3246.8,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":82086.85},{"day":"2026-02-26","value_cad":76398.88,"positions_cad":73151.84,"cash_cad":3247.04,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":81629.68},{"day":"2026-02-27","value_cad":75574.82,"positions_cad":72331.46,"cash_cad":3243.36,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":81036.33},{"day":"2026-03-02","value_cad":76242.71,"positions_cad":72850.17,"cash_cad":3392.54,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":81289.23},{"day":"2026-03-03","value_cad":76040.51,"positions_cad":72648.29,"cash_cad":3392.22,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":80569.43},{"day":"2026-03-04","value_cad":76628.8,"positions_cad":73238.18,"cash_cad":3390.62,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":80977.96},{"day":"2026-03-05","value_cad":76326.71,"positions_cad":72935.05,"cash_cad":3391.66,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":80652.11},{"day":"2026-03-06","value_cad":75002.7,"positions_cad":71616.16,"cash_cad":3386.54,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":79188.18},{"day":"2026-03-09","value_cad":75122.36,"positions_cad":71738.94,"cash_cad":3383.42,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":79762.08},{"day":"2026-03-10","value_cad":74897.43,"positions_cad":71514.57,"cash_cad":3382.86,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":79762.08},{"day":"2026-03-11","value_cad":74859.66,"positions_cad":71475.2,"cash_cad":3384.46,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":79538.36},{"day":"2026-03-12","value_cad":73975.05,"positions_cad":70588.19,"cash_cad":3386.86,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":78585.1},{"day":"2026-03-13","value_cad":74088.58,"positions_cad":70693.8,"cash_cad":3394.78,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":78692.1},{"day":"2026-03-16","value_cad":75198.7,"positions_cad":71807.2,"cash_cad":3391.5,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":79231.95},{"day":"2026-03-17","value_cad":75661.13,"positions_cad":72267.71,"cash_cad":3393.42,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":79523.77},{"day":"2026-03-18","value_cad":74731.1,"positions_cad":71337.12,"cash_cad":3393.98,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":78585.1},{"day":"2026-03-19","value_cad":74376.79,"positions_cad":70981.05,"cash_cad":3395.74,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":78497.56},{"day":"2026-03-20","value_cad":73454.79,"positions_cad":70059.85,"cash_cad":3394.94,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":77198.99},{"day":"2026-03-23","value_cad":74419.95,"positions_cad":71025.09,"cash_cad":3394.86,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":78147.38},{"day":"2026-03-24","value_cad":74103.87,"positions_cad":70705.49,"cash_cad":3398.38,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":78025.79},{"day":"2026-03-25","value_cad":74824.01,"positions_cad":71422.43,"cash_cad":3401.58,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":78716.42},{"day":"2026-03-26","value_cad":73544.87,"positions_cad":70139.85,"cash_cad":3405.02,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":77607.53},{"day":"2026-03-27","value_cad":72520.52,"positions_cad":69113.02,"cash_cad":3407.5,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":76211.69},{"day":"2026-03-30","value_cad":72729.42,"positions_cad":69317.84,"cash_cad":3411.58,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":76197.1},{"day":"2026-03-31","value_cad":74561.67,"positions_cad":71149.05,"cash_cad":3412.62,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":78298.15},{"day":"2026-04-01","value_cad":74796.21,"positions_cad":71387.67,"cash_cad":3408.54,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":78706.69},{"day":"2026-04-02","value_cad":74871.13,"positions_cad":71460.19,"cash_cad":3410.94,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":78988.78},{"day":"2026-04-06","value_cad":75143.61,"positions_cad":71681.96,"cash_cad":3461.65,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":79304.91},{"day":"2026-04-07","value_cad":75347.87,"positions_cad":71886.94,"cash_cad":3460.93,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":79275.73},{"day":"2026-04-08","value_cad":76452.53,"positions_cad":72996.08,"cash_cad":3456.45,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":80929.33},{"day":"2026-04-09","value_cad":75761.15,"positions_cad":72307.1,"cash_cad":3454.05,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":81289.23},{"day":"2026-04-10","value_cad":75786.94,"positions_cad":72332.57,"cash_cad":3454.37,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":81347.59},{"day":"2026-04-13","value_cad":76606.32,"positions_cad":73152.99,"cash_cad":3453.33,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":81853.4},{"day":"2026-04-14","value_cad":77355.36,"positions_cad":73906.43,"cash_cad":3448.93,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":82723.98},{"day":"2026-04-15","value_cad":78268.41,"positions_cad":74732.86,"cash_cad":3535.55,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":83195.74},{"day":"2026-04-16","value_cad":78411.93,"positions_cad":74879.26,"cash_cad":3532.67,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":83234.65},{"day":"2026-04-17","value_cad":79143.49,"positions_cad":75613.94,"cash_cad":3529.55,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":84134.4},{"day":"2026-04-20","value_cad":79355.01,"positions_cad":75826.34,"cash_cad":3528.67,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":83696.68},{"day":"2026-04-21","value_cad":78226.96,"positions_cad":74698.85,"cash_cad":3528.11,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":83258.97},{"day":"2026-04-22","value_cad":78704.64,"positions_cad":75175.81,"cash_cad":3528.83,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":84163.58},{"day":"2026-04-23","value_cad":77911.48,"positions_cad":74380.57,"cash_cad":3530.91,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":84003.09},{"day":"2026-04-24","value_cad":78245.45,"positions_cad":74715.34,"cash_cad":3530.11,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":84431.08},{"day":"2026-04-27","value_cad":78163.61,"positions_cad":74638.54,"cash_cad":3525.07,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":84367.85},{"day":"2026-04-28","value_cad":77673.96,"positions_cad":74143.85,"cash_cad":3530.11,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":84265.72},{"day":"2026-04-29","value_cad":77392.39,"positions_cad":73861.96,"cash_cad":3530.43,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":84236.54},{"day":"2026-04-30","value_cad":78323.84,"positions_cad":74711.65,"cash_cad":3612.19,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":84533.21},{"day":"2026-05-01","value_cad":79637.08,"positions_cad":76028.73,"cash_cad":3608.35,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":84766.66},{"day":"2026-05-04","value_cad":79579.4,"positions_cad":75968.25,"cash_cad":3611.15,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":84591.58},{"day":"2026-05-05","value_cad":78930.87,"positions_cad":75319.24,"cash_cad":3611.63,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":85335.7},{"day":"2026-05-06","value_cad":79314.49,"positions_cad":75702.22,"cash_cad":3612.27,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":86605.08},{"day":"2026-05-07","value_cad":79427.7,"positions_cad":75814.63,"cash_cad":3613.07,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":86473.77},{"day":"2026-05-08","value_cad":79028.97,"positions_cad":75411.82,"cash_cad":3617.15,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":87261.66},{"day":"2026-05-11","value_cad":78960.92,"positions_cad":75345.29,"cash_cad":3615.63,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":87490.25},{"day":"2026-05-12","value_cad":78830.44,"positions_cad":75211.37,"cash_cad":3619.07,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":87524.29},{"day":"2026-05-13","value_cad":78623.74,"positions_cad":75005.23,"cash_cad":3618.51,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":88034.96},{"day":"2026-05-14","value_cad":79658.09,"positions_cad":76037.82,"cash_cad":3620.27,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":88847.17},{"day":"2026-05-15","value_cad":79468.95,"positions_cad":75846.52,"cash_cad":3622.43,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":87952.28},{"day":"2026-05-18","value_cad":79520.65,"positions_cad":75898.22,"cash_cad":3622.43,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":87952.28},{"day":"2026-05-19","value_cad":79542.97,"positions_cad":75920.14,"cash_cad":3622.83,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":87285.98},{"day":"2026-05-20","value_cad":79982.74,"positions_cad":76360.39,"cash_cad":3622.35,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":88156.55},{"day":"2026-05-21","value_cad":80877.51,"positions_cad":77252.6,"cash_cad":3624.91,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":88604.0},{"day":"2026-05-22","value_cad":80882.37,"positions_cad":77189.78,"cash_cad":3692.59,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":89100.08},{"day":"2026-05-25","value_cad":81468.94,"positions_cad":77776.75,"cash_cad":3692.19,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":90335.42},{"day":"2026-05-26","value_cad":81203.9,"positions_cad":77511.07,"cash_cad":3692.83,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":89659.39},{"day":"2026-05-27","value_cad":81761.36,"positions_cad":78067.01,"cash_cad":3694.35,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":89824.75},{"day":"2026-05-28","value_cad":82778.91,"positions_cad":79086.32,"cash_cad":3692.59,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":90033.88},{"day":"2026-05-29","value_cad":83754.7,"positions_cad":80062.99,"cash_cad":3691.71,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":90272.19},{"day":"2026-06-01","value_cad":84011.57,"positions_cad":80171.24,"cash_cad":3840.33,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":90797.45},{"day":"2026-06-02","value_cad":83734.67,"positions_cad":79894.58,"cash_cad":3840.09,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":90928.77},{"day":"2026-06-03","value_cad":83519.09,"positions_cad":79675.0,"cash_cad":3844.09,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":90763.41},{"day":"2026-06-04","value_cad":85004.8,"positions_cad":81159.75,"cash_cad":3845.05,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91098.99},{"day":"2026-06-05","value_cad":83599.56,"positions_cad":79752.27,"cash_cad":3847.29,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":88954.17},{"day":"2026-06-08","value_cad":83603.43,"positions_cad":79754.3,"cash_cad":3849.13,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":89245.99},{"day":"2026-06-09","value_cad":84218.73,"positions_cad":80369.6,"cash_cad":3849.13,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":88983.35},{"day":"2026-06-10","value_cad":83608.41,"positions_cad":79760.64,"cash_cad":3847.77,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":87543.75},{"day":"2026-06-11","value_cad":84489.32,"positions_cad":80636.51,"cash_cad":3852.81,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":89104.94},{"day":"2026-06-12","value_cad":84120.42,"positions_cad":80268.89,"cash_cad":3851.53,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":89766.38},{"day":"2026-06-15","value_cad":85627.51,"positions_cad":81775.58,"cash_cad":3851.93,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91327.58},{"day":"2026-06-16","value_cad":85288.38,"positions_cad":81435.33,"cash_cad":3853.05,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":90850.95},{"day":"2026-06-17","value_cad":84460.46,"positions_cad":80604.37,"cash_cad":3856.09,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":90534.82},{"day":"2026-06-18","value_cad":85557.79,"positions_cad":81693.94,"cash_cad":3863.85,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91629.12},{"day":"2026-06-19","value_cad":85526.98,"positions_cad":81659.93,"cash_cad":3867.05,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91609.67},{"day":"2026-06-22","value_cad":85282.62,"positions_cad":81416.29,"cash_cad":3866.33,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91419.99},{"day":"2026-06-23","value_cad":85281.65,"positions_cad":81412.28,"cash_cad":3869.37,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":90461.87},{"day":"2026-06-24","value_cad":85344.44,"positions_cad":81472.35,"cash_cad":3872.09,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":90452.14},{"day":"2026-06-25","value_cad":85235.65,"positions_cad":81365.96,"cash_cad":3869.69,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":90218.69},{"day":"2026-06-26","value_cad":85690.79,"positions_cad":81822.54,"cash_cad":3868.25,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":89669.11},{"day":"2026-06-29","value_cad":86189.99,"positions_cad":82320.14,"cash_cad":3869.85,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91113.58},{"day":"2026-06-30","value_cad":86020.16,"positions_cad":82149.99,"cash_cad":3870.17,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91614.53},{"day":"2026-07-01","value_cad":87394.55,"positions_cad":83524.38,"cash_cad":3870.17,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91614.53},{"day":"2026-07-02","value_cad":86990.31,"positions_cad":83122.46,"cash_cad":3867.85,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91410.26},{"day":"2026-07-03","value_cad":87240.48,"positions_cad":83371.03,"cash_cad":3869.45,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91925.8},{"day":"2026-07-06","value_cad":87804.94,"positions_cad":83886.61,"cash_cad":3918.33,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":92378.11},{"day":"2026-07-07","value_cad":88276.22,"positions_cad":84359.49,"cash_cad":3916.73,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91789.62},{"day":"2026-07-08","value_cad":87172.03,"positions_cad":83257.3,"cash_cad":3914.73,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91405.4},{"day":"2026-07-09","value_cad":88035.4,"positions_cad":84121.07,"cash_cad":3914.33,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":92164.11},{"day":"2026-07-10","value_cad":87995.01,"positions_cad":84082.52,"cash_cad":3912.49,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":92451.06},{"day":"2026-07-13","value_cad":88329.33,"positions_cad":84416.92,"cash_cad":3912.41,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91760.44},{"day":"2026-07-14","value_cad":88645.57,"positions_cad":84739.4,"cash_cad":3906.17,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91590.21},{"day":"2026-07-15","value_cad":88841.12,"positions_cad":84848.89,"cash_cad":3992.23,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91672.89},{"day":"2026-07-16","value_cad":88121.27,"positions_cad":84129.92,"cash_cad":3991.35,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91254.63},{"day":"2026-07-17","value_cad":87291.86,"positions_cad":83302.43,"cash_cad":3989.43,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":90097.1},{"day":"2026-07-20","value_cad":86732.9,"positions_cad":82740.27,"cash_cad":3992.63,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":90291.65},{"day":"2026-07-21","value_cad":87328.77,"positions_cad":83332.86,"cash_cad":3995.91,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91337.31},{"day":"2026-07-22","value_cad":86260.5,"positions_cad":82265.15,"cash_cad":3995.35,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91108.72},{"day":"2026-07-23","value_cad":85087.56,"positions_cad":81092.61,"cash_cad":3994.95,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":89965.79},{"day":"2026-07-24","value_cad":85518.9,"positions_cad":81523.15,"cash_cad":3995.75,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":90077.65},{"day":"2026-07-27","value_cad":86653.24,"positions_cad":82655.81,"cash_cad":3997.43,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":90281.92},{"day":"2026-07-28","value_cad":87174.81,"positions_cad":83178.34,"cash_cad":3996.47,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":90461.87},{"day":"2026-07-29","value_cad":85875.48,"positions_cad":81880.53,"cash_cad":3994.95,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":88725.59},{"day":"2026-07-30","value_cad":85927.24,"positions_cad":81937.81,"cash_cad":3989.43,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":89839.34},{"day":"2026-07-31","value_cad":83599.67,"positions_cad":79519.44,"cash_cad":4080.23,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":90602.91},{"day":"2026-08-03","value_cad":84387.54,"positions_cad":80307.31,"cash_cad":4080.23,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":90602.91},{"day":"2026-08-04","value_cad":85841.88,"positions_cad":81758.53,"cash_cad":4083.35,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":94012.26},{"day":"2026-08-05","value_cad":86399.2,"positions_cad":82319.21,"cash_cad":4079.99,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":93384.86},{"day":"2026-08-06","value_cad":86484.13,"positions_cad":82404.78,"cash_cad":4079.35,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":93195.18},{"day":"2026-08-07","value_cad":86958.98,"positions_cad":82885.63,"cash_cad":4073.35,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":93292.45},{"day":"2026-08-10","value_cad":86871.67,"positions_cad":82798.4,"cash_cad":4073.27,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":93219.5},{"day":"2026-08-11","value_cad":86698.2,"positions_cad":82626.13,"cash_cad":4072.07,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":92840.14},{"day":"2026-08-12","value_cad":86875.94,"positions_cad":82803.63,"cash_cad":4072.31,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":93195.18},{"day":"2026-08-13","value_cad":87768.16,"positions_cad":83695.21,"cash_cad":4072.95,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":93720.44},{"day":"2026-08-14","value_cad":88465.0,"positions_cad":84397.09,"cash_cad":4067.91,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":93204.91},{"day":"2026-08-17","value_cad":87154.08,"positions_cad":83086.97,"cash_cad":4067.11,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":92762.33},{"day":"2026-08-18","value_cad":86413.47,"positions_cad":82344.44,"cash_cad":4069.03,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":92261.38},{"day":"2026-08-19","value_cad":84762.29,"positions_cad":80698.46,"cash_cad":4063.83,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91886.89},{"day":"2026-08-20","value_cad":84304.5,"positions_cad":80243.79,"cash_cad":4060.71,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":90987.13},{"day":"2026-08-21","value_cad":84387.99,"positions_cad":80329.28,"cash_cad":4058.71,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91240.04},{"day":"2026-08-24","value_cad":84684.76,"positions_cad":80549.09,"cash_cad":4135.67,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91478.35},{"day":"2026-08-25","value_cad":85742.11,"positions_cad":81606.68,"cash_cad":4135.43,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91648.57},{"day":"2026-08-26","value_cad":85559.49,"positions_cad":81421.1,"cash_cad":4138.39,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91945.25},{"day":"2026-08-27","value_cad":85679.59,"positions_cad":81542.4,"cash_cad":4137.19,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":92455.92},{"day":"2026-08-28","value_cad":85812.81,"positions_cad":81673.46,"cash_cad":4139.35,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":92592.1},{"day":"2026-08-31","value_cad":85024.32,"positions_cad":80886.73,"cash_cad":4137.59,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91998.75},{"day":"2026-09-01","value_cad":84415.36,"positions_cad":80129.87,"cash_cad":4285.49,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91595.08},{"day":"2026-09-02","value_cad":85413.61,"positions_cad":81130.76,"cash_cad":4282.85,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91624.26},{"day":"2026-09-03","value_cad":85976.51,"positions_cad":81699.58,"cash_cad":4276.93,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":92203.02},{"day":"2026-09-04","value_cad":85681.52,"positions_cad":81400.51,"cash_cad":4281.01,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":92183.56},{"day":"2026-09-08","value_cad":84243.45,"positions_cad":79966.92,"cash_cad":4276.53,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91317.85},{"day":"2026-09-09","value_cad":83279.17,"positions_cad":79001.52,"cash_cad":4277.65,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91079.54},{"day":"2026-09-10","value_cad":83394.61,"positions_cad":79115.04,"cash_cad":4279.57,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":90705.05},{"day":"2026-09-11","value_cad":84037.75,"positions_cad":79754.66,"cash_cad":4283.09,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91716.66},{"day":"2026-09-14","value_cad":84786.8,"positions_cad":80500.27,"cash_cad":4286.53,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91507.53},{"day":"2026-09-15","value_cad":84290.25,"positions_cad":80003.08,"cash_cad":4287.17,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91220.58},{"day":"2026-09-16","value_cad":84173.16,"positions_cad":79883.59,"cash_cad":4289.57,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91322.72},{"day":"2026-09-17","value_cad":84316.59,"positions_cad":80023.74,"cash_cad":4292.85,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":92319.74},{"day":"2026-09-18","value_cad":84222.18,"positions_cad":79928.21,"cash_cad":4293.97,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":92441.33},{"day":"2026-09-21","value_cad":86011.6,"positions_cad":81716.11,"cash_cad":4295.49,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":94172.75},{"day":"2026-09-22","value_cad":86191.6,"positions_cad":81892.67,"cash_cad":4298.93,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":94391.61},{"day":"2026-09-23","value_cad":85022.03,"positions_cad":80720.54,"cash_cad":4301.49,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":93919.85},{"day":"2026-09-24","value_cad":85230.19,"positions_cad":80925.5,"cash_cad":4304.69,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":94119.25},{"day":"2026-09-25","value_cad":85115.26,"positions_cad":80809.85,"cash_cad":4305.41,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":94620.2},{"day":"2026-09-28","value_cad":84544.48,"positions_cad":80237.23,"cash_cad":4307.25,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":93885.8},{"day":"2026-09-29","value_cad":84591.42,"positions_cad":80282.57,"cash_cad":4308.85,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":93778.81},{"day":"2026-09-30","value_cad":84304.31,"positions_cad":79995.46,"cash_cad":4308.85,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":93924.71},{"day":"2026-10-01","value_cad":84553.37,"positions_cad":80240.12,"cash_cad":4313.25,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":94012.26},{"day":"2026-10-02","value_cad":84850.14,"positions_cad":80536.65,"cash_cad":4313.49,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":94877.97},{"day":"2026-10-05","value_cad":85558.38,"positions_cad":81244.25,"cash_cad":4314.13,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":95578.32},{"day":"2026-10-06","value_cad":85974.27,"positions_cad":81613.45,"cash_cad":4360.82,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":95811.77},{"day":"2026-10-07","value_cad":85566.55,"positions_cad":81203.25,"cash_cad":4363.3,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":95938.22},{"day":"2026-10-08","value_cad":85539.87,"positions_cad":81177.93,"cash_cad":4361.94,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":95218.41},{"day":"2026-10-09","value_cad":86376.02,"positions_cad":82011.6,"cash_cad":4364.42,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":96084.12},{"day":"2026-10-12","value_cad":86377.16,"positions_cad":82012.74,"cash_cad":4364.42,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":96084.12},{"day":"2026-10-13","value_cad":87039.94,"positions_cad":82679.44,"cash_cad":4360.5,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":95733.95},{"day":"2026-10-14","value_cad":86217.91,"positions_cad":81854.13,"cash_cad":4363.78,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":94780.7},{"day":"2026-10-15","value_cad":87423.42,"positions_cad":82977.5,"cash_cad":4445.92,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":94746.65},{"day":"2026-10-16","value_cad":86696.18,"positions_cad":82253.62,"cash_cad":4442.56,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":93428.63},{"day":"2026-10-19","value_cad":86203.33,"positions_cad":81765.33,"cash_cad":4438.0,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":93623.17},{"day":"2026-10-20","value_cad":86693.48,"positions_cad":82258.92,"cash_cad":4434.56,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":93511.31},{"day":"2026-10-21","value_cad":87128.33,"positions_cad":82693.53,"cash_cad":4434.8,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":94002.53},{"day":"2026-10-22","value_cad":86386.8,"positions_cad":81954.88,"cash_cad":4431.92,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":92611.56},{"day":"2026-10-23","value_cad":85737.54,"positions_cad":81307.86,"cash_cad":4429.68,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":92100.88},{"day":"2026-10-26","value_cad":85807.98,"positions_cad":81375.74,"cash_cad":4432.24,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":92840.14},{"day":"2026-10-27","value_cad":85897.28,"positions_cad":81464.0,"cash_cad":4433.28,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":93593.99},{"day":"2026-10-28","value_cad":85897.22,"positions_cad":81464.1,"cash_cad":4433.12,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":93516.17},{"day":"2026-10-29","value_cad":85604.49,"positions_cad":81175.45,"cash_cad":4429.04,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":93170.86},{"day":"2026-10-30","value_cad":82249.74,"positions_cad":77822.7,"cash_cad":4427.04,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91356.76},{"day":"2026-11-02","value_cad":82326.59,"positions_cad":77808.51,"cash_cad":4518.08,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91026.04},{"day":"2026-11-03","value_cad":81921.25,"positions_cad":77401.89,"cash_cad":4519.36,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91468.62},{"day":"2026-11-04","value_cad":83679.27,"positions_cad":79162.55,"cash_cad":4516.72,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":92601.83},{"day":"2026-11-05","value_cad":81246.49,"positions_cad":76727.53,"cash_cad":4518.96,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":88861.77},{"day":"2026-11-06","value_cad":81739.27,"positions_cad":77210.39,"cash_cad":4528.88,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":89926.88},{"day":"2026-11-09","value_cad":83182.01,"positions_cad":78652.33,"cash_cad":4529.68,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91954.98},{"day":"2026-11-10","value_cad":83051.68,"positions_cad":78517.36,"cash_cad":4534.32,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":92081.43},{"day":"2026-11-11","value_cad":84273.68,"positions_cad":79739.36,"cash_cad":4534.32,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":93691.26},{"day":"2026-11-12","value_cad":83730.48,"positions_cad":79190.24,"cash_cad":4540.24,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":93409.18},{"day":"2026-11-13","value_cad":83474.81,"positions_cad":78934.41,"cash_cad":4540.4,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":93088.18},{"day":"2026-11-16","value_cad":82735.1,"positions_cad":78191.42,"cash_cad":4543.68,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":91517.26},{"day":"2026-11-17","value_cad":81724.47,"positions_cad":77181.35,"cash_cad":4543.12,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":90529.96},{"day":"2026-11-18","value_cad":80797.85,"positions_cad":76251.93,"cash_cad":4545.92,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":90559.14},{"day":"2026-11-19","value_cad":79238.55,"positions_cad":74693.35,"cash_cad":4545.2,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":88978.49},{"day":"2026-11-20","value_cad":77262.65,"positions_cad":72716.81,"cash_cad":4545.84,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":85739.37},{"day":"2026-11-23","value_cad":79689.13,"positions_cad":75139.77,"cash_cad":4549.36,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":89839.34},{"day":"2026-11-24","value_cad":79325.62,"positions_cad":74782.1,"cash_cad":4543.52,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":88667.22},{"day":"2026-11-25","value_cad":79326.08,"positions_cad":74788.72,"cash_cad":4537.36,"cost_cad":67219.1,"unpriced":[],"fund_value_cad":88176.01}],"warnings":[]}
+{
+  "portfolio_id": "c46d0a80-4f91-4fc9-a707-d43ecbbbf169",
+  "start": "2025-11-27",
+  "end": "2026-11-27",
+  "account": null,
+  "points": [
+    {
+      "day": "2025-11-28",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2025-12-05",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2025-12-12",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2025-12-19",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2025-12-26",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-01-02",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-01-09",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-01-16",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-01-23",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-01-30",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-02-06",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-02-13",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-02-20",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-02-27",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-03-06",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-03-13",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-03-20",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-03-27",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-04-03",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-04-10",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-04-17",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-04-24",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-05-01",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-05-08",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-05-15",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-05-22",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-05-29",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-06-05",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-06-12",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-06-19",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-06-26",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-07-03",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-07-10",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-07-17",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-07-24",
+      "value_cad": 0,
+      "positions_cad": 0,
+      "cash_cad": 0,
+      "cost_cad": 0,
+      "unpriced": [],
+      "fund_value_cad": null
+    },
+    {
+      "day": "2026-07-31",
+      "value_cad": 10277.56,
+      "positions_cad": 10277.56,
+      "cash_cad": 0,
+      "cost_cad": 9990,
+      "unpriced": [
+        "MSFT (trading)",
+        "ZQQ.TO (trading)"
+      ],
+      "fund_value_cad": 10104.63
+    },
+    {
+      "day": "2026-08-07",
+      "value_cad": 10177.07,
+      "positions_cad": 10177.07,
+      "cash_cad": 0,
+      "cost_cad": 9990,
+      "unpriced": [
+        "MSFT (trading)",
+        "ZQQ.TO (trading)"
+      ],
+      "fund_value_cad": 10177.41
+    },
+    {
+      "day": "2026-08-14",
+      "value_cad": 97199.48,
+      "positions_cad": 10199.48,
+      "cash_cad": 87000,
+      "cost_cad": 9990,
+      "unpriced": [
+        "MSFT (trading)",
+        "ZQQ.TO (trading)"
+      ],
+      "fund_value_cad": 97045.02
+    },
+    {
+      "day": "2026-08-21",
+      "value_cad": 97043.87,
+      "positions_cad": 14043.87,
+      "cash_cad": 83000,
+      "cost_cad": 13990,
+      "unpriced": [
+        "MSFT (trading)",
+        "ZQQ.TO (trading)"
+      ],
+      "fund_value_cad": 100192.35
+    },
+    {
+      "day": "2026-08-28",
+      "value_cad": 96934.43,
+      "positions_cad": 16934.43,
+      "cash_cad": 80000,
+      "cost_cad": 16990,
+      "unpriced": [
+        "TRP.TO (rrsp)",
+        "POW.TO (tfsa)",
+        "AQN.TO (trading)",
+        "MSFT (trading)",
+        "ZQQ.TO (trading)"
+      ],
+      "fund_value_cad": 96074.03
+    },
+    {
+      "day": "2026-09-04",
+      "value_cad": 95859.95,
+      "positions_cad": 31859.95,
+      "cash_cad": 64000,
+      "cost_cad": 32990,
+      "unpriced": [
+        "TRP.TO (rrsp)",
+        "POW.TO (tfsa)",
+        "AQN.TO (trading)",
+        "MSFT (trading)",
+        "ZQQ.TO (trading)"
+      ],
+      "fund_value_cad": 97915.56
+    },
+    {
+      "day": "2026-09-11",
+      "value_cad": 93846.44,
+      "positions_cad": 46346.44,
+      "cash_cad": 47500,
+      "cost_cad": 49490,
+      "unpriced": [
+        "TRP.TO (rrsp)",
+        "POW.TO (tfsa)",
+        "AQN.TO (trading)",
+        "MSFT (trading)",
+        "ZQQ.TO (trading)"
+      ],
+      "fund_value_cad": 95424.48
+    },
+    {
+      "day": "2026-09-18",
+      "value_cad": 93329.19,
+      "positions_cad": 52329.19,
+      "cash_cad": 41000,
+      "cost_cad": 55490,
+      "unpriced": [
+        "TRP.TO (rrsp)",
+        "POW.TO (tfsa)",
+        "AQN.TO (trading)",
+        "MSFT (trading)",
+        "ZQQ.TO (trading)"
+      ],
+      "fund_value_cad": 92533.84
+    },
+    {
+      "day": "2026-09-25",
+      "value_cad": 93810.35,
+      "positions_cad": 52835.35,
+      "cash_cad": 40975,
+      "cost_cad": 55490,
+      "unpriced": [
+        "TRP.TO (rrsp)",
+        "POW.TO (tfsa)",
+        "AQN.TO (trading)",
+        "MSFT (trading)",
+        "ZQQ.TO (trading)"
+      ],
+      "fund_value_cad": 93612.84
+    },
+    {
+      "day": "2026-10-02",
+      "value_cad": 94261.52,
+      "positions_cad": 57009.94,
+      "cash_cad": 37251.58,
+      "cost_cad": 59530,
+      "unpriced": [
+        "TRP.TO (rrsp)",
+        "POW.TO (tfsa)",
+        "AQN.TO (trading)",
+        "MSFT (trading)",
+        "ZQQ.TO (trading)"
+      ],
+      "fund_value_cad": 88697.42
+    },
+    {
+      "day": "2026-10-09",
+      "value_cad": 94743.23,
+      "positions_cad": 60197.39,
+      "cash_cad": 34545.84,
+      "cost_cad": 62000,
+      "unpriced": [
+        "TRP.TO (rrsp)",
+        "POW.TO (tfsa)",
+        "AQN.TO (trading)",
+        "MSFT (trading)",
+        "ZQQ.TO (trading)"
+      ],
+      "fund_value_cad": 90895.37
+    },
+    {
+      "day": "2026-10-16",
+      "value_cad": 95058.55,
+      "positions_cad": 56917.39,
+      "cash_cad": 38141.16,
+      "cost_cad": 59000,
+      "unpriced": [
+        "MSFT (trading)",
+        "ZQQ.TO (trading)"
+      ],
+      "fund_value_cad": 88204.54
+    },
+    {
+      "day": "2026-10-23",
+      "value_cad": 96486.11,
+      "positions_cad": 56138.89,
+      "cash_cad": 40347.22,
+      "cost_cad": 57000,
+      "unpriced": [
+        "MSFT (trading)",
+        "ZQQ.TO (trading)"
+      ],
+      "fund_value_cad": 88097.97
+    },
+    {
+      "day": "2026-10-30",
+      "value_cad": 96919.33,
+      "positions_cad": 56573.43,
+      "cash_cad": 40345.9,
+      "cost_cad": 57000,
+      "unpriced": [
+        "MSFT (trading)",
+        "ZQQ.TO (trading)"
+      ],
+      "fund_value_cad": 90302.59
+    },
+    {
+      "day": "2026-11-06",
+      "value_cad": 97656.74,
+      "positions_cad": 57304.72,
+      "cash_cad": 40352.02,
+      "cost_cad": 57000,
+      "unpriced": [
+        "MSFT (trading)",
+        "ZQQ.TO (trading)"
+      ],
+      "fund_value_cad": 87878.18
+    },
+    {
+      "day": "2026-11-13",
+      "value_cad": 97666.95,
+      "positions_cad": 57809.17,
+      "cash_cad": 39857.78,
+      "cost_cad": 57500,
+      "unpriced": [
+        "MSFT (trading)",
+        "ZQQ.TO (trading)"
+      ],
+      "fund_value_cad": 92613.77
+    },
+    {
+      "day": "2026-11-20",
+      "value_cad": 97797,
+      "positions_cad": 58936.5,
+      "cash_cad": 38860.5,
+      "cost_cad": 58500,
+      "unpriced": [
+        "MSFT (trading)",
+        "ZQQ.TO (trading)"
+      ],
+      "fund_value_cad": 91341.62
+    },
+    {
+      "day": "2026-11-21",
+      "value_cad": 97464.67,
+      "positions_cad": 58604.17,
+      "cash_cad": 38860.5,
+      "cost_cad": 58500,
+      "unpriced": [
+        "MSFT (trading)",
+        "ZQQ.TO (trading)"
+      ],
+      "fund_value_cad": 91341.62
+    },
+    {
+      "day": "2026-11-22",
+      "value_cad": 97545.58,
+      "positions_cad": 58985.08,
+      "cash_cad": 38560.5,
+      "cost_cad": 58800,
+      "unpriced": [
+        "MSFT (trading)",
+        "ZQQ.TO (trading)"
+      ],
+      "fund_value_cad": 91341.62
+    },
+    {
+      "day": "2026-11-23",
+      "value_cad": 97536.44,
+      "positions_cad": 58974.18,
+      "cash_cad": 38562.26,
+      "cost_cad": 58800,
+      "unpriced": [
+        "MSFT (trading)",
+        "ZQQ.TO (trading)"
+      ],
+      "fund_value_cad": 91341.62
+    },
+    {
+      "day": "2026-11-24",
+      "value_cad": 97582.05,
+      "positions_cad": 59022.71,
+      "cash_cad": 38559.34,
+      "cost_cad": 58800,
+      "unpriced": [
+        "MSFT (trading)",
+        "ZQQ.TO (trading)"
+      ],
+      "fund_value_cad": 91341.62
+    },
+    {
+      "day": "2026-11-25",
+      "value_cad": 97581.03,
+      "positions_cad": 59024.77,
+      "cash_cad": 38556.26,
+      "cost_cad": 58800,
+      "unpriced": [
+        "MSFT (trading)",
+        "ZQQ.TO (trading)"
+      ],
+      "fund_value_cad": 91341.62
+    },
+    {
+      "day": "2026-11-27",
+      "value_cad": 96929.28,
+      "positions_cad": 58372.06,
+      "cash_cad": 38557.22,
+      "cost_cad": 58800,
+      "unpriced": [],
+      "fund_value_cad": 99906.98
+    }
+  ],
+  "warnings": []
+}

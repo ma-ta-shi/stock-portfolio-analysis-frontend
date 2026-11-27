@@ -95,7 +95,7 @@ describe('TransactionsTab', () => {
   it('offers every ticker held, active or closed, and keeps an active ticker nobody holds', () => {
     renderAt('/portfolio?tab=transactions&ticker=ZZZ')
     const options = within(screen.getByLabelText('Ticker')).getAllByRole('option').map((o) => o.textContent)
-    expect(options).toContain('XOM')
+    expect(options).toContain('TRP.TO')
     expect(options).toContain('RY.TO')
     expect(options).toContain('ZZZ')
   })
@@ -125,10 +125,10 @@ describe('TransactionsTab', () => {
   })
 
   it('shows one position’s history from "View history"', () => {
-    const xom = mockHoldings.find((h) => h.stock.ticker === 'XOM')!
-    renderAt(`/portfolio?tab=transactions&holding=${xom.holding_id}`, 'tfsa')
-    expect(screen.getByText(/Showing full history for/)).toHaveTextContent('XOM (RRSP)')
-    expect(lastCall()[0].holdingId).toBe(xom.holding_id)
+    const trp = mockHoldings.find((h) => h.stock.ticker === 'TRP.TO')!
+    renderAt(`/portfolio?tab=transactions&holding=${trp.holding_id}`, 'tfsa')
+    expect(screen.getByText(/Showing full history for/)).toHaveTextContent('TRP.TO (RRSP)')
+    expect(lastCall()[0].holdingId).toBe(trp.holding_id)
     fireEvent.click(screen.getByRole('button', { name: 'Show all transactions' }))
     expect(screen.queryByText(/Showing full history for/)).not.toBeInTheDocument()
   })
@@ -145,16 +145,24 @@ describe('TransactionsTab', () => {
     expect(screen.getByText('Entry id')).toBeInTheDocument()
   })
 
+  const dividendFirst = () => {
+    const dividend = mapTransactions(transactionsFixture.data as unknown as ApiTransaction[]).find((t) => t.transaction_type === 'dividend')!
+    mockLedger({ data: { rows: [dividend], meta } })
+    return dividend
+  }
+
   it('opens the correction form for a row, from the entry\'s own values', () => {
+    const dividend = dividendFirst()
     renderAt('/portfolio?tab=transactions')
     fireEvent.click(screen.getAllByRole('button', { name: 'Show details of this entry' })[0])
     fireEvent.click(screen.getByRole('button', { name: 'Correct' }))
     const dialog = screen.getByRole('dialog')
     expect(dialog).toHaveTextContent('Correct dividend')
-    expect(within(dialog).getByLabelText(/Dividend before tax/)).toHaveValue(rows[0].total_amount)
+    expect(within(dialog).getByLabelText(/Dividend before tax/)).toHaveValue(dividend.total_amount)
   })
 
   it('opens the reverse confirmation for a row', () => {
+    dividendFirst()
     renderAt('/portfolio?tab=transactions')
     fireEvent.click(screen.getAllByRole('button', { name: 'Show details of this entry' })[0])
     fireEvent.click(screen.getByRole('button', { name: 'Reverse' }))

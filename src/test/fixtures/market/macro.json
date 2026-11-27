@@ -1,1 +1,23 @@
-{"run_id":"f37c6935-e315-4320-8508-c1d4812e46d6","run_day":"2026-11-26","data_vintage":"2026-11-26T14:18:02.878170Z","boc_rate":2.5,"boc_rate_age_days":1,"boc_rate_90d_delta_bp":25.0,"boc_rate_trend":"tightening","canada_bond_2y":3.24,"canada_bond_10y":3.65,"ca_curve_shape":"normal","ca_cpi_yoy":null,"ca_cpi_trend":null,"cpi_age_days":26,"ca_unemployment_6m_delta":null,"unemployment_age_days":26,"cad_usd":0.7033,"cad_usd_age_days":1,"fed_funds_rate":3.88,"vix":26.36,"vix_age_days":2,"vix_regime":"high"}
+{
+  "run_id": "00000000-0000-4000-8000-000000000002",
+  "run_day": "2026-01-16",
+  "data_vintage": "2026-01-16",
+  "boc_rate": 2.5,
+  "boc_rate_age_days": 2,
+  "boc_rate_90d_delta_bp": 25,
+  "boc_rate_trend": "tightening",
+  "canada_bond_2y": 2.6,
+  "canada_bond_10y": 3.2,
+  "ca_curve_shape": "normal",
+  "ca_cpi_yoy": 2.1,
+  "ca_cpi_trend": "stable",
+  "cpi_age_days": 30,
+  "ca_unemployment_6m_delta": 0.2,
+  "unemployment_age_days": 30,
+  "cad_usd": 0.73,
+  "cad_usd_age_days": 1,
+  "fed_funds_rate": 4.1,
+  "vix": 17.5,
+  "vix_age_days": 1,
+  "vix_regime": "normal"
+}

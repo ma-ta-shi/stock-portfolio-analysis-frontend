@@ -1,16 +1,16 @@
 {
   "data": [
     {
-      "prediction_id": "18a27666-1393-4032-b55c-6055e9150af8",
-      "analysis_id": "d0f99985-a8ef-4eee-bb11-d20d6895ddc6",
+      "prediction_id": "48807f64-7ac2-45ff-800d-d6e3208c0f88",
+      "analysis_id": "e6f4e422-29dc-4a2a-9ea4-c54955523af8",
       "stock": {
-        "stock_id": "7e8b0f73-e2f1-4f3e-99e2-efa1c685ae39",
+        "stock_id": "b9952af0-b24f-4732-9428-94aab02f89c5",
         "ticker": "RY.TO",
         "name": "Royal Bank of Canada",
         "exchange": "TSX",
         "currency": "CAD"
       },
-      "created_at": "2026-08-16T09:30:00Z",
+      "created_at": "2026-08-18T09:30:00Z",
       "price_at_recommendation": 95,
       "benchmark_price_at_recommendation": 500,
       "predicted_return_tier": "outperform",
@@ -22,7 +22,7 @@
       "checkpoints": [
         {
           "interval": "1m",
-          "due_date": "2026-09-15T09:30:00Z",
+          "due_date": "2026-09-17T09:30:00Z",
           "status": "resolved",
           "status_reason": null,
           "actual_price": null,
@@ -32,15 +32,15 @@
           "actual_total_return_pct": 2.5,
           "benchmark_total_return_pct": null,
           "excess_return_pct": 0.8,
-          "interpolated_expected": null,
+          "interpolated_expected": 0.75,
           "exit_date": null,
-          "checked_at": "2026-09-15T09:30:00Z",
+          "checked_at": "2026-09-17T09:30:00Z",
           "resolver_version": null,
           "resolution_detail": null
         },
         {
           "interval": "3m",
-          "due_date": "2026-11-15T09:30:00Z",
+          "due_date": "2026-11-17T09:30:00Z",
           "status": "resolved",
           "status_reason": null,
           "actual_price": null,
@@ -50,15 +50,15 @@
           "actual_total_return_pct": 6.4,
           "benchmark_total_return_pct": null,
           "excess_return_pct": 2.1,
-          "interpolated_expected": null,
+          "interpolated_expected": 2.25,
           "exit_date": null,
-          "checked_at": "2026-11-15T09:30:00Z",
+          "checked_at": "2026-11-17T09:30:00Z",
           "resolver_version": null,
           "resolution_detail": null
         },
         {
           "interval": "6m",
-          "due_date": "2027-02-14T09:30:00Z",
+          "due_date": "2027-02-16T09:30:00Z",
           "status": "pending",
           "status_reason": null,
           "actual_price": null,
@@ -76,7 +76,7 @@
         },
         {
           "interval": "12m",
-          "due_date": "2027-08-16T09:30:00Z",
+          "due_date": "2027-08-18T09:30:00Z",
           "status": "pending",
           "status_reason": null,
           "actual_price": null,
@@ -93,7 +93,18 @@
           "resolution_detail": null
         }
       ],
-      "shadow": null
+      "shadow": {
+        "primary_outlook_direction": "bullish",
+        "primary_confidence": 70,
+        "primary_expected_return_tier": "outperform",
+        "shadow_outlook_direction": "neutral",
+        "shadow_confidence": 55,
+        "shadow_expected_return_tier": "market_perform",
+        "divergence_magnitude": "moderate",
+        "primary_cio_outlook_distance": 2,
+        "high_divergence": true,
+        "created_at": "2026-11-27T19:17:35Z"
+      }
     }
   ],
   "meta": {

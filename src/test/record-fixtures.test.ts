@@ -5,7 +5,7 @@ import scratch from '../../scripts/scratch-backend.mjs?raw'
 // Owner rule: no test data is ever taken from a real database. The recorder only ever talks to the backend it starts itself.
 describe('the fixture recorder', () => {
   it('records from its own seeded backend', () => {
-    expect(recorder).toContain("const base = await startScratchBackend('record-fixtures')")
+    expect(recorder).toContain("const base = await startScratchBackend('record-fixtures', ['--recordings'])")
   })
 
   it('cannot be pointed at another backend or user', () => {

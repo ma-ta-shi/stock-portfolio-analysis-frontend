@@ -1,13 +1,13 @@
 {
   "data": [
     {
-      "event_id": "d808e06e-5d7a-4c85-9075-cc7252891358",
-      "portfolio_id": "515a4ceb-16de-40b3-bc1c-f6f87b07d510",
+      "event_id": "9d41091f-51d8-41c1-8026-31b5acafe6c4",
+      "portfolio_id": "c46d0a80-4f91-4fc9-a707-d43ecbbbf169",
       "stock": {
         "instrument_type": null,
         "pipeline_supported": true,
         "unsupported_reason": null,
-        "stock_id": "5525971d-8301-4dea-acc8-75c9eb504ffc",
+        "stock_id": "b9952af0-b24f-4732-9428-94aab02f89c5",
         "ticker": "RY.TO",
         "name": "Royal Bank of Canada",
         "exchange": "TSX",
@@ -15,8 +15,8 @@
         "sector": "Financials"
       },
       "account_type": "tfsa",
-      "ex_date": "2026-11-15",
-      "payment_date": "2026-11-22",
+      "ex_date": "2026-11-17",
+      "payment_date": "2026-11-24",
       "amount_per_share": 1.05,
       "currency": "CAD",
       "source": "seed",
@@ -26,26 +26,26 @@
       "withholding_rate_pct": 0,
       "expected_withholding": 0,
       "expected_net": 47.67,
-      "planned_reinvest_price": null,
-      "planned_reinvest_date": null,
-      "planned_reinvest_shares": null,
+      "planned_reinvest_price": 100,
+      "planned_reinvest_date": "2026-11-24",
+      "planned_reinvest_shares": 0.4767,
       "status": "expected",
       "decided_by": null,
       "decided_at": null,
       "note": null,
       "dividend_transaction_id": null,
       "drip_transaction_id": null,
-      "detected_at": "2026-11-25T05:53:12.224332Z",
-      "updated_at": "2026-11-25T05:53:12.224332Z"
+      "detected_at": "2026-11-27T19:17:35.683832Z",
+      "updated_at": "2026-11-27T19:17:35.683832Z"
     },
     {
-      "event_id": "e422c82c-510e-47eb-9d9a-6b8ba97af56c",
-      "portfolio_id": "515a4ceb-16de-40b3-bc1c-f6f87b07d510",
+      "event_id": "321097ba-f3ea-4cd5-a729-7ebad4b8fe16",
+      "portfolio_id": "c46d0a80-4f91-4fc9-a707-d43ecbbbf169",
       "stock": {
         "instrument_type": null,
         "pipeline_supported": true,
         "unsupported_reason": null,
-        "stock_id": "4666379a-cc33-42e1-9bca-fd33bf5ee526",
+        "stock_id": "58f5d40f-2013-4c97-99f1-cfcf8308db37",
         "ticker": "ENB.TO",
         "name": "Enbridge Inc.",
         "exchange": "TSX",
@@ -53,8 +53,8 @@
         "sector": "Energy"
       },
       "account_type": "trading",
-      "ex_date": "2026-11-23",
-      "payment_date": "2026-11-30",
+      "ex_date": "2026-11-25",
+      "payment_date": "2026-12-02",
       "amount_per_share": 0.92,
       "currency": "CAD",
       "source": "seed",
@@ -73,8 +73,8 @@
       "note": null,
       "dividend_transaction_id": null,
       "drip_transaction_id": null,
-      "detected_at": "2026-11-25T05:53:12.224332Z",
-      "updated_at": "2026-11-25T05:53:12.224332Z"
+      "detected_at": "2026-11-27T19:17:35.683832Z",
+      "updated_at": "2026-11-27T19:17:35.683832Z"
     }
   ],
   "meta": {

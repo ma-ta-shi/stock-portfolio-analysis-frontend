@@ -1,17 +1,36 @@
 {
   "data": [
     {
-      "user_id": "user_01",
-      "display_name": "Alex",
+      "province": "ON",
+      "marginal_tax_rate_override_pct": null,
+      "income_annual": 95000,
+      "tfsa_room_remaining": 30000,
+      "tfsa_room_as_of": "2026-05-11T09:30:00",
+      "rrsp_room_remaining": 30000,
+      "rrsp_room_as_of": "2026-05-11T09:30:00",
+      "time_sensitive_cash_needs": [
+        {
+          "description": "Roof repair",
+          "amount": 8500,
+          "deadline": "2027-09-23"
+        }
+      ],
+      "max_position_size_pct": 10,
+      "max_sector_weight_pct": 30,
+      "rrsp_annual_contribution_cap": 12000,
+      "rrsp_claimed_amount": 4000,
+      "rrsp_claimed_tax_year": 2025,
+      "rrsp_claimed_as_of": "2026-05-11T09:30:00",
+      "user_id": "8040fd64-f073-47e7-badf-a96912f0e99d",
+      "display_name": "End-to-end owner",
       "is_active": true,
-      "created_at": "2025-09-01T00:00:00Z"
-    },
-    {
-      "user_id": "user_02",
-      "display_name": "Sam",
-      "is_active": true,
-      "created_at": "2025-09-01T00:00:00Z"
+      "marginal_tax_rate_pct": 31.48
     }
   ],
-  "meta": { "total": 2, "page": 1, "per_page": 20, "pages": 1 }
+  "meta": {
+    "total": 1,
+    "page": 1,
+    "per_page": 20,
+    "pages": 1
+  }
 }

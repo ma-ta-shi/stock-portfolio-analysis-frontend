@@ -1,31 +1,54 @@
 {
-  "portfolio_id": "e3ba3a97-cedc-4d75-9976-0655d9fd9340",
-  "as_of": "2026-11-26",
+  "portfolio_id": "c46d0a80-4f91-4fc9-a707-d43ecbbbf169",
+  "as_of": "2026-11-27",
   "accounts": {
     "tfsa": {
       "account": "tfsa",
-      "room_today": 32000,
-      "base_room": 32000,
-      "base_as_of": "2026-09-29T20:52:46.598309",
+      "room_today": 17000,
+      "base_room": 30000,
+      "base_as_of": "2026-05-11T09:30:00",
       "estimated": false,
       "year": 2026,
       "annual_limit": 7000,
       "limit_estimated": false,
-      "contributed_this_year": 0,
-      "events": [],
+      "contributed_this_year": 13000,
+      "events": [
+        {
+          "when": "2026-08-09",
+          "kind": "contribution",
+          "change": -12000,
+          "room_after": 18000,
+          "detail": "12,000.00 contributed"
+        },
+        {
+          "when": "2026-10-28",
+          "kind": "contribution",
+          "change": -1000,
+          "room_after": 17000,
+          "detail": "1,000.00 contributed"
+        }
+      ],
       "shortfalls": []
     },
     "rrsp": {
       "account": "rrsp",
-      "room_today": 28000,
-      "base_room": 28000,
-      "base_as_of": "2026-09-29T20:52:46.598309",
+      "room_today": 15000,
+      "base_room": 30000,
+      "base_as_of": "2026-05-11T09:30:00",
       "estimated": false,
       "year": 2026,
       "annual_limit": 33810,
       "limit_estimated": false,
-      "contributed_this_year": 0,
-      "events": [],
+      "contributed_this_year": 15000,
+      "events": [
+        {
+          "when": "2026-08-11",
+          "kind": "contribution",
+          "change": -15000,
+          "room_after": 15000,
+          "detail": "15,000.00 contributed"
+        }
+      ],
       "shortfalls": []
     }
   }

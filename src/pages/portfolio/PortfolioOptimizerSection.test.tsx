@@ -53,7 +53,7 @@ describe('noOrdersMessage', () => {
   it('claims "well-positioned" only when nothing waits and nothing was left out', () => {
     expect(noOrdersMessage(quiet({}))).toMatch(/well-positioned/)
     expect(noOrdersMessage(quiet({ waiting: recorded.waiting }))).toBe('No orders to place now; what is waiting is listed below.')
-    expect(noOrdersMessage(quiet({ report: recorded.report }))).toMatch(/^No changes suggested. Left out .*RDDT/)
+    expect(noOrdersMessage(quiet({ report: recorded.report }))).toMatch(/^No changes suggested. Left out .*KO/)
     expect(noOrdersMessage(quiet({ transfers: [base] }))).toBeNull()
     expect(noOrdersMessage(recorded)).toBeNull()
   })
@@ -81,7 +81,7 @@ describe('OptimizerRun', () => {
   it('keeps a whole-portfolio wait under every account, and does not call it cash', () => {
     render(<OptimizerRun run={recorded} view="tfsa" />)
     const waiting = screen.getByRole('region', { name: 'Waiting' })
-    expect(waiting).toHaveTextContent('Sell $5,237.74 (whole portfolio)')
+    expect(waiting).toHaveTextContent('Sell TD.TO $1,450.00 (whole portfolio)')
     expect(waiting).not.toHaveTextContent('RY.TO (RRSP)')
   })
 

@@ -1,1 +1,55 @@
-{"data":[{"type":"outlook_change","title":"ENB.TO: the outlook changed","message":"From somewhat bearish to bearish.","ticker":"ENB.TO","portfolio_id":null,"happened_at":"2026-11-25T13:49:41Z","action_url":"/analysis/efc0c457-8783-4bcc-b0c9-7ab9073ac9af","meta":{"run_id":"efc0c457-8783-4bcc-b0c9-7ab9073ac9af","previous_outlook":"somewhat_bearish","outlook":"bearish"}},{"type":"outlook_change","title":"BCE.TO: the outlook changed","message":"From bearish to somewhat bearish.","ticker":"BCE.TO","portfolio_id":null,"happened_at":"2026-11-25T13:30:31Z","action_url":"/analysis/257894b8-a31f-49a4-bdd0-1653473042df","meta":{"run_id":"257894b8-a31f-49a4-bdd0-1653473042df","previous_outlook":"bearish","outlook":"somewhat_bearish"}},{"type":"portfolio_optimization","title":"Test User (synthetic): new weekly proposals","message":"5 orders proposed.","ticker":null,"portfolio_id":"e3ba3a97-cedc-4d75-9976-0655d9fd9340","happened_at":"2026-11-20T22:30:52.282993Z","action_url":"/portfolio?tab=optimizer","meta":{"run_id":"7ebb1417-ae69-432b-8e42-7355c0a06e04","kind":"weekly","orders":5,"no_changes":false}},{"type":"outlook_change","title":"SHOP.TO: the outlook changed","message":"From bearish to somewhat bullish.","ticker":"SHOP.TO","portfolio_id":null,"happened_at":"2026-11-19T10:56:54Z","action_url":"/analysis/eba79b1b-60bc-4fdd-b2e5-a2cf700cd1fd","meta":{"run_id":"eba79b1b-60bc-4fdd-b2e5-a2cf700cd1fd","previous_outlook":"bearish","outlook":"somewhat_bullish"}},{"type":"dividend_waiting","title":"RY.TO: a dividend is waiting to be confirmed","message":"70.40 CAD expected, payment date 2026-11-24.","ticker":"RY.TO","portfolio_id":"e3ba3a97-cedc-4d75-9976-0655d9fd9340","happened_at":null,"action_url":"/portfolio?tab=dividends","meta":{"event_id":"f55f67a2-937f-47c2-9f81-73edc02ee8d8","ex_date":"2026-10-26","payment_date":"2026-11-24","expected_net":70.4,"currency":"CAD"}}],"meta":{"total":5,"page":1,"per_page":100,"pages":1}}
+{
+  "data": [
+    {
+      "type": "outlook_change",
+      "title": "CNQ.TO: the outlook changed",
+      "message": "From neutral to bullish.",
+      "ticker": "CNQ.TO",
+      "portfolio_id": null,
+      "happened_at": "2026-11-26T09:30:00Z",
+      "action_url": "/analysis/87df2e11-74b3-4eee-963b-71ffe37206d3",
+      "meta": {
+        "run_id": "87df2e11-74b3-4eee-963b-71ffe37206d3",
+        "previous_outlook": "neutral",
+        "outlook": "bullish"
+      }
+    },
+    {
+      "type": "portfolio_optimization",
+      "title": "End-to-end (synthetic): new weekly proposals",
+      "message": "No changes proposed.",
+      "ticker": null,
+      "portfolio_id": "c46d0a80-4f91-4fc9-a707-d43ecbbbf169",
+      "happened_at": "2026-11-25T09:30:00Z",
+      "action_url": "/portfolio?tab=optimizer",
+      "meta": {
+        "run_id": "ef5df135-9236-47cb-8e44-d814f576f427",
+        "kind": "weekly",
+        "orders": 0,
+        "no_changes": true
+      }
+    },
+    {
+      "type": "dividend_waiting",
+      "title": "RY.TO: a dividend is waiting to be confirmed",
+      "message": "47.67 CAD expected, payment date 2026-11-24.",
+      "ticker": "RY.TO",
+      "portfolio_id": "c46d0a80-4f91-4fc9-a707-d43ecbbbf169",
+      "happened_at": null,
+      "action_url": "/portfolio?tab=dividends",
+      "meta": {
+        "event_id": "9d41091f-51d8-41c1-8026-31b5acafe6c4",
+        "ex_date": "2026-11-17",
+        "payment_date": "2026-11-24",
+        "expected_net": 47.67,
+        "currency": "CAD"
+      }
+    }
+  ],
+  "meta": {
+    "total": 3,
+    "page": 1,
+    "per_page": 100,
+    "pages": 1
+  }
+}

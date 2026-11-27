@@ -56,9 +56,9 @@ describe('HoldingsTable', () => {
   })
 
   it('renders a row for each holding with its account', () => {
-    show(mockHolding, fixtureHolding('SHOP.TO'))
+    show(mockHolding, fixtureHolding('FTS.TO'))
     expect(screen.getByText('RY.TO')).toBeInTheDocument()
-    expect(screen.getByText('SHOP.TO')).toBeInTheDocument()
+    expect(screen.getByText('FTS.TO')).toBeInTheDocument()
     expect(screen.getByText('RRSP')).toBeInTheDocument()
     expect(screen.getByText('TFSA')).toBeInTheDocument()
   })
@@ -82,7 +82,7 @@ describe('HoldingsTable', () => {
   })
 
   it('flags a holding the pipeline cannot analyse and shows no outlook for it', () => {
-    show(fixtureHolding('VFV.TO'))
+    show(fixtureHolding('ZQQ.TO'))
     expect(screen.getByText('Unsupported')).toBeInTheDocument()
     expect(screen.queryByText('Bullish')).not.toBeInTheDocument()
   })
@@ -94,16 +94,16 @@ describe('HoldingsTable', () => {
 
   it('formats a USD holding in USD, with the gain in Canadian dollars', () => {
     show(mockUsdHolding)
-    expect(screen.getByText('US$3,413.20')).toBeInTheDocument()
-    expect(screen.getByText(/-\$232\.09/)).toBeInTheDocument()
+    expect(screen.getByText('US$2,480.00')).toBeInTheDocument()
+    expect(screen.getByText(/-\$107\.74/)).toBeInTheDocument()
   })
 
   it('expands a row to every detail field, and collapses it again', () => {
     show(mockHolding)
-    const toggle = screen.getByRole('button', { name: 'Show details of RY.TO (RRSP)' })
+    const toggle = screen.getByRole('button', { name: 'Show details of RY.TO (TFSA)' })
     expect(toggle).toHaveAttribute('aria-expanded', 'false')
     fireEvent.click(toggle)
-    const details = screen.getByRole('button', { name: 'Hide details of RY.TO (RRSP)' })
+    const details = screen.getByRole('button', { name: 'Hide details of RY.TO (TFSA)' })
     expect(details).toHaveAttribute('aria-expanded', 'true')
     const list = within(screen.getByRole('table')).getAllByRole('term')
     const labels = list.map((t) => t.textContent)
@@ -125,9 +125,9 @@ describe('HoldingsTable', () => {
   it('gives icon-only action buttons accessible names, and they do not navigate', () => {
     mockNavigate.mockClear()
     show(mockHolding)
-    expect(screen.getByRole('button', { name: 'Buy more RY.TO (RRSP)' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Edit RY.TO (RRSP)' })).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'Sell RY.TO (RRSP)' }))
+    expect(screen.getByRole('button', { name: 'Buy more RY.TO (TFSA)' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Edit RY.TO (TFSA)' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Sell RY.TO (TFSA)' }))
     expect(mockNavigate).not.toHaveBeenCalled()
     expect(screen.getByRole('dialog')).toHaveTextContent('Sell RY.TO')
   })
@@ -139,15 +139,15 @@ describe('HoldingsTable', () => {
       expect(screen.getByRole('dialog')).toHaveTextContent(text)
       fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
     }
-    open('Log dividend for RY.TO (RRSP)', 'Log dividend RY.TO')
-    open('Edit RY.TO (RRSP)', 'RY.TO')
-    open('Remove RY.TO (RRSP)', 'Remove from Portfolio')
+    open('Log dividend for RY.TO (TFSA)', 'Log dividend RY.TO')
+    open('Edit RY.TO (TFSA)', 'RY.TO')
+    open('Remove RY.TO (TFSA)', 'Remove from Portfolio')
     expect(mockNavigate).not.toHaveBeenCalled()
   })
 
   it('has no Actions strip, Move or Confirm with broker', () => {
     show(mockHolding)
-    fireEvent.click(screen.getByRole('button', { name: 'Show details of RY.TO (RRSP)' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Show details of RY.TO (TFSA)' }))
     expect(screen.queryByRole('group', { name: /Actions for/ })).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Move to another account|Confirm with broker/ })).not.toBeInTheDocument()
   })

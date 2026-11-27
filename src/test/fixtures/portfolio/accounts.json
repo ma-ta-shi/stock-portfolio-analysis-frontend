@@ -1,40 +1,40 @@
 {
   "data": [
     {
-      "account_id": "21e361b6-4fae-40c9-ad88-b87d13cb2687",
-      "portfolio_id": "e3ba3a97-cedc-4d75-9976-0655d9fd9340",
+      "account_id": "cc4a4a68-4f30-4538-b01a-a5e106b2e747",
+      "portfolio_id": "c46d0a80-4f91-4fc9-a707-d43ecbbbf169",
       "account_type": "tfsa",
-      "cash_cad": 1647.24,
+      "cash_cad": 7675,
       "cash_usd": 0,
       "commission_per_trade": 0,
-      "conversion_cost_pct": 1.5,
+      "conversion_cost_pct": 0,
       "uses_norberts_gambit": false,
       "reinvests_dividends": true,
-      "last_updated": "2026-11-06T22:30:35.681107Z"
+      "last_updated": "2026-11-27T19:17:35.636254Z"
     },
     {
-      "account_id": "d1afb876-36ef-44ff-a3af-d1701108a57f",
-      "portfolio_id": "e3ba3a97-cedc-4d75-9976-0655d9fd9340",
+      "account_id": "16dd8890-aa2f-4d39-a48d-1c181d7a67a1",
+      "portfolio_id": "c46d0a80-4f91-4fc9-a707-d43ecbbbf169",
       "account_type": "rrsp",
-      "cash_cad": 201.6,
+      "cash_cad": 9200,
       "cash_usd": 0,
       "commission_per_trade": 0,
-      "conversion_cost_pct": 1.5,
+      "conversion_cost_pct": 0,
       "uses_norberts_gambit": false,
       "reinvests_dividends": true,
-      "last_updated": "2026-11-06T22:30:35.606161Z"
+      "last_updated": "2026-11-27T19:17:35.646254Z"
     },
     {
-      "account_id": "1c8cda0c-c1b8-4ff3-8927-7153cfdffac0",
-      "portfolio_id": "e3ba3a97-cedc-4d75-9976-0655d9fd9340",
+      "account_id": "caf8741f-1549-4fca-b607-50f59be2c014",
+      "portfolio_id": "c46d0a80-4f91-4fc9-a707-d43ecbbbf169",
       "account_type": "trading",
-      "cash_cad": 1551,
-      "cash_usd": 800,
+      "cash_cad": 21112.5,
+      "cash_usd": 400,
       "commission_per_trade": 0,
-      "conversion_cost_pct": 1.5,
+      "conversion_cost_pct": 0,
       "uses_norberts_gambit": false,
       "reinvests_dividends": true,
-      "last_updated": "2026-11-06T22:30:35.707107Z"
+      "last_updated": "2026-11-27T19:17:35.656254Z"
     }
   ],
   "meta": {
