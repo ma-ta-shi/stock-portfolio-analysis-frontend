@@ -944,10 +944,9 @@ export interface paths {
         };
         /**
          * List what changed for a person
-         * @description Events since `since`, newest first: an outlook that changed on a stock the person holds or watches (`outlook_change`), a new proposal list for one
-         *     of their portfolios (`portfolio_optimization`) and a prediction checkpoint that resolved on one of those stocks (`prediction_result`). After them,
-         *     the states that stay until dealt with and that `since` never hides: a dividend whose ex-date has passed and is not confirmed (`dividend_waiting`)
-         *     and a position or cash balance not confirmed against the broker for over 45 days (`confirmation_overdue`). Each item has the route of the app it
+         * @description Events since `since`, newest first: an outlook that changed on a stock the person holds or watches (`outlook_change`), the newest proposal list of each
+         *     of their portfolios (`portfolio_optimization`) and a prediction checkpoint of a current-design weekly batch run that resolved on one of those stocks (`prediction_result`). After them,
+         *     what stays until dealt with and `since` never hides: a dividend whose payment date has come and is not confirmed (`dividend_waiting`). Each item has the route of the app it
          *     points to. Read only, and nothing is marked read: the app does not store that. 404 `USER_NOT_FOUND`.
          */
         get: operations["activity_list_activity"];
@@ -969,7 +968,7 @@ export interface paths {
         /**
          * Read the macro snapshot from the newest stored data bundle
          * @description The Bank of Canada rate and its 90-day change, the Canadian bond yields and curve shape, Canadian inflation and its trend, the unemployment change and
-         *     the CAD/USD rate, from the newest completed analysis (of any stock) that kept a data bundle, with that run and day. Each figure has the age of its
+         *     the CAD/USD rate, the US federal funds rate and the VIX, from the newest completed analysis (of any stock) that kept a data bundle, with that run and day. Each figure has the age of its
          *     latest observation; one the sources did not give is null. As old as that analysis (up to a week); nothing is fetched. With no bundle on record
          *     `run_id` and every figure are null.
          */
@@ -1740,15 +1739,15 @@ export interface components {
         };
         /**
          * ActivityItemResponse
-         * @description One thing worth a look. The first three are events (`happened_at` says when, and `since` filters them); the last two are states that stay
-         *     until dealt with (`happened_at` is null for a confirmation never made, and `since` does not hide them).
+         * @description One thing worth a look. The first three are events (`happened_at` says when, and `since` filters them); the last is a state that stays
+         *     until dealt with (`happened_at` is null, and `since` does not hide it).
          */
         ActivityItemResponse: {
             /**
              * Type
              * @enum {string}
              */
-            type: "outlook_change" | "portfolio_optimization" | "prediction_result" | "dividend_waiting" | "confirmation_overdue";
+            type: "outlook_change" | "portfolio_optimization" | "prediction_result" | "dividend_waiting";
             /** Title */
             title: string;
             /** Message */
@@ -1765,12 +1764,12 @@ export interface components {
             portfolio_id?: string | null;
             /**
              * Happened At
-             * @description When it happened; null for a state with no moment (a confirmation never made).
+             * @description When it happened; null for a state, which has no moment.
              */
             happened_at?: string | null;
             /**
              * Action Url
-             * @description A route of the app to open: `/analysis/{run id}`, `/portfolio` or `/feedback`.
+             * @description A route of the app to open: `/analysis/{run id}`, `/portfolio` (with `?tab=optimizer` or `?tab=dividends`) or `/feedback`.
              */
             action_url?: string | null;
             /** @description The figures behind it, by type (outlooks, the interval and returns, the amount, the ages). */
@@ -4653,6 +4652,26 @@ export interface components {
              * @description Days since that exchange rate.
              */
             cad_usd_age_days?: number | null;
+            /**
+             * Fed Funds Rate
+             * @description The US federal funds rate. Whole percent: 9.11 means 9.11%.
+             */
+            fed_funds_rate?: number | null;
+            /**
+             * Vix
+             * @description The VIX volatility index, in index points.
+             */
+            vix?: number | null;
+            /**
+             * Vix Age Days
+             * @description Days since the VIX observation.
+             */
+            vix_age_days?: number | null;
+            /**
+             * Vix Regime
+             * @description How high the VIX is, in words.
+             */
+            vix_regime?: ("low" | "normal" | "elevated" | "high") | null;
         };
         /** MarketLineResponse */
         MarketLineResponse: {

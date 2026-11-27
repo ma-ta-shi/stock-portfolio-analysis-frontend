@@ -1170,9 +1170,13 @@
       "canada_bond_2y",
       "cpi_age_days",
       "data_vintage",
+      "fed_funds_rate",
       "run_day",
       "run_id",
-      "unemployment_age_days"
+      "unemployment_age_days",
+      "vix",
+      "vix_age_days",
+      "vix_regime"
     ],
     "MarketLineResponse": [
       "holding",

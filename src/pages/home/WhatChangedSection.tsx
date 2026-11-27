@@ -1,105 +1,107 @@
 import { Link } from 'react-router-dom'
-import {
-  TrendingUp,
-  Target,
-  BarChart2,
-  Calendar,
-  Bot,
-  LayoutGrid,
-} from 'lucide-react'
-import { useAlerts } from '@/hooks/use-alerts'
+import { CircleDollarSign, LayoutGrid, Target, TrendingUp } from 'lucide-react'
 import type { ElementType } from 'react'
 import { QueryError } from '@/components/QueryError'
+import { useActivity } from '@/hooks/use-home'
 import { formatRelativeTime } from '@/lib/format'
-import type { AlertType } from '@/types'
+import type { components } from '@/types/openapi.gen'
 
-const iconMap: Record<AlertType, ElementType> = {
+type Item = components['schemas']['ActivityItemResponse']
+type Kind = Item['type']
+
+const SHOWN = 8
+const ICONS: Record<Kind, ElementType> = {
   outlook_change: TrendingUp,
   portfolio_optimization: LayoutGrid,
   prediction_result: Target,
-  price_movement: BarChart2,
-  earnings_upcoming: Calendar,
-  agent_decision: Bot,
+  dividend_waiting: CircleDollarSign,
 }
+/** One and many, for what did not fit. */
+const KIND_WORDS: Record<Kind, [string, string]> = {
+  outlook_change: ['outlook change', 'outlook changes'],
+  portfolio_optimization: ['new proposal list', 'new proposal lists'],
+  prediction_result: ['prediction result', 'prediction results'],
+  dividend_waiting: ['dividend to confirm', 'dividends to confirm'],
+}
+const NEEDS_YOU: ReadonlySet<Kind> = new Set(['dividend_waiting'])
 
 const VALID_STATIC_ACTION_ROUTES = new Set(['/watchlist', '/portfolio', '/feedback', '/settings', '/'])
+const isSafeInternalActionUrl = (url: string) => {
+  if (!url.startsWith('/') || url.startsWith('//')) return false
+  const path = url.split('?')[0]
+  return VALID_STATIC_ACTION_ROUTES.has(path) || path.startsWith('/analysis/')
+}
 
-function isSafeInternalActionUrl(url: string): boolean {
-  if (!url.startsWith('/')) return false
-  return VALID_STATIC_ACTION_ROUTES.has(url) || url.startsWith('/analysis/')
+function hiddenWords(hidden: Item[]): string {
+  const counts = new Map<Kind, number>()
+  for (const item of hidden) counts.set(item.type, (counts.get(item.type) ?? 0) + 1)
+  return [...counts].map(([kind, n]) => `${n} ${KIND_WORDS[kind][n === 1 ? 0 : 1]}`).join(', ')
+}
+
+function Card({ item }: { item: Item }) {
+  const Icon = ICONS[item.type]
+  const href = item.action_url && isSafeInternalActionUrl(item.action_url) ? item.action_url : null
+  return (
+    <li className="bg-card border border-border rounded-lg p-3 flex flex-col gap-1">
+      <div className="flex items-start gap-2">
+        <Icon className="w-4 h-4 shrink-0 mt-0.5 text-muted-foreground" aria-hidden="true" />
+        <div className="min-w-0">
+          <div className="text-sm font-medium leading-snug line-clamp-2">{item.title}</div>
+          <div className="text-xs text-muted-foreground mt-0.5 line-clamp-3">{item.message}</div>
+        </div>
+      </div>
+      <div className="flex items-center justify-between mt-auto pt-1">
+        <span className="text-xs text-muted-foreground">
+          {NEEDS_YOU.has(item.type) || !item.happened_at ? 'Needs you' : formatRelativeTime(item.happened_at)}
+        </span>
+        {href && (
+          <Link to={href} className="text-xs text-primary underline underline-offset-2" aria-label={`View: ${item.title}`}>
+            View
+          </Link>
+        )}
+      </div>
+    </li>
+  )
 }
 
 export function WhatChangedSection() {
-  const { data: alerts, isLoading, isError, error, refetch } = useAlerts()
+  const { data, isLoading, isError, error, refetch } = useActivity()
+  const items = data?.data ?? []
+  const hidden = items.slice(SHOWN)
+  const more = (data?.meta.total ?? items.length) - Math.min(items.length, SHOWN)
 
-  if (isLoading) {
-    return (
-      <div className="mb-6">
-        <h2 className="text-lg font-semibold mb-3">What Changed</h2>
+  return (
+    <section aria-labelledby="what-changed-heading" className="mb-6">
+      <h2 id="what-changed-heading" className="text-lg font-semibold mb-3">What Changed</h2>
+      {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="h-20 rounded-lg bg-muted animate-pulse" />
           ))}
         </div>
-      </div>
-    )
-  }
-
-  const displayed = alerts?.slice(0, 8) ?? []
-
-  return (
-    <section aria-labelledby="what-changed-heading" className="mb-6">
-      <h2 id="what-changed-heading" className="text-lg font-semibold mb-3">What Changed</h2>
-      {isError && <QueryError what="alerts" error={error} onRetry={refetch} compact />}
-      {!isError && displayed.length === 0 && (
-        <p className="text-sm text-muted-foreground">Nothing new since your last visit.</p>
+      ) : isError ? (
+        <QueryError what="what changed" error={error} onRetry={refetch} compact />
+      ) : items.length === 0 ? (
+        <p className="text-sm text-muted-foreground">Nothing new in the last 7 days.</p>
+      ) : (
+        <>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+            {items.slice(0, SHOWN).map((item, i) => (
+              <Card key={`${item.type}-${item.ticker ?? item.portfolio_id}-${i}`} item={item} />
+            ))}
+          </ul>
+          {more > 0 && (
+            <p className="text-xs text-muted-foreground mt-2">
+              {more} more: {hiddenWords(hidden)}.{' '}
+              {hidden.some((i) => i.type === 'dividend_waiting') && (
+                <Link to="/portfolio?tab=dividends" className="text-primary underline underline-offset-2">
+                  Go to Portfolio
+                </Link>
+              )}
+            </p>
+          )}
+        </>
       )}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-        {displayed.map((alert) => {
-          const Icon = iconMap[alert.type] ?? Bot
-          const safeActionUrl =
-            alert.action_url && isSafeInternalActionUrl(alert.action_url) ? alert.action_url : null
-
-          return (
-            <div
-              key={alert.alert_id}
-              className="bg-card border border-border rounded-lg p-3 flex flex-col gap-1"
-            >
-              <div className="flex items-start gap-2">
-                <div className="relative shrink-0 mt-0.5">
-                  <Icon className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
-                  {!alert.is_read && (
-                    <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-blue-500">
-                      <span className="sr-only">Unread</span>
-                    </span>
-                  )}
-                </div>
-                <div className="min-w-0">
-                  <div className="text-sm font-medium leading-snug line-clamp-1">
-                    {alert.title}
-                  </div>
-                  <div className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
-                    {alert.message}
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center justify-between mt-auto pt-1">
-                <span className="text-xs text-muted-foreground">
-                  {formatRelativeTime(alert.created_at)}
-                </span>
-                {safeActionUrl && (
-                  <Link
-                    to={safeActionUrl}
-                    className="text-xs text-primary hover:underline"
-                  >
-                    {alert.action_label ?? 'View'}
-                  </Link>
-                )}
-              </div>
-            </div>
-          )
-        })}
-      </div>
     </section>
   )
 }

@@ -8,16 +8,12 @@ export const queryKeys = {
     all: ['users'] as const,
     profile: (userId: string) => ['user', 'profile', userId] as const,
   },
-  alerts: {
-    list: (userId: string) => ['alerts', userId] as const,
-    unreadCount: (userId: string) => ['alerts', userId, 'unread'] as const,
-  },
+  activity: (userId: string) => ['activity', userId] as const,
   analysis: {
     result: (analysisId: string) => ['analysis', 'result', analysisId] as const,
   },
   market: {
-    overview: ['market', 'overview'] as const,
-    news: ['market', 'news'] as const,
+    macro: ['market', 'macro'] as const,
     exchangeRates: ['market', 'exchange-rates'] as const,
   },
   stocks: {

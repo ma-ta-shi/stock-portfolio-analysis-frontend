@@ -1,6 +1,1 @@
-[
-  "GET /api/alerts/{}",
-  "GET /api/alerts/{}/unread-count",
-  "GET /api/market/overview",
-  "GET /api/market/news"
-]
+[]

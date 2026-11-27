@@ -150,7 +150,7 @@
     "screen": "portfolio",
     "kind": "documented",
     "what": "Confirming a position or an account's cash against the broker, and the history of those checks (POST /reconciliation, GET /reconciliations, the confirmations on positions)",
-    "why": "The original design has no such screen (owner decision, 2026-11-25). A candidate for the owner to design; nothing was built. Not confirming only produces a warning on the backend plans.",
+    "why": "The original design has no such screen (owner decision, 2026-11-25), and nothing reminds the owner to check: no Home card and no plan warning (owner, 2026-11-26: the system cannot see what was never entered).",
     "ticket": "86bd5z6kr"
   },
   "P-N4": {
@@ -438,6 +438,41 @@
     "kind": "missing",
     "what": "The agent portfolio's line on the performance chart, and the fund's dividends",
     "why": "The agent portfolio is not built; the recorded fund prices carry no distributions.",
+    "ticket": "86bd5z6nc"
+  },
+  "H-1": {
+    "screen": "home",
+    "kind": "missing",
+    "what": "Market index cards with 5-day lines, a sentiment score, the Fed rate direction and the next rate meeting dates",
+    "why": "No route or stored data gives them (owner, 2026-11-26: left out).",
+    "ticket": "86bd5z6nc"
+  },
+  "H-2": {
+    "screen": "home",
+    "kind": "missing",
+    "what": "A market news feed",
+    "why": "The only headlines are those saved inside each analysis, without links; the section is removed (owner, 2026-11-26).",
+    "ticket": "86bd5z6nc"
+  },
+  "H-3": {
+    "screen": "home",
+    "kind": "missing",
+    "what": "A count on the header bell, unread marks and \"since your last visit\"",
+    "why": "Nothing stores what has been read (owner, 2026-11-26: no number).",
+    "ticket": "86bd5z6nc"
+  },
+  "H-4": {
+    "screen": "home",
+    "kind": "missing",
+    "what": "Alerts for price movement, earnings coming up and agent portfolio decisions, and a list of what did not fit on Home",
+    "why": "The activity feed has no such kinds, and there is no page for the rest of it.",
+    "ticket": "86bd5z6nc"
+  },
+  "H-5": {
+    "screen": "home",
+    "kind": "documented",
+    "what": "Bond yields, inflation, unemployment, the health of the service and per-account values on Home",
+    "why": "Served by the backend; the original Home has no place for them.",
     "ticket": "86bd5z6nc"
   }
 }
