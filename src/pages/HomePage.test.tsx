@@ -15,8 +15,8 @@ vi.mock('@/hooks/use-portfolio', () => ({ usePortfolioSummary: () => ({ data: un
 vi.mock('@/context/UserContext', () => ({ useUser: () => ({ userId: 'u1', setUserId: vi.fn() }) }))
 vi.mock('@/components/layout/ProfileSwitcher', () => ({ ProfileSwitcher: () => null }))
 
-const ACTIVITY = '/mock-data/home/activity.json'
-const MACRO = '/mock-data/market/macro.json'
+const ACTIVITY = 'home/activity'
+const MACRO = 'market/macro'
 
 function show(ui = <HomePage />) {
   return render(

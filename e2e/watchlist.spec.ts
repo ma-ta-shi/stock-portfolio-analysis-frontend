@@ -3,7 +3,7 @@
  * again, each surviving a reload. The seed watches RY.TO (a usable analysis); TD.TO's is out of date and MSFT was never analysed.
  */
 import type { APIRequestContext, Page } from '@playwright/test'
-import { axeViolations, expect, test } from '../e2e/fixtures'
+import { axeViolations, expect, test } from './fixtures'
 import { API } from './helpers'
 
 test.describe.configure({ mode: 'serial' })

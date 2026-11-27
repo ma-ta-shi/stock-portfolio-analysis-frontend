@@ -5,23 +5,17 @@ import { test as base, expect, type Page } from '@playwright/test'
 const require = createRequire(import.meta.url)
 const axeSource = readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8')
 
-/**
- * In the live run, screens that are not wired yet (the header bell, Home) still ask for routes the backend does not have and log a
- * 404. Those routes are the contract test's known-dead list (`src/lib/known-dead-routes.json`), so the allowance shrinks as the
- * page tickets land; any other console error still fails the test.
- */
-const KNOWN_DEAD = (JSON.parse(readFileSync(new URL('../src/lib/known-dead-routes.json', import.meta.url), 'utf8')) as string[]).map(
-  (route) => new RegExp(`^${route.split(' ')[1].replace(/\{\}/g, '[^/]+')}$`),
-)
+/** Requests the seeded database is expected to answer 404 (it has no saved optimizer run). Any other console error fails. */
+const EXPECTED_404 = [/^\/api\/portfolios\/[^/]+\/proposals$/]
+
 const pathOf = (url: string) => {
   try {
     return new URL(url).pathname
   } catch {
-    return '' // a console message with no address is never a known-dead route
+    return '' // a console message with no address is never expected
   }
 }
-const isKnownDead404 = (text: string, url: string) =>
-  process.env.E2E_LIVE === '1' && text.includes('status of 404') && KNOWN_DEAD.some((pattern) => pattern.test(pathOf(url)))
+const isExpected = (text: string, url: string) => text.includes('status of 404') && EXPECTED_404.some((path) => path.test(pathOf(url)))
 
 /** Run axe-core on the current page state and return readable violations. */
 export async function axeViolations(page: Page): Promise<string[]> {
@@ -41,7 +35,7 @@ export const test = base.extend<{ consoleErrors: string[] }>({
   consoleErrors: async ({ page }, provide) => {
     const errors: string[] = []
     page.on('console', (m) => {
-      if (m.type() === 'error' && !isKnownDead404(m.text(), m.location().url)) errors.push(m.text())
+      if (m.type() === 'error' && !isExpected(m.text(), m.location().url)) errors.push(m.text())
     })
     page.on('pageerror', (e) => errors.push(e.message))
     await provide(errors)

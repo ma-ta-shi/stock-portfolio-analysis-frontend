@@ -19,7 +19,7 @@ vi.mock('@/context/UserContext', () => ({ useUser: () => ({ userId: 'u1', setUse
 
 type Args = Parameters<typeof mapScorecard>
 const [overview, scoring, versions] = [overviewFile, scoringFile, versionsFile] as unknown as Args
-const OVERVIEW = '/mock-data/feedback/scorecard-overview.json'
+const OVERVIEW = 'feedback/scorecard-overview'
 const older = { ...overviewFile, data: { ...overviewFile.data, current_cohort: 'P14-B1' } }
 
 function show() {
@@ -112,7 +112,7 @@ describe('FeedbackPage', () => {
     const fixtures = installFixtureFetch()
     const serve = fixtures.getMockImplementation()!
     fixtures.mockImplementation(async (input) =>
-      String(input).includes('scorecard-')
+      String(input).includes('/api/scorecard')
         ? new Response(JSON.stringify({ error: { code: 'SCORECARD_NOT_FOUND', message: 'none' } }), { status: 404 })
         : serve(input),
     )
@@ -126,7 +126,7 @@ describe('FeedbackPage', () => {
     const q1 = data[overviewFile.data.current_cohort].horizons['1m'].measures.q1
     q1.rank_correlation = null
     q1.hit_vs_baseline = { ...q1.hit_vs_baseline, n: 0, rate: null }
-    installFixtureFetch({ '/mock-data/feedback/scorecard-scoring.json': { ...scoringFile, data } })
+    installFixtureFetch({ 'feedback/scorecard-scoring': { ...scoringFile, data } })
     show()
     expect(await screen.findByText('Too few in any month to rank')).toBeInTheDocument()
     expect(screen.getByText('No call with a direction yet')).toBeInTheDocument()

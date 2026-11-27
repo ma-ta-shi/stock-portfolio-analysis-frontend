@@ -18,9 +18,6 @@ vi.mock('@/context/UserContext', () => ({
   useUser: () => ({ userId: 'user_01', setUserId: vi.fn() }),
 }))
 
-// `.env` sets VITE_USE_MOCK=true: the hooks read the recorded API responses in public/mock-data/portfolio.
-vi.stubEnv('VITE_USE_MOCK', 'true')
-
 function makeWrapper() {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
   return function Wrapper({ children }: { children: React.ReactNode }) {

@@ -3,7 +3,7 @@
  * compared with the API's own answer. No analysis is started.
  */
 import type { APIRequestContext } from '@playwright/test'
-import { axeViolations, expect, test } from '../e2e/fixtures'
+import { axeViolations, expect, test } from './fixtures'
 import { API } from './helpers'
 
 const json = async (request: APIRequestContext, path: string) => (await request.get(`${API}${path}`)).json()

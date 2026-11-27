@@ -15,8 +15,7 @@
     "preview": "vite preview",
     "test": "node scripts/gen-gaps.mjs --check && vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test",
-    "test:e2e:live": "node scripts/e2e-live.mjs"
+    "test:e2e": "node scripts/e2e.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

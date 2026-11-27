@@ -1,5 +1,5 @@
 /** Home against the seeded scratch backend: the cards and market figures are what the API answers. */
-import { axeViolations, expect, test } from '../e2e/fixtures'
+import { axeViolations, expect, test } from './fixtures'
 import { API } from './helpers'
 
 test('home: the activity cards and the market figures match the API', async ({ page, request }) => {

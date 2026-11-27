@@ -4,15 +4,10 @@
  * is started.
  */
 import type { APIRequestContext } from '@playwright/test'
-import { axeViolations, expect, test } from '../e2e/fixtures'
-import { API } from './helpers'
+import { axeViolations, expect, test } from './fixtures'
+import { API, stockId } from './helpers'
 
 const json = async (request: APIRequestContext, path: string) => (await request.get(`${API}${path}`)).json()
-
-async function stockId(request: APIRequestContext, ticker: string) {
-  const stocks = (await json(request, `/api/stocks?q=${ticker}`)).data as { ticker: string; stock_id: string }[]
-  return stocks.find((s) => s.ticker === ticker)!.stock_id
-}
 
 test('shows the latest call, its drivers and the history the API holds', async ({ page, request }) => {
   const id = await stockId(request, 'RY.TO')

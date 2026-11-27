@@ -2,7 +2,7 @@
  * The Optimizer tab against the seeded scratch backend. The seed cannot build a run (too little price history), so this checks
  * the two states it does give: no run stored, and a run refused with the server's own message.
  */
-import { axeViolations, expect, test } from '../e2e/fixtures'
+import { axeViolations, expect, test } from './fixtures'
 import { API, portfolioId } from './helpers'
 
 test('optimizer: no run yet, and a refused run shows what the server said', async ({ page, request }) => {

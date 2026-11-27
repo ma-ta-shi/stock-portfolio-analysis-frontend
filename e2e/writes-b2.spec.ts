@@ -5,7 +5,7 @@
  * screen it is compared with the same request previewed straight from the API.
  */
 import type { Page } from '@playwright/test'
-import { axeViolations, expect, test } from '../e2e/fixtures'
+import { axeViolations, expect, test } from './fixtures'
 import { localDateInputValue } from '../src/lib/format'
 import { API, apiPreview, apiRecord, ledgerOf, openLedgerRow, portfolioId, previewValue } from './helpers'
 

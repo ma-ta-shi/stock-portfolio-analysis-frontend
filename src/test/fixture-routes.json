@@ -1,0 +1,42 @@
+[
+  { "screen": "stocks", "file": "stock", "path": "/api/stocks/{stockId}" },
+  { "screen": "stocks", "file": "snapshot", "path": "/api/stocks/snapshots?stock_ids={stockId}" },
+  { "screen": "stocks", "file": "fundamentals", "path": "/api/stocks/{stockId}/fundamentals" },
+  { "screen": "stocks", "file": "prices", "path": "/api/stocks/{stockId}/prices?page=1&per_page=100" },
+  { "screen": "stocks", "file": "runs", "path": "/api/analysis?stock_id={stockId}&status=complete&page=1&per_page=100" },
+  { "screen": "stocks", "file": "predictions", "path": "/api/predictions?stock_id={stockId}&page=1&per_page=100" },
+  { "screen": "stocks", "file": "result", "path": "/api/analysis/{runId}" },
+
+  { "screen": "settings", "file": "profile", "path": "/api/users/{userId}" },
+  { "screen": "settings", "file": "order-settings", "path": "/api/order-settings/schema" },
+
+  { "screen": "watchlist", "file": "watchlist", "path": "/api/watchlist?user_id={userId}&include=snapshot&page=1&per_page=100" },
+
+  { "screen": "portfolio", "file": "portfolios", "path": "/api/portfolios?user_id={userId}" },
+  { "screen": "portfolio", "file": "positions", "path": "/api/portfolios/{portfolioId}/positions" },
+  { "screen": "portfolio", "file": "holdings", "path": "/api/portfolios/{portfolioId}/holdings?include=snapshot&include=position&include_closed=true&page=1&per_page=100" },
+  { "screen": "portfolio", "file": "accounts", "path": "/api/portfolios/{portfolioId}/accounts" },
+  { "screen": "portfolio", "file": "room", "path": "/api/portfolios/{portfolioId}/room" },
+  { "screen": "portfolio", "file": "report", "method": "POST", "path": "/api/portfolios/{portfolioId}/reports", "body": { "preset": "since_inception" } },
+  { "screen": "portfolio", "file": "report-30d", "method": "POST", "path": "/api/portfolios/{portfolioId}/reports", "body": { "start": "{day-30}", "end": "{day0}" } },
+  { "screen": "portfolio", "file": "value-history", "path": "/api/portfolios/{portfolioId}/value-history?from={day-30}&to={day0}" },
+  { "screen": "portfolio", "file": "value-history-year", "path": "/api/portfolios/{portfolioId}/value-history?from={day-365}&to={day0}", "spanOver": 31 },
+  { "screen": "portfolio", "file": "transactions", "path": "/api/portfolios/{portfolioId}/transactions?page=1&per_page=100" },
+  { "screen": "portfolio", "file": "exposure", "path": "/api/portfolios/{portfolioId}/exposure" },
+  { "screen": "portfolio", "file": "dividends", "path": "/api/portfolios/{portfolioId}/dividends?page=1&per_page=100" },
+  { "screen": "portfolio", "file": "proposals", "path": "/api/portfolios/{portfolioId}/proposals" },
+  { "screen": "portfolio", "file": "ask", "method": "POST", "path": "/api/portfolios/{portfolioId}/ask", "body": { "amount_cad": 5000, "account": null, "store": false } },
+
+  { "screen": "market", "file": "exchange-rates", "path": "/api/exchange-rates" },
+  { "screen": "market", "file": "macro", "path": "/api/macro" },
+
+  { "screen": "home", "file": "activity", "path": "/api/activity?user_id={userId}&per_page=100" },
+
+  { "screen": "feedback", "file": "weekly-batch", "path": "/api/weekly-batch" },
+  { "screen": "feedback", "file": "pipeline-versions", "path": "/api/pipeline-versions?per_page=100" },
+  { "screen": "feedback", "file": "predictions", "path": "/api/predictions?current_design=true&page=1&per_page=20" },
+  { "screen": "feedback", "file": "scorecard-overview", "path": "/api/scorecard?section=overview", "record": false },
+  { "screen": "feedback", "file": "scorecard-scoring", "path": "/api/scorecard?section=scoring", "record": false },
+
+  { "screen": "", "file": "users", "path": "/api/users", "record": false }
+]

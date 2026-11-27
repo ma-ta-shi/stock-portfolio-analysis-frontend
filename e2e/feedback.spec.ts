@@ -2,7 +2,7 @@
  * The Feedback page against the seeded scratch backend. The scorecard folder is the backend's own and not seeded, so the
  * page is compared with whatever the API answers rather than with an assumed state.
  */
-import { axeViolations, expect, test } from '../e2e/fixtures'
+import { axeViolations, expect, test } from './fixtures'
 import { API } from './helpers'
 
 test('feedback: the batch, the scorecard state and the weekly batch predictions match the API', async ({ page, request }) => {

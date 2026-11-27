@@ -1,6 +1,6 @@
 import { expect, type APIRequestContext, type Locator, type Page } from '@playwright/test'
 
-/** The backend the live run started (scripts/e2e-live.mjs). */
+/** The backend the run started (scripts/e2e.mjs). */
 export const API = process.env.E2E_API_URL ?? ''
 
 /** The number in a formatted figure: "$1,234.50", "-US$3.20", "31.48%" -> 1234.5, -3.2, 31.48. */
@@ -27,6 +27,13 @@ export async function apiRecord(request: APIRequestContext, path: string, body: 
   const res = await request.post(`${API}/api/portfolios/${await portfolioId(request)}/${path}`, { data: body })
   expect(res.ok(), await res.text()).toBeTruthy()
   return res.json()
+}
+
+/** The id the backend gave a seeded stock. */
+export async function stockId(request: APIRequestContext, ticker: string): Promise<string> {
+  const res = await request.get(`${API}/api/stocks?q=${encodeURIComponent(ticker)}`)
+  expect(res.ok()).toBeTruthy()
+  return (await res.json()).data.find((s: { ticker: string }) => s.ticker === ticker).stock_id
 }
 
 /** The newest ledger rows of a ticker, newest first. */
