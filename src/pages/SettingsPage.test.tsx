@@ -56,7 +56,7 @@ describe('SettingsPage: what it shows', () => {
   it('fills the inputs with the stored values and shows the computed rate', async () => {
     show()
     expect(await field('Profile', 'Name')).toHaveValue(profile.display_name)
-    expect(await field('Tax & Income', 'Annual income')).toHaveValue('85000')
+    expect(await field('Tax & Income', 'Annual income')).toHaveValue('95000')
     expect(await field('Position Sizing', /Max Single Position/)).toHaveValue('10')
     expect(await card('Tax & Income')).toHaveTextContent('(auto-calculated)')
     expect(saveButton()).toBeDisabled()
@@ -69,8 +69,8 @@ describe('SettingsPage: what it shows', () => {
     expect(tfsa).toHaveTextContent('$7,000.00 for 2026')
     expect(tfsa).toHaveTextContent('$1,500.00')
     expect(tfsa).toHaveTextContent('$30,500.00')
-    expect(within(tfsa).getByLabelText('Your starting TFSA room')).toHaveValue('32000')
-    expect(tfsa).toHaveTextContent(/Entered on Sep \d+, 2026/)
+    expect(within(tfsa).getByLabelText('Your starting TFSA room')).toHaveValue('30000')
+    expect(tfsa).toHaveTextContent(/Entered on May \d+, 2026/)
   })
 
   it('has an input for every published optimizer rule, showing its default when unset', async () => {
@@ -140,7 +140,7 @@ describe('SettingsPage: saving', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Optimizer rules was not saved. orders.minimum_order cannot be negative')
     expect(await field('Optimizer Rules', /Orders: minimum order/)).toHaveValue('1')
-    await waitFor(() => expect(screen.getByLabelText('Annual income')).toHaveValue('85000')) // saved: now the server's value
+    await waitFor(() => expect(screen.getByLabelText('Annual income')).toHaveValue('95000')) // saved: now the server's value
   })
 
   it('blocks saving a value out of range, and says why', async () => {
@@ -192,7 +192,7 @@ describe('SettingsPage: saving', () => {
     const income = await field('Tax & Income', 'Annual income')
     type(income, '1')
     fireEvent.click(screen.getByRole('button', { name: 'Discard' }))
-    expect(income).toHaveValue('85000')
+    expect(income).toHaveValue('95000')
     expect(hasUnsaved()).toBe(false)
   })
 })

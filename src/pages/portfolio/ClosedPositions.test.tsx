@@ -7,7 +7,7 @@ import { mockHoldings } from '@/test/mock-data'
 vi.mock('@/hooks/use-portfolio')
 import { useClosedPositions } from '@/hooks/use-portfolio'
 
-// The recorded closed positions: XOM (RRSP), KO (TFSA) and PLUG (Trading).
+// The recorded closed positions: TRP.TO (RRSP), POW.TO (TFSA) and AQN.TO (Trading).
 const closed = mockHoldings.filter((h) => !h.is_active)
 vi.mocked(useClosedPositions).mockReturnValue({ data: closed, isError: false } as unknown as ReturnType<typeof useClosedPositions>)
 
@@ -35,22 +35,22 @@ describe('ClosedPositions', () => {
 
   it('links to the position’s full transaction history', () => {
     renderClosed()
-    const xom = closed.find((h) => h.stock.ticker === 'XOM')!
-    const link = screen.getByRole('link', { name: 'View history for XOM (RRSP)' })
-    expect(link).toHaveAttribute('href', `/portfolio?tab=transactions&holding=${xom.holding_id}`)
+    const trp = closed.find((h) => h.stock.ticker === 'TRP.TO')!
+    const link = screen.getByRole('link', { name: 'View history for TRP.TO (RRSP)' })
+    expect(link).toHaveAttribute('href', `/portfolio?tab=transactions&holding=${trp.holding_id}`)
   })
 
   it('expands a position to its remaining details', () => {
     renderClosed()
-    fireEvent.click(screen.getByRole('button', { name: 'Show details of XOM (RRSP)' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Show details of TRP.TO (RRSP)' }))
     expect(screen.getByText('Dividends received')).toBeInTheDocument()
     expect(screen.getByText('Fees paid')).toBeInTheDocument()
   })
 
   it('respects the account switcher', () => {
     renderClosed('tfsa')
-    expect(screen.getByText('KO')).toBeInTheDocument()
-    expect(screen.queryByText('XOM')).not.toBeInTheDocument()
+    expect(screen.getByText('POW.TO')).toBeInTheDocument()
+    expect(screen.queryByText('TRP.TO')).not.toBeInTheDocument()
   })
 
   it('renders nothing when the account has no closed positions', () => {

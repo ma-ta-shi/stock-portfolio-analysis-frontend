@@ -23,8 +23,8 @@ const wanted = args.filter((a, i) => !a.startsWith('--') && !(onlyFlag >= 0 && i
 const day = (offset) => new Date(Date.now() + offset * 86_400_000).toISOString().slice(0, 10)
 
 // The routes, shared with the test server (`src/test/fixture-fetch.ts`) so a recording and what answers with it cannot drift.
-// A `record: false` entry is not recorded: a database has no filled scorecard (those samples are the real scorer's output on
-// made-up results), and `users` is kept as it is.
+// A `record: false` entry is not recorded: the seed cannot produce it (a filled scorecard, an optimizer run, market figures,
+// the weekly batch). Those files are written by hand with invented values; never copy them from a running app.
 const table = JSON.parse(readFileSync(new URL('../src/test/fixture-routes.json', import.meta.url), 'utf8')).filter((r) => r.record !== false)
 const SCREENS = [...new Set(table.map((r) => r.screen))]
 
@@ -46,7 +46,7 @@ async function call({ path, method = 'GET', body }) {
   return res.json()
 }
 
-const base = await startScratchBackend('record-fixtures')
+const base = await startScratchBackend('record-fixtures', ['--recordings'])
 try {
   const owners = (await call({ path: '/api/portfolios?per_page=100' })).data.filter((p) => p.kind === 'user')
   const chosen = owners[0]

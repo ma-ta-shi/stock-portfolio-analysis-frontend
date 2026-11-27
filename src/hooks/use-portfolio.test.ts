@@ -38,14 +38,14 @@ describe('portfolio reads (recorded API responses)', () => {
     await waitFor(() => expect(result.current.data).toBeDefined())
     const tickers = result.current.data!.map((h) => h.stock.ticker)
     expect(tickers).toContain('RY.TO')
-    expect(tickers).not.toContain('XOM') // closed
+    expect(tickers).not.toContain('TRP.TO') // closed
     expect(result.current.data!.every((h) => h.is_active)).toBe(true)
   })
 
   it('lists the closed positions from the same request', async () => {
     const { result } = renderHook(() => useClosedPositions(), { wrapper: makeWrapper() })
     await waitFor(() => expect(result.current.data).toBeDefined())
-    expect(result.current.data!.map((h) => h.stock.ticker).sort()).toEqual(['KO', 'PLUG', 'XOM'])
+    expect(result.current.data!.map((h) => h.stock.ticker).sort()).toEqual(['AQN.TO', 'POW.TO', 'TRP.TO'])
   })
 
   it('builds the header from positions, report, history, accounts and room', async () => {

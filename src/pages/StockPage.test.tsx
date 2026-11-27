@@ -59,7 +59,7 @@ describe('StockPage: the latest call', () => {
     const call = await screen.findByRole('region', { name: 'Latest call' })
     expect(call).toHaveTextContent('Bullish · Outperform')
     expect(call).toHaveTextContent('Target price (12 months)')
-    expect(call).toHaveTextContent('$108.82')
+    expect(call).toHaveTextContent('$115.44')
     expect(call).toHaveTextContent('Range low (10th percentile)')
     expect(call).toHaveTextContent('Target and return are at the latest price.')
     expect(within(call).getByRole('link', { name: 'Full Analysis' })).toHaveAttribute('href', `/analysis/${snapshotFile.data[0].analysis.run_id}`)

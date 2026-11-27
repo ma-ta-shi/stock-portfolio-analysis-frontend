@@ -12,7 +12,7 @@ beforeEach(() => {
   ledger = mockLedgerHooks()
 })
 
-// RY.TO in the RRSP, from the recorded holdings, with round numbers for the arithmetic.
+// RY.TO in the TFSA, from the recorded holdings, with round numbers for the arithmetic.
 const holding = { ...mockHolding, shares: 50, average_cost_basis: 130, total_book_cost: 6500, current_price: 145 }
 const set = (label: RegExp, value: string) => fireEvent.change(screen.getByLabelText(label), { target: { value } })
 const review = () => fireEvent.click(screen.getByRole('button', { name: 'Review' }))
@@ -26,7 +26,7 @@ describe('BuySharesDialog', () => {
   it("prefills the price with the current price and the fees with the account's commission", () => {
     render(<BuySharesDialog holding={holding} onClose={vi.fn()} />)
     expect(screen.getByLabelText(/Price per share \(CAD\)/)).toHaveValue(145)
-    expect(screen.getByLabelText(/Fees \(CAD\)/)).toHaveValue(9.99) // the recorded RRSP account's commission_per_trade
+    expect(screen.getByLabelText(/Fees \(CAD\)/)).toHaveValue(9.99) // the commission_per_trade set in ledger-mocks
   })
 
   it('shows the position it buys into', () => {
@@ -66,7 +66,7 @@ describe('BuySharesDialog', () => {
         body: {
           events: [
             {
-              account_type: 'rrsp', transaction_type: 'buy', ticker: 'RY.TO', shares: 10, price_per_share: 145, total_amount: 1450,
+              account_type: 'tfsa', transaction_type: 'buy', ticker: 'RY.TO', shares: 10, price_per_share: 145, total_amount: 1450,
               currency: 'CAD', transaction_date: '2026-03-15', fees: 9.99,
             },
           ],
@@ -102,7 +102,7 @@ describe('BuySharesDialog', () => {
     set(/Shares to buy/, '2')
     set(/Exchange rate/, '1.37')
     review()
-    expect(ledger.calls.preview[0].body).toMatchObject({ events: [{ currency: 'USD', fx_rate_to_cad: 1.37, ticker: 'RDDT' }] })
+    expect(ledger.calls.preview[0].body).toMatchObject({ events: [{ currency: 'USD', fx_rate_to_cad: 1.37, ticker: 'KO' }] })
   })
 
   it("shows the backend's explanation when the record fails, and keeps the form", () => {

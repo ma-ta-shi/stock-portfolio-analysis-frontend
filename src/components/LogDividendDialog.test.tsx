@@ -48,7 +48,7 @@ describe('LogDividendDialog', () => {
     expect(screen.getByText('$20.00')).toBeInTheDocument()
     review()
     expect(rows()).toHaveLength(1)
-    expect(rows()[0]).toMatchObject({ transaction_type: 'dividend', ticker: 'RY.TO', total_amount: 20, account_type: 'rrsp' })
+    expect(rows()[0]).toMatchObject({ transaction_type: 'dividend', ticker: 'RY.TO', total_amount: 20, account_type: 'tfsa' })
     expect(rows()[0]).not.toHaveProperty('withholding_tax')
   })
 

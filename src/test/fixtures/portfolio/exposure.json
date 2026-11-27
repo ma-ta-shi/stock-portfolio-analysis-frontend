@@ -1,18 +1,54 @@
 {
-  "portfolio_id": "e3ba3a97-cedc-4d75-9976-0655d9fd9340",
-  "as_of": "2026-11-24",
-  "total_value_cad": 77250.43,
-  "cash": 0.05881546486530201,
+  "portfolio_id": "c46d0a80-4f91-4fc9-a707-d43ecbbbf169",
+  "as_of": "2026-11-27",
+  "total_value_cad": 96929.28,
+  "cash": 0.3977871125097757,
   "names": [
     {
-      "key": "TD",
-      "display": "TD.TO",
+      "key": "BCE",
+      "display": "BCE.TO",
       "kind": "stock",
-      "direct": 0.16781783430331002,
+      "direct": 0.11348479578163397,
       "via_funds": 0,
-      "total": 0.16781783430331002,
-      "sector": "Financials",
-      "industry": "Banks - Diversified",
+      "total": 0.11348479578163397,
+      "sector": "Communication Services",
+      "industry": "Telecom Services",
+      "currency": "CAD",
+      "group": null
+    },
+    {
+      "key": "ENB",
+      "display": "ENB.TO",
+      "kind": "stock",
+      "direct": 0.10729471601172665,
+      "via_funds": 0,
+      "total": 0.10729471601172665,
+      "sector": "Energy",
+      "industry": "Oil & Gas Midstream",
+      "currency": "CAD",
+      "group": null
+    },
+    {
+      "key": "MSFT",
+      "display": "MSFT",
+      "kind": "stock",
+      "direct": 0.08816530616278977,
+      "via_funds": 0.0022284287171666305,
+      "total": 0.0903937348799564,
+      "sector": "Technology",
+      "industry": "Software - Infrastructure",
+      "currency": "USD",
+      "group": null
+    },
+    {
+      "key": "FTS",
+      "display": "FTS.TO",
+      "kind": "stock",
+      "direct": 0.06190079769907307,
+      "via_funds": 0,
+      "total": 0.06190079769907307,
+      "sector": "Utilities",
+      "industry": "Utilities - Regulated Electric",
       "currency": "CAD",
       "group": 0
     },
@@ -20,60 +56,72 @@
       "key": "RY",
       "display": "RY.TO",
       "kind": "stock",
-      "direct": 0.13620636011566092,
+      "direct": 0.05152209728486182,
       "via_funds": 0,
-      "total": 0.13620636011566092,
+      "total": 0.05152209728486182,
       "sector": "Financials",
       "industry": "Banks - Diversified",
+      "currency": "CAD",
+      "group": null
+    },
+    {
+      "key": "SU",
+      "display": "SU.TO",
+      "kind": "stock",
+      "direct": 0.04126719846604871,
+      "via_funds": 0,
+      "total": 0.04126719846604871,
+      "sector": "Energy",
+      "industry": "Oil & Gas Integrated",
       "currency": "CAD",
       "group": 0
     },
     {
-      "key": "ENB",
-      "display": "ENB.TO",
+      "key": "TD",
+      "display": "TD.TO",
       "kind": "stock",
-      "direct": 0.12726142618295597,
+      "direct": 0.04126719846604871,
       "via_funds": 0,
-      "total": 0.12726142618295597,
+      "total": 0.04126719846604871,
+      "sector": "Financials",
+      "industry": "Banks - Diversified",
+      "currency": "CAD",
+      "group": null
+    },
+    {
+      "key": "CNQ",
+      "display": "CNQ.TO",
+      "kind": "stock",
+      "direct": 0.039203838542746276,
+      "via_funds": 0,
+      "total": 0.039203838542746276,
       "sector": "Energy",
-      "industry": "Oil & Gas Midstream",
+      "industry": "Oil & Gas E&P",
       "currency": "CAD",
       "group": null
     },
     {
-      "key": "SHOP",
-      "display": "SHOP.TO",
+      "key": "KO",
+      "display": "KO",
       "kind": "stock",
-      "direct": 0.09169657598510698,
+      "direct": 0.036441659880619766,
       "via_funds": 0,
-      "total": 0.09169657598510698,
-      "sector": "Technology",
-      "industry": "Software - Application",
-      "currency": "CAD",
-      "group": null
-    },
-    {
-      "key": "BCE",
-      "display": "BCE.TO",
-      "kind": "stock",
-      "direct": 0.08119048571045669,
-      "via_funds": 0,
-      "total": 0.08119048571045669,
-      "sector": "Communication Services",
-      "industry": "Telecom Services",
-      "currency": "CAD",
-      "group": null
-    },
-    {
-      "key": "RDDT",
-      "display": "RDDT",
-      "kind": "stock",
-      "direct": 0.06316483639786272,
-      "via_funds": 0,
-      "total": 0.06316483639786272,
-      "sector": "Communication Services",
-      "industry": "Internet Content & Information",
+      "total": 0.036441659880619766,
+      "sector": "Consumer Staples",
+      "industry": "Beverages - Non-Alcoholic",
       "currency": "USD",
+      "group": null
+    },
+    {
+      "key": "MFC",
+      "display": "MFC.TO",
+      "kind": "stock",
+      "direct": 0.0030950398849536533,
+      "via_funds": 0,
+      "total": 0.0030950398849536533,
+      "sector": "Financials",
+      "industry": "Insurance - Life",
+      "currency": "CAD",
       "group": null
     },
     {
@@ -81,551 +129,411 @@
       "display": "NVDA",
       "kind": "stock",
       "direct": 0,
-      "via_funds": 0.02298296685579336,
-      "total": 0.02298296685579336,
+      "via_funds": 0.0014856191447777537,
+      "total": 0.0014856191447777537,
       "sector": null,
       "industry": null,
       "currency": "USD",
       "group": null
-    },
-    {
-      "key": "AAPL",
-      "display": "AAPL",
-      "kind": "stock",
-      "direct": 0,
-      "via_funds": 0.020211168140264166,
-      "total": 0.020211168140264166,
-      "sector": "Technology",
-      "industry": "Consumer Electronics",
-      "currency": "USD",
-      "group": null
-    },
+    }
+  ],
+  "not_itemised": 0.014856191447777537,
+  "sectors": {
+    "Energy": 0.18776575302052162,
+    "Communication Services": 0.11348479578163397,
+    "Financials": 0.09588433563586418,
+    "Technology": 0.0903937348799564,
+    "Utilities": 0.06190079769907307,
+    "Consumer Staples": 0.036441659880619766,
+    "inside funds, not itemised": 0.014856191447777537,
+    "unclassified": 0.0014856191447777537
+  },
+  "industries": {
+    "Telecom Services": 0.11348479578163397,
+    "Oil & Gas Midstream": 0.10729471601172665,
+    "Banks - Diversified": 0.09278929575091052,
+    "Software - Infrastructure": 0.0903937348799564,
+    "Utilities - Regulated Electric": 0.06190079769907307,
+    "Oil & Gas Integrated": 0.04126719846604871,
+    "Oil & Gas E&P": 0.039203838542746276,
+    "Beverages - Non-Alcoholic": 0.036441659880619766,
+    "inside funds, not itemised": 0.014856191447777537,
+    "Insurance - Life": 0.0030950398849536533,
+    "unclassified": 0.0014856191447777537
+  },
+  "currencies": {
+    "CAD": 0.45903568213709284,
+    "USD": 0.12832101390535391,
+    "inside funds, not itemised": 0.014856191447777537
+  },
+  "held_both_ways": [
     {
       "key": "MSFT",
       "display": "MSFT",
       "kind": "stock",
-      "direct": 0,
-      "via_funds": 0.015837887426366205,
-      "total": 0.015837887426366205,
+      "direct": 0.08816530616278977,
+      "via_funds": 0.0022284287171666305,
+      "total": 0.0903937348799564,
       "sector": "Technology",
       "industry": "Software - Infrastructure",
       "currency": "USD",
       "group": null
-    },
-    {
-      "key": "GOOGL",
-      "display": "GOOGL",
-      "kind": "stock",
-      "direct": 0,
-      "via_funds": 0.015131882433283932,
-      "total": 0.015131882433283932,
-      "sector": "Communication Services",
-      "industry": "Internet Content & Information",
-      "currency": "USD",
-      "group": null
-    },
-    {
-      "key": "AMZN",
-      "display": "AMZN",
-      "kind": "stock",
-      "direct": 0,
-      "via_funds": 0.010169911418911227,
-      "total": 0.010169911418911227,
-      "sector": "Consumer Discretionary",
-      "industry": "Specialty Retail",
-      "currency": "USD",
-      "group": null
-    },
-    {
-      "key": "AVGO",
-      "display": "AVGO",
-      "kind": "stock",
-      "direct": 0,
-      "via_funds": 0.006948374569824744,
-      "total": 0.006948374569824744,
-      "sector": null,
-      "industry": null,
-      "currency": "USD",
-      "group": null
-    },
-    {
-      "key": "META",
-      "display": "META",
-      "kind": "stock",
-      "direct": 0,
-      "via_funds": 0.006650183375164992,
-      "total": 0.006650183375164992,
-      "sector": null,
-      "industry": null,
-      "currency": "USD",
-      "group": null
-    },
-    {
-      "key": "MU",
-      "display": "MU",
-      "kind": "stock",
-      "direct": 0,
-      "via_funds": 0.005002253910490932,
-      "total": 0.005002253910490932,
-      "sector": null,
-      "industry": null,
-      "currency": "USD",
-      "group": null
-    },
-    {
-      "key": "TSLA",
-      "display": "TSLA",
-      "kind": "stock",
-      "direct": 0,
-      "via_funds": 0.004158202636421584,
-      "total": 0.004158202636421584,
-      "sector": "Consumer Discretionary",
-      "industry": "Auto Manufacturers",
-      "currency": "USD",
-      "group": null
     }
   ],
-  "not_itemised": 0.16675418567282344,
-  "sectors": {
-    "Financials": 0.30402419441897094,
-    "inside funds, not itemised": 0.16675418567282344,
-    "Communication Services": 0.15948720454160334,
-    "Technology": 0.12774563155173735,
-    "Energy": 0.12726142618295597,
-    "unclassified": 0.04158377871127403,
-    "Consumer Discretionary": 0.01432811405533281
-  },
-  "industries": {
-    "Banks - Diversified": 0.30402419441897094,
-    "inside funds, not itemised": 0.16675418567282344,
-    "Oil & Gas Midstream": 0.12726142618295597,
-    "Software - Application": 0.09169657598510698,
-    "Telecom Services": 0.08119048571045669,
-    "Internet Content & Information": 0.07829671883114665,
-    "unclassified": 0.04158377871127403,
-    "Consumer Electronics": 0.020211168140264166,
-    "Software - Infrastructure": 0.015837887426366205,
-    "Specialty Retail": 0.010169911418911227,
-    "Auto Manufacturers": 0.004158202636421584
-  },
-  "currencies": {
-    "CAD": 0.6041726822974907,
-    "USD": 0.17025766716438384,
-    "inside funds, not itemised": 0.16675418567282344
-  },
-  "held_both_ways": [],
   "groups": [
     {
       "members": [
-        "BMO.TO",
-        "RY.TO",
-        "TD.TO"
+        "FTS.TO",
+        "SU.TO"
       ],
-      "weight": 0.30402419441897094
+      "weight": 0.10316799616512179
     }
   ],
   "near_misses": [],
   "risk": {
-    "AAPL": {
-      "weeks": 52,
-      "vol_cad": 0.24473484136239948,
-      "vol_quote": 0.2418686108955313,
-      "beta": 0.7007693636560788,
-      "beta_se": 0.20744092963338837,
-      "beta_shrunk": 0.8005129091040526,
-      "resid_vol": 0.22302539163819265,
-      "r2": 0.18582671780838356,
-      "flags": []
-    },
     "BCE.TO": {
       "weeks": 52,
-      "vol_cad": 0.21049787147249188,
-      "vol_quote": 0.21049787147249188,
-      "beta": -0.41766187061433796,
-      "beta_se": 0.18870901182881278,
-      "beta_shrunk": 0.054892086257108064,
-      "resid_vol": 0.20288619677494574,
-      "r2": 0.08922853989080232,
-      "flags": []
-    },
-    "BMO.TO": {
-      "weeks": 52,
-      "vol_cad": 0.19445639958789254,
-      "vol_quote": 0.19445639958789254,
-      "beta": 0.7405065680007119,
-      "beta_se": 0.1496682913259866,
-      "beta_shrunk": 0.8270043786671413,
-      "resid_vol": 0.16091245516393343,
-      "r2": 0.3286721412320716,
+      "vol_cad": 0.15378759895504263,
+      "vol_quote": 0.15378759895504263,
+      "beta": -0.07877647546742263,
+      "beta_se": 0.09211970306577028,
+      "beta_shrunk": 0.2808156830217183,
+      "resid_vol": 0.15419435093212377,
+      "r2": 0.014414917158147496,
       "flags": []
     },
     "CNQ.TO": {
       "weeks": 52,
-      "vol_cad": 0.3498346174128873,
-      "vol_quote": 0.3498346174128873,
-      "beta": -0.3557785535512135,
-      "beta_se": 0.32475224530648467,
-      "beta_shrunk": 0.09614763096585771,
-      "resid_vol": 0.34914998126388846,
-      "r2": 0.023441398120940187,
+      "vol_cad": 0.33599831367055993,
+      "vol_quote": 0.33599831367055993,
+      "beta": -0.4636831336356999,
+      "beta_se": 0.19183332133985315,
+      "beta_shrunk": 0.024211244242866803,
+      "resid_vol": 0.32109975919085804,
+      "r2": 0.10462370455752273,
       "flags": []
     },
     "ENB.TO": {
       "weeks": 52,
-      "vol_cad": 0.21468802622493877,
-      "vol_quote": 0.21468802622493877,
-      "beta": -0.2843944300528116,
-      "beta_se": 0.1976219860370407,
-      "beta_shrunk": 0.14373704663145898,
-      "resid_vol": 0.21246877802814504,
-      "r2": 0.039771875515169065,
+      "vol_cad": 0.21781304625763231,
+      "vol_quote": 0.21781304625763231,
+      "beta": -0.08990314924340381,
+      "beta_se": 0.1308055354077377,
+      "beta_shrunk": 0.2733979005043975,
+      "resid_vol": 0.21894854150935272,
+      "r2": 0.009359307658127192,
       "flags": []
     },
     "FTS.TO": {
       "weeks": 52,
-      "vol_cad": 0.15081245381855646,
-      "vol_quote": 0.15081245381855646,
-      "beta": -0.1564804543381331,
-      "beta_se": 0.1399307811361006,
-      "beta_shrunk": 0.22901303044124466,
-      "resid_vol": 0.15044339282643668,
-      "r2": 0.02440030918575589,
+      "vol_cad": 0.11576246441575067,
+      "vol_quote": 0.11576246441575067,
+      "beta": -0.025853330722334537,
+      "beta_se": 0.06975190994345803,
+      "beta_shrunk": 0.3160977795184437,
+      "resid_vol": 0.11675407238697366,
+      "r2": 0.0027400542892941954,
       "flags": []
     },
-    "JNJ": {
+    "KO": {
       "weeks": 52,
-      "vol_cad": 0.24644732219332932,
-      "vol_quote": 0.24020731226740738,
-      "beta": 0.05942357499456402,
-      "beta_se": 0.23135452795606276,
-      "beta_shrunk": 0.37294904999637607,
-      "resid_vol": 0.24873555231293767,
-      "r2": 0.0013177071115913269,
+      "vol_cad": 0.24141842814200365,
+      "vol_quote": 0.23267599865221136,
+      "beta": -0.15251014933316293,
+      "beta_se": 0.14405916308581407,
+      "beta_shrunk": 0.2316599004445581,
+      "resid_vol": 0.24113309540286595,
+      "r2": 0.021923927044901963,
       "flags": []
     },
-    "RDDT": {
+    "MFC.TO": {
       "weeks": 52,
-      "vol_cad": 0.7719354903455895,
-      "vol_quote": 0.7740267342879389,
-      "beta": 2.3694100355552963,
-      "beta_se": 0.6430741941240113,
-      "beta_shrunk": 1.912940023703531,
-      "resid_vol": 0.6913865756887666,
-      "r2": 0.2135344621655609,
+      "vol_cad": 0.18594139573555662,
+      "vol_quote": 0.18594139573555662,
+      "beta": 0.03617745614600176,
+      "beta_se": 0.11207485433663797,
+      "beta_shrunk": 0.3574516374306679,
+      "resid_vol": 0.18759623452012164,
+      "r2": 0.002079627586493423,
       "flags": []
+    },
+    "MSFT": {
+      "weeks": 0,
+      "vol_cad": null,
+      "vol_quote": null,
+      "beta": null,
+      "beta_se": null,
+      "beta_shrunk": null,
+      "resid_vol": null,
+      "r2": null,
+      "flags": [
+        "short_history"
+      ]
     },
     "RY.TO": {
       "weeks": 52,
-      "vol_cad": 0.17741334448556592,
-      "vol_quote": 0.17741334448556592,
-      "beta": 0.6621419342543089,
-      "beta_se": 0.13786331620639652,
-      "beta_shrunk": 0.7747612895028726,
-      "resid_vol": 0.14822060498769926,
-      "r2": 0.31570333193030015,
+      "vol_cad": 0.1408936242671682,
+      "vol_quote": 0.1408936242671682,
+      "beta": -0.0037364838830476767,
+      "beta_se": 0.0850094297308597,
+      "beta_shrunk": 0.33084234407796825,
+      "resid_vol": 0.1422928364315423,
+      "r2": 0.00003863716356415599,
       "flags": []
     },
-    "SHOP.TO": {
+    "SU.TO": {
       "weeks": 52,
-      "vol_cad": 0.6090886919218804,
-      "vol_quote": 0.6090886919218804,
-      "beta": 1.8994632724265887,
-      "beta_se": 0.5051858862007661,
-      "beta_shrunk": 1.599642181617726,
-      "resid_vol": 0.5431391014258102,
-      "r2": 0.22041963200977757,
+      "vol_cad": 0.12246117402349814,
+      "vol_quote": 0.12246117402349814,
+      "beta": -0.010002556961452292,
+      "beta_se": 0.0738759313996208,
+      "beta_shrunk": 0.3266649620256985,
+      "resid_vol": 0.12365705611901151,
+      "r2": 0.0003665109215568299,
       "flags": []
     },
     "TD.TO": {
       "weeks": 52,
-      "vol_cad": 0.18529611824290623,
-      "vol_quote": 0.18529611824290623,
-      "beta": 0.6923469956492591,
-      "beta_se": 0.14391334962214505,
-      "beta_shrunk": 0.794897997099506,
-      "resid_vol": 0.15472516064292177,
-      "r2": 0.3164204372515746,
+      "vol_cad": 0.1959192160338115,
+      "vol_quote": 0.1959192160338115,
+      "beta": -0.1587176446962962,
+      "beta_se": 0.11606130603353972,
+      "beta_shrunk": 0.22752157020246924,
+      "resid_vol": 0.19426894743027032,
+      "r2": 0.03605438094124199,
       "flags": []
     }
   },
   "correlations": [
     {
-      "a": "AAPL",
-      "b": "BCE.TO",
-      "rho": -0.2649742973104625
-    },
-    {
-      "a": "AAPL",
-      "b": "BMO.TO",
-      "rho": 0.2688524485820906
-    },
-    {
-      "a": "AAPL",
-      "b": "CNQ.TO",
-      "rho": -0.00779884615982841
-    },
-    {
-      "a": "AAPL",
-      "b": "ENB.TO",
-      "rho": -0.03984420413766905
-    },
-    {
-      "a": "AAPL",
-      "b": "FTS.TO",
-      "rho": -0.10738440816423239
-    },
-    {
-      "a": "AAPL",
-      "b": "JNJ",
-      "rho": 0.04538871362772899
-    },
-    {
-      "a": "AAPL",
-      "b": "RDDT",
-      "rho": 0.19067775903381345
-    },
-    {
-      "a": "AAPL",
-      "b": "RY.TO",
-      "rho": 0.2648222929534649
-    },
-    {
-      "a": "AAPL",
-      "b": "SHOP.TO",
-      "rho": -0.0009299729904387756
-    },
-    {
-      "a": "AAPL",
-      "b": "TD.TO",
-      "rho": 0.3182718401639825
-    },
-    {
-      "a": "BCE.TO",
-      "b": "BMO.TO",
-      "rho": 0.05581772139776983
-    },
-    {
       "a": "BCE.TO",
       "b": "CNQ.TO",
-      "rho": -0.06793909124523356
+      "rho": 0.2986352256334087
     },
     {
       "a": "BCE.TO",
       "b": "ENB.TO",
-      "rho": -0.05156621573191436
+      "rho": 0.15422577728160233
     },
     {
       "a": "BCE.TO",
       "b": "FTS.TO",
-      "rho": 0.14481589105129197
+      "rho": 0.5480835750268507
     },
     {
       "a": "BCE.TO",
-      "b": "JNJ",
-      "rho": -0.05075310058768165
+      "b": "KO",
+      "rho": 0.12203854515284102
     },
     {
       "a": "BCE.TO",
-      "b": "RDDT",
-      "rho": -0.04372228886632296
+      "b": "MFC.TO",
+      "rho": 0.22642390439530785
+    },
+    {
+      "a": "BCE.TO",
+      "b": "MSFT",
+      "rho": null
     },
     {
       "a": "BCE.TO",
       "b": "RY.TO",
-      "rho": -0.05470258751542378
+      "rho": 0.009461762271757292
     },
     {
       "a": "BCE.TO",
-      "b": "SHOP.TO",
-      "rho": -0.030511435940717625
+      "b": "SU.TO",
+      "rho": 0.409110907398445
     },
     {
       "a": "BCE.TO",
       "b": "TD.TO",
-      "rho": -0.04555576896298952
-    },
-    {
-      "a": "BMO.TO",
-      "b": "CNQ.TO",
-      "rho": -0.06908088482935143
-    },
-    {
-      "a": "BMO.TO",
-      "b": "ENB.TO",
-      "rho": 0.15248108436095445
-    },
-    {
-      "a": "BMO.TO",
-      "b": "FTS.TO",
-      "rho": 0.24596400888569814
-    },
-    {
-      "a": "BMO.TO",
-      "b": "JNJ",
-      "rho": 0.22695921339329334
-    },
-    {
-      "a": "BMO.TO",
-      "b": "RDDT",
-      "rho": 0.2323207912078262
-    },
-    {
-      "a": "BMO.TO",
-      "b": "RY.TO",
-      "rho": 0.8688009876540108
-    },
-    {
-      "a": "BMO.TO",
-      "b": "SHOP.TO",
-      "rho": 0.20996386622519592
-    },
-    {
-      "a": "BMO.TO",
-      "b": "TD.TO",
-      "rho": 0.822250210911642
+      "rho": 0.18769399229865827
     },
     {
       "a": "CNQ.TO",
       "b": "ENB.TO",
-      "rho": 0.5845778036693883
+      "rho": 0.12973588807773706
     },
     {
       "a": "CNQ.TO",
       "b": "FTS.TO",
-      "rho": 0.047050723793830206
+      "rho": 0.447483110449406
     },
     {
       "a": "CNQ.TO",
-      "b": "JNJ",
-      "rho": 0.18534052696626893
+      "b": "KO",
+      "rho": 0.26564696205269667
     },
     {
       "a": "CNQ.TO",
-      "b": "RDDT",
-      "rho": -0.29205503892880713
+      "b": "MFC.TO",
+      "rho": 0.22787186560738568
+    },
+    {
+      "a": "CNQ.TO",
+      "b": "MSFT",
+      "rho": null
     },
     {
       "a": "CNQ.TO",
       "b": "RY.TO",
-      "rho": -0.045025427372307414
+      "rho": -0.2656437257106269
     },
     {
       "a": "CNQ.TO",
-      "b": "SHOP.TO",
-      "rho": -0.26147349499544587
+      "b": "SU.TO",
+      "rho": 0.4113845483416775
     },
     {
       "a": "CNQ.TO",
       "b": "TD.TO",
-      "rho": -0.1263627627245023
+      "rho": 0.2622875620020361
     },
     {
       "a": "ENB.TO",
       "b": "FTS.TO",
-      "rho": 0.5782993838997464
+      "rho": 0.16306595614056302
     },
     {
       "a": "ENB.TO",
-      "b": "JNJ",
-      "rho": 0.46939331763344705
+      "b": "KO",
+      "rho": 0.02539410515558328
     },
     {
       "a": "ENB.TO",
-      "b": "RDDT",
-      "rho": -0.3914997602418659
+      "b": "MFC.TO",
+      "rho": -0.0196057704997935
+    },
+    {
+      "a": "ENB.TO",
+      "b": "MSFT",
+      "rho": null
     },
     {
       "a": "ENB.TO",
       "b": "RY.TO",
-      "rho": 0.11330736624580727
+      "rho": 0.1575651164676407
     },
     {
       "a": "ENB.TO",
-      "b": "SHOP.TO",
-      "rho": -0.34248460359689453
+      "b": "SU.TO",
+      "rho": 0.04354514404569636
     },
     {
       "a": "ENB.TO",
       "b": "TD.TO",
-      "rho": 0.07344861715098676
+      "rho": 0.16877454175876994
     },
     {
       "a": "FTS.TO",
-      "b": "JNJ",
-      "rho": 0.4468696612484825
+      "b": "KO",
+      "rho": 0.34358878744622895
     },
     {
       "a": "FTS.TO",
-      "b": "RDDT",
-      "rho": -0.18943213767657632
+      "b": "MFC.TO",
+      "rho": 0.45978978690551775
+    },
+    {
+      "a": "FTS.TO",
+      "b": "MSFT",
+      "rho": null
     },
     {
       "a": "FTS.TO",
       "b": "RY.TO",
-      "rho": 0.19178007849441533
+      "rho": -0.20496807786663843
     },
     {
       "a": "FTS.TO",
-      "b": "SHOP.TO",
-      "rho": -0.09563856747683727
+      "b": "SU.TO",
+      "rho": 0.7627651309556546
     },
     {
       "a": "FTS.TO",
       "b": "TD.TO",
-      "rho": 0.19754956839203125
+      "rho": 0.15209575494075672
     },
     {
-      "a": "JNJ",
-      "b": "RDDT",
-      "rho": -0.26413391406684783
+      "a": "KO",
+      "b": "MFC.TO",
+      "rho": 0.2654581288086275
     },
     {
-      "a": "JNJ",
+      "a": "KO",
+      "b": "MSFT",
+      "rho": null
+    },
+    {
+      "a": "KO",
       "b": "RY.TO",
-      "rho": 0.13230355801111726
+      "rho": -0.26528610154037574
     },
     {
-      "a": "JNJ",
-      "b": "SHOP.TO",
-      "rho": -0.06800223201584114
+      "a": "KO",
+      "b": "SU.TO",
+      "rho": 0.3589099020485235
     },
     {
-      "a": "JNJ",
+      "a": "KO",
       "b": "TD.TO",
-      "rho": 0.03107102719075955
+      "rho": -0.028835828697297703
     },
     {
-      "a": "RDDT",
+      "a": "MFC.TO",
+      "b": "MSFT",
+      "rho": null
+    },
+    {
+      "a": "MFC.TO",
       "b": "RY.TO",
-      "rho": 0.3003961065350001
+      "rho": -0.3036041784460447
     },
     {
-      "a": "RDDT",
-      "b": "SHOP.TO",
-      "rho": 0.5472458622472679
+      "a": "MFC.TO",
+      "b": "SU.TO",
+      "rho": 0.43256528467446237
     },
     {
-      "a": "RDDT",
+      "a": "MFC.TO",
       "b": "TD.TO",
-      "rho": 0.2919486146421384
+      "rho": -0.0011868287211601047
+    },
+    {
+      "a": "MSFT",
+      "b": "RY.TO",
+      "rho": null
+    },
+    {
+      "a": "MSFT",
+      "b": "SU.TO",
+      "rho": null
+    },
+    {
+      "a": "MSFT",
+      "b": "TD.TO",
+      "rho": null
     },
     {
       "a": "RY.TO",
-      "b": "SHOP.TO",
-      "rho": 0.22299895954513868
+      "b": "SU.TO",
+      "rho": -0.320100570876547
     },
     {
       "a": "RY.TO",
       "b": "TD.TO",
-      "rho": 0.8747277216883402
+      "rho": 0.09930467714232749
     },
     {
-      "a": "SHOP.TO",
+      "a": "SU.TO",
       "b": "TD.TO",
-      "rho": 0.23107063883922785
+      "rho": 0.046553696578042134
     }
   ],
-  "benchmark_vol": 0.15054792450816454,
-  "usd_cad": 1.4296,
-  "warnings": []
+  "benchmark_vol": 0.23438555650328433,
+  "usd_cad": 1.4243,
+  "warnings": [
+    "MSFT: short_history (0 weeks)"
+  ]
 }

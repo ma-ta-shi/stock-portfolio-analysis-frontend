@@ -1,5 +1,5 @@
 {
-  "analysis_id": "4052936a-30c1-42d3-9ca7-1565de60a579",
+  "analysis_id": "75657c0f-5394-47c0-b406-31edd5bc2c24",
   "status": "complete",
   "stock_outlook_direction": "bullish",
   "overall_confidence": 70,
@@ -318,7 +318,7 @@
     "status": "ok",
     "ticker": "RY.TO",
     "timeline": "medium_term",
-    "as_of_date": "2026-11-25",
+    "as_of_date": "2026-11-27",
     "flags": [
       "edge_history_short",
       "vol_3m_missing"
@@ -329,70 +329,70 @@
     "currency": "CAD",
     "horizon_years": 1,
     "range": {
-      "low": 80.04400829208234,
+      "low": 76.90944166869674,
       "low_percentile": 10,
-      "median": 104.89083954444904,
-      "high": 137.4504907374515,
+      "median": 100.78325758109743,
+      "high": 132.06785523697263,
       "high_percentile": 90
     },
     "model_range": {
-      "p10": 80.04400829208234,
-      "p25": 90.97970114662256,
-      "p50": 104.89083954444904,
-      "p75": 120.92904331053394,
-      "p90": 137.4504907374515
+      "p10": 76.90944166869674,
+      "p25": 87.41688688101051,
+      "p50": 100.78325758109743,
+      "p75": 116.19339662007896,
+      "p90": 132.06785523697263
     },
     "by_horizon": {
       "1m": {
         "status": "ok",
         "horizon_years": 0.08333333333333333,
-        "p10": 92.86138318409184,
-        "p25": 96.35849571985425,
-        "p50": 100.39870940616682,
-        "p75": 104.60832514166168,
-        "p90": 108.54782154645663,
-        "target_price": 101.01396408427946,
-        "income_expected": 0,
-        "expected_total_return_pct": 1.0139640842794648,
+        "p10": 92.53825874382446,
+        "p25": 96.0232025772488,
+        "p50": 100.04935776323337,
+        "p75": 104.24432553978522,
+        "p90": 108.17011390441226,
+        "target_price": 100.66247157485589,
+        "income_expected": 0.35,
+        "expected_total_return_pct": 1.0124715748558857,
         "stock_baseline_pct": 0.5850380353085605
       },
       "3m": {
         "status": "ok",
         "horizon_years": 0.25,
-        "p10": 88.40565043339943,
-        "p25": 94.25141143463505,
-        "p50": 101.20090363246861,
-        "p75": 108.66280663744689,
-        "p90": 115.84805774087647,
-        "target_price": 102.51578053989,
-        "income_expected": 0,
-        "expected_total_return_pct": 2.5157805398900024,
+        "p10": 87.49349432793947,
+        "p25": 93.27893965294629,
+        "p50": 100.15672804330802,
+        "p75": 107.54164026374964,
+        "p90": 114.65275503504292,
+        "target_price": 101.45803825003604,
+        "income_expected": 1.05,
+        "expected_total_return_pct": 2.50803825003604,
         "stock_baseline_pct": 1.7654022150761728
       },
       "6m": {
         "status": "ok",
         "horizon_years": 0.5,
-        "p10": 84.59569628183796,
-        "p25": 92.61354157801568,
-        "p50": 102.416228960282,
-        "p75": 113.25648253726614,
-        "p90": 123.99075148574467,
-        "target_price": 104.63917942069415,
-        "income_expected": 0,
-        "expected_total_return_pct": 4.639179420694148,
+        "p10": 82.88028896887968,
+        "p25": 90.73555069331861,
+        "p50": 100.33946198695081,
+        "p75": 110.95990000501658,
+        "p90": 121.47650252053457,
+        "target_price": 102.5173360942654,
+        "income_expected": 2.1,
+        "expected_total_return_pct": 4.6173360942654025,
         "stock_baseline_pct": 3.5619708799623284
       },
       "12m": {
         "status": "ok",
         "horizon_years": 1,
-        "p10": 80.04400829208234,
-        "p25": 90.97970114662256,
-        "p50": 104.89083954444904,
-        "p75": 120.92904331053394,
-        "p90": 137.4504907374515,
-        "target_price": 108.82052662978722,
-        "income_expected": 0,
-        "expected_total_return_pct": 8.820526629787224,
+        "p10": 76.90944166869674,
+        "p25": 87.41688688101051,
+        "p50": 100.78325758109743,
+        "p75": 116.19339662007896,
+        "p90": 132.06785523697263,
+        "target_price": 104.55905599642921,
+        "income_expected": 4.2,
+        "expected_total_return_pct": 8.759055996429208,
         "stock_baseline_pct": 7.250818125421654
       }
     },
@@ -401,36 +401,36 @@
       "shift": 0.02734375,
       "position": 0.5012764606347382
     },
-    "target_price": 108.82052662978722,
+    "target_price": 104.55905599642921,
     "vs_current_pct": {
-      "low": -19.955991707917665,
-      "median": 4.890839544449044,
-      "high": 37.4504907374515,
-      "target_price": 8.820526629787228
+      "low": -23.090558331303257,
+      "median": 0.7832575810974296,
+      "high": 32.06785523697264,
+      "target_price": 4.559055996429207
     },
     "income_per_share": {
-      "low_state": 0,
-      "expected": 0,
-      "method": "none"
+      "low_state": 4.2,
+      "expected": 4.2,
+      "method": "indicated"
     },
-    "expected_total_return_pct": 8.820526629787228,
+    "expected_total_return_pct": 8.759055996429208,
     "stock_baseline_pct": 7.250818125421654,
     "market_reference_pct": null,
-    "view_pts": 1.5697085043655745,
-    "view_per_unit_risk": 0.06938065442788058,
+    "view_pts": 1.5082378710075535,
+    "view_per_unit_risk": 0.06938065442788084,
     "inputs": {
       "sigma": 0.2,
       "sigma_3m": null,
       "sigma_eff": 0.2109502310972899,
       "rf": 0.03,
       "mu0": 0.07,
-      "y": 0,
-      "m0": 107.25081812542166,
+      "y": 0.042,
+      "m0": 103.05081812542166,
       "z_raw": 0.875,
       "z_smooth": 0.875,
       "z_ref": 0,
       "z_view": 0.875,
-      "income_annual_expected": 0,
+      "income_annual_expected": 4.2,
       "next_earnings_date": null
     },
     "risk_profile": {
@@ -440,8 +440,8 @@
         "used": 0.2109502310972899
       },
       "loss_probability_12m": {
-        "over_15_pct": 0.15943800375253253,
-        "over_30_pct": 0.027608924751522435
+        "over_15_pct": 0.2097183428942569,
+        "over_30_pct": 0.042013236062513004
       },
       "loss_risk_class": "low",
       "drawdown": {
@@ -485,17 +485,17 @@
   "business_profile": null,
   "failure": null,
   "stock": {
-    "stock_id": "7e8b0f73-e2f1-4f3e-99e2-efa1c685ae39",
+    "stock_id": "b9952af0-b24f-4732-9428-94aab02f89c5",
     "ticker": "RY.TO",
     "name": "Royal Bank of Canada",
     "exchange": "TSX",
     "currency": "CAD"
   },
   "timeline": "medium_term",
-  "triggered_at": "2026-11-24T09:30:00Z",
+  "triggered_at": "2026-11-26T09:30:00Z",
   "pass1_completed_at": null,
   "pass2_completed_at": null,
-  "completed_at": "2026-11-24T09:30:00Z",
+  "completed_at": "2026-11-26T09:30:00Z",
   "duration_s": 0,
   "pipeline_version": null
 }
