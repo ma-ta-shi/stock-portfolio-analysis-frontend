@@ -55,6 +55,16 @@ describe('What Changed', () => {
     expect(screen.getByRole('link', { name: 'Go to Portfolio' })).toHaveAttribute('href', '/portfolio?tab=dividends')
   })
 
+  it('shows a stock split as news, with nothing to do', async () => {
+    const split = { ...item, type: 'stock_split', title: 'KO split 2-for-1', ticker: 'KO', action_url: '/portfolio' }
+    installFixtureFetch({ [ACTIVITY]: feed([split]) })
+    show()
+    const card = await within(region('What Changed')).findByRole('listitem')
+    expect(card).toHaveTextContent('KO split 2-for-1')
+    expect(card).not.toHaveTextContent('Needs you')
+    expect(within(card).getByRole('link')).toHaveAttribute('href', '/portfolio')
+  })
+
   it.each(['https://example.com', '//example.com', '/admin?x=1'])('never links to %s', async (url) => {
     installFixtureFetch({ [ACTIVITY]: feed([{ ...item, action_url: url }]) })
     show()

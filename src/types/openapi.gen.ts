@@ -1739,15 +1739,15 @@ export interface components {
         };
         /**
          * ActivityItemResponse
-         * @description One thing worth a look. The first three are events (`happened_at` says when, and `since` filters them); the last is a state that stays
-         *     until dealt with (`happened_at` is null, and `since` does not hide it).
+         * @description One thing worth a look. All but `dividend_waiting` are events (`happened_at` says when, and `since` filters them); that one is a state that
+         *     stays until dealt with (`happened_at` is null, and `since` does not hide it).
          */
         ActivityItemResponse: {
             /**
              * Type
              * @enum {string}
              */
-            type: "outlook_change" | "portfolio_optimization" | "prediction_result" | "dividend_waiting";
+            type: "outlook_change" | "portfolio_optimization" | "prediction_result" | "dividend_waiting" | "stock_split";
             /** Title */
             title: string;
             /** Message */
@@ -1772,7 +1772,7 @@ export interface components {
              * @description A route of the app to open: `/analysis/{run id}`, `/portfolio` (with `?tab=optimizer` or `?tab=dividends`) or `/feedback`.
              */
             action_url?: string | null;
-            /** @description The figures behind it, by type (outlooks, the interval and returns, the amount, the ages). */
+            /** @description The figures behind it, by type (outlooks, the interval and returns, the amount, the split ratio). */
             meta: components["schemas"]["StoredRecord"];
         };
         /** ActivityListResponse */
