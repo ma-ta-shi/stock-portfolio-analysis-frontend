@@ -6,7 +6,7 @@ import { useFxRates } from './use-fx-rates'
 import { installFixtureFetch } from '@/test/fixture-fetch'
 import file from '../../public/mock-data/market/exchange-rates.json'
 
-const FILE = '/mock-data/market/exchange-rates.json'
+const FILE = 'market/exchange-rates'
 
 function read(overrides: Record<string, unknown> = {}) {
   installFixtureFetch(overrides)

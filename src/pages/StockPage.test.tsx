@@ -21,7 +21,7 @@ import { useTickerSearch } from '@/hooks/use-ticker-search'
 import { useWatchlist } from '@/hooks/use-watchlist'
 
 // The page runs its real hooks and mappers over the recorded responses (the end-to-end seed's RY.TO).
-const DIR = '/mock-data/stocks'
+const DIR = 'stocks'
 const holdings = vi.mocked(usePortfolioHoldings)
 const ledger = vi.mocked(useTransactionHistory)
 
@@ -49,8 +49,8 @@ function show(overrides: Record<string, unknown> = {}, stockId = stockFile.stock
 }
 
 const noAnalysis = {
-  [`${DIR}/snapshot.json`]: { ...snapshotFile, data: [{ ...snapshotFile.data[0], analysis: null, status: 'excluded', exclusions: ['no_analysis'] }] },
-  [`${DIR}/runs.json`]: { data: [], meta: { page: 1, per_page: 100, total: 0, pages: 1 } },
+  [`${DIR}/snapshot`]: { ...snapshotFile, data: [{ ...snapshotFile.data[0], analysis: null, status: 'excluded', exclusions: ['no_analysis'] }] },
+  [`${DIR}/runs`]: { data: [], meta: { page: 1, per_page: 100, total: 0, pages: 1 } },
 }
 
 describe('StockPage: the latest call', () => {
@@ -74,13 +74,13 @@ describe('StockPage: the latest call', () => {
   })
 
   it('says which day the price is from', async () => {
-    show({ [`${DIR}/snapshot.json`]: { ...snapshotFile, data: [{ ...snapshotFile.data[0], price_day: '2026-11-20' }] } })
+    show({ [`${DIR}/snapshot`]: { ...snapshotFile, data: [{ ...snapshotFile.data[0], price_day: '2026-11-20' }] } })
     expect(await screen.findByText(/as of Nov 20, 2026/i)).toBeInTheDocument()
   })
 
   it("keeps the summary's paragraphs, and drops the price note when the call has no target", async () => {
     show({
-      [`${DIR}/snapshot.json`]: { ...snapshotFile, data: [{ ...snapshotFile.data[0], analysis: { ...snapshotFile.data[0].analysis, target_price: null } }] },
+      [`${DIR}/snapshot`]: { ...snapshotFile, data: [{ ...snapshotFile.data[0], analysis: { ...snapshotFile.data[0].analysis, target_price: null } }] },
     })
     expect(await screen.findByText(/the margin trend outweighs the valuation/)).toHaveClass('whitespace-pre-line')
     expect(screen.queryByText('Target and return are at the latest price.')).not.toBeInTheDocument()
@@ -94,7 +94,7 @@ describe('StockPage: the latest call', () => {
   })
 
   it('says why an unsupported security is not analysed, instead of awaiting', async () => {
-    show({ ...noAnalysis, [`${DIR}/stock.json`]: { ...stockFile, pipeline_supported: false, unsupported_reason: 'an ETF or fund' } })
+    show({ ...noAnalysis, [`${DIR}/stock`]: { ...stockFile, pipeline_supported: false, unsupported_reason: 'an ETF or fund' } })
     expect(await screen.findByText('This security is not analysed: an ETF or fund.')).toBeInTheDocument()
     expect(screen.queryByText('Awaiting analysis.')).not.toBeInTheDocument()
   })
@@ -102,7 +102,7 @@ describe('StockPage: the latest call', () => {
 
 describe('StockPage: failed and unseen reads', () => {
   it('does not claim a stock was never analysed when its call cannot be read', async () => {
-    show({ ...noAnalysis, [`${DIR}/snapshot.json`]: 500 })
+    show({ ...noAnalysis, [`${DIR}/snapshot`]: 500 })
     expect(await screen.findByText(/price and latest call/i)).toBeInTheDocument()
     await screen.findByText(/No analyses yet/)
     expect(screen.queryByText('Awaiting analysis.')).not.toBeInTheDocument()
@@ -111,7 +111,7 @@ describe('StockPage: failed and unseen reads', () => {
   // The seed stores no data bundle, so the fundamentals are built by hand to the API's shape.
   it('draws the fundamentals the API serves, with the market cap in the stock currency and the day they are from', async () => {
     show({
-      [`${DIR}/fundamentals.json`]: {
+      [`${DIR}/fundamentals`]: {
         ...fundamentalsFile,
         run_id: 'r',
         run_day: '2026-11-20',
@@ -156,17 +156,17 @@ describe('StockPage: the analysis history', () => {
 
 describe('StockPage: states', () => {
   it('says a stock that does not exist was not found', async () => {
-    show({ [`${DIR}/stock.json`]: 404 })
+    show({ [`${DIR}/stock`]: 404 })
     expect(await screen.findByText('Stock not found.')).toBeInTheDocument()
   })
 
   it('offers a retry when the stock cannot be read', async () => {
-    show({ [`${DIR}/stock.json`]: 500 })
+    show({ [`${DIR}/stock`]: 500 })
     expect(await screen.findByRole('button', { name: /retry/i })).toBeInTheDocument()
   })
 
   it('keeps the page when only the price history fails', async () => {
-    show({ [`${DIR}/prices.json`]: 500 })
+    show({ [`${DIR}/prices`]: 500 })
     expect(await screen.findByText(/price history/i)).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Analysis History' })).toBeInTheDocument()
   })

@@ -118,13 +118,6 @@
     "why": "The form does not send tax_year, so a contribution counts for the year of its date; the API allows the prior year during the first 60 days.",
     "ticket": "86bd5z6mq"
   },
-  "E-1": {
-    "screen": "end-to-end",
-    "kind": "missing",
-    "what": "Mock mode cannot reproduce server-side filtering and paging, so the Transactions filter flows are not tested end to end",
-    "why": "A recorded file is the same for every query. The Transactions filters are covered by the live run (npm run test:e2e:live) against a seeded scratch backend.",
-    "ticket": "86bd5z6mq"
-  },
   "P-W9": {
     "screen": "portfolio",
     "kind": "missing",

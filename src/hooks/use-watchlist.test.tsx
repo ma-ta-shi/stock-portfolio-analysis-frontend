@@ -27,17 +27,21 @@ describe('useWatchlist', () => {
   })
 })
 
-// Unit tests run in mock mode, where a write has no recorded answer: it must fail visibly and never edit the list.
-describe('watchlist writes in mock mode', () => {
+// A write has no recording, so the stand-in server refuses it: the failure reaches the caller and nothing is edited.
+describe('a refused watchlist write', () => {
   it.each([
-    ['add', () => useAddToWatchlist(), 'BNS.TO'],
-    ['remove', () => useRemoveFromWatchlist(), 'w1'],
-  ])('refuses to %s, without a request', async (_name, hook, input) => {
+    ['add', () => useAddToWatchlist(), 'BNS.TO', 'POST', '/api/watchlist'],
+    ['remove', () => useRemoveFromWatchlist(), 'w1', 'DELETE', '/api/watchlist/w1'],
+  ])('to %s says why and leaves the list as it was read', async (_name, hook, input, method, url) => {
     const fetch = installFixtureFetch()
-    const { result } = renderHook(hook, { wrapper: wrap(client()) })
+    const c = client()
+    const list = renderHook(() => useWatchlist(), { wrapper: wrap(c) })
+    await waitFor(() => expect(list.result.current.data).toHaveLength(3))
+    const { result } = renderHook(hook, { wrapper: wrap(c) })
     await act(async () => {
-      await expect(result.current.mutateAsync(input)).rejects.toMatchObject({ code: 'mock_mode_unsupported' })
+      await expect(result.current.mutateAsync(input)).rejects.toMatchObject({ code: 'not_found', status: 404 })
     })
-    expect(fetch).not.toHaveBeenCalled()
+    expect(fetch).toHaveBeenCalledWith(url, expect.objectContaining({ method }))
+    expect(list.result.current.data).toHaveLength(3)
   })
 })

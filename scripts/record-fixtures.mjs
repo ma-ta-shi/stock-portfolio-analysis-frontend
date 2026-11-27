@@ -5,8 +5,8 @@
 //   API_URL=http://localhost:8010 npm run record:fixtures -- portfolio    (one screen)
 //   ... -- --user <uuid>                                                  (a user other than the first owner of a portfolio)
 //   ... -- portfolio --only dividends                                     (just those files of the screen, leaving the others as recorded)
-// To record a new screen, add it to SCREENS (step 6 of "Wiring a screen" in CLAUDE.md).
-import { mkdirSync, writeFileSync } from 'node:fs'
+// To record a new screen, add its routes to src/test/fixture-routes.json (step 6 of "Wiring a screen" in CLAUDE.md).
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 
 const base = (process.env.API_URL ?? 'http://localhost:8000').replace(/\/$/, '')
 const args = process.argv.slice(2)
@@ -18,52 +18,18 @@ const wanted = args.filter((a, i) => !a.startsWith('--') && !(userFlag >= 0 && i
 
 const day = (offset) => new Date(Date.now() + offset * 86_400_000).toISOString().slice(0, 10)
 
-// file -> how to read it. `ctx` holds the ids found from the backend.
-const SCREENS = {
-  // one stock with analyses, price history and a scored prediction: the end-to-end seed's RY.TO
-  stocks: (ctx) => [
-    { file: 'stock', path: `/api/stocks/${ctx.stockId}` },
-    { file: 'snapshot', path: `/api/stocks/snapshots?stock_ids=${ctx.stockId}` },
-    { file: 'fundamentals', path: `/api/stocks/${ctx.stockId}/fundamentals` },
-    { file: 'prices', path: `/api/stocks/${ctx.stockId}/prices?page=1&per_page=100` },
-    { file: 'runs', path: `/api/analysis?stock_id=${ctx.stockId}&status=complete&page=1&per_page=100` },
-    { file: 'predictions', path: `/api/predictions?stock_id=${ctx.stockId}&page=1&per_page=100` },
-    { file: 'result', path: `/api/analysis/${ctx.runId}` },
-  ],
-  settings: (ctx) => [
-    { file: 'profile', path: `/api/users/${ctx.userId}` },
-    { file: 'order-settings', path: '/api/order-settings/schema' },
-  ],
-  watchlist: (ctx) => [{ file: 'watchlist', path: `/api/watchlist?user_id=${ctx.userId}&include=snapshot&page=1&per_page=100` }],
-  portfolio: (ctx) => [
-    { file: 'portfolios', path: `/api/portfolios?user_id=${ctx.userId}` },
-    { file: 'positions', path: `/api/portfolios/${ctx.portfolioId}/positions` },
-    { file: 'holdings', path: `/api/portfolios/${ctx.portfolioId}/holdings?include=snapshot&include=position&include_closed=true&page=1&per_page=100` },
-    { file: 'accounts', path: `/api/portfolios/${ctx.portfolioId}/accounts` },
-    { file: 'room', path: `/api/portfolios/${ctx.portfolioId}/room` },
-    { file: 'report', method: 'POST', path: `/api/portfolios/${ctx.portfolioId}/reports`, body: { preset: 'since_inception' } },
-    { file: 'report-30d', method: 'POST', path: `/api/portfolios/${ctx.portfolioId}/reports`, body: { start: day(-30), end: day(0) } },
-    { file: 'value-history', path: `/api/portfolios/${ctx.portfolioId}/value-history?from=${day(-30)}&to=${day(0)}` },
-    { file: 'value-history-year', path: `/api/portfolios/${ctx.portfolioId}/value-history?from=${day(-365)}&to=${day(0)}` },
-    { file: 'transactions', path: `/api/portfolios/${ctx.portfolioId}/transactions?page=1&per_page=100` },
-    { file: 'exposure', path: `/api/portfolios/${ctx.portfolioId}/exposure` },
-    { file: 'dividends', path: `/api/portfolios/${ctx.portfolioId}/dividends?page=1&per_page=100` },
-    // the latest stored optimizer run (a seeded database has none), and an answer that saves nothing
-    { file: 'proposals', path: `/api/portfolios/${ctx.portfolioId}/proposals` },
-    { file: 'ask', method: 'POST', path: `/api/portfolios/${ctx.portfolioId}/ask`, body: { amount_cad: 5000, account: null, store: false } },
-  ],
-  // The USD/CAD observations. Last, because the backend reads them from the Bank of Canada: an outage stops only this one.
-  market: () => [
-    { file: 'exchange-rates', path: '/api/exchange-rates' },
-    { file: 'macro', path: '/api/macro' },
-  ],
-  home: (ctx) => [{ file: 'activity', path: `/api/activity?user_id=${ctx.userId}&per_page=100` }],
-  // the scorecard samples are not recorded: a database has no filled scorecard, so they are the real scorer's output on made-up results
-  feedback: () => [
-    { file: 'weekly-batch', path: '/api/weekly-batch' },
-    { file: 'pipeline-versions', path: '/api/pipeline-versions?per_page=100' },
-    { file: 'predictions', path: '/api/predictions?current_design=true&page=1&per_page=20' },
-  ],
+// The routes, shared with the test server (`src/test/fixture-fetch.ts`) so a recording and what answers with it cannot drift.
+// A `record: false` entry is not recorded: a database has no filled scorecard (those samples are the real scorer's output on
+// made-up results), and `users` is kept as it is.
+const table = JSON.parse(readFileSync(new URL('../src/test/fixture-routes.json', import.meta.url), 'utf8')).filter((r) => r.record !== false)
+const SCREENS = [...new Set(table.map((r) => r.screen))]
+
+/** `{userId}` and friends from the backend, `{day-30}` as a date. */
+function fill(value, ctx) {
+  if (typeof value === 'string')
+    return value.replace(/\{(\w+?)(-?\d+)?\}/g, (whole, name, offset) => (name === 'day' ? day(Number(offset)) : (ctx[name] ?? whole)))
+  if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, fill(v, ctx)]))
+  return value
 }
 
 async function call({ path, method = 'GET', body }) {
@@ -87,13 +53,14 @@ try {
     ctx.stockId = stock.stock_id
     ctx.runId = (await call({ path: `/api/analysis?stock_id=${stock.stock_id}&status=complete` })).data[0]?.analysis_id
   }
-  for (const [screen, routes] of Object.entries(SCREENS)) {
+  for (const screen of SCREENS) {
     if (wanted.length && !wanted.includes(screen)) continue
     const dir = `public/mock-data/${screen}`
     mkdirSync(dir, { recursive: true })
-    for (const route of routes(ctx)) {
+    for (const route of table.filter((r) => r.screen === screen)) {
       if (only.length && !only.includes(route.file)) continue
-      writeFileSync(`${dir}/${route.file}.json`, JSON.stringify(await call(route), null, 2) + '\n')
+      const request = { method: route.method, path: fill(route.path, ctx), body: fill(route.body, ctx) }
+      writeFileSync(`${dir}/${route.file}.json`, JSON.stringify(await call(request), null, 2) + '\n')
       console.log(`recorded ${dir}/${route.file}.json`)
     }
   }

@@ -32,13 +32,12 @@ Open http://localhost:5173.
 | `npm run coverage:api` | Lists the API response schemas no screen has claimed yet (the epic is done when it is empty or every entry has a reason) |
 | `npm run record:fixtures` | Records the Portfolio screen's API responses from a backend on a scratch database into `public/mock-data/portfolio/` (`API_URL=...`) |
 | `npm run test:watch` | Vitest in watch mode |
-| `npm run test:e2e` | Playwright: every page and key flow in a real browser (mock mode), light + dark, with axe-core accessibility checks |
-| `npm run test:e2e:live` | Playwright against a real backend on a seeded scratch database (`scripts/e2e-live.mjs` seeds it with the backend's `seed_e2e.py`, starts the backend and the dev server, runs `e2e-live/`, tears everything down). Needs the backend checkout at `../backend` (or `BACKEND_DIR`) with its `.venv`; never touches `app.db` |
+| `npm run test:e2e` | Playwright against a real backend on a seeded scratch database (`scripts/e2e.mjs` seeds it with the backend's `seed_e2e.py`, starts the backend and the dev server, runs `e2e/`, tears everything down): every page in light and dark with axe-core, and the user flows. Needs the backend checkout at `../backend` (or `BACKEND_DIR`) with its `.venv`, and a network; never touches `app.db` |
 | `npm run lint` | ESLint |
 | `npx tsc -b` | Type check |
 | `npm run build` | Type check + production build to `dist/` |
 
-CI (`.github/workflows/frontend.yml`) runs the type check, lint, unit tests and build, plus the end-to-end suite as a separate job, on every push that touches `frontend/`. Locally, the first `npm run test:e2e` may need `npx playwright install chromium`.
+CI (`.github/workflows/ci.yml`) runs the type check, lint, unit tests and build on pull requests into `main`; it does not run the end-to-end tests. Locally, the first `npm run test:e2e` may need `npx playwright install chromium`.
 
 ## Project layout
 

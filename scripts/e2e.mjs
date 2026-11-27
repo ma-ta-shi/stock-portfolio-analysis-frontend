@@ -1,9 +1,9 @@
 /**
- * End-to-end run against a real backend on a seeded scratch database: `npm run test:e2e:live [playwright args]`.
+ * End-to-end run against a real backend on a seeded scratch database: `npm run test:e2e [playwright args]`.
  *
  *   1. makes a scratch database in the OS temp folder and seeds it with `<backend>/scripts/seed_e2e.py` (which refuses `app.db`);
  *   2. starts the backend on it (`DATABASE_URL`) and the Vite dev server in live mode, pointed at that backend;
- *   3. runs Playwright with `E2E_LIVE=1` (the specs in `e2e-live/`, one at a time);
+ *   3. runs Playwright (the specs in `e2e/`, one at a time);
  *   4. always stops both servers and removes the scratch folder (also after an error or Ctrl+C), and exits with Playwright's exit code.
  *
  * Needs the backend checkout next to this folder (`../backend`, or `BACKEND_DIR`) with its virtual environment (`.venv`) and the
@@ -24,7 +24,7 @@ const python = path.join(backend, '.venv', process.platform === 'win32' ? 'Scrip
 const children = []
 
 function fail(message) {
-  console.error(`e2e-live: ${message}`)
+  console.error(`e2e: ${message}`)
   cleanup()
   process.exit(1)
 }
@@ -79,7 +79,7 @@ function cleanup() {
   cleaned = true
   for (const child of children) stop(child)
   if (scratch && process.env.E2E_KEEP !== '1') rmSync(scratch, { recursive: true, force: true })
-  else if (scratch) console.log(`e2e-live: kept ${scratch}`)
+  else if (scratch) console.log(`e2e: kept ${scratch}`)
 }
 // However the script ends (an error thrown after the servers started, Ctrl+C, a kill), nothing is left running or on disk.
 process.on('exit', cleanup)
@@ -87,11 +87,11 @@ for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => process.exi
 
 if (!existsSync(python)) fail(`the backend's Python is not at ${python} (set BACKEND_DIR to the backend checkout)`)
 
-scratch = mkdtempSync(path.join(os.tmpdir(), 'e2e-live-'))
+scratch = mkdtempSync(path.join(os.tmpdir(), 'e2e-'))
 if (!path.resolve(scratch).startsWith(path.resolve(os.tmpdir()))) fail(`the scratch folder ${scratch} is not inside the OS temp folder`)
 const db = path.join(scratch, 'e2e.db')
 
-console.log(`e2e-live: seeding ${db}`)
+console.log(`e2e: seeding ${db}`)
 const seeded = spawnSync(python, ['scripts/seed_e2e.py', '--db', db], { cwd: backend, stdio: 'inherit' })
 if (seeded.status !== 0) fail('the seed failed')
 
@@ -115,10 +115,10 @@ start(process.execPath, [path.join(frontend, 'node_modules/vite/bin/vite.js'), '
 })
 await waitFor(`http://localhost:${webPort}/`, 'the dev server')
 
-console.log(`e2e-live: backend :${apiPort}, app :${webPort}`)
+console.log(`e2e: backend :${apiPort}, app :${webPort}`)
 const run = spawnSync(process.execPath, [path.join(frontend, 'node_modules/@playwright/test/cli.js'), 'test', ...process.argv.slice(2)], {
   cwd: frontend,
-  env: { ...process.env, E2E_LIVE: '1', E2E_BASE_URL: `http://localhost:${webPort}`, E2E_API_URL: `http://127.0.0.1:${apiPort}` },
+  env: { ...process.env, E2E_BASE_URL: `http://localhost:${webPort}`, E2E_API_URL: `http://127.0.0.1:${apiPort}` },
   stdio: 'inherit',
 })
 

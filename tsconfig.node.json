@@ -22,9 +22,9 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
 
-    /* The app's `@/` alias, for the live specs that import app code (e2e-live uses lib/format) */
+    /* The app's `@/` alias, for the specs that import app code (e2e uses lib/format) */
     "baseUrl": ".",
     "paths": { "@/*": ["./src/*"] }
   },
-  "include": ["vite.config.ts", "playwright.config.ts", "e2e", "e2e-live"]
+  "include": ["vite.config.ts", "playwright.config.ts", "e2e"]
 }

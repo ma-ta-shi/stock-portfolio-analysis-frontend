@@ -3,7 +3,7 @@
  * answers back, a warning before leaving with unsaved changes, and the profile put back as it was.
  */
 import type { APIRequestContext } from '@playwright/test'
-import { axeViolations, expect, test } from '../e2e/fixtures'
+import { axeViolations, expect, test } from './fixtures'
 import { API, portfolioId } from './helpers'
 
 const json = async (request: APIRequestContext, path: string) => (await request.get(`${API}${path}`)).json()

@@ -1,9 +1,9 @@
 /**
- * The Portfolio write flows against a real backend on a seeded scratch database (`npm run test:e2e:live`). Each flow uses its own
+ * The Portfolio write flows against a real backend on a seeded scratch database (`npm run test:e2e`). Each flow uses its own
  * seeded holding, so the specs do not depend on each other's order. Where a figure is on screen, it is compared with the same
  * entry previewed straight from the API: the page must show the server's numbers, not its own.
  */
-import { axeViolations, expect, test } from '../e2e/fixtures'
+import { axeViolations, expect, test } from './fixtures'
 import { localDateInputValue } from '../src/lib/format'
 import { API, apiPreview, ledgerOf, numberIn, openFromRow, portfolioId, previewValue } from './helpers'
 
@@ -78,6 +78,7 @@ test('selling at a gain shows the tax estimate the server worked out, and record
   expect(api.estimated_tax.estimated_tax).toBeGreaterThan(0)
   expect(numberIn(await previewValue(dialog, 'Estimated tax effect (CAD)').textContent())).toBeCloseTo(api.estimated_tax.estimated_tax, 2)
   expect(numberIn(await previewValue(dialog, 'Realised gain or loss').textContent())).toBeCloseTo(api.row.realized_gain_loss, 2)
+  expect(await axeViolations(page)).toEqual([])
 
   await dialog.getByRole('button', { name: 'Sell shares' }).click()
   await expect(dialog.getByRole('status')).toContainText('Recorded')

@@ -14,7 +14,7 @@ vi.mock('@/hooks/use-fx-rates', () => ({ useFxRates: () => ({ rates: { CAD: 1, U
 import { usePortfolioHoldings } from '@/hooks/use-portfolio'
 
 // The page runs its real hooks and mappers over the recorded responses (the end-to-end seed's RY.TO).
-const RESULT = '/mock-data/stocks/result.json'
+const RESULT = 'stocks/result'
 
 beforeEach(() => {
   vi.mocked(usePortfolioHoldings).mockReturnValue({ data: [] } as unknown as ReturnType<typeof usePortfolioHoldings>)
@@ -95,7 +95,7 @@ describe('AnalysisPage: a completed run', () => {
 
 describe('AnalysisPage: runs without everything', () => {
   it('says the fundamentals are the newest, not those of this analysis', async () => {
-    show({ '/mock-data/stocks/fundamentals.json': { ...fundamentals, run_id: 'r', run_day: '2026-11-20' } })
+    show({ 'stocks/fundamentals': { ...fundamentals, run_id: 'r', run_day: '2026-11-20' } })
     expect(await screen.findByText(/Fundamentals as of Nov 20, 2026\. These and the market cap are the newest.*unavailable \(S-6\)$/)).toBeInTheDocument()
   })
 
@@ -125,7 +125,7 @@ describe('AnalysisPage: runs without everything', () => {
 
 describe('AnalysisPage: states', () => {
   it('does not show a run from before the price band, nor read anything else for it', async () => {
-    show({ [RESULT]: { ...result, triggered_at: '2026-10-12T20:00:00Z', price_band: null }, '/mock-data/stocks/stock.json': 500 })
+    show({ [RESULT]: { ...result, triggered_at: '2026-10-12T20:00:00Z', price_band: null }, 'stocks/stock': 500 })
     expect(await screen.findByRole('status')).toHaveTextContent('made before the price range was introduced')
     expect(screen.queryByText(result.synthesis_narrative)).not.toBeInTheDocument()
     expect(screen.queryByText('Agent Results')).not.toBeInTheDocument()

@@ -10,17 +10,9 @@
  * their shapes differ from the hook types until their page tickets).
  */
 import { describe, expect, it } from 'vitest'
-import knownDead from './known-dead-routes.json'
 import servedRoutes from '@/types/api-routes.gen.json'
 
 const served = new Set<string>(servedRoutes)
-
-/**
- * Mock-era paths with no backend route, each owned by the page ticket that replaces it (epic 86bd5z6kr), in `known-dead-routes.json`
- * (the live end-to-end run reads the same list to ignore their 404s). The last ticket empties it. A path that starts to exist must be
- * removed from it (the third test enforces that).
- */
-const KNOWN_DEAD: readonly string[] = knownDead
 
 const sources = import.meta.glob('/src/**/*.{ts,tsx}', { query: '?raw', import: 'default', eager: true }) as Record<
   string,
@@ -77,15 +69,8 @@ describe('API contract', () => {
     expect(routes).toEqual(expect.arrayContaining(['GET /api/portfolios/{}/positions', 'GET /api/portfolios/{}/holdings', 'POST /api/portfolios/{}/reports', 'GET /api/portfolios/{}/transactions', 'GET /api/portfolios/{}/exposure']))
   })
 
-  it('every path the app calls is served by the backend, except the known mock-era ones', () => {
-    const unknown = routes.filter((r) => !served.has(r) && !KNOWN_DEAD.includes(r))
-    expect(unknown).toEqual([])
-  })
-
-  it('the known-dead list holds only paths that are still missing and still used', () => {
-    const nowServed = KNOWN_DEAD.filter((r) => served.has(r))
-    const unused = KNOWN_DEAD.filter((r) => !routes.includes(r))
-    expect({ nowServed, unused }).toEqual({ nowServed: [], unused: [] })
+  it('every path the app calls is served by the backend', () => {
+    expect(routes.filter((r) => !served.has(r))).toEqual([])
   })
 
   it('tells a literal path from an id, and checks the method', () => {

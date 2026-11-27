@@ -5,9 +5,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createMemoryRouter, Link, RouterProvider } from 'react-router-dom'
 import { SettingsPage } from './SettingsPage'
 import { hasUnsaved } from '@/lib/unsaved'
-import { installFixtureFetch } from '@/test/fixture-fetch'
+import { installFixtureFetch, recordingFor } from '@/test/fixture-fetch'
 import profile from '../../public/mock-data/settings/profile.json'
 import room from '../../public/mock-data/portfolio/room.json'
+import portfoliosFile from '../../public/mock-data/portfolio/portfolios.json'
 
 vi.mock('@/context/UserContext', () => ({
   UserProvider: ({ children }: { children: React.ReactNode }) => children,
@@ -20,9 +21,9 @@ vi.mock('@/lib/api', async (importOriginal) => {
   return { ...api, apiFetch: (mock: string, path: string, init?: RequestInit) => (init?.method === 'PATCH' ? send(path, JSON.parse(init.body as string)) : api.apiFetch(mock, path, init)) }
 })
 
-const PROFILE = '/mock-data/settings/profile.json'
-const ROOM = '/mock-data/portfolio/room.json'
-const PORTFOLIOS = '/mock-data/portfolio/portfolios.json'
+const PROFILE = 'settings/profile'
+const ROOM = 'portfolio/room'
+const PORTFOLIOS = 'portfolio/portfolios'
 
 afterEach(() => {
   vi.unstubAllGlobals()
@@ -90,7 +91,7 @@ describe('SettingsPage: what it shows', () => {
     show()
     const served = globalThis.fetch
     vi.stubGlobal('fetch', (url: string, init?: RequestInit) =>
-      String(url) === ROOM
+      recordingFor('GET', url) === ROOM
         ? Promise.resolve(new Response(JSON.stringify({ error: { code: 'PROFILE_INCOMPLETE', message: 'Contribution room needs these profile figures: income_annual', details: {} } }), { status: 422 }))
         : served(url, init),
     )
@@ -178,7 +179,7 @@ describe('SettingsPage: saving', () => {
     show()
     type(await field('Optimizer Rules', /Orders: minimum order/), '750')
     // meanwhile a key this page does not edit changes outside it
-    const portfolios = await (await fetch(PORTFOLIOS)).json()
+    const portfolios = structuredClone(portfoliosFile) as unknown as { data: { settings: Record<string, unknown> }[] }
     portfolios.data[0].settings = { ...portfolios.data[0].settings, synthetic: true }
     installFixtureFetch({ [PORTFOLIOS]: portfolios })
     fireEvent.click(saveButton())

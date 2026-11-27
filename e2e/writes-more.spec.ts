@@ -4,7 +4,7 @@
  * looked up and only Canadian-dollar rows are recorded.
  */
 import type { Page } from '@playwright/test'
-import { axeViolations, expect, test } from '../e2e/fixtures'
+import { axeViolations, expect, test } from './fixtures'
 import { localDateInputValue } from '../src/lib/format'
 import { apiPreview, ledgerOf, numberIn, openFromRow, previewValue } from './helpers'
 
@@ -99,4 +99,9 @@ test('the Transactions filters narrow the list, and survive a reload', async ({ 
   await page.reload()
   await expect(page.getByRole('combobox', { name: 'Ticker' })).toHaveValue('RY.TO')
   await expect.poll(() => rows.count()).toBe(both)
+  expect(await axeViolations(page)).toEqual([])
+
+  await page.getByRole('button', { name: 'Clear filters' }).click()
+  await expect(page).not.toHaveURL(/ticker=/)
+  await expect.poll(() => rows.count()).toBe(all)
 })
