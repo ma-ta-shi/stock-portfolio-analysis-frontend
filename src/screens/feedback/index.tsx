@@ -78,8 +78,8 @@ const rest: NotShown = { reason: 'Part of the scorecard or the prediction with n
 
 export const FEEDBACK_NOT_SHOWN = {
   ...keys('ScorecardResponse', ['scorer_version', 'section', 'available'], id),
-  ...keys('BatchWeekResponse', ['added_this_week', 'removed_this_week', 'complete'], rest),
-  ...keys('WeeklyBatchResponse', ['as_of', 'user_id', 'timeline', 'due_today', 'stocks'], rest),
+  ...keys('BatchWeekResponse', ['required', 'complete'], rest),
+  ...keys('WeeklyBatchResponse', ['as_of'], rest),
   ...keys('PipelineVersionResponse', ['date', 'prompts_hash', 'band_settings', 'model', 'description', 'change'], rest),
 } as Partial<Record<ApiFieldKey, NotShown>>
 
@@ -94,7 +94,7 @@ export const FEEDBACK_SCREEN: ScreenFieldSet = {
     { id: 'why', label: 'Why it waits', source: 'PredictionCheckpointResponse.status_reason', places: detail },
     // the scorecard (lib/feedback.ts), the progress strip and the version it is checked against
     { id: 'scorecard', label: 'Scorecard figures', source: ['ScorecardResponse.as_of', 'ScorecardResponse.data'], places: column },
-    { id: 'batch', label: "This week's batch", source: ['WeeklyBatchResponse.week', 'BatchWeekResponse.week_start', 'BatchWeekResponse.required', 'BatchWeekResponse.done', 'BatchWeekResponse.pending', 'BatchWeekResponse.gave_up'], places: column },
+    { id: 'batch', label: "This week's batch", source: ['WeeklyBatchResponse.week', 'BatchWeekResponse.week_start', 'BatchWeekResponse.done', 'BatchWeekResponse.pending', 'BatchWeekResponse.gave_up'], places: column },
     { id: 'pipeline', label: 'Pipeline version', source: ['PipelineVersionResponse.id', 'PipelineVersionResponse.view_comparable_with_previous'], places: column },
   ],
   notShown: FEEDBACK_NOT_SHOWN,

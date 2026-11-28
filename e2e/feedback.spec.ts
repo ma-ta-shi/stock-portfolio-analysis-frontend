@@ -15,7 +15,7 @@ test('feedback: the batch, the scorecard state and the weekly batch predictions 
 
   await page.goto('/feedback')
   const progress = page.getByRole('region', { name: 'Progress' })
-  await expect(progress).toContainText(`${batch.week.done.length} of ${batch.week.required.length} done`)
+  await expect(progress).toContainText(`${batch.week.done} of ${batch.week.done + batch.week.pending + batch.week.gave_up} done`)
   if (overview.status() === 404) await expect(progress).toContainText('No scorecard has been saved yet')
   else {
     const version = (await overview.json()).data.current_cohort.split('-')[0]

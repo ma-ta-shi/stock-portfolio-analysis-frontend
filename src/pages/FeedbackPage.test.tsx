@@ -83,7 +83,7 @@ describe('FeedbackPage', () => {
   it("shows the batch, the current scorecard's figures, the agent placeholder and the predictions", async () => {
     show()
     const progress = region('Progress')
-    expect(await within(progress).findByText(`${batchFile.week.done.length} of ${batchFile.week.required.length} done`)).toBeInTheDocument()
+    expect(await within(progress).findByText(`${batchFile.week.done} of ${batchFile.week.done + batchFile.week.pending + batchFile.week.gave_up} done`)).toBeInTheDocument()
     expect(await within(progress).findByText('Toward a verdict')).toBeInTheDocument()
     expect(await screen.findByText(/1-month results of pipeline P/)).toBeInTheDocument()
     expect(region('Accuracy')).toHaveTextContent('Hit rate beyond the baseline')

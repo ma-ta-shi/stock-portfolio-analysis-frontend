@@ -206,7 +206,7 @@
     "screen": "watchlist",
     "kind": "missing",
     "what": "An analysis of a newly added stock",
-    "why": "The weekly batch reads its own list, not the watchlist, and the screen has no control to start one, so a new stock stays \"Awaiting analysis\" (backend handoff BH-14).",
+    "why": "The weekly batch analyses a newly added stock on its next weekday run, and the screen has no control to start one sooner, so until then it shows \"Awaiting analysis\" (backend handoff BH-14).",
     "ticket": "86bd5z6mt"
   },
   "W-5": {

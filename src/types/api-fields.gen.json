@@ -25,7 +25,6 @@
     "BaselineOutcomeResponse",
     "BaselineUniverseListResponse",
     "BaselineUniverseRowResponse",
-    "BatchStockResponse",
     "BatchWeekResponse",
     "BenchmarkLineResponse",
     "BookAccountResponse",
@@ -456,19 +455,11 @@
       "row_id",
       "ticker"
     ],
-    "BatchStockResponse": [
-      "added",
-      "removed",
-      "ticker",
-      "weekday"
-    ],
     "BatchWeekResponse": [
-      "added_this_week",
       "complete",
       "done",
       "gave_up",
       "pending",
-      "removed_this_week",
       "required",
       "week_start"
     ],
@@ -2368,10 +2359,6 @@
     ],
     "WeeklyBatchResponse": [
       "as_of",
-      "due_today",
-      "stocks",
-      "timeline",
-      "user_id",
       "week"
     ],
     "WhyLineResponse": [

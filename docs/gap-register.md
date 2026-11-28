@@ -43,7 +43,7 @@ expects, with why and the ClickUp ticket that closes it. The code cites these id
 | T-6 | settings | Member since | The profile has no created date (backend handoff BH-22). The line was removed. | [86bd5z6n3](https://app.clickup.com/t/86bd5z6n3) |
 | W-1 | watchlist | Portfolio Fit of a watched stock | Analyses no longer judge fit for a portfolio, so nothing serves it. The column stays and says unavailable (backend handoff BH-13). | [86bd5z6mt](https://app.clickup.com/t/86bd5z6mt) |
 | W-2 | watchlist | The suggested account for a watched stock | The account matrix scores each account but names no suggestion, and choosing one in the browser would be a second rule (backend handoff BH-13). | [86bd5z6mt](https://app.clickup.com/t/86bd5z6mt) |
-| W-4 | watchlist | An analysis of a newly added stock | The weekly batch reads its own list, not the watchlist, and the screen has no control to start one, so a new stock stays "Awaiting analysis" (backend handoff BH-14). | [86bd5z6mt](https://app.clickup.com/t/86bd5z6mt) |
+| W-4 | watchlist | An analysis of a newly added stock | The weekly batch analyses a newly added stock on its next weekday run, and the screen has no control to start one sooner, so until then it shows "Awaiting analysis" (backend handoff BH-14). | [86bd5z6mt](https://app.clickup.com/t/86bd5z6mt) |
 
 ## Documented difference (a deliberate choice)
 

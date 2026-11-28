@@ -1519,10 +1519,9 @@ export interface paths {
         };
         /**
          * Read how the weekly batch stands
-         * @description One scored analysis of every stock on the batch list each week, a few each weekday morning. This says who is done, pending or given up this
-         *     week (`week`), which stocks are due on `as_of` (default today, Toronto; `due_today`, at most 8, the cap for one morning, most overdue first;
-         *     `week.pending` lists everything still open) and the list itself. The list is the file `backend/batch_list.json`, outside the database.
-         *     503 `BATCH_LIST_UNAVAILABLE` when it cannot be read or is not valid.
+         * @description One scored analysis of every supported stock held or watched each week, a share each weekday while the market is closed.
+         *     Gives the week's progress as counts (`week`) for the week holding `as_of` (default today, Toronto), over the stocks held or
+         *     watched now.
          */
         get: operations["weekly-batch_get_weekly_batch"];
         put?: never;
@@ -2409,31 +2408,8 @@ export interface components {
             outcomes: components["schemas"]["BaselineOutcomeResponse"][];
         };
         /**
-         * BatchStockResponse
-         * @description One stock on the batch list.
-         */
-        BatchStockResponse: {
-            /** Ticker */
-            ticker: string;
-            /**
-             * Weekday
-             * @description 0 (Monday) to 4 (Friday): the day its weekly analysis is due.
-             */
-            weekday: number;
-            /**
-             * Added
-             * Format: date
-             */
-            added: string;
-            /**
-             * Removed
-             * @description Set once it is taken off the list; its history stays.
-             */
-            removed?: string | null;
-        };
-        /**
          * BatchWeekResponse
-         * @description Who is done, pending or given up this week, from `services/weekly_batch.week_status`.
+         * @description How many stocks are done, pending or given up this week, from `services/weekly_batch.week_status`.
          */
         BatchWeekResponse: {
             /**
@@ -2444,28 +2420,24 @@ export interface components {
             week_start: string;
             /**
              * Required
-             * @description Stocks active at the start of the week: the week is complete when each is done, given up or removed.
+             * @description Stocks held or watched since before the week began: it is complete when none of them is pending.
              */
-            required: string[];
+            required: number;
             /**
              * Done
              * @description Stocks with a scorable run this week.
              */
-            done: string[];
-            /**
-             * Gave Up
-             * @description Stocks that used all their counted attempts without a scorable run.
-             */
-            gave_up: string[];
+            done: number;
             /**
              * Pending
-             * @description Active stocks not done and not given up, everything still open.
+             * @description Stocks still to be run, including any added this week.
              */
-            pending: string[];
-            /** Added This Week */
-            added_this_week: string[];
-            /** Removed This Week */
-            removed_this_week: string[];
+            pending: number;
+            /**
+             * Gave Up
+             * @description Stocks that used up their attempts without a scorable run.
+             */
+            gave_up: number;
             /** Complete */
             complete: boolean;
         };
@@ -8165,7 +8137,7 @@ export interface components {
         };
         /**
          * WeeklyBatchResponse
-         * @description How the weekly batch stands: the week's progress, what is due today and the list itself.
+         * @description How the weekly batch stands, as counts only.
          */
         WeeklyBatchResponse: {
             /**
@@ -8173,24 +8145,7 @@ export interface components {
              * Format: date
              */
             as_of: string;
-            /**
-             * User Id
-             * @description The profile the batch's analyses are made for.
-             */
-            user_id: string;
-            /** Timeline */
-            timeline: string;
             week: components["schemas"]["BatchWeekResponse"];
-            /**
-             * Due Today
-             * @description The stocks to analyse today, most overdue first, at most 8 (the batch's cap for one morning); `week.pending` lists all that are still open.
-             */
-            due_today: components["schemas"]["BatchStockResponse"][];
-            /**
-             * Stocks
-             * @description Every stock on the list, removed ones included.
-             */
-            stocks: components["schemas"]["BatchStockResponse"][];
         };
         /** WhyLineResponse */
         WhyLineResponse: {
@@ -8226,7 +8181,7 @@ export interface components {
              * Code
              * @enum {string}
              */
-            code: "VALIDATION_ERROR" | "NOT_FOUND" | "METHOD_NOT_ALLOWED" | "INTERNAL_ERROR" | "ACCOUNT_NOT_FOUND" | "AGENT_PORTFOLIO_READ_ONLY" | "ALREADY_REVERSED" | "ALREADY_WATCHING" | "ANALYSIS_IN_PROGRESS" | "ANALYSIS_NOT_FOUND" | "BASELINE_FIT_NOT_FOUND" | "BATCH_LIST_UNAVAILABLE" | "BUNDLE_NOT_STORED" | "BUNDLE_UNREADABLE" | "CONTRIBUTION_EXCEEDS_ROOM" | "CORRECTION_NOT_VALID" | "CURRENCY_MISMATCH" | "DIVIDEND_EVENT_NOT_FOUND" | "DUPLICATE_ENTRY" | "EMPTY_PORTFOLIO" | "EVENT_NOT_OPEN" | "FIGURE_NOT_FOUND" | "ERROR_NOT_FOUND" | "EXCHANGE_RATE_UNAVAILABLE" | "FUND_NOT_FOUND" | "HOLDING_NOT_FOUND" | "INSUFFICIENT_SHARES" | "INVALID_ACCOUNT" | "INVALID_CORRECTION" | "INVALID_DATE_RANGE" | "INVALID_ORDER_SETTINGS" | "INVALID_SURPLUS" | "MISSING_CAD_AMOUNT" | "MISSING_FX_RATE" | "MIXED_SECURITIES" | "NOT_PAID_YET" | "USE_DELETE_TO_ARCHIVE" | "CASH_SET_BY_ENTRIES" | "EVENT_NOT_DECIDED" | "NOT_CORRECTABLE" | "NOT_REMOVABLE" | "NOT_REVERSIBLE" | "NO_BENCHMARK_HISTORY" | "NO_BENCHMARK_LINE" | "NO_BOOK_STORED" | "NO_MATRIX_STORED" | "NO_REINVESTMENT_PRICE" | "NO_RUN_STORED" | "NO_SHARES_AT_EX" | "PIPELINE_REGISTRY_UNREADABLE" | "PORTFOLIO_EXISTS" | "PORTFOLIO_NOT_FOUND" | "PROFILE_INCOMPLETE" | "PROPOSAL_NOT_FOUND" | "PROVIDER_NOT_CONFIGURED" | "QUALITY_NOT_STORED" | "RECONCILIATION_DIFFERENCE" | "SCORECARD_NOT_FOUND" | "STOCK_LOOKUP_UNAVAILABLE" | "STOCK_NOT_FOUND" | "TARGET_BOOK_FAILED" | "TRANSACTION_NOT_FOUND" | "UNSUPPORTED_ASSET_TYPE" | "UNSUPPORTED_CURRENCY" | "UNSUPPORTED_EXCHANGE" | "UNSUPPORTED_INSTRUMENT" | "USER_NOT_FOUND" | "WATCHLIST_ENTRY_NOT_FOUND" | "HTTP_400" | "HTTP_401" | "HTTP_402" | "HTTP_403" | "HTTP_406" | "HTTP_407" | "HTTP_408" | "HTTP_409" | "HTTP_410" | "HTTP_411" | "HTTP_412" | "HTTP_413" | "HTTP_414" | "HTTP_415" | "HTTP_416" | "HTTP_417" | "HTTP_418" | "HTTP_421" | "HTTP_422" | "HTTP_423" | "HTTP_424" | "HTTP_425" | "HTTP_426" | "HTTP_428" | "HTTP_429" | "HTTP_431" | "HTTP_451" | "HTTP_500" | "HTTP_501" | "HTTP_502" | "HTTP_503" | "HTTP_504" | "HTTP_505" | "HTTP_506" | "HTTP_507" | "HTTP_508" | "HTTP_510" | "HTTP_511";
+            code: "VALIDATION_ERROR" | "NOT_FOUND" | "METHOD_NOT_ALLOWED" | "INTERNAL_ERROR" | "ACCOUNT_NOT_FOUND" | "AGENT_PORTFOLIO_READ_ONLY" | "ALREADY_REVERSED" | "ALREADY_WATCHING" | "ANALYSIS_IN_PROGRESS" | "ANALYSIS_NOT_FOUND" | "BASELINE_FIT_NOT_FOUND" | "BUNDLE_NOT_STORED" | "BUNDLE_UNREADABLE" | "CONTRIBUTION_EXCEEDS_ROOM" | "CORRECTION_NOT_VALID" | "CURRENCY_MISMATCH" | "DIVIDEND_EVENT_NOT_FOUND" | "DUPLICATE_ENTRY" | "EMPTY_PORTFOLIO" | "EVENT_NOT_OPEN" | "FIGURE_NOT_FOUND" | "ERROR_NOT_FOUND" | "EXCHANGE_RATE_UNAVAILABLE" | "FUND_NOT_FOUND" | "HOLDING_NOT_FOUND" | "INSUFFICIENT_SHARES" | "INVALID_ACCOUNT" | "INVALID_CORRECTION" | "INVALID_DATE_RANGE" | "INVALID_ORDER_SETTINGS" | "INVALID_SURPLUS" | "MISSING_CAD_AMOUNT" | "MISSING_FX_RATE" | "MIXED_SECURITIES" | "NOT_PAID_YET" | "USE_DELETE_TO_ARCHIVE" | "CASH_SET_BY_ENTRIES" | "EVENT_NOT_DECIDED" | "NOT_CORRECTABLE" | "NOT_REMOVABLE" | "NOT_REVERSIBLE" | "NO_BENCHMARK_HISTORY" | "NO_BENCHMARK_LINE" | "NO_BOOK_STORED" | "NO_MATRIX_STORED" | "NO_REINVESTMENT_PRICE" | "NO_RUN_STORED" | "NO_SHARES_AT_EX" | "PIPELINE_REGISTRY_UNREADABLE" | "PORTFOLIO_EXISTS" | "PORTFOLIO_NOT_FOUND" | "PROFILE_INCOMPLETE" | "PROPOSAL_NOT_FOUND" | "PROVIDER_NOT_CONFIGURED" | "QUALITY_NOT_STORED" | "RECONCILIATION_DIFFERENCE" | "SCORECARD_NOT_FOUND" | "STOCK_LOOKUP_UNAVAILABLE" | "STOCK_NOT_FOUND" | "TARGET_BOOK_FAILED" | "TRANSACTION_NOT_FOUND" | "UNSUPPORTED_ASSET_TYPE" | "UNSUPPORTED_CURRENCY" | "UNSUPPORTED_EXCHANGE" | "UNSUPPORTED_INSTRUMENT" | "USER_NOT_FOUND" | "WATCHLIST_ENTRY_NOT_FOUND" | "HTTP_400" | "HTTP_401" | "HTTP_402" | "HTTP_403" | "HTTP_406" | "HTTP_407" | "HTTP_408" | "HTTP_409" | "HTTP_410" | "HTTP_411" | "HTTP_412" | "HTTP_413" | "HTTP_414" | "HTTP_415" | "HTTP_416" | "HTTP_417" | "HTTP_418" | "HTTP_421" | "HTTP_422" | "HTTP_423" | "HTTP_424" | "HTTP_425" | "HTTP_426" | "HTTP_428" | "HTTP_429" | "HTTP_431" | "HTTP_451" | "HTTP_500" | "HTTP_501" | "HTTP_502" | "HTTP_503" | "HTTP_504" | "HTTP_505" | "HTTP_506" | "HTTP_507" | "HTTP_508" | "HTTP_510" | "HTTP_511";
             /** Message */
             message: string;
             /** Details */
@@ -12409,15 +12364,6 @@ export interface operations {
             };
             /** @description `INTERNAL_ERROR`: A bug on the server; the message never carries its detail, which is in the log. */
             500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorEnvelope"];
-                };
-            };
-            /** @description `BATCH_LIST_UNAVAILABLE`: The weekly batch list file cannot be read or is not valid; the message says which. */
-            503: {
                 headers: {
                     [name: string]: unknown;
                 };

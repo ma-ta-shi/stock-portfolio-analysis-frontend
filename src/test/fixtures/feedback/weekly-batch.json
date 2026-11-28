@@ -1,114 +1,11 @@
 {
   "as_of": "2026-01-16",
-  "user_id": "8040fd64-f073-47e7-badf-a96912f0e99d",
-  "timeline": "medium_term",
   "week": {
     "week_start": "2026-01-12",
-    "required": [
-      "RY.TO",
-      "TD.TO",
-      "ENB.TO",
-      "CNQ.TO",
-      "BCE.TO",
-      "FTS.TO",
-      "SU.TO",
-      "MFC.TO",
-      "MSFT",
-      "BNS.TO"
-    ],
-    "done": [
-      "RY.TO",
-      "TD.TO",
-      "ENB.TO",
-      "CNQ.TO",
-      "BCE.TO",
-      "FTS.TO"
-    ],
-    "gave_up": [],
-    "pending": [
-      "SU.TO",
-      "MFC.TO",
-      "MSFT",
-      "BNS.TO"
-    ],
-    "added_this_week": [],
-    "removed_this_week": [],
+    "required": 10,
+    "done": 6,
+    "pending": 4,
+    "gave_up": 0,
     "complete": false
-  },
-  "due_today": [
-    {
-      "ticker": "BCE.TO",
-      "weekday": 4,
-      "added": "2025-11-13",
-      "removed": null
-    },
-    {
-      "ticker": "BNS.TO",
-      "weekday": 4,
-      "added": "2025-11-13",
-      "removed": null
-    }
-  ],
-  "stocks": [
-    {
-      "ticker": "RY.TO",
-      "weekday": 0,
-      "added": "2025-11-13",
-      "removed": null
-    },
-    {
-      "ticker": "TD.TO",
-      "weekday": 1,
-      "added": "2025-11-13",
-      "removed": null
-    },
-    {
-      "ticker": "ENB.TO",
-      "weekday": 2,
-      "added": "2025-11-13",
-      "removed": null
-    },
-    {
-      "ticker": "CNQ.TO",
-      "weekday": 3,
-      "added": "2025-11-13",
-      "removed": null
-    },
-    {
-      "ticker": "BCE.TO",
-      "weekday": 4,
-      "added": "2025-11-13",
-      "removed": null
-    },
-    {
-      "ticker": "FTS.TO",
-      "weekday": 0,
-      "added": "2025-11-13",
-      "removed": null
-    },
-    {
-      "ticker": "SU.TO",
-      "weekday": 1,
-      "added": "2025-11-13",
-      "removed": null
-    },
-    {
-      "ticker": "MFC.TO",
-      "weekday": 2,
-      "added": "2025-11-13",
-      "removed": null
-    },
-    {
-      "ticker": "MSFT",
-      "weekday": 3,
-      "added": "2025-11-13",
-      "removed": null
-    },
-    {
-      "ticker": "BNS.TO",
-      "weekday": 4,
-      "added": "2025-11-13",
-      "removed": null
-    }
-  ]
+  }
 }

@@ -23,7 +23,7 @@ export function ProgressStrip() {
         {week && (
           <Figure
             label={`Batch, week of ${formatDate(week.week_start)}`}
-            value={`${week.done.length} of ${week.required.length} done${week.gave_up.length ? `, ${week.gave_up.length} gave up` : ''}`}
+            value={`${week.done} of ${week.done + week.pending + week.gave_up} done${week.gave_up ? `, ${week.gave_up} gave up` : ''}`}
           />
         )}
         {card?.state === 'current' && (
